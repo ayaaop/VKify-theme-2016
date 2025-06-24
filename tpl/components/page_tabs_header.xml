@@ -13,9 +13,10 @@
                       - attrs: (optional) Array of extra attributes for <a>
   @param id           (optional) ID for the <ul> element
   @param extra        (optional) HTML content or button after the tabs
+  @param white        (optional) Boolean, if true use white background
 *}
 <h2 class="page_block_h2">
-  <ul class="ui_tabs clear_fix ui_tabs_header" id="{=$id ?? 'apps_top_tabs'}">
+  <ul class="ui_tabs clear_fix {if !isset($white)} ui_tabs_header{/if}" id="{=$id ?? 'apps_top_tabs'}">
     {foreach $tabs as $tab}
       <li{if isset($tab['id'])} id="{$tab['id']}"{/if}>
         <a class="ui_tab{if !empty($tab['active'])} ui_tab_sel{/if}" href="{$tab['url']}"{if isset($tab['attrs'])} {foreach $tab['attrs'] as $attr => $val}{$attr}="{$val}" {/foreach}{/if}>

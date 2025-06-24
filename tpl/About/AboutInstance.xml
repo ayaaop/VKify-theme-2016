@@ -6,77 +6,99 @@
 {/block}
 
 {block content}
-    <div class="left_big_block">
-        {include "../components/page_block_header.xml" title=> about_this_instance}
-        <div class="page_block">
-            <div class="page_block_sub_header">{_statistics}</div>
-            <div class="module_body" style="padding-top: 0">
-                {_on_this_instance_are}
-                <ul>
-                    <li><span>{tr("about_users", $usersStats->all)|noescape}</span></li>
-                    <li><span>{tr("about_online_users", $usersStats->online)|noescape}</span></li>
-                    <li><span>{tr("about_active_users", $usersStats->active)|noescape}</span></li>
-                    <li><span>{tr("about_groups", $clubsCount)|noescape}</span></li>
-                    <li><span>{tr("about_wall_posts", $postsCount)|noescape}</span></li>
-                </ul>
-            </div>
-        </div>
-        {if OPENVK_ROOT_CONF['openvk']['preferences']['about']['links']}
-        <div class="page_block module">
-            <div class="module_header"><div class="header_top">{_about_links}</div></div>
-            <div class="module_body">
-                {_instance_links}
-                <ul>
-                    <li n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['about']['links'] as $aboutLink"><a href="{$aboutLink['url']}" target="_blank" class="link">{$aboutLink["name"]}</a></li>
-                </ul>
-            </div>
-        </div>
-        {/if}
-        {if sizeof($popularClubs) !== 0}
-        <div class="page_block module page_list_module">
-            <div class="module_header"><div class="header_top">{_most_popular_groups}</div></div>
-            <div class="module_body">
-                {foreach $popularClubs as $club}
-                    <div class="line_cell clear_fix">
-                        <div class="thumb">
-                            <a href="{$club->club->getURL()}">
-                                <img class="cell_img" src="{$club->club->getAvatarUrl()}" alt="{$club->club->getName()}">
-                            </a>
-                        </div>
-                        <div class="desc_info">
-                            <div class="group_name"><a href="{$club->club->getURL()}">{$club->club->getName()}</a></div>
-                            <div class="group_desc">
-                                <span>{tr("participants", $club->subscriptions)}</span>
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                <div class="page_block module">
+                    <div class="module_header">
+                        <h3 class="header_top clear_fix">
+                            <span class="header_label fl_l">{_rules}</span>
+                        </h3>
+                    </div>
+                    <div class="module_body">
+                        {tr("about_watch_rules", "/terms")|noescape}
+                    </div>
+                </div>
+                {var $adminsCount = sizeof($admins)}
+                <div class="page_block module page_list_module">
+                    <div class="module_header">
+                        <h3 class="header_top clear_fix">
+                            <span class="header_label fl_l">{_administrators}</span>
+                            <span class="header_count fl_l">{$adminsCount}</span>
+                        </h3>
+                    </div>
+                    <div class="module_body">
+                        {foreach $admins as $admin}
+                            <div class="line_cell clear_fix">
+                                <div class="thumb">
+                                    <a href="{$admin->getURL()}">
+                                        <img class="cell_img" src="{$admin->getAvatarUrl()}" alt="{$admin->getCanonicalName()}">
+                                    </a>
+                                </div>
+                                <div class="desc_info">
+                                    <div class="group_name"><a href="{$admin->getURL()}">{$admin->getCanonicalName()}</a></div>
+                                    <div class="group_desc">
+                                        <span>{$admin->getStatus()}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        {/foreach}
                     </div>
-                {/foreach}
+                </div>
             </div>
         </div>
-        {/if}
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block">
+                    {include "../components/page_block_header.xml", title => "about_this_instance"}
 
-        <h4>{_rules}</h4>
-        <div style="margin-top: 16px;">
-            {tr("about_watch_rules", "/terms")|noescape}
-        </div>
-    </div>
-    <div class="right_small_block">
-        <div class="page_block module page_list_module">
-            <div class="module_header"><div class="header_top">{_administrators}</div></div>
-            <div class="module_body">
-                <div n:foreach="$admins as $admin" class="line_cell clear_fix">
-                    <div class="thumb">
-                        <a href="{$admin->getURL()}">
-                        <img class="cell_img" src="{$admin->getAvatarUrl()}" alt="{$admin->getCanonicalName()}">
-                    </a>
-                </div>
-                <div class="desc_info">
-                    <div class="group_name"><a href="{$admin->getURL()}">{$admin->getCanonicalName()}</a></div>
-                    <div class="group_desc">
-                            <span>{$admin->getStatus()}</span>
-                        </div>
+                    <div class="page_block_sub_header">{_statistics}</div>
+                    <div class="page_padding" style="padding-top: 0">
+                        {_on_this_instance_are}
+                        <ul>
+                            <li><span>{tr("about_users", $usersStats->all)|noescape}</span></li>
+                            <li><span>{tr("about_online_users", $usersStats->online)|noescape}</span></li>
+                            <li><span>{tr("about_active_users", $usersStats->active)|noescape}</span></li>
+                            <li><span>{tr("about_groups", $clubsCount)|noescape}</span></li>
+                            <li><span>{tr("about_wall_posts", $postsCount)|noescape}</span></li>
+                        </ul>
                     </div>
                 </div>
+
+                {if OPENVK_ROOT_CONF['openvk']['preferences']['about']['links']}
+                <div class="page_block">
+                    {include "../components/page_block_header.xml", title => "about_links"}
+                    <div class="page_padding">
+                        {_instance_links}
+                        <ul>
+                            <li n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['about']['links'] as $aboutLink"><a href="{$aboutLink['url']}" target="_blank" class="link">{$aboutLink["name"]}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                {/if}
+
+                {if sizeof($popularClubs) !== 0}
+                <div class="page_block module page_list_module">
+                    {include "../components/page_block_header.xml", title => "most_popular_groups"}
+                    <div class="page_padding">
+                        {foreach $popularClubs as $club}
+                            <div class="line_cell clear_fix">
+                                <div class="thumb">
+                                    <a href="{$club->club->getURL()}">
+                                        <img class="cell_img" src="{$club->club->getAvatarUrl()}" alt="{$club->club->getName()}">
+                                    </a>
+                                </div>
+                                <div class="desc_info">
+                                    <div class="group_name"><a href="{$club->club->getURL()}">{$club->club->getName()}</a></div>
+                                    <div class="group_desc">
+                                        <span>{tr("participants", $club->subscriptions)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {/foreach}
+                    </div>
+                </div>
+                {/if}
             </div>
         </div>
     </div>

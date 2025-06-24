@@ -7,7 +7,7 @@
 }
 
 .settings_label {
-    color: #656565;
+    color: var(--muted-text-color-2);
     width: 145px;
     padding: 6px 10px 6px 0;
     float: left;
@@ -19,6 +19,10 @@
     margin: 0 0 8px 155px;
 }
 
+.settings_labeled_text label:has(input[type="checkbox"], input[type="radio"]):first-child {
+    margin-top: 0;
+}
+
 .settings_list_row .settings_label,
 .settings_list_row .settings_labeled_text {
     padding-top: 2px;
@@ -27,7 +31,7 @@
 
 .settings_line {
 	margin: 12px 0 15px;
-	background: #e7e8ec;
+	background: var(--border-color);
 	height: 1px;
 }
 
@@ -37,13 +41,13 @@
 
 .settings_block_msg {
     padding: 13px 20px 15px;
-    border-bottom: 1px solid #e7e8ec;
+    border-bottom: 1px solid var(--border-color);
     line-height: 150%;
 }
 
 .settings_block_footer {
-    border-top: 1px solid #e7e8ec;
-    background: #fafbfc;
+    border-top: 1px solid var(--border-color);
+    background: var(--module-header-background-color);
     line-height: 140%;
     padding: 15px 0 17px;
     border-bottom-left-radius: inherit;
@@ -75,7 +79,7 @@
 }
 
 .settings_privacy_row {
-    border: solid #e7e8ec;
+    border: solid var(--border-color);
     border-width: 1px 0;
     padding: 11px 0 14px;
     margin: -1px 0 0
@@ -152,17 +156,6 @@
     margin-right: 10px;
 }
 
-.knowledgeBaseArticle h4 {
-	border: 0;
-	color: #000;
-	font-weight: 600;
-	padding: 0;
-	font-size: 14px;
-}
-.knowledgeBaseArticle p + h4 {
-    margin-top: 10px;
-}
-
 .delete_reason_list {
     margin: 10px 0 20px;
 }
@@ -180,16 +173,16 @@
 }
 .group_settings .settings_labeled_text {
 	margin: 0 0 8px 177px;
-	padding-top: 6px;
+	padding-top: 7px;
 }
 .group_settings .settings_labeled_text:has(textarea,input[type="text"],select) {
-    padding-top: 0;
+    padding-top: 2px;
 }
 
 /* followers */
 .group_l_row {
 	position: relative;
-	border-bottom: 1px solid #e7e8ec;
+	border-bottom: 1px solid var(--border-color);
 	padding: 15px 0;
 }
 .group_u_bigph_wrap {
@@ -217,7 +210,7 @@
 }
 .group_u_desc, .group_u_btns_text {
 	padding-top: 6px;
-	color: #939393;
+	color: var(--muted-text-color);
 }
 .group_u_info_row {
 	padding-top: 7px;

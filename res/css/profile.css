@@ -279,6 +279,7 @@
 
 .module_body .people_row {
     display: flex;
+    padding: 0;
 }
 
 .module_body .people_cell {

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
         duration: [100, 100],
         theme: 'light vk',
         placement: 'bottom',
-        appendTo: document.body
+        appendTo: 'parent'
     };
 
     function setupTooltip(selector, contentCallback, options = {}) {
@@ -46,14 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
             reference.setAttribute('data-tippy-content-html', menu.innerHTML);
             return menuClone;
         },
-        allowHTML: true,
-        interactive: true,
-        trigger: 'mouseenter focus',
-        placement: 'bottom-end',
-        animation: 'shift-toward-subtle',
-        theme: 'light vk',
-        duration: [100, 100],
-        appendTo: 'parent',
+        ...commonConfig,
+        'placement': 'bottom-end',
         onCreate: (instance) => {
             instance.reference.setAttribute('data-tippy-initialized', 'true');
         },
@@ -78,7 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         safeSetupTooltip('#moreAttachTrigger', 'moreAttachTooltip');
-        safeSetupTooltip('#postOptsTrigger', 'postOptsTooltip');
+        safeSetupTooltip('#postOptsTrigger', 'postOptsTooltip', {
+            appendTo: 'parent'
+        });
         safeSetupTooltip('#moreOptionsLink', 'moreOptionsContent', {
             trigger: 'mouseenter focus',
             arrow: true,

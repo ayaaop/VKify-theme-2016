@@ -186,11 +186,6 @@
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="page_block module completeness_block">
             {var $completeness = $user->getProfileCompletenessReport()}
             
-            <div onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($user->getUrl(), '/')}, {$csrfToken})" n:class="module_body, completeness-gauge, $completeness->total >= 100 ? completeness-gauge-gold">
-                <div style="width: {$completeness->percent}%"></div>
-                <span>{$completeness->total}%</span>
-            </div>
-            
             {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
                 <div class="profile_warning_row" n:if="in_array('interests', $completeness->unfilled)">
                     <div class="profile_warning_img interests"></div>

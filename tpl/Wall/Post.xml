@@ -17,7 +17,7 @@
     [
         'url' => "/wall" . $post->getTargetWall() . "?type=owners",
         'title' => $post->getTargetWall() < 0 ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($wallOwner->getFirstName(), 20)),
-        'translate' => false,
+        'translate' => $post->getTargetWall() < 0 ? true : false,
         'active' => false
     ],
     [

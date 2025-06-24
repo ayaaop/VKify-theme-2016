@@ -534,15 +534,6 @@
                                 </div>
                             </div>
                             <div class="settings_list_row">
-                                <div class="settings_label">{_ui_settings_rating}</div>
-                                <div class="settings_labeled_text">
-                                    <select name="rating">
-                                        <option value="1" {if !$user->prefersNotToSeeRating()}selected{/if}>{_ui_settings_rating_show}</option>
-                                        <option value="0" {if $user->prefersNotToSeeRating()}selected{/if}>{_ui_settings_rating_hide}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="settings_list_row">
                                 <div class="settings_label">{_ui_settings_nsfw_content}</div>
                                 <div class="settings_labeled_text">
                                     <select name="nsfw">
@@ -574,6 +565,15 @@
                                 <div class="settings_label">&nbsp;</div>
                                 <div class="settings_labeled_text" dir="auto">
                                     <label><input type="checkbox" name="theme_for_session" value="1"> {_apply_style_for_this_device}</label>
+                                </div>
+                            </div>
+                            <div class="settings_list_row">
+                                <div class="settings_label">&nbsp;</div>
+                                <div class="settings_labeled_text" dir="auto">
+                                    <label>
+                                        <input type="hidden" name="rating" value="0">
+                                        <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()"> <vkifyloc name="profile_recommendations"/>
+                                    </label>
                                 </div>
                             </div>
                             <div class="settings_list_row">

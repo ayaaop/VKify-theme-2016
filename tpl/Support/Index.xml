@@ -11,45 +11,53 @@
     {var $isList = $mode === 'list'}
 
     {if $thisUser}
-        <div class="tabs">
-            <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
-                <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/support">{_support_faq}</a>
-            </div>
-            <div n:if="$count > 0" n:attr="id => ($isList ? 'activetabs' : 'ki')" class="tab">
-                <a n:attr="id => ($isList ? 'act_tab_a' : 'ki')" href="/support?act=list">{_support_list}</a>
-            </div>
-            <div n:attr="id => ($isNew ? 'activetabs' : 'ki')" class="tab">
-                <a n:attr="id => ($isNew ? 'act_tab_a' : 'ki')" href="/support?act=new">{_support_new}</a>
-            </div>
-        </div>
-        <br />
-        
-        {if $isNew}
-            {if !is_null($banReason)}
-                <center>
-                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
-                </center>
-                <p>
-                    {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
-                    {tr("banned_in_support_2", htmlentities($banReason))|noescape}
-                </p>
-            {else}
-                <div class="new">
-                    <form action="/support" method="post" style="margin:0;">
+        {include "../components/page_tabs_header.xml", tabs => [
+            [
+                'url' => '/support',
+                'title' => 'support_faq',
+                'active' => $isMain,
+                'id' => 'support_tab_faq'
+            ],
+            [
+                'url' => '/support?act=list',
+                'title' => 'support_list',
+                'active' => $isList,
+                'id' => 'support_tab_list'
+            ],
+            [
+                'url' => '/support?act=new',
+                'title' => 'support_new',
+                'active' => $isNew,
+                'id' => 'support_tab_new'
+            ]
+        ], white => true}
+            {if $isNew}
+                <div class="page_block page_padding">
+                    {if !is_null($banReason)}
                         <center>
-                            <input type="text" name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
-                            <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
-                            <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />
+                            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
                         </center>
-                    </form>
+                        <p>
+                            {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
+                            {tr("banned_in_support_2", htmlentities($banReason))|noescape}
+                        </p>
+                    {else}
+                        <div class="new">
+                            <form action="/support" method="post" style="margin:0;">
+                                <center>
+                                    <input type="text" name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
+                                    <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                    <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />
+                                </center>
+                            </form>
+                        </div>
+                    {/if}
                 </div>
             {/if}
-        {/if}
     {/if}
-
+    <div n:ifcontent class="page_block page_padding">
     {if $isMain}
-        <h4>{_support_faq}</h4><br />
         <div n:foreach="$faq as $section" class="faq">
             <div id="faqhead">{$section[0]}</div>
             <div id="faqcontent">{$section[1]|noescape}</div>
@@ -93,4 +101,5 @@
             ]}
         </div>
     {/if}
+    </div>
 {/block}

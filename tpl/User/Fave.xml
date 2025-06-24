@@ -2,24 +2,47 @@
 
 {block title}{_bookmarks_tab}{/block}
 
-{block header}
-    {_bookmarks_tab}
-{/block}
+{block content}
+    {var $isPosts    = $section === 'posts'}
+    {var $isComments = $section === 'comments'}
+    {var $isPhotos   = $section === 'photos'}
+    {var $isVideos   = $section === 'videos'}
 
-{block wrap}
-    <div class="wrap2">
-        <div class="wrap1">
-            <div class="page_wrap">
-                <div class='summaryBar summaryBarFlex padding'>
-                    <div class='summary'>
-                        <b>{tr("faves", $count)} {*tr("showing_x_y", $page, $count)*}</b>
-                    </div>
+    {var $menuItems = [
+        [
+            'url' => '/fave?section=posts',
+            'title' => 's_posts',
+            'active' => $isPosts
+        ],
+        [
+            'url' => '/fave?section=comments',
+            'title' => 's_comments',
+            'active' => $isComments
+        ],
+        [
+            'url' => '/fave?section=photos',
+            'title' => 's_photos',
+            'active' => $isPhotos
+        ],
+        [
+            'url' => '/fave?section=videos',
+            'title' => 's_videos',
+            'active' => $isVideos
+        ]
+    ]}
 
-                    {include "../components/paginator.xml", conf => $paginatorConf}
-                </div>
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $menuItems}
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block">
+                    {include "../components/page_block_header.xml", title => "bookmarks_tab"}
 
-                <div class='page_wrap_content' id='search_page'>
-                    <div n:class='page_wrap_content_main, scroll_container, ($section == "photos" && $count > 0) ? album-flex'>
+                    <div n:class='scroll_container, ($section == "photos" && $count > 0) ? album-flex'>
                         <style>
                             .scroll_node:first-of-type .comment {
                                 border-top: unset;
@@ -66,20 +89,11 @@
                             {include "../components/content_error.xml", description => tr("faves_".$section."_empty_tip")}
                         {/if}
                     </div>
-                    <div class='page_wrap_content_options verticalGrayTabsWrapper'>
-                        <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
-                            <a n:attr="id => $section === 'posts' ? 'used'" href="/fave?section=posts">{_s_posts}</a>
-                            <a n:attr="id => $section === 'comments' ? 'used'" href="/fave?section=comments">{_s_comments}</a>
-                            <a n:attr="id => $section === 'photos' ? 'used'" href="/fave?section=photos">{_s_photos}</a>
-                            <a n:attr="id => $section === 'videos' ? 'used'" href="/fave?section=videos">{_s_videos}</a>
-                        </div>
+
+                    <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
+                        {include "../components/paginator.xml", conf => $extendedPaginatorConf}
                     </div>
                 </div>
-
-                <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
-                    {include "../components/paginator.xml", conf => $extendedPaginatorConf}
-                </div>
-            </div>
             </div>
         </div>
     </div>

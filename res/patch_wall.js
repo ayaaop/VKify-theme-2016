@@ -1,17 +1,14 @@
 u(document).on("click", "#editPost", async (e) => {
-    // Prevent the original handler from executing
     e.stopImmediatePropagation();
-    
+
     const target = u(e.target)
     const post = target.closest(".post")
     const content = post.find(".post_content")
-    
-    // For comments (which have .reply class), we need to look inside .reply_content
-    // For regular posts, we want direct children to avoid nested reposts
-    const edit_place_l = post.hasClass('reply') 
+
+    const edit_place_l = post.hasClass('reply')
         ? post.find('.reply_content > .post_edit')
         : post.children('.post_edit')
-        
+
     const edit_place = u(edit_place_l.first())
     const id = post.attr('data-id').split('_')
 
@@ -111,7 +108,6 @@ u(document).on("click", "#editPost", async (e) => {
             `)
         }
 
-        // horizontal attachments
         api_post.attachments.forEach(att => {
             const type = att.type
             let aid = att[type].owner_id + '_' + att[type].id
@@ -223,6 +219,203 @@ u(document).on("click", "#editPost", async (e) => {
 
     post.addClass('editing')
 })
+
+window.wallCheckboxStates = {
+    as_group: false,
+    force_sign: false,
+    anon: false,
+    nsfw: false
+};
+
+function setupTooltipCheckboxListeners() {
+    u(document).on('change', 'input[name="as_group"]', function(e) {
+        window.wallCheckboxStates.as_group = e.target.checked;
+    });
+
+    u(document).on('change', 'input[name="force_sign"]', function(e) {
+        window.wallCheckboxStates.force_sign = e.target.checked;
+    });
+
+    u(document).on('change', 'input[name="anon"]', function(e) {
+        window.wallCheckboxStates.anon = e.target.checked;
+
+        if (e.target.checked) {
+            window.wallCheckboxStates.as_group = false;
+
+            const form = document.querySelector('#write form');
+            if (form && form.dataset.originalAction) {
+                form.action = form.dataset.originalAction;
+            }
+        }
+    });
+
+    u(document).on('change', 'input[name="nsfw"]', function(e) {
+        window.wallCheckboxStates.nsfw = e.target.checked;
+    });
+}
+
+setupTooltipCheckboxListeners();
+
+window.handleWallAsGroupClick = function(el) {
+    window.wallCheckboxStates.as_group = el.checked;
+
+    if (el.checked) {
+        window.wallCheckboxStates.anon = false;
+    }
+
+    const form = el.closest('form') || document.querySelector('#write form');
+    if (form) {
+        if (!form.dataset.originalAction) {
+            form.dataset.originalAction = form.action;
+        }
+
+        const currentUrl = window.location.pathname;
+        const groupMatch = currentUrl.match(/^\/club(\d+)/);
+        if (groupMatch && el.checked) {
+            form.action = `/wall-${groupMatch[1]}/makePost`;
+        } else if (form.dataset.originalAction) {
+            form.action = form.dataset.originalAction;
+        }
+    }
+
+    const userImg = form ? form.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
+    const groupImg = form ? form.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
+    const avatarLink = form ? form.querySelector('._post_field_author') : document.querySelector('._post_field_author');
+
+    if (userImg && groupImg) {
+        if (el.checked) {
+            userImg.classList.remove('avatar-showing');
+            userImg.classList.add('avatar-flipping');
+
+            setTimeout(() => {
+                groupImg.classList.remove('avatar-flipping');
+                groupImg.classList.add('avatar-showing');
+                if (avatarLink && groupImg.dataset.groupUrl) {
+                    avatarLink.href = groupImg.dataset.groupUrl;
+                }
+
+                setTimeout(() => {
+                    userImg.style.opacity = '0';
+                    userImg.classList.remove('avatar-flipping');
+                    groupImg.style.opacity = '1';
+                    groupImg.classList.remove('avatar-showing');
+                }, 100);
+            }, 100);
+        } else {
+            groupImg.classList.remove('avatar-showing');
+            groupImg.classList.add('avatar-flipping');
+
+            setTimeout(() => {
+                userImg.classList.remove('avatar-flipping');
+                userImg.classList.add('avatar-showing');
+                if (avatarLink && userImg.dataset.userUrl) {
+                    avatarLink.href = userImg.dataset.userUrl;
+                }
+
+                setTimeout(() => {
+                    groupImg.style.opacity = '0';
+                    groupImg.classList.remove('avatar-flipping');
+                    userImg.style.opacity = '1';
+                    userImg.classList.remove('avatar-showing');
+                }, 100);
+            }, 100);
+        }
+    }
+};
+
+u(document).on("submit", "#write form", function(e) {
+    const form = e.target;
+
+    const checkboxes = [
+        { name: 'as_group', checked: window.wallCheckboxStates.as_group },
+        { name: 'force_sign', checked: window.wallCheckboxStates.force_sign },
+        { name: 'anon', checked: window.wallCheckboxStates.anon },
+        { name: 'nsfw', checked: window.wallCheckboxStates.nsfw }
+    ];
+
+    if (window.wallCheckboxStates.anon && window.wallCheckboxStates.as_group) {
+        checkboxes.find(cb => cb.name === 'as_group').checked = false;
+    }
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            let hiddenInput = form.querySelector(`input[name="${checkbox.name}"][type="hidden"]`);
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = checkbox.name;
+                hiddenInput.value = 'on';
+                form.appendChild(hiddenInput);
+            } else {
+                hiddenInput.value = 'on';
+            }
+        }
+    });
+});
+
+u(document).on("click", "#write input[type='submit']", function(e) {
+    const form = u(e.target).closest('form').nodes[0];
+
+    const checkboxes = [
+        { name: 'as_group', checked: window.wallCheckboxStates.as_group },
+        { name: 'force_sign', checked: window.wallCheckboxStates.force_sign },
+        { name: 'anon', checked: window.wallCheckboxStates.anon },
+        { name: 'nsfw', checked: window.wallCheckboxStates.nsfw }
+    ];
+
+    if (window.wallCheckboxStates.anon && window.wallCheckboxStates.as_group) {
+        checkboxes.find(cb => cb.name === 'as_group').checked = false;
+    }
+
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            let hiddenInput = form.querySelector(`input[name="${checkbox.name}"][type="hidden"]`);
+            if (!hiddenInput) {
+                hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = checkbox.name;
+                hiddenInput.value = 'on';
+                form.appendChild(hiddenInput);
+            } else {
+                hiddenInput.value = 'on';
+            }
+        }
+    });
+});
+
+window.initTextareaInteraction = function() {
+    document.addEventListener('focus', function(e) {
+        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
+            const submitPostBox = e.target.closest('.model_content_textarea');
+            if (submitPostBox) {
+                submitPostBox.classList.add('shown');
+            }
+        }
+    }, true);
+
+    document.addEventListener('input', function(e) {
+        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
+            const submitPostBox = e.target.closest('.model_content_textarea');
+            if (submitPostBox) {
+                submitPostBox.classList.add('shown');
+            }
+        }
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
+            const submitPostBox = e.target.closest('.model_content_textarea');
+            if (submitPostBox) {
+                submitPostBox.classList.add('shown');
+            }
+        }
+    });
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    window.initTextareaInteraction();
+});
+
 function reportPost(postId) {
     uReportMsgTxt = tr("going_to_report_post");
     uReportMsgTxt += "<br/>" + tr("report_question_text");

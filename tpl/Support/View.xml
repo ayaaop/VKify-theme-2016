@@ -36,7 +36,7 @@
             });
         }
     </script>
-
+    <div class="page_block page_padding">
     {if $ticket->isDeleted() == 0}
         <div class="post-author">
             <a href="#" style="font-size:13px;"><b>{$ticket->getName()}</b></a>
@@ -147,4 +147,5 @@
             </tbody>
         </table>
     {/if}
+    </div>
 {/block}

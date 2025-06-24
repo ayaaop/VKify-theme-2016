@@ -4,9 +4,28 @@
 
 <div id="write" class='model_content_textarea' style="padding: 4px 1px 2px 1px;">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
+    {if $thisUser ?? NULL}
+        <a class="post_field_user_link _post_field_author" href="{$thisUser->getURL()}">
+            <!-- User avatar image - visible by default -->
+            <img class="post_field_user_image _post_field_user_image"
+                    src="{$thisUser->getAvatarUrl('miniscule')}"
+                    alt="{$thisUser->getCanonicalName()}"
+                    width="28" height="28"
+                    data-user-url="{$thisUser->getURL()}" />
+            <!-- Group avatar image - hidden by default -->
+            {if !is_null($club ?? NULL)}
+            <img class="post_field_user_image _post_field_group_image"
+                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/1.0.0.0/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
+                    alt="{$club->getCanonicalName()}"
+                    width="28" height="28"
+                    style="opacity: 0;"
+                    data-group-url="{$club->getURL()}" />
+            {/if}
+        </a>
+    {/if}
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text"
-            style="width: 100%;resize: none;" class="small-textarea"></textarea>
-        <div id="post-buttons{$textAreaId}" class='post-buttons' style="display: none;">
+            style="resize: none;" class="small-textarea"></textarea>
+        <div id="post-buttons{$textAreaId}" class='post-buttons'>
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>
             <div class="post-has-poll">
@@ -75,7 +94,7 @@
                             {_menu_settings}
                         </div>
                 
-                        <div class="post_settings" id="postOptsTooltip">
+                        <div class="post_settings post-opts" id="postOptsTooltip">
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
                                 <script>
                                     function onWallAsGroupClick(el) {
@@ -83,6 +102,11 @@
                                         {if $anonEnabled}
                                             document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";
                                         {/if}
+
+                                        // Call the main handler in patch_wall.js
+                                        if (window.handleWallAsGroupClick) {
+                                            window.handleWallAsGroupClick(el);
+                                        }
                                     }
                                 </script>
                                 <label>

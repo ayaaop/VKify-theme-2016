@@ -21,9 +21,10 @@ let locales = {
 		"newUserSubhead": "Instant registration",
 		"left_edge": "Left edge:",
 		"right_edge": "Right edge:",
-		'oldposts_disabled_desc': "VKify 2016 does not support the old posts view.",
 		"back_to_page": "back to page",
-		"clear_playlist": "Clear playlist"
+		"clear_playlist": "Clear playlist",
+		"users_posts": "Posts from user",
+		"profile_recommendations": "Show recommendations on filling out your profile"
 	},
 	'ru': {
 		"language": "Язык",
@@ -47,9 +48,37 @@ let locales = {
 		"newUserSubhead": "Мгновенная регистрация",
 		"left_edge": "Левая граница:",
 		"right_edge": "Правая граница:",
-		'oldposts_disabled_desc': "VKify 2016 не поддерживает старый вид постов.",
 		"back_to_page": "вернуться к странице",
-		"clear_playlist": "Очистить плейлист"
+		"clear_playlist": "Очистить плейлист",
+		"users_posts": "Записи от пользователя",
+		"profile_recommendations": "Показывать рекомендации по заполнению профиля"
+	},
+	"uk": {
+		"language": "Мова",
+		"currentlyplaying": "Зараз відтворюється: ",
+		"loadmore": "Завантажити ще",
+		"graffitiflushhistory": "Очистити",
+		"graffitibackhistory": "Скасувати",
+		"graffiticolor": "Колір:",
+		"graffitiopacity": "Інтенсивність:",
+		"graffitithickness": "Товщина:",
+		"graffitiswitch": "Використовувати графіті з ВКонтакті",
+		"ovkhat": "Використовувати логотип OpenVK у шапці",
+		"httpwarn": "Цей інстанс OpenVK використовує застарілий протокол <b>http</b>.<br>Будь ласка, перейдіть на <b>https</b>.",
+		"httpwarnovk": "Ви використовуєте небезпечний протокол <b>http</b>. Завжди використовуйте <b>https</b>.<br><a href='https://{url}/'>Перейти на https »</a>",
+		"loginPromo": "OpenVK для мобільних пристроїв",
+		"loginPromoInfo": "Встановіть офіційний застосунок OpenVK і залишайтеся в курсі новин друзів, де б ви не були.",
+		"loginPromoAndroid": "Для Android",
+		"loginPromoWp": "Для WP",
+		"loginPromoIos": "Для iOS",
+		"newUserQuestionMark": "Вперше в OpenVK?",
+		"newUserSubhead": "Миттєва реєстрація",
+		"left_edge": "Ліва межа:",
+		"right_edge": "Права межа:",
+		"back_to_page": "Повернутися до сторінки",
+		"clear_playlist": "Очистити плейлист",
+		"users_posts": "Дописи користувача",
+		"profile_recommendations": "Показувати поради щодо заповнення профілю"
 	}
 }
 

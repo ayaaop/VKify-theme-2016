@@ -5,17 +5,29 @@
         <div n:if="$canPost" class="page_block">
             {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
         </div>
-        <div class="tabs">
-            <div n:attr="id => ($type != 'all' ? 'ki' : 'activetabs')" class="tab">
-                <a n:attr="id => ($type != 'all' ? 'ki' : 'act_tab_a')" href="/wall{$owner}">{_all_posts}</a>
-            </div>
-            <div n:attr="id => ($type != 'owners' ? 'ki' : 'activetabs')" class="tab">
-                <a n:attr="id => ($type != 'owners' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=owners">{isset($club) ? tr("clubs_posts") : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20))}</a>
-            </div>
-            <div n:attr="id => ($type != 'others' ? 'ki' : 'activetabs')" class="tab">
-                <a n:attr="id => ($type != 'others' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=others">{_others_posts}</a>
-            </div>
-        </div>
+        {var $tabs = [
+            [
+                'url' => "/wall{$owner}",
+                'title' => 'all_posts',
+                'active' => true,
+                'id' => 'wall_tab_all',
+                'count' => $count
+            ],
+            [
+                'url' => "/wall{$owner}?type=owners",
+                'title' => isset($club) ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20)),
+                'active' => false,
+                'id' => 'wall_tab_owners',
+                'translate' => isset($club) ? true : false,
+            ],
+            [
+                'url' => "/wall{$owner}?type=others",
+                'title' => 'others_posts',
+                'active' => false,
+                'id' => 'wall_tab_others'
+            ]
+        ]}
+        {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'wall_top_tabs', white => true}
         <div class="content scroll_container">
             {if sizeof($posts) > 0}
                 {foreach $posts as $post}
