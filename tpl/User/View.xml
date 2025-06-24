@@ -183,7 +183,7 @@
         </div>
         </div>
 
-        <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="page_block module completeness_block">
+        <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" n:ifcontent class="page_block module completeness_block">
             {var $completeness = $user->getProfileCompletenessReport()}
             
             {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
