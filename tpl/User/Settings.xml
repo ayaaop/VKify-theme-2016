@@ -428,7 +428,7 @@
                     <div class="settings_block_msg">
                             {presenter "openvk!Support->knowledgeBaseArticle", "points"}
                     </div>
-                    <div class="settings_panel clear_fix settings_payments">
+                    <div class="settings_panel clear_fix settings_padding">
                         <div class="settings_list_row">
                             <div class="settings_label">{_on_your_account|firstUpper}:</div>
                             <div class="settings_labeled_text">
@@ -436,9 +436,7 @@
                                 <br />
                                 <div>
                                 {if OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']}
-                                <a href="javascript:showCoinsTopUpTroughTon()">
-                                    <input class="button" type="submit" style="margin-right: 10px;" value="{_transfer_trough_ton}" />
-                                </a>
+                                <input onclick="showCoinsTopUpTroughTon()" class="button" type="submit" style="margin-right: 10px;" value="{_transfer_trough_ton}" />
                                 <a href="?act=finance.top-up">
                                     <input class="button" type="submit" value="{_have_voucher}?" />
                                 </a>
@@ -486,7 +484,7 @@
                 </div>
                     {elseif $isFinanceTU}
                 <div class="page_block">
-                    {include "../components/page_block_header.xml", title => "points"}
+                    {include "../components/page_block_header.xml", title => "vouchers", extra=> "<a href='/settings?act=finance'>".tr('paginator_back')."</a>"}
                     <div class="settings_block_msg">
                         {_voucher_explanation} {_voucher_explanation_ex}
                     </div>
