@@ -541,12 +541,15 @@ window.initVKGraffiti = function (event) {
 window.toggle_comment_textarea = function (id) {
     var el = document.getElementById('commentTextArea' + id);
     var wi = document.getElementById('wall-post-input' + id);
+    var pm = document.getElementsByClassName('post-menu-s')[0];
     if (el.style.display === "block") {
         el.style.display = "none";
         wi.blur();
+        pm.classList.add('hidden');
     } else {
         el.style.display = "block";
         wi.focus();
+        pm.classList.remove('hidden');
     }
 }
 

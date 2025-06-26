@@ -2517,7 +2517,7 @@ select:focus {
     line-height: 15px;
 }
 
-.post-menu-s {
+.reply:not(:first-child) .reply_wrap,.commentsTextFieldWrap,.post-menu-s {
     border-top: 1px solid var(--border-color);
 }
 
@@ -2741,7 +2741,10 @@ select:focus {
 
 /* replies */
 .reply {
-    padding: 12px 20px;
+    padding: 0 20px;
+}
+.reply_wrap {
+    padding: 12px 0;
 }
 
 .reply_author {

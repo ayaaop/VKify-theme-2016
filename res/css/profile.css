@@ -541,11 +541,6 @@ div.avatar_block:hover .avatar_variants {
     right: 0;
 }
 
-.commentsTextFieldWrap {
-    background-color: transparent;
-    border: 0;
-}
-
 .avatar_block_inner {
     position: relative;
 }

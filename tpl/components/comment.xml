@@ -4,62 +4,64 @@
 {var $target = $comment->getTarget()}
 {var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
 <div data-id="1_{$comment->getId()}" class="post reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
-    <a class="reply_image{if $author->isOnline()} online{/if}" href="{$author->getURL()}">
-        <img src="{$author->getAvatarURL('miniscule')}" width="30" class="reply_img" />
-    </a>
-    <div class="reply_content">
-        <div class="fl_r reply_actions_wrap">
-            <div class="reply_actions" n:if="isset($thisUser) && !($timeOnly ?? false)">
-                <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="editPost2" data-id="{$comment->getId()}" data-tippy-content="{_edit}"></a>
-                <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tippy-content="{_delete}"></a>
-                <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tippy-content="{_report}"></a>
-            </div>
-        </div>
-        <div class="reply_author">
-            <a class="author" href="{$author->getURL()}">
-                {$author->getCanonicalName()}
-            </a>
-            <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
-        </div>
-        <div class="post_content" id="{$comment->getId()}">
-            <div class="text reply_text" id="text{$comment->getId()}">
-                <div class="really_text">{$comment->getText()|noescape}</div>
-                
-                {var $attachmentsLayout = $comment->getChildrenWithLayout(288)}
-                <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
-                    <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};" data-localized-nsfw-text="{_nsfw_warning}">
-                        {include "attachment.xml", attachment => $attachment[2], parent => $comment, parentType => "comment", tilesCount => sizeof($attachmentsLayout->tiles)}
-                    </div>
+    <div class="reply_wrap">
+        <a class="reply_image{if $author->isOnline()} online{/if}" href="{$author->getURL()}">
+            <img src="{$author->getAvatarURL('miniscule')}" width="30" class="reply_img" />
+        </a>
+        <div class="reply_content">
+            <div class="fl_r reply_actions_wrap">
+                <div class="reply_actions" n:if="isset($thisUser) && !($timeOnly ?? false)">
+                    <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="editPost2" data-id="{$comment->getId()}" data-tippy-content="{_edit}"></a>
+                    <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tippy-content="{_delete}"></a>
+                    <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tippy-content="{_report}"></a>
                 </div>
+            </div>
+            <div class="reply_author">
+                <a class="author" href="{$author->getURL()}">
+                    {$author->getCanonicalName()}
+                </a>
+                <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+            </div>
+            <div class="post_content" id="{$comment->getId()}">
+                <div class="text reply_text" id="text{$comment->getId()}">
+                    <div class="really_text">{$comment->getText()|noescape}</div>
+                    
+                    {var $attachmentsLayout = $comment->getChildrenWithLayout(288)}
+                    <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
+                        <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};" data-localized-nsfw-text="{_nsfw_warning}">
+                            {include "attachment.xml", attachment => $attachment[2], parent => $comment, parentType => "comment", tilesCount => sizeof($attachmentsLayout->tiles)}
+                        </div>
+                    </div>
 
-                <div n:ifcontent class="attachments attachments_m">
-                    <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
-                        {include "attachment.xml", attachment => $attachment, post => $comment}
+                    <div n:ifcontent class="attachments attachments_m">
+                        <div class="attachment" n:foreach="$attachmentsLayout->extras as $attachment">
+                            {include "attachment.xml", attachment => $attachment, post => $comment}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class='post_edit'></div>
-        <div class="reply_footer clear_fix" n:if="isset($thisUser) && !($timeOnly ?? false)">
-            {var $isLiked = $comment->hasLikeFrom($thisUser)}
-            <a class="like_wrap {if $isLiked}my_like{/if}" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
-                <i class="heart like_icon _icon" id="{if $isLiked}liked{/if}"></i>
-                <span class="likeCnt reply_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
-            </a>
-            <div class="reply_date">
-                <a href="{if $correctLink}{$comment->getTargetURL()}{/if}#_comment{$comment->getId()}" class="reply_link">
-                    {$comment->getPublicationTime()}
-                    <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
+            <div class='post_edit'></div>
+            <div class="reply_footer clear_fix" n:if="isset($thisUser) && !($timeOnly ?? false)">
+                {var $isLiked = $comment->hasLikeFrom($thisUser)}
+                <a class="like_wrap {if $isLiked}my_like{/if}" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
+                    <i class="heart like_icon _icon" id="{if $isLiked}liked{/if}"></i>
+                    <span class="likeCnt reply_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
                 </a>
+                <div class="reply_date">
+                    <a href="{if $correctLink}{$comment->getTargetURL()}{/if}#_comment{$comment->getId()}" class="reply_link">
+                        {$comment->getPublicationTime()}
+                        <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
+                    </a>
+                </div>
+                <div class="reply_link_wrap">
+                    <a n:if="!($no_reply_button ?? false)" class="comment-reply reply_link">
+                        {_reply}
+                    </a>
+                </div>
             </div>
-            <div class="reply_link_wrap">
-                <a n:if="!($no_reply_button ?? false)" class="comment-reply reply_link">
-                    {_reply}
-                </a>
-            </div>
+            <span n:if="$compact ?? false" class="compact_footer">
+                <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
+            </span>
         </div>
-        <span n:if="$compact ?? false" class="compact_footer">
-            <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
-        </span>
     </div>
 </div>
