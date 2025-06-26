@@ -2,31 +2,44 @@
   Reusable search bar component
 
   @param id               (optional) ID for the search container, defaults to 'ui_search'
+  @param form_id          (optional) ID for the form element
+  @param form_class       (optional) CSS classes for the form element
+  @param name             (optional) Name attribute for the form element
   @param placeholder      (optional) Placeholder text for the search input
   @param action           (optional) Form action URL, defaults to '/search'
   @param section          (optional) Hidden input value for search section
   @param input_name       (optional) Name attribute for search input, defaults to 'q'
+  @param input_value      (optional) Value for the search input
+  @param input_title      (optional) Title attribute for the search input
+  @param input_maxlength  (optional) Maxlength attribute for the search input
   @param class            (optional) Additional CSS classes for the container
   @param autocomplete     (optional) Form autocomplete attribute, defaults to 'off'
   @param onsubmit         (optional) Form onsubmit handler
 *}
 
 {var $search_id = $id ?? 'ui_search'}
+{var $search_form_id = $form_id ?? ''}
+{var $search_form_class = $form_class ?? ''}
+{var $search_name = $name ?? ''}
 {var $search_placeholder = $placeholder ?? tr('search')}
 {var $search_action = $action ?? '/search'}
 {var $search_section = $section ?? ''}
 {var $search_input_name = $input_name ?? 'q'}
+{var $search_input_value = $input_value ?? ''}
+{var $search_input_title = $input_title ?? ''}
+{var $search_input_maxlength = $input_maxlength ?? ''}
 {var $search_class = $class ?? ''}
 {var $search_autocomplete = $autocomplete ?? 'off'}
-{var $search_onsubmit = $onsubmit ?? 'return false;'}
+{var $search_onsubmit = $onsubmit ?? ''}
 
 <div class="ui_search ui_search_field_empty {$search_class}" id="{$search_id}">
   <div class="ui_search_input_block">
-    <form autocomplete="{$search_autocomplete}" action="{$search_action}" method="get" onsubmit="{$search_onsubmit}">
+    <form autocomplete="{$search_autocomplete}" action="{$search_action}" method="get" {if $search_onsubmit} onsubmit="{$search_onsubmit}"{/if} {if $search_form_id} id="{$search_form_id}"{/if}{if $search_form_class} class="{$search_form_class}"{/if}{if $search_name} name="{$search_name}"{/if}>
       {if $search_section}
         <input name="section" type="hidden" value="{$search_section}">
       {/if}
-      <input type="text" class="ui_search_field" name="{$search_input_name}" autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="{$search_placeholder}">
+      <input type="text" class="ui_search_field" name="{$search_input_name}"{if $search_input_value} value="{$search_input_value}"{/if} autocorrect="off" autocapitalize="none" spellcheck="false" placeholder="{$search_placeholder}"{if $search_input_title} title="{$search_input_title}"{/if}{if $search_input_maxlength} maxlength="{$search_input_maxlength}"{/if}>
+      <input type="submit" style="display: none;">
     </form>
     <div class="ui_search_reset" title="Clear search"></div>
   </div>

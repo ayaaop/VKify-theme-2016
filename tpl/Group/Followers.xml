@@ -7,9 +7,7 @@
 
 {block title}{_followers} {$club->getCanonicalName()}{/block}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
+
 
 {block content}
     <div class="wide_column_left">
@@ -33,6 +31,12 @@
                             'url' => "/club{$club->getId()}/followers",
                             'title' => 'followers',
                             'active' => true,
+                            'condition' => $club->canBeModifiedBy($thisUser)
+                        ],
+                        [
+                            'url' => "/club{$club->getId()}/stats",
+                            'title' => 'statistics',
+                            'active' => false,
                             'condition' => $club->canBeModifiedBy($thisUser)
                         ]
                     ]}
@@ -111,6 +115,9 @@
                                     </div>
                                 </div>
                             </div>
+                            {if $count == 0}
+                                {include "../components/nothing.xml"}
+                            {/if}
                             {include "../components/paginator.xml", conf => $paginatorConf}
                         </div>
                     </div>

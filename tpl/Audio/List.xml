@@ -130,14 +130,6 @@
                     'id' => $mode === 'list' ? 'used' : 'ki'
                 ]}
 
-                {if isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser)}
-                    {var $tabMenuItems[] = [
-                        'url' => "/player/upload?gid=" . abs($ownerId),
-                        'title' => 'upload_audio',
-                        'active' => false
-                    ]}
-                {/if}
-
                 {if isset($thisUser) && isset($ownerId) && !$isMy}
                     {var $tabMenuItems[] = [
                         'url' => "/playlists" . $ownerId,

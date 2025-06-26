@@ -1,8 +1,6 @@
 {extends "../@layout.xml"}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
+
 
 {block title}
     {if $create}

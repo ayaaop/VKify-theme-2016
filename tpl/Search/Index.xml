@@ -7,63 +7,73 @@
     {/if}
 {/block}
 
-{block header}
-	<div style="margin-bottom: 15px;">
-		<form id="real_search_form" action="/search" method="get">
-			<div id="search_and_one_more_wrapper">
-				<input autocomplete="off" type="search" maxlength="79" name="q" value="{$_REQUEST['q']}" placeholder="{_header_search}" title="{_header_search}" style="max-width: 82%; margin-right: 5px;" />
-				<button class="search_box_button button" style="min-width: 100px;height: 24px;">{_header_search}</button>
-			</div>
-		</form>
-	</div>
-	<div>
-		<div class="mb_tab" n:attr="id => $section === 'users' ? 'active'">
-            <div>
-                <a href="/search?section=users&q={urlencode($query)}">{_s_people}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'groups' ? 'active'">
-            <div>
-                <a href="/search?section=groups&q={urlencode($query)}">{_s_groups}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'posts' ? 'active'">
-            <div>
-                <a href="/search?section=posts&q={urlencode($query)}">{_s_posts}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'videos' ? 'active'">
-            <div>
-                <a href="/search?section=videos&q={urlencode($query)}">{_s_videos}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'apps' ? 'active'">
-            <div>
-                <a href="/search?section=apps&q={urlencode($query)}">{_s_apps}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'audios' ? 'active'">
-            <div>
-                <a href="/search?section=audios&q={urlencode($query)}">{_s_audios}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'audios_playlists' ? 'active'">
-            <div>
-                <a href="/search?section=audios_playlists&q={urlencode($query)}">{_s_audios_playlists}</a>
-            </div>
-        </div>
-		<div class="mb_tab" n:attr="id => $section === 'docs' ? 'active'">
-            <div>
-                <a href="/search?section=docs&q={urlencode($query)}">{_s_documents}</a>
-            </div>
-        </div>
-	</div>
-{/block}
+{block content}
+	{var $tabs = [
+		[
+			'url' => '/search?section=users&q=' . urlencode($query),
+			'title' => 's_people',
+			'active' => $section === 'users'
+		],
+		[
+			'url' => '/search?section=groups&q=' . urlencode($query),
+			'title' => 's_groups',
+			'active' => $section === 'groups'
+		],
+		[
+			'url' => '/search?section=posts&q=' . urlencode($query),
+			'title' => 's_posts',
+			'active' => $section === 'posts'
+		],
+		[
+			'url' => '/search?section=videos&q=' . urlencode($query),
+			'title' => 's_videos',
+			'active' => $section === 'videos'
+		],
+		[
+			'url' => '/search?section=apps&q=' . urlencode($query),
+			'title' => 's_apps',
+			'active' => $section === 'apps'
+		],
+		[
+			'url' => '/search?section=audios&q=' . urlencode($query),
+			'title' => 's_audios',
+			'active' => $section === 'audios'
+		],
+		[
+			'url' => '/search?section=audios_playlists&q=' . urlencode($query),
+			'title' => 's_audios_playlists',
+			'active' => $section === 'audios_playlists'
+		],
+		[
+			'url' => '/search?section=docs&q=' . urlencode($query),
+			'title' => 's_documents',
+			'active' => $section === 'docs'
+		]
+	]}
 
-{block wrap}
-    <div class="wrap2">
-        <div class="wrap1">
-            <div class="page_wrap">
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $tabs}
+                <div class="page_block page_padding" style="padding-block: 15px">
+                    {include searchOptions}
+                </div>
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                {include "../components/page_block_header.xml", title => "search_for_$section"}
+                {include "../components/search_bar.xml",
+                    form_id => 'real_search_form',
+                    form_class => 'search_page_form',
+                    placeholder => tr('header_search'),
+                    action => '/search',
+                    input_name => 'q',
+                    input_value => $_REQUEST['q'],
+                    input_title => tr('header_search'),
+                    input_maxlength => '59',
+                    autocomplete => 'off'
+                }
                 {if $section == 'audios' && $count > 1}
                     {include "../Audio/bigplayer.xml", tidy => true}
                     <script>
@@ -79,175 +89,87 @@
                         }
                     </script>
                 {/if}
-                <div class='summaryBar summaryBarFlex padding'>
-                    <div class='summary'>
-                        <b>{tr("results", $count)} {tr("showing_x_y", $page, $count)}</b>
-                    </div>
 
-                    {include "../components/paginator.xml", conf => $paginatorConf}
-                </div>
-
-                <div class='page_wrap_content' id='search_page'>
-                    <div n:class='page_wrap_content_main, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
+                <div class='page_block page_search'>
+                    <div n:class='list_view, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
-                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td valign="top">
-                                                    <a href="{$dat->getURL()}">
-                                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
-                                                    </a>
-                                                </td>
-                                                <td valign="top" style="width: 100%">
-                                                    <a href="{$dat->getURL()}">
-                                                        <b>
-                                                            <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
-                                                                {if $order     == "rating"}
-                                                                    ({$dat->getProfileCompletenessReport()->total}%)
-                                                                {/if}
-                                                            </text>
-                                                            <img n:if="$dat->isVerified()" 
-                                                                class="name-checkmark"
-                                                                src="/assets/packages/static/openvk/img/checkmark.png"
-                                                            />
-                                                        </b>
-                                                        {if $dat->getId() == $thisUser->getId()}
-                                                            ({_s_it_is_you})
-                                                        {/if}
-                                                    </a>
-
-                                                    <table class="ugc-table">
-                                                        <tbody>
-                                                            {if $_REQUEST["order"] == "id"}
-                                                                <tr>
-                                                                    <td><span class="nobold">ID:</span></td>
-                                                                    <td>{$dat->getId()}</td>
-                                                                </tr>
-                                                            {/if}
-                                                            {if $dat->getPrivacySetting("page.info.read") > 1}        
-                                                                <tr>
-                                                                    <td><span class="nobold">{_pronouns}: </span></td>
-                                                                    <td>{$dat->isFemale() ? tr("female") : ($dat->isNeutral() ? tr("neutral") : tr("male"))}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><span class="nobold">{_relationship}:</span></td>
-                                                                    <td>{$dat->getLocalizedMaritalStatus()}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td><span class="nobold">{_registration_date}: </span></td>
-                                                                    <td>{$dat->getRegistrationTime()}</td>
-                                                                </tr>
-                                                                {if !empty($dat->getDescription())}
-                                                                <tr>
-                                                                    <td>
-                                                                        <span class="nobold">{_description}:</span>
-                                                                    </td>
-                                                                    <td>
-                                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
-                                                                    </td>
-                                                                </tr>
-                                                                {/if}
-                                                                {if !empty($_REQUEST["fav_mus"])}
-                                                                    <tr>
-                                                                        <td><span class="nobold">{_favorite_music}:</span></td>
-                                                                        <td>{$dat->getFavoriteMusic()}</td>
-                                                                    </tr>
-                                                                {/if}
-                                                                {if !empty($_REQUEST["fav_films"])}
-                                                                    <tr>
-                                                                        <td><span class="nobold">{_favorite_films}:</span></td>
-                                                                        <td>{$dat->getFavoriteFilms()}</td>
-                                                                    </tr>
-                                                                {/if}
-                                                                {if !empty($_REQUEST["fav_shows"])}
-                                                                    <tr>
-                                                                        <td><span class="nobold">{_favorite_shows}:</span></td>
-                                                                        <td>{$dat->getFavoriteShows()}</td>
-                                                                    </tr>
-                                                                {/if}
-                                                                {if !empty($_REQUEST["fav_books"])}
-                                                                    <tr>
-                                                                        <td><span class="nobold">{_favorite_books}:</span></td>
-                                                                        <td>{$dat->getFavoriteBooks()}</td>
-                                                                    </tr>
-                                                                {/if}
-                                                            {/if}
-                                                        </tbody>
-                                                    </table>
-                                                    <br/>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class='scroll_node people_row' n:foreach="$data as $dat">
+                                    <a href="{$dat->getURL()}" class="img">
+                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$dat->getURL()}">
+                                                {$dat->getCanonicalName()}
+                                                <div class="page_verified"
+                                                     n:if="$dat->isVerified()" href="/verify"></div>
+                                                {if $dat->getId() == $thisUser->getId()}
+                                                    ({_s_it_is_you})
+                                                {/if}
+                                            </a>
+                                        </div>
+                                        <div class="labeled" n:if="$dat->getCity()">
+                                            {$dat->getCity()}
+                                        </div>
+                                        <div claass="labeled">
+                                            {$dat->isFemale() ? tr("female") : ($dat->isNeutral() ? tr("neutral") : tr("male"))}
+                                        </div>
+                                    </div>
+                                    <div class="action_links controls">
+                                        {var $subStatus = $dat->getSubscriptionStatus($thisUser)}
+                                        {var $actions = [
+                                            0 => ['act' => 'add', 'label' => tr('friends_add')],
+                                            1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+                                            2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+                                            3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+                                        ]}
+                                        {if isset($actions[$subStatus])}
+                                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
+                                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                                                <input type="hidden" name="id"  value="{$dat->getId()}" />
+                                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+                                            </form>
+                                        {/if}
+                                    </div>
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', ['text'])
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
                                     }
 
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'groups'}
-                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td valign="top">
-                                                    <a href="{$dat->getURL()}">
-														<img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
-															? '/themepack/vkify16/1.0.0.0/resource/community_200.png' 
-															: $dat->getAvatarUrl('miniscule')}" 
-															width="75" alt="{_photo}" loading='lazy' />
-                                                    </a>
-                                                </td>
-                                                <td valign="top" style="width: 100%">
-                                                    <a href="{$dat->getURL()}">
-                                                        <b>
-                                                            <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
-                                                                {if $order == "id"}
-                                                                    (id{$dat->getId()})
-                                                                {/if}
-                                                            </text>
-                                                            <img n:if="$dat->isVerified()" 
-                                                                class="name-checkmark"
-                                                                src="/assets/packages/static/openvk/img/checkmark.png"
-                                                            />
-                                                        </b>
-                                                    </a>
-
-                                                    <table class="ugc-table">
-                                                        <tbody>
-                                                            {if !empty($dat->getDescription())}
-                                                                <tr>
-                                                                    <td>
-                                                                        <span class="nobold">{_description}:</span>
-                                                                    </td>
-                                                                    <td data-highlight='_clubDesc'>
-                                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
-                                                                    </td>
-                                                                </tr>
-                                                            {/if}
-                                                            <td>
-                                                                <span class="nobold">{_size}:</span>
-                                                            </td>
-                                                            <td>
-                                                                {tr("participants", $dat->getFollowersCount())}
-                                                            </td>
-                                                        </tbody>
-                                                    </table>
-                                                    <br/>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class='scroll_node people_row' n:foreach="$data as $dat">
+                                    <a href="{$dat->getURL()}" class="img">
+                                        <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
+                                            ? '/themepack/vkify16/1.0.0.0/resource/community_200.png' 
+                                            : $dat->getAvatarUrl('miniscule')}" 
+                                            width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$dat->getURL()}">
+                                                {$dat->getCanonicalName()}
+                                                <div class="page_verified"
+                                                     n:if="$dat->isVerified()" href="/verify"></div>
+                                            </a>
+                                        </div>
+                                        <div class="labeled">
+                                            {tr("participants", $dat->getFollowersCount())}
+                                        </div>
+                                        <div class="labeled" n:if="!empty($dat->getDescription())">
+                                            {$dat->getDescription()}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
                                     }
 
                                     __scrollHook()
@@ -355,11 +277,6 @@
                             {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
                         {/if}
                     </div>
-                    <div class='page_wrap_content_options verticalGrayTabsWrapper'>
-                        <div class='page_search_options'>
-                            {include searchOptions}
-                        </div>
-                    </div>
                 </div>
 
                 <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
@@ -372,7 +289,7 @@
 
 {block searchOptions}
     <div class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_s_order_by}
         </div>
         <div class="search_option_content">
@@ -404,7 +321,7 @@
         </div>
     </div>
     <div n:if="$section == 'users'" class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
 
             {_main}
         </div>
@@ -420,7 +337,7 @@
     </div>
 
     <div n:if="$section == 'users'" class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_pronouns}
         </div>
         <div class="search_option_content">
@@ -431,7 +348,7 @@
         </div>
     </div>
     <div n:if="$section == 'users'" n:class="search_option, !isset($_REQUEST['polit_views']) && !isset($_REQUEST['marital_status']) ? search_option_hidden">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_s_additional}
         </div>
         <div class="search_option_content">
@@ -443,7 +360,6 @@
                     </option>
                 </select>
             </label>
-			<br>
             <label>
                 {_relationship}
                 <select name="marital_status" form="real_search_form" data-default='0'>
@@ -455,7 +371,7 @@
         </div>
     </div>
     <div n:if="$section == 'videos'" class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_s_main}
         </div>
         <div class="search_option_content">
@@ -465,7 +381,7 @@
         </div>
     </div>
     <div n:if="$section == 'docs'" class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_s_type}
         </div>
         <div class="search_option_content">
@@ -477,7 +393,7 @@
         </div>
     </div>
     <div n:if="$section == 'audios'" class="search_option">
-        <div class="search_option_name">
+        <div class="search_option_name search_filter_main ">
             {_s_main}
         </div>
         <div class="search_option_content">

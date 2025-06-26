@@ -24,7 +24,8 @@ let locales = {
 		"back_to_page": "back to page",
 		"clear_playlist": "Clear playlist",
 		"users_posts": "Posts from user",
-		"profile_recommendations": "Show recommendations on filling out your profile"
+		"profile_recommendations": "Show recommendations on filling out your profile",
+	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account."
 	},
 	'ru': {
 		"language": "Язык",
@@ -51,7 +52,8 @@ let locales = {
 		"back_to_page": "вернуться к странице",
 		"clear_playlist": "Очистить плейлист",
 		"users_posts": "Записи от пользователя",
-		"profile_recommendations": "Показывать рекомендации по заполнению профиля"
+		"profile_recommendations": "Показывать рекомендации по заполнению профиля",
+	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт."
 	},
 	"uk": {
 		"language": "Мова",
@@ -78,7 +80,8 @@ let locales = {
 		"back_to_page": "Повернутися до сторінки",
 		"clear_playlist": "Очистити плейлист",
 		"users_posts": "Дописи користувача",
-		"profile_recommendations": "Показувати поради щодо заповнення профілю"
+		"profile_recommendations": "Показувати поради щодо заповнення профілю",
+		"guest_actions": "<a href='/register'>Зареєструйтесь</a>, щоб залишатися на зв'язку з $1 та іншими людьми, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис."
 	}
 }
 
@@ -111,15 +114,41 @@ window.vkifylocalize = function(langcode) {
 	}
 }
 
+// Process a single vkifyloc element
+window.processVkifyLocElement = function(element) {
+	if (!window.vkifylang) return;
+
+	const locName = element.getAttribute('name');
+	if (locName && window.vkifylang[locName]) {
+		let translatedText = window.vkifylang[locName];
+
+		// Handle arguments like $1, $2, etc.
+		const args = element.getAttribute('args');
+		if (args) {
+			const argArray = args.split(',').map(arg => arg.trim());
+			argArray.forEach((arg, index) => {
+				const placeholder = '$' + (index + 1);
+				translatedText = translatedText.replace(new RegExp('\\' + placeholder, 'g'), arg);
+			});
+		}
+
+		element.outerHTML = translatedText;
+	}
+}
+
+// Process all vkifyloc tags on the page
+window.processVkifyLocTags = function() {
+	if (!window.vkifylang) return;
+
+	document.querySelectorAll('vkifyloc').forEach(element => {
+		window.processVkifyLocElement(element);
+	});
+}
+
 function patchpage(langcode) {
 	window.vkifylang = locales[langcode];
 	// Handle all vkifyloc tags on the page
-	document.querySelectorAll('vkifyloc').forEach(element => {
-		const locName = element.getAttribute('name');
-		if (locName && locales[langcode][locName]) {
-			element.outerHTML = locales[langcode][locName];
-		}
-	});
+	window.processVkifyLocTags();
 	
 	if (location.protocol.includes('http:')) {
 		if (location.host.includes('openvk.xyz')) {
@@ -142,19 +171,13 @@ window.addEventListener('DOMContentLoaded', () => {
 					const locTags = node.querySelectorAll('vkifyloc');
 					if (locTags.length > 0) {
 						locTags.forEach(element => {
-							const locName = element.getAttribute('name');
-							if (locName && window.vkifylang[locName]) {
-								element.outerHTML = window.vkifylang[locName];
-							}
+							window.processVkifyLocElement(element);
 						});
 					}
-					
+
 					// Check if the added node itself is a vkifyloc tag
 					if (node.nodeName === 'VKIFYLOC') {
-						const locName = node.getAttribute('name');
-						if (locName && window.vkifylang[locName]) {
-							node.outerHTML = window.vkifylang[locName];
-						}
+						window.processVkifyLocElement(node);
 					}
 				}
 			});

@@ -1,19 +1,56 @@
 {extends "../@layout.xml"}
 {block title}{$club->getName()} » {_statistics}{/block}
 
-{block header}
-    <a href="{$club->getURL()}">{$club->getName()}</a> » {_statistics}
-{/block}
-
 {block content}
-    <div>
-        <h4>{_coverage}</h4>
-        <p>{_coverage_this_week}</p>
-        <div id="reachChart" style="width: 100%; height: 280px;"></div>
-        
-        <h4>{_views}</h4>
-        <p>{_views_this_week}</p>
-        <div id="viewsChart" style="width: 100%; height: 280px;"></div>
+    <div class="wide_column_left">
+        <div class="wide_column_left">
+            <div class="narrow_column_wrap">
+                <div class="narrow_column">
+                    {var $menuItems = [
+                        [
+                            'url' => "/club{$club->getId()}/edit",
+                            'title' => 'main',
+                            'active' => false
+                        ],
+                        [
+                            'url' => "/club{$club->getId()}/backdrop",
+                            'title' => 'backdrop_short',
+                            'active' => false
+                        ],
+                        [
+                            'url' => "/club{$club->getId()}/followers",
+                            'title' => 'followers',
+                            'active' => false
+                        ],
+                        [
+                            'url' => "/club{$club->getId()}/stats",
+                            'title' => 'statistics',
+                            'active' => true
+                        ]
+                    ]}
+                    {var $ownblockData = [
+                        'url' => "/club" . $club->getId(),
+                        'name' => $club->getName(),
+                        'img' => $club->getAvatarURL()
+                    ]}
+                    {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => "club"}
+                </div>
+            </div>
+            <div class="wide_column_wrap">
+                <div class="wide_column">
+                    {include "../components/page_block_header.xml", title => "statistics"}
+                    <div class="page_block page_padding">
+                        <h4>{_coverage}</h4>
+                        <p>{_coverage_this_week}</p>
+                        <div id="reachChart" style="width: 100%; height: 280px;"></div>
+                        
+                        <h4>{_views}</h4>
+                        <p>{_views_this_week}</p>
+                        <div id="viewsChart" style="width: 100%; height: 280px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <style>
             .modebar-container {

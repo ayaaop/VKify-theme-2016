@@ -1,83 +1,94 @@
 /**
  * OpenVK Router Patch for VKify Theme
  * 
- * This script enhances the OpenVK router to properly handle CSS loading and localization
+ * This script enhances the OpenVK router to properly handle localization
  * during AJAX transitions.
  */
 
-function loadPageSpecificCSS(htmlContent) {
-    const linkPattern = /<link[^>]*rel=['"]stylesheet['"][^>]*href=['"]([^'"]+)['"][^>]*>/gi;
-    let match;
-    const cssFiles = [];
-    
-    while ((match = linkPattern.exec(htmlContent)) !== null) {
-        const href = match[1];
-        if (href.includes('/themepack/') && !href.includes('node_modules')) {
-            cssFiles.push(href);
-        }
-    }
-    
-    cssFiles.forEach(href => {
-        const cssExists = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
-            .some(link => link.getAttribute('href') === href);
-            
-        if (!cssExists) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            document.head.appendChild(link);
-            console.log('AJAX transition: Loaded CSS file', href);
-        }
-    });
-}
-
+// Use the function from localizator.js instead of duplicating code
 function processVkifyLocTags() {
-    if (!window.vkifylang) return;
-    
-    document.querySelectorAll('vkifyloc').forEach(element => {
-        const locName = element.getAttribute('name');
-        if (locName && window.vkifylang[locName]) {
-            element.outerHTML = window.vkifylang[locName];
-        }
-    });
+    if (window.processVkifyLocTags) {
+        window.processVkifyLocTags();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
     processVkifyLocTags();
     
     const patchRouter = function() {
-        if (window.router && window.router.route) {
-            const originalRoute = window.router.route;
-            
-            window.router.route = async function(...args) {
-                await originalRoute.apply(this, args);
-                
-                processVkifyLocTags();
-                reinitializeTooltips();
-            };
-            
+        if (window.router) {
+            // Patch the public route method
+            if (window.router.route) {
+                const originalPublicRoute = window.router.route;
+                window.router.route = async function(...args) {
+                    const result = await originalPublicRoute.apply(this, args);
+
+                    processVkifyLocTags();
+                    reinitializeTooltips();
+
+                    // Add suggested tab if on group page
+                    if (window.addSuggestedTabToWall) {
+                        setTimeout(window.addSuggestedTabToWall, 100);
+                    }
+
+                    return result;
+                };
+            }
+
+            // Patch the internal __route method
+            if (window.router.__route) {
+                const originalRoute = window.router.__route;
+
+                window.router.__route = async function(...args) {
+                    const result = await originalRoute.apply(this, args);
+
+                    processVkifyLocTags();
+                    reinitializeTooltips();
+
+                    // Add suggested tab if on group page
+                    if (window.addSuggestedTabToWall) {
+                        setTimeout(window.addSuggestedTabToWall, 100);
+                    }
+
+                    return result;
+                };
+            }
+
             if (window.router.__appendPage) {
                 const originalAppendPage = window.router.__appendPage;
                 window.router.__appendPage = function(parsedContent) {
-                    originalAppendPage.call(this, parsedContent);
-                    
+                    const result = originalAppendPage.call(this, parsedContent);
+
                     if (parsedContent && parsedContent.documentElement) {
-                        loadPageSpecificCSS(parsedContent.documentElement.outerHTML);
                         reinitializeTooltips();
                     }
+
+                    // Add suggested tab if on group page
+                    if (window.addSuggestedTabToWall) {
+                        setTimeout(window.addSuggestedTabToWall, 100);
+                    }
+
+                    return result;
                 };
             }
-            
+
             if (window.router.__integratePage) {
                 const originalIntegratePage = window.router.__integratePage;
                 window.router.__integratePage = async function(...args) {
-                    await originalIntegratePage.apply(this, args);
+                    const result = await originalIntegratePage.apply(this, args);
                     processVkifyLocTags();
                     reinitializeTooltips();
+
+                    // Add suggested tab if on group page
+                    if (window.addSuggestedTabToWall) {
+                        setTimeout(window.addSuggestedTabToWall, 100);
+                    }
+
+                    return result;
                 };
             }
-            
-            console.log('Router patched for proper CSS loading and localization');
+
+            console.log('Router patched for proper localization');
         }
     };
     
@@ -119,7 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     (this.responseType === '' || this.responseType === 'text') && 
                     this.responseText && 
                     this.responseText.includes('<!DOCTYPE html>')) {
-                    loadPageSpecificCSS(this.responseText);
                     setTimeout(processVkifyLocTags, 0);
                 }
             });
@@ -138,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (contentType && contentType.includes('text/html')) {
                 cloned.text().then(html => {
                     if (html.includes('<!DOCTYPE html>')) {
-                        loadPageSpecificCSS(html);
                         setTimeout(processVkifyLocTags, 0); 
                     }
                 }).catch(error => console.error('Error processing fetch response:', error));
@@ -153,8 +162,36 @@ document.addEventListener('DOMContentLoaded', function() {
     ['DOMContentLoaded', 'load', 'popstate'].forEach(eventType => {
         window.addEventListener(eventType, () => {
             setTimeout(processVkifyLocTags, 0);
+            // Also add suggested tab on these events
+            if (window.addSuggestedTabToWall) {
+                setTimeout(window.addSuggestedTabToWall, 200);
+            }
         });
     });
+
+    // Hook into history API for SPA navigation
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function(...args) {
+        originalPushState.apply(this, args);
+        setTimeout(() => {
+            processVkifyLocTags();
+            if (window.addSuggestedTabToWall) {
+                window.addSuggestedTabToWall();
+            }
+        }, 100);
+    };
+
+    history.replaceState = function(...args) {
+        originalReplaceState.apply(this, args);
+        setTimeout(() => {
+            processVkifyLocTags();
+            if (window.addSuggestedTabToWall) {
+                window.addSuggestedTabToWall();
+            }
+        }, 100);
+    };
     
     const observer = new MutationObserver((mutations) => {
         let shouldProcess = false;
@@ -180,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     observer.observe(document.body, {
-        childList: true, 
+        childList: true,
         subtree: true
     });
-}); 
+});

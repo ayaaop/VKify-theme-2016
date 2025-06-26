@@ -784,31 +784,11 @@ window.uiSearch = {
 
     // Handle form submission
     handleSubmit: function(event) {
-        const form = event.target;
-        const searchContainer = form.closest('.ui_search');
-        if (!searchContainer) return;
-
-        const input = form.querySelector('.ui_search_field');
-        if (!input || !input.value.trim()) {
-            event.preventDefault();
-            return false;
-        }
-
-        // Add loading state
-        this.setLoadingState(searchContainer, true);
-
-        // Allow form to submit normally
+        // Let the form submit naturally - don't prevent default
+        // The form will submit to its action URL (typically /search)
         return true;
     },
 
-    // Set loading state
-    setLoadingState: function(container, loading) {
-        if (loading) {
-            container.classList.add('ui_search_loading');
-        } else {
-            container.classList.remove('ui_search_loading');
-        }
-    }
 };
 
 // Initialize search functionality

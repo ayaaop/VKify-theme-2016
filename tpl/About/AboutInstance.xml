@@ -1,9 +1,7 @@
 {extends "../@layout.xml"}
 {block title}{_about_this_instance}{/block}
 
-{block headIncludes}
-	<link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/profile.css">
-{/block}
+
 
 {block content}
     <div class="wide_column_left">

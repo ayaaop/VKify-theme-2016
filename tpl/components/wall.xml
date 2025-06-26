@@ -19,12 +19,6 @@
                 'active' => false,
                 'id' => 'wall_tab_owners',
                 'translate' => isset($club) ? true : false,
-            ],
-            [
-                'url' => "/wall{$owner}?type=others",
-                'title' => 'others_posts',
-                'active' => false,
-                'id' => 'wall_tab_others'
             ]
         ]}
         {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'wall_top_tabs', white => true}

@@ -3,10 +3,6 @@
 
 {block title}{_edit_group}{/block}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
-
 {block content}
     <div class="wide_column_left">
         <div class="wide_column_left">
@@ -26,6 +22,11 @@
                         [
                             'url' => "/club{$club->getId()}/followers",
                             'title' => 'followers',
+                            'active' => false
+                        ],
+                        [
+                            'url' => "/club{$club->getId()}/stats",
+                            'title' => 'statistics',
                             'active' => false
                         ]
                     ]}

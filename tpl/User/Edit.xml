@@ -3,9 +3,7 @@
     {var $backdrops = $user->getBackDropPictureURLs()}
 {/if}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
+
 
 {block title}{_edit_page}{/block}
 

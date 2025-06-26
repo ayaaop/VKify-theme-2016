@@ -1,6 +1,9 @@
 {php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
 {var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
+{var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+{var $anonAccountId = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['account'] ?? 100}
+{var $anonUser = $anonEnabled ? (new \openvk\Web\Models\Repositories\Users())->get($anonAccountId) : NULL}
 
 <div id="write" class='model_content_textarea' style="padding: 4px 1px 2px 1px;">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
@@ -21,6 +24,16 @@
                     style="opacity: 0;"
                     data-group-url="{$club->getURL()}" />
             {/if}
+            <!-- Anonymous avatar image - hidden by default -->
+            {if $anonEnabled && $anonUser}
+            <img class="post_field_user_image _post_field_anon_image"
+                    src="{$anonUser->getAvatarUrl('miniscule')}"
+                    alt="{$anonUser->getCanonicalName()}"
+                    width="28" height="28"
+                    style="opacity: 0;"
+                    data-anon-url="{$anonUser->getURL()}" />
+            {/if}
+
         </a>
     {/if}
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text"
@@ -46,13 +59,13 @@
                     <div id="wallAttachmentMenu">
                         <a id="__photoAttachment" title="{_photo}"
                            {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
-                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                            <div class="post-attach-menu__icon"></div>
                         </a>
                         <a id="__videoAttachment" title="{_video}">
-                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                            <div class="post-attach-menu__icon"></div>
                         </a>
                         <a id="__audioAttachment" title="{_audio}">
-                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                            <div class="post-attach-menu__icon"></div>
                         </a>
 
                         <a class="post-attach-menu__trigger" id="moreAttachTrigger">
@@ -61,51 +74,64 @@
                         <div class="tippy-menu" id="moreAttachTooltip">
                             <a n:if="$docs ?? true" id="__documentAttachment"
                                {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                <div class="post-attach-menu__icon"></div>
                                 {_document}
                             </a>
                             <a n:if="$notes ?? false" id="__notesAttachment">
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                <div class="post-attach-menu__icon"></div>
                                 {_note}
                             </a>
-                            <a n:if="$graffiti ?? false" onclick="window.vkifyGraffiti(event);">
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                            <a n:if="$graffiti ?? false" id="__graffitiAttachment" onclick="window.vkifyGraffiti(event);">
+                                <div class="post-attach-menu__icon"></div>
                                 {_graffiti}
                             </a>
-                            <a n:if="$polls ?? false" onclick="initPoll(event);">
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/office-chart-bar-stacked.png" />
+                            <a n:if="$polls ?? false" id="__pollAttachment" onclick="initPoll(event);">
+                                <div class="post-attach-menu__icon"></div>
                                 {_poll}
                             </a>
                             <a n:if="$geo ?? false" id="__geoAttacher">
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/amarok.png" />
+                                <div class="post-attach-menu__icon"></div>
                                 {_geo_place}
                             </a>
                             <a n:if="$hasSource ?? false" id="__sourceAttacher">
-                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
+                                <div class="post-attach-menu__icon"></div>
                                 {_source}
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="post-bottom-buttons">
-                    {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
                     {if $postOpts ?? true}
-                        <div class="button" id="postOptsTrigger" role="button">
-                            {_menu_settings}
+                        <div class="post_settings" id="postOptsTrigger" role="button">
+                            <div class="common_icon"></div>
                         </div>
                 
-                        <div class="post_settings post-opts" id="postOptsTooltip">
+                        <div class="post-opts" id="postOptsTooltip">
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
                                 <script>
                                     function onWallAsGroupClick(el) {
                                         document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
                                         {if $anonEnabled}
-                                            document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";
+                                            document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";                                            
                                         {/if}
 
                                         // Call the main handler in patch_wall.js
                                         if (window.handleWallAsGroupClick) {
                                             window.handleWallAsGroupClick(el);
+                                        }
+                                    }
+
+                                    function onWallAnonClick(el) {
+                                        {if $anonEnabled}
+                                            const asGroupCheckbox = document.querySelector('input[name="as_group"]');
+                                            if (asGroupCheckbox) {
+                                                asGroupCheckbox.disabled = el.checked;
+                                            }
+                                        {/if}
+
+                                        // Call the main handler in patch_wall.js
+                                        if (window.handleWallAnonClick) {
+                                            window.handleWallAnonClick(el);
                                         }
                                     }
                                 </script>
@@ -119,7 +145,7 @@
                             {/if}
                 
                             <label n:if="$anonEnabled" id="octoberAnonOpt">
-                                <input type="checkbox" name="anon" /> {_as_anonymous}
+                                <input type="checkbox" name="anon" onchange="onWallAnonClick(this)" /> {_as_anonymous}
                             </label>
                 
                             <label>

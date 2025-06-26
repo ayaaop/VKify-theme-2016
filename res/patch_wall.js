@@ -3,7 +3,7 @@ u(document).on("click", "#editPost", async (e) => {
 
     const target = u(e.target)
     const post = target.closest(".post")
-    const content = post.find(".post_content")
+    const content = post.find(".post-content")
 
     const edit_place_l = post.hasClass('reply')
         ? post.find('.reply_content > .post_edit')
@@ -53,30 +53,30 @@ u(document).on("click", "#editPost", async (e) => {
 
                         <input type="hidden" id="source" name="source" value="none" />
                         <div class="post-bottom-acts">
-                            <div class="page_add_media">
+                            <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
                                 <a id="__photoAttachment">
-                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                    <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a id="__videoAttachment">
-                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                    <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a id="__audioAttachment">
-                                    <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                    <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a class="post-attach-menu__trigger" id="moreAttachTrigger">
                                     ${tr('show_more')}
                                 </a>
                                 <div class="tippy-menu" id="moreAttachTooltip2">
                                         <a id="__documentAttachment">
-                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                            <div class="post-attach-menu__icon"></div>
                                             ${tr('document')}
                                         </a>
                                         ${type == 'post' ? `<a id="__notesAttachment">
-                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                            <div class="post-attach-menu__icon"></div>
                                             ${tr('note')}
                                         </a>
                                         <a id='__sourceAttacher'>
-                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
+                                            <div class="post-attach-menu__icon"></div>
                                             ${tr('source')}
                                         </a>` : ''}
                                 </div>
@@ -227,9 +227,24 @@ window.wallCheckboxStates = {
     nsfw: false
 };
 
+function resetWallCheckboxStates() {
+    window.wallCheckboxStates.as_group = false;
+    window.wallCheckboxStates.force_sign = false;
+    window.wallCheckboxStates.anon = false;
+    window.wallCheckboxStates.nsfw = false;
+}
+
 function setupTooltipCheckboxListeners() {
     u(document).on('change', 'input[name="as_group"]', function(e) {
         window.wallCheckboxStates.as_group = e.target.checked;
+
+        if (e.target.checked) {
+            window.wallCheckboxStates.anon = false;
+            const anonCheckbox = document.querySelector('input[name="anon"]');
+            if (anonCheckbox) {
+                anonCheckbox.checked = false;
+            }
+        }
     });
 
     u(document).on('change', 'input[name="force_sign"]', function(e) {
@@ -241,11 +256,19 @@ function setupTooltipCheckboxListeners() {
 
         if (e.target.checked) {
             window.wallCheckboxStates.as_group = false;
+            const asGroupCheckbox = document.querySelector('input[name="as_group"]');
+            if (asGroupCheckbox) {
+                asGroupCheckbox.checked = false;
+            }
 
             const form = document.querySelector('#write form');
             if (form && form.dataset.originalAction) {
                 form.action = form.dataset.originalAction;
             }
+        }
+
+        if (window.handleWallAnonClick) {
+            window.handleWallAnonClick(e.target);
         }
     });
 
@@ -280,10 +303,13 @@ window.handleWallAsGroupClick = function(el) {
 
     const userImg = form ? form.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
     const groupImg = form ? form.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
+    const anonImg = form ? form.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
     const avatarLink = form ? form.querySelector('._post_field_author') : document.querySelector('._post_field_author');
 
     if (userImg && groupImg) {
         if (el.checked) {
+            if (anonImg) anonImg.style.opacity = '0';
+
             userImg.classList.remove('avatar-showing');
             userImg.classList.add('avatar-flipping');
 
@@ -299,8 +325,8 @@ window.handleWallAsGroupClick = function(el) {
                     userImg.classList.remove('avatar-flipping');
                     groupImg.style.opacity = '1';
                     groupImg.classList.remove('avatar-showing');
-                }, 100);
-            }, 100);
+                }, 150);
+            }, 150);
         } else {
             groupImg.classList.remove('avatar-showing');
             groupImg.classList.add('avatar-flipping');
@@ -317,8 +343,74 @@ window.handleWallAsGroupClick = function(el) {
                     groupImg.classList.remove('avatar-flipping');
                     userImg.style.opacity = '1';
                     userImg.classList.remove('avatar-showing');
-                }, 100);
-            }, 100);
+                }, 150);
+            }, 150);
+        }
+    }
+};
+
+window.handleWallAnonClick = function(el) {
+    window.wallCheckboxStates.anon = el.checked;
+
+    if (el.checked) {
+        window.wallCheckboxStates.as_group = false;
+    }
+
+    const form = el.closest('form') || document.querySelector('#write form');
+    if (form) {
+        if (!form.dataset.originalAction) {
+            form.dataset.originalAction = form.action;
+        }
+
+        if (form.dataset.originalAction) {
+            form.action = form.dataset.originalAction;
+        }
+    }
+
+    const userImg = form ? form.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
+    const groupImg = form ? form.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
+    const anonImg = form ? form.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
+    const avatarLink = form ? form.querySelector('._post_field_author') : document.querySelector('._post_field_author');
+
+    if (userImg && anonImg) {
+        if (el.checked) {
+            if (groupImg) groupImg.style.opacity = '0';
+
+            userImg.classList.remove('avatar-showing');
+            userImg.classList.add('avatar-flipping');
+
+            setTimeout(() => {
+                anonImg.classList.remove('avatar-flipping');
+                anonImg.classList.add('avatar-showing');
+                if (avatarLink && anonImg.dataset.anonUrl) {
+                    avatarLink.href = anonImg.dataset.anonUrl;
+                }
+
+                setTimeout(() => {
+                    userImg.style.opacity = '0';
+                    userImg.classList.remove('avatar-flipping');
+                    anonImg.style.opacity = '1';
+                    anonImg.classList.remove('avatar-showing');
+                }, 150);
+            }, 150);
+        } else {
+            anonImg.classList.remove('avatar-showing');
+            anonImg.classList.add('avatar-flipping');
+
+            setTimeout(() => {
+                userImg.classList.remove('avatar-flipping');
+                userImg.classList.add('avatar-showing');
+                if (avatarLink && userImg.dataset.userUrl) {
+                    avatarLink.href = userImg.dataset.userUrl;
+                }
+
+                setTimeout(() => {
+                    anonImg.style.opacity = '0';
+                    anonImg.classList.remove('avatar-flipping');
+                    userImg.style.opacity = '1';
+                    userImg.classList.remove('avatar-showing');
+                }, 150);
+            }, 150);
         }
     }
 };
@@ -351,6 +443,8 @@ u(document).on("submit", "#write form", function(e) {
             }
         }
     });
+
+    resetWallCheckboxStates();
 });
 
 u(document).on("click", "#write input[type='submit']", function(e) {
@@ -381,6 +475,8 @@ u(document).on("click", "#write input[type='submit']", function(e) {
             }
         }
     });
+
+    resetWallCheckboxStates();
 });
 
 window.initTextareaInteraction = function() {
@@ -436,4 +532,50 @@ function reportPost(postId) {
         }),
         Function.noop
     ]);
+}
+
+function addSuggestedTabToWall() {
+    const currentUrl = window.location.pathname;
+    const groupMatch = currentUrl.match(/^\/club(\d+)/);
+
+    if (groupMatch) {
+        const groupId = groupMatch[1];
+        const suggListElement = document.querySelector('.sugglist');
+
+        if (suggListElement) {
+            const wallTabs = document.querySelector('#wall_top_tabs');
+            if (wallTabs) {
+                // Check if suggested tab already exists
+                const existingTab = wallTabs.querySelector('#wall_tab_suggested');
+                if (existingTab) {
+                    return; // Tab already exists, don't add it again
+                }
+
+                const countMatch = suggListElement.textContent.match(/(\d+)/);
+                const suggestedCount = countMatch ? countMatch[1] : '0';
+
+                const suggestedTab = document.createElement('li');
+                suggestedTab.id = 'wall_tab_suggested';
+                suggestedTab.innerHTML = `
+                    <a class="ui_tab" href="/club${groupId}/suggested">
+                        ${tr('suggested')}
+                        <span class="ui_tab_count">${suggestedCount}</span>
+                    </a>
+                `;
+                wallTabs.appendChild(suggestedTab);
+            }
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    addSuggestedTabToWall();
+});
+
+// Also run when navigating between pages
+if (window.router && window.router.addEventListener) {
+    window.router.addEventListener('route', addSuggestedTabToWall);
+} else {
+    // Fallback for when router isn't available yet
+    document.addEventListener('page:loaded', addSuggestedTabToWall);
 }

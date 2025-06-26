@@ -1,73 +1,145 @@
 {extends "../@layout.xml"}
 {block title}{$user->getCanonicalName()}{/block}
 
-{block header}
-    {$user->getCanonicalName()}
-    <img n:if="$user->isVerified()"
-         class="name-checkmark"
-         src="/assets/packages/static/openvk/img/checkmark.png"
-         />
-{/block}
-
 {block content}
-    <div class="left_small_block">
-        <div>
-            <img src="{$user->getAvatarUrl('normal')}"
-                alt="{$user->getCanonicalName()}"
-                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-        </div>
-        <div id="profile_links" n:if="isset($thisUser)">
-            <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel='nofollow'>{_send_message}</a>
-            {var $subStatus = $user->getSubscriptionStatus($thisUser)}
-            {if $subStatus === 0}
-                <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
-                    <input type="hidden" name="act" value="add" />
-                    <input type="hidden" name="id"  value="{$user->getId()}" />
-                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" class="profile_link" value="{_friends_add}" style="width: 194px;" />
-                </form>
-            {elseif $subStatus === 1}
-                <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
-                    <input type="hidden" name="act" value="add" />
-                    <input type="hidden" name="id"  value="{$user->getId()}" />
-                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" class="profile_link" value="{_friends_accept}" style="width: 194px;" />
-                </form>
-            {elseif $subStatus === 2}
-                <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
-                    <input type="hidden" name="act" value="rem" />
-                    <input type="hidden" name="id"  value="{$user->getId()}" />
-                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
-                </form>
-            {/if}
-            <a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}"  data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
-            <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
-        </div>
-    </div>
-
-    <div class="right_big_block">
-        <div class="page_info">
-            <div class="accountInfo clearFix">
-                <div class="profileName">
-                    <h2>{$user->getFullName()}</h2>
-                    <div class="page_status" style="color: #AAA;">{_closed_page}</div>
+    <div class="wide_column_right">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+				<div class="page_block photo_block">
+                    <div class="avatar_block">
+						<div class="avatar_block_inner">
+                            <img src="{$user->getAvatarUrl('normal')}"
+                                alt="{$user->getCanonicalName()}"
+                                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                        </div>
+                    </div>
+                    <div class="profile_actions clear_fix" n:if="isset($thisUser)">
+                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
+                            {if $user->getPrivacyPermission('messages.write', $thisUser)}
+                                <div class="profile_msg_split">
+                                    <div class="cut_left">
+                                        <button class="button button_blue profile_btn_cut_left profile_action_btn button_wide" onclick="window.location.href='/im?sel={$user->getId()}'" rel="nofollow">
+                                            {_send_message}
+                                        </button>
+                                    </div>
+                                    <div class="cut_right">
+                                        <button class="button button_blue profile_btn_cut_right profile_action_btn" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+                                            <span class="profile_gift_icon"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            {else}
+                                <button class="button button_blue profile_action_btn button_wide" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+                                    <span class="profile_gift_icon"></span> {_gift}
+                                </button>
+                            {/if}
+                        {else}
+                            <a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
+                                {_send_message}
+                            </a>
+                        {/if}
+                        {var $subStatus = $user->getSubscriptionStatus($thisUser)}
+                        <div class="profile_actions_split">
+                            {var $actions = [
+                                0 => ['act' => 'add', 'label' => tr('friends_add')],
+                                1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+                                2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+                                3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+                            ]}
+                            {if isset($actions[$subStatus])}
+                                <form action="/setSub/user" method="post" class="profile_link_form fl_l">
+                                    <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                                    <input type="hidden" name="id"  value="{$user->getId()}" />
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                    <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+                                </form>
+                            {/if}
+                            <button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
+                            <div id="profile_actions_tooltip">
+                                <div class="tippy-menu">
+                                    {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                                        {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                                            <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+                                                {tr("login_as", $user->getFirstName())}
+                                            </a>
+                                        {/if}
+                                        <a href="/admin/users/id{$user->getId()}">
+                                            {_manage_user_action}
+                                        </a>
+                                        <a href="javascript:banUser()">
+                                            {_ban_user_action}
+                                        </a>
+                                        <a href="javascript:warnUser()">
+                                            {_warn_user_action}
+                                        </a>
+                                        <a href="/admin/user{$user->getId()}/bans">
+                                            {_blocks}
+                                        </a>
+                                        <a href="/admin/logs?uid={$user->getId()}">
+                                            {_last_actions}
+                                        </a>
+                                        {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                                        <div class="separator"></div>
+                                        <a href="javascript:toggleBanInSupport()">
+                                            {if $user->isBannedInSupport()}
+                                                {_unban_in_support_user_action}
+                                            {else}
+                                                {_ban_in_support_user_action}
+                                            {/if}
+                                        </a>
+                                        {/if}
+                                        <div class="separator"></div>
+                                    {/if}
+                                    <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="1" data-id="{$user->getRealId()}" class="tippy-menu-item">
+                                        {_bl_add}
+                                    </a>
+                                    <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="tippy-menu-item">
+                                        {_bl_remove}
+                                    </a>
+                                    <a class="tippy-menu-item" href="javascript:reportUser({$user->getId()})">
+                                        {_report}
+                                    </a>
+                                    <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="tippy-menu-item" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
+                                        {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="msg msg_yellow" style="width: 93%;margin-top: 10px;">
-                {var $m = $user->isFemale() ? "f" : "m"}
-                {tr("limited_access_to_page_$m", $user->getFirstName())}
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block page_info_wrap">
+						<div class="accountInfo clearFix">
+							<div class="page_top">
+                                <h2 class="page_name">{$user->getFullName()}
+                                    <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a>
+                                </h2>
+                                <div class="page_status" style="color: #AAA;">{_closed_page}</div>
+                            </div>
+                        </div>
+                    <div class="msg msg_yellow">
+                        {var $m = $user->isFemale() ? "f" : "m"}
+                        <p>
+                            {tr("limited_access_to_page_$m", $user->getFirstName())}
+                        </p>
 
-                {if isset($thisUser)}
-                    {if $subStatus != 2}
-                        <br /><br />
-                        {_you_can_add}
-                        <a href="javascript:addToFriends.submit()">{tr("add_to_friends_$m")}</a>
-                    {/if}
-                {else}
-                    <br /><br />
-                    {tr("register_to_access_page_$m")}
-                {/if}
+                        {if isset($thisUser)}
+                            {if $subStatus != 2}
+                                <p>
+                                    {_you_can_add}
+                                    <a href="javascript:addToFriends.submit()">{tr("add_to_friends_$m")}</a>
+                                </p>
+                            {/if}
+                        {else}
+                            <p>
+                                {tr("register_to_access_page_$m")}
+                            </p>
+                        {/if}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

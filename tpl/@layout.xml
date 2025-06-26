@@ -209,6 +209,19 @@
                                 <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link">{_bookmarks_tab}</a>
                             {/if}
+                            <div id="_groupListPinnedGroups">
+                                <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
+
+                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
+                                    {ovk_proc_strtr($club->getName(), 14)}
+
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
+                                        <a href="/club{$club->getId()}/suggested" class="linkunderline">
+                                            +<b>{$club->getSuggestedPostsCount($thisUser)}</b>
+                                        </a>
+                                    </object>
+                                </a>
+                            </div>
 
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
@@ -240,19 +253,6 @@
                           class="link">
                             {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
                         </a>
-                            <div id="_groupListPinnedGroups">
-                                <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
-
-                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
-                                    {ovk_proc_strtr($club->getName(), 14)}
-
-                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
-                                        <a href="/club{$club->getId()}/suggested" class="linkunderline">
-                                            +<b>{$club->getSuggestedPostsCount($thisUser)}</b>
-                                        </a>
-                                    </object>
-                                </a>
-                            </div>
 
                             <div id="news" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
                                 <b>{_news} </b>
@@ -372,15 +372,13 @@
                         <div class="wrap1">
                             <div id="auth" class="page-wrap">
                                 <div class="page_content">
-                                    {ifset header}
-                                        <h2 class="page_block_h2">
-                                            <div class="page_block_header clear_fix">
-                                                <div class="page_block_header_inner _header_inner">
-                                                    {include header}
-                                                </div>
+                                    <h2 n:ifset="header" class="page_block_h2">
+                                        <div class="page_block_header clear_fix">
+                                            <div class="page_block_header_inner _header_inner">
+                                                {include header}
                                             </div>
-                                        </h2>
-                                    {/ifset}
+                                        </div>
+                                    </h2>
 
                                     {include content}
                                 </div>

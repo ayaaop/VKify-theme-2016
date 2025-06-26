@@ -1,8 +1,6 @@
 {extends "../@layout.xml"}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
+
 
 {block title}{_my_settings}{/block}
 
@@ -484,7 +482,12 @@
                 </div>
                     {elseif $isFinanceTU}
                 <div class="page_block">
-                    {include "../components/page_block_header.xml", title => "vouchers", extra=> "<a href='/settings?act=finance'>".tr('paginator_back')."</a>"}
+                    {include "../components/page_crumb_header.xml",
+                        crumbs: [
+                            ['title' => tr("points"), 'href' => '/settings?act=finance']
+                        ],
+                        current: tr("vouchers")
+                    }
                     <div class="settings_block_msg">
                         {_voucher_explanation} {_voucher_explanation_ex}
                     </div>
@@ -569,7 +572,7 @@
                                 <div class="settings_label">&nbsp;</div>
                                 <div class="settings_labeled_text" dir="auto">
                                     <label>
-                                        <input type="hidden" name="rating" value="0">
+                                        <input class="hidden" type="hidden" name="rating" value="0">
                                         <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()"> <vkifyloc name="profile_recommendations"/>
                                     </label>
                                 </div>
@@ -717,28 +720,25 @@
                 </div>
                     {elseif $isBl}
                 <div class="page_block">
-                    {include "../components/page_block_header.xml", title => "blacklist"}
+                    {include "../components/page_block_header.xml", title => "blacklist", count => $blSize}
                         {if $blSize < 1}
                             {include "../components/error.xml", description => tr("bl_count_zero_desc")}
                         {else}
-                            <h4 style="margin-bottom: 10px;">{tr("bl_count", $blSize)}.</h4>
-                            <div class='entity_vertical_list mini m_mini scroll_container'>
-                                <div n:foreach="$blItems as $item" class="entity_vertical_list_item scroll_node">
-                                    <div class="first_column">
-                                        <a href="{$item->getURL()}" class="avatar">
-                                            <img src='{$item->getAvatarURL()}'>
-                                        </a>
-                                        <div class="info">
-                                            <b class="noOverflow">
-                                                <a href="{$item->getURL()}">
-                                                    {$item->getCanonicalName()} 
-                                                </a>
-                                            </b>
+                            <div class="list_view">
+                                <div n:foreach="$blItems as $item" class="people_row">
+                                    <a href="{$item->getURL()}" class="img">
+                                        <img src='{$item->getAvatarURL()}'>
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$item->getURL()}">
+                                                {$item->getCanonicalName()} 
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
+                                {include "../components/paginator.xml", conf => $paginatorConf}
                             </div>
-                            {include "../components/paginator.xml", conf => $paginatorConf}
                         {/if}
                     {/if}
                 </div>

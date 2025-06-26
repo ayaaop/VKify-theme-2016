@@ -30,7 +30,6 @@
     {else} 
     <meta name="robots" content="noindex, noarchive">
     {/if}
-	<link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/profile.css">
 {/block}
 
 {block content}
@@ -43,761 +42,770 @@
         </div>
     {else}
     
-    <div class="left_small_block">
-        <div class="page_block photo_block">
-            {var $hasAvatar = !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
-			<div class="avatar_block">
-				<div class="avatar_block_inner">
-				{if $thisUser && $user->getId() == $thisUser->getId()}
-					<a {if $hasAvatar}style="display:none"{/if} class="add_image_text" id="add_image">{_add_image}</a>
-					<div {if !$hasAvatar}style="display:none"{/if} class="avatar_controls">
-						<div class="avatarDelete hoverable"></div>
-						<div class="avatar_variants">
-							<a class="_add_image hoverable" id="add_image"><span>{_upload_new_picture}</span></a>
+    <div class="wide_column_right">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+				<div class="page_block photo_block">
+					{var $hasAvatar = !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
+					<div class="avatar_block">
+						<div class="avatar_block_inner">
+						{if $thisUser && $user->getId() == $thisUser->getId()}
+							<a {if $hasAvatar}style="display:none"{/if} class="add_image_text" id="add_image">{_add_image}</a>
+							<div {if !$hasAvatar}style="display:none"{/if} class="avatar_controls">
+								<div class="avatarDelete hoverable"></div>
+								<div class="avatar_variants">
+									<a class="_add_image hoverable" id="add_image"><span>{_upload_new_picture}</span></a>
+								</div>
+							</div>
+						{/if}
+							<a href="{$user->getAvatarLink()|nocheck}">
+								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/1.0.0.0/resource/camera_200.png{/if}"
+									alt="{$user->getCanonicalName()}"
+									id="bigAvatar"
+									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
+									{if ($user->getAvatarPhoto())}
+									onclick="OpenMiniature(event, {$user->getAvatarUrl('normal')}, null, {$user->getAvatarPhoto()->getPrettyId()}, null)"
+									{/if}
+								/>
+							</a>
 						</div>
 					</div>
-				{/if}
-				<a href="{$user->getAvatarLink()|nocheck}">
-					<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/1.0.0.0/resource/camera_200.png{/if}"
-						alt="{$user->getCanonicalName()}"
-						id="bigAvatar"
-						style="width: 100%; image-rendering: -webkit-optimize-contrast;"
-						{if ($user->getAvatarPhoto())}
-						onclick="OpenMiniature(event, {$user->getAvatarUrl('normal')}, null, {$user->getAvatarPhoto()->getPrettyId()}, null)"
-						{/if}
-					/>
-				</a>
-				</div>
-			</div>
-			        <div n:ifset="$thisUser" class="profile_actions">
-						{if $user->getId() != $thisUser->getId()}
-			{if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
-				{if $user->getPrivacyPermission('messages.write', $thisUser)}
-				<div class="profile_msg_split">
-					<div class="cut_left">
-						<button class="button button_blue profile_btn_cut_left profile_action_btn button_wide" onclick="window.location.href='/im?sel={$user->getId()}'" rel="nofollow">
-							{_send_message}
-						</button>
-					</div>
-					<div class="cut_right">
-						<button class="button button_blue profile_btn_cut_right profile_action_btn" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
-							<span class="profile_gift_icon"></span>
-						</button>
-					</div>
-				</div>
-				{else}
-				<button class="button button_blue profile_action_btn button_wide" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
-					<span class="profile_gift_icon"></span> {_gift}
-				</button>
-				{/if}
-			{else}
-				<a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
-					{_send_message}
-				</a>
-			{/if}
-			{var $subStatus = $user->getSubscriptionStatus($thisUser)}
-			<div class="profile_actions_split">
-				{var $actions = [
-					0 => ['act' => 'add', 'label' => tr('friends_add')],
-					1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
-					2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
-					3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
-				]}
-				{if isset($actions[$subStatus])}
-					<form action="/setSub/user" method="post" class="profile_link_form fl_l">
-						<input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
-						<input type="hidden" name="id"  value="{$user->getId()}" />
-						<input type="hidden" name="hash" value="{$csrfToken}" />
-						<input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
-					</form>
-				{/if}
-				<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
-                <div id="profile_actions_tooltip" style="display: none;">
-                    <div class="tippy-menu">
-						{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-							{if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
-								<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
-									{tr("login_as", $user->getFirstName())}
-								</a>
-							{/if}
-							<a href="/admin/users/id{$user->getId()}">
-								{_manage_user_action}
-							</a>
-							<a href="javascript:banUser()">
-								{_ban_user_action}
-							</a>
-							<a href="javascript:warnUser()">
-								{_warn_user_action}
-							</a>
-							<a href="/admin/user{$user->getId()}/bans">
-								{_blocks}
-							</a>
-							<a href="/admin/logs?uid={$user->getId()}">
-								{_last_actions}
-							</a>
-							{if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-							<div class="separator"></div>
-							<a href="javascript:toggleBanInSupport()">
-								{if $user->isBannedInSupport()}
-									{_unban_in_support_user_action}
+					<div class="profile_actions clear_fix">
+						{ifset $thisUser}
+							{if $user->getId() != $thisUser->getId()}
+								{if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
+									{if $user->getPrivacyPermission('messages.write', $thisUser)}
+										<div class="profile_msg_split">
+											<div class="cut_left">
+												<button class="button button_blue profile_btn_cut_left profile_action_btn button_wide" onclick="window.location.href='/im?sel={$user->getId()}'" rel="nofollow">
+													{_send_message}
+												</button>
+											</div>
+											<div class="cut_right">
+												<button class="button button_blue profile_btn_cut_right profile_action_btn" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+													<span class="profile_gift_icon"></span>
+												</button>
+											</div>
+										</div>
+									{else}
+										<button class="button button_blue profile_action_btn button_wide" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+											<span class="profile_gift_icon"></span> {_gift}
+										</button>
+									{/if}
 								{else}
-									{_ban_in_support_user_action}
+									<a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
+										{_send_message}
+									</a>
 								{/if}
-							</a>
+								{var $subStatus = $user->getSubscriptionStatus($thisUser)}
+								<div class="profile_actions_split">
+									{var $actions = [
+										0 => ['act' => 'add', 'label' => tr('friends_add')],
+										1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+										2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+										3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+									]}
+									{if isset($actions[$subStatus])}
+										<form action="/setSub/user" method="post" class="profile_link_form fl_l">
+											<input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+											<input type="hidden" name="id"  value="{$user->getId()}" />
+											<input type="hidden" name="hash" value="{$csrfToken}" />
+											<input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+										</form>
+									{/if}
+									<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
+									<div id="profile_actions_tooltip">
+										<div class="tippy-menu">
+											{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+												{if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+													<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+														{tr("login_as", $user->getFirstName())}
+													</a>
+												{/if}
+												<a href="/admin/users/id{$user->getId()}">
+													{_manage_user_action}
+												</a>
+												<a href="javascript:banUser()">
+													{_ban_user_action}
+												</a>
+												<a href="javascript:warnUser()">
+													{_warn_user_action}
+												</a>
+												<a href="/admin/user{$user->getId()}/bans">
+													{_blocks}
+												</a>
+												<a href="/admin/logs?uid={$user->getId()}">
+													{_last_actions}
+												</a>
+												{if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+												<div class="separator"></div>
+												<a href="javascript:toggleBanInSupport()">
+													{if $user->isBannedInSupport()}
+														{_unban_in_support_user_action}
+													{else}
+														{_ban_in_support_user_action}
+													{/if}
+												</a>
+												{/if}
+												<div class="separator"></div>
+											{/if}
+											<a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="1" data-id="{$user->getRealId()}" class="tippy-menu-item">
+												{_bl_add}
+											</a>
+											<a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="tippy-menu-item">
+												{_bl_remove}
+											</a>
+											<a class="tippy-menu-item" href="javascript:reportUser({$user->getId()})">
+												{_report}
+											</a>
+											<a n:if="!$user->isHideFromGlobalFeedEnabled()" class="tippy-menu-item" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
+												{if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
+											</a>
+										</div>
+									</div>
+								</div>
 							{/if}
-							<div class="separator"></div>
-						{/if}
-                        <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="1" data-id="{$user->getRealId()}" class="tippy-menu-item">
-                            {_bl_add}
-                        </a>
-                        <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="tippy-menu-item">
-                            {_bl_remove}
-                        </a>
-                        <a class="tippy-menu-item" href="javascript:reportUser({$user->getId()})">
-                            {_report}
-                        </a>
-                        <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="tippy-menu-item" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
-                            {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
-                        </a>
-                    </div>
-                </div>
-                
-                <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        tippy('#profile_more_btn', {
-                            content: document.getElementById('profile_actions_tooltip').innerHTML,
-                            allowHTML: true,
-                            interactive: true,
-                            trigger: 'mouseenter',
-                            placement: 'bottom-end',
-                            theme: 'light vk',
-                            arrow: true
-                        });
-                    });
-                </script>
-			</div>
-		{/if}
-		{if $user->getId() == $thisUser->getId()}
-			<a class="button button_blue button_wide" href="/edit" class="link">{_edit_page}</a>
-		{/if}
-        </div>
-        </div>
+							{if $user->getId() == $thisUser->getId()}
+								<a class="button button_blue button_wide" href="/edit" class="link">{_edit_page}</a>
+							{/if}
+						{else}
+							<div class="guest_actions">
+								<vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
+							</div>
+						{/ifset}
+					</div>	
+				</div>
 
-        <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" n:ifcontent class="page_block module completeness_block">
-            {var $completeness = $user->getProfileCompletenessReport()}
-            
-            {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
-                <div class="profile_warning_row" n:if="in_array('interests', $completeness->unfilled)">
-                    <div class="profile_warning_img interests"></div>
-                    <div class="profile_warning_label">
-                        <a href="/edit?act=interests">{_interests} <span class="unfilled_rating">+20%</span></a>
-                    </div>
-                </div>
-                
-                <div class="profile_warning_row" n:if="in_array('email', $completeness->unfilled)">
-                    <div class="profile_warning_img email"></div>
-                    <div class="profile_warning_label">
-                        <a href="/edit?act=contacts">Email <span class="unfilled_rating">+20%</span></a>
-                    </div>
-                </div>
-                
-                <div class="profile_warning_row" n:if="in_array('phone', $completeness->unfilled)">
-                    <div class="profile_warning_img phone"></div>
-                    <div class="profile_warning_label">
-                        <a href="/edit?act=contacts">{_phone} <span class="unfilled_rating">+20%</span></a>
-                    </div>
-                </div>
-                
-                <div class="profile_warning_row" n:if="in_array('telegram', $completeness->unfilled)">
-                    <div class="profile_warning_img telegram"></div>
-                    <div class="profile_warning_label">
-                        <a href="/edit?act=contacts">Telegram <span class="unfilled_rating">+15%</span></a>
-                    </div>
-                </div>
-                
-                <div class="profile_warning_row" n:if="in_array('status', $completeness->unfilled)">
-                    <div class="profile_warning_img status"></div>
-                    <div class="profile_warning_label">
-                        <a href="/edit">{_status} <span class="unfilled_rating">+15%</span></a>
-                    </div>
-                </div>
-            {/if}
+				<div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" n:ifcontent class="page_block module completeness_block">
+					{var $completeness = $user->getProfileCompletenessReport()}
+					
+					{if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
+						<div class="profile_warning_row" n:if="in_array('interests', $completeness->unfilled)">
+							<div class="profile_warning_img interests"></div>
+							<div class="profile_warning_label">
+								<a href="/edit?act=interests">{_interests} <span class="unfilled_rating">+20%</span></a>
+							</div>
+						</div>
+						
+						<div class="profile_warning_row" n:if="in_array('email', $completeness->unfilled)">
+							<div class="profile_warning_img email"></div>
+							<div class="profile_warning_label">
+								<a href="/edit?act=contacts">Email <span class="unfilled_rating">+20%</span></a>
+							</div>
+						</div>
+						
+						<div class="profile_warning_row" n:if="in_array('phone', $completeness->unfilled)">
+							<div class="profile_warning_img phone"></div>
+							<div class="profile_warning_label">
+								<a href="/edit?act=contacts">{_phone} <span class="unfilled_rating">+20%</span></a>
+							</div>
+						</div>
+						
+						<div class="profile_warning_row" n:if="in_array('telegram', $completeness->unfilled)">
+							<div class="profile_warning_img telegram"></div>
+							<div class="profile_warning_label">
+								<a href="/edit?act=contacts">Telegram <span class="unfilled_rating">+15%</span></a>
+							</div>
+						</div>
+						
+						<div class="profile_warning_row" n:if="in_array('status', $completeness->unfilled)">
+							<div class="profile_warning_img status"></div>
+							<div class="profile_warning_label">
+								<a href="/edit">{_status} <span class="unfilled_rating">+15%</span></a>
+							</div>
+						</div>
+					{/if}
+				</div>
+				<div class="leftDataBlock">
+					<div class="page_block" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
+						<div class="module clear people_module" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
+							<a href="/friends{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_friends}
+									</span>
+									<span class="header_count fl_l">
+										{$user->getFriendsCount()}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="people_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
+									<div class="people_cell" n:foreach="$friendRow as $friend">
+										<a class="people_cell_ava" href="{$friend->getURL()}">
+											<div class="people_cell_img">
+												<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
+											</div>
+										</a>
+										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="module clear people_module" n:if="$user->getFriendsOnlineCount() > 0 && $thisUser != NULL && $thisUser->getId() == $user->getId()">
+							<a href="/friends{$user->getId()}?act=online" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_friends_online}
+									</span>
+									<span class="header_count fl_l">
+										{$user->getFriendsOnlineCount()}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="people_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriendsOnline(1)), 0, 6), 3) as $friendRow">
+									<div class="people_cell" n:foreach="$friendRow as $friend">
+										<a class="people_cell_ava" href="{$friend->getURL()}">
+											<div class="people_cell_img">
+												<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
+											</div>
+										</a>
+										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="page_block" id="gifts_block" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+						<div class="module clear profile_gifts">
+							<a class="module_header" href="/gifts{$user->getId()}">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">{_gifts}</span>
+									<span class="header_count fl_l" id="gifts_module_count">{$giftCount}</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<a class="profile_gifts_cont" href="/gifts{$user->getId()}">
+									<img width="64" height="64" class="profile_gift_img" n:foreach="$user->getGifts(1, 3) as $giftDescriptor" 
+										src="{$giftDescriptor->gift->getImage(2)}" 
+										title="{$giftDescriptor->anon ? tr('gift') : tr('sender') . ': ' . $giftDescriptor->sender->getFirstName()}{$giftDescriptor->caption ? ($giftDescriptor->anon ? ' - ' : "\n") . $giftDescriptor->caption : ''}" />
+								</a>
+							</div>
+						</div>
+					</div>
+					<div class="page_block" n:if="($albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || ($videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL))">
+						<div class="module clear page_list_module" n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+							<a href="/groups{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_groups}
+									</span>
+									<span class="header_count fl_l">
+										{$user->getClubCount()}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="line_cell clear_fix" n:foreach="array_slice(($clubs = iterator_to_array($user->getClubs(1))) && shuffle($clubs) ? $clubs : $clubs, 0, 5) as $club">
+									<div class="thumb">
+										<a href="club{$club->getId()}">
+											<img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
+												/themepack/vkify16/1.0.0.0/resource/community_200.png
+											{else}
+												{$club->getAvatarUrl()}
+											{/if}" alt="{$club->getCanonicalName()}" />
+										</a>
+									</div>
+									<div class="desc_info">
+										<div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
+										<div class="group_desc">
+											<span>{$club->getDescription()}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="module clear page_list_module" n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+							<a href="/groups{$user->getId()}?act=meetings" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_meetings}
+									</span>
+									<span class="header_count fl_l">
+										{$user->getMeetingCount()}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="line_cell clear_fix" n:foreach="array_slice(($meetings = iterator_to_array($user->getMeetings(1))) && shuffle($meetings) ? $meetings : $meetings, 0, 5) as $meeting">
+									<div class="thumb">
+										<a href="/event{$meeting->getId()}">
+											<img class="cell_img" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
+												/themepack/vkify16/1.0.0.0/resource/community_200.png
+											{else}
+												{$meeting->getAvatarUrl()}
+											{/if}" alt="{$meeting->getName()}" />
+										</a>
+									</div>
+									<div class="desc_info">
+										<div class="group_name"><a href="/event{$meeting->getId()}">{$meeting->getName()}</a></div>
+										<div class="group_desc">
+											<span>{$meeting->getDescription()}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="module notes_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
+							<a href="/notes{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_notes}
+									</span>
+									<span class="header_count fl_l">
+										$notesCount
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div style="padding: 5px 8px 15px 8px;">
+									<ul class="notes_titles" n:foreach="$notes as $note">
+										<li class="written">
+											<a href="/note{$note->getPrettyId()}">
+												{$note->getName()}
+											</a>
+											<small>
+												{$note->getPublicationTime()}
+												<span class="divide">|</span>
+												<a href="/note{$note->getPrettyId()}">{_comments}</a>
+											</small>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="module album_module" n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
+							<a href="/albums{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_albums}
+									</span>
+									<span class="header_count fl_l">
+										{$albumsCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="clear_fix clear page_album_row" n:foreach="array_slice(iterator_to_array($albums), 0, 3) as $album">
+									<a href="/album{$album->getPrettyId()}" class="page_album_link {if is_null($album->getCoverPhoto())}page_album_nocover{/if}">
+										{var $cover = $album->getCoverPhoto()}
+										<div class="page_album_thumb_wrap">
+											<img n:if="!is_null($cover)"
+												src="{$cover->getURLBySizeId('normal')}"
+												class="page_album_thumb" loading="lazy" />
+										</div>
+										<div class="page_album_title">
+											<div class="page_album_size">{$album->getPhotosCount()}</div>
+											<div class="page_album_title_text">{$album->getName()}</div>
+										</div>
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="module video_module" n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
+							<a href="/videos{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_videos}
+									</span>
+									<span class="header_count fl_l">
+										{$videosCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="video_row" n:foreach="$videos as $video">
+									<a class="video fl_l" href="/video{$video->getPrettyId()}">
+										<div class="video_thumb_label">
+										{if $video->getType() != 0}
+											<span class="video_thumb_label_item">
+												<vkifyloc name="external" />
+											</span>
+										{/if}
+											<span class="video_thumb_label_item">{$video->getLength()}</span>
+										</div>
+										<div class="page_video_play_icon"></div>
+										<span class="page_video_thumb" style="background-image: url('{$video->getThumbnailURL()}');"></span>
+									</a>
+									<div class="info clear">
+										<a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="module audio_module" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
+							<a href="/audios{$user->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_audios}
+									</span>
+									<span class="header_count fl_l">
+										{$audiosCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="audio_row" n:foreach="$audios as $audio">
+									<a class="audio fl_l" href="/audios{$user->getId()}">
+										<div class="page_audio_play_icon"></div>
+									</a>
+									<div class="info clear">
+										{include "../Audio/player.xml", audio => $audio}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
         </div>
-        <br />
-		<div class="leftDataBlock">
-			<div class="page_block" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
-				<div class="module clear people_module" n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
-					<a href="/friends{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_friends}
-							</span>
-							<span class="header_count fl_l">
-								{$user->getFriendsCount()}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="people_row" n:foreach="array_chunk(array_slice(($friends = iterator_to_array($user->getFriends(1))) && shuffle($friends) ? $friends : $friends, 0, 6), 3) as $friendRow">
-							<div class="people_cell" n:foreach="$friendRow as $friend">
-								<a class="people_cell_ava" href="{$friend->getURL()}">
-									<div class="people_cell_img">
-										<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+				<div class="page_block">
+					<div class="page_info_wrap">
+						<div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
+						{var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
+						<div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
+							<form name="status_popup_form" onsubmit="changeStatus(); return false;">
+								<div style="margin-bottom: 10px;">
+									<input type="text" name="status" size="50" value="{$user->getStatus()}" />
+									<label style="width: 316px;display: block;">
+										<input type="checkbox" name="broadcast" n:attr="checked => $user->isBroadcastEnabled()" />
+										{_broadcast_audio}
+									</label>
+								</div>
+								<input type="hidden" name="hash" value="{$csrfToken}" />
+								<button type="submit" name="submit" class="button" style="height: 25px;">{_send}</button>
+							</form>
+						</div>
+						<div class="accountInfo clearFix">
+							<div class="page_top">
+								<!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
+								<div class="profile_online" n:if="$user->getOnline()->timestamp() + 2505600 > time() || $user->onlineStatus() == 2">
+									{if $user->onlineStatus() == 2}
+										<div class="profile_online_status">{_deceased_person}</div>
+									{else}
+										{if $user->isOnline()}
+											<div class="profile_online_status">{_online}</div>
+										{else}
+											<div class="profile_online_status">{$user->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$user->getOnline()}</div>
+										{/if}
+										{var $platform = $user->getOnlinePlatform()}
+										{var $platformDetails = $user->getOnlinePlatformDetails()}
+										<a n:if="!empty($platform)" class="client_app client_app_titlebar" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+											<img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(this)}.svg">
+										</a>
+									{/if}
+								</div>
+								<h2 class="page_name">{$user->getFullName()} <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a></h2>
+
+								{if !$audioStatus}
+									{if $user->getStatus()}
+										<div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
+									{elseif $thatIsThisUser}
+										<div class="page_status">
+											<div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">{_change_status}</div>
+										</div>
+									{/if}
+								{else}
+									<div class="page_status" style="display: flex;">
+										<div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
+											{$audioStatus->getName()}
+										</div>
 									</div>
-								</a>
-								<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
+								{/if}
+							</div>
+						</div>
+						<div class="basicInfo">
+							<table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+								<tbody>
+									<tr>
+										<td class="label"><span class="nobold">{_pronouns}: </span></td>
+										<td class="data">{$user->isFemale() ? tr("female") : ($user->isNeutral() ? tr("neutral") : tr("male"))}</td>
+									</tr>
+									<tr>
+										<td class="label"><span class="nobold">{_relationship}:</span></td>
+										<td class="data">
+											{$user->getLocalizedMaritalStatus()}
+											{if $user->getMaritalStatusUser()}
+												{$user->getMaritalStatusUserPrefix()}
+												<a href="{$user->getMaritalStatusUser()->getURL()}" target="_blank">
+													{$user->getMaritalStatusUser()->getCanonicalName()}
+												</a>
+											{/if}
+										</td>
+									</tr>
+									<tr>
+										<td class="label"><span class="nobold">{tr("registration_date")}: </span></td>
+										<td class="data">{$user->getRegistrationTime()}</td>
+									</tr>
+									<tr n:if="!is_null($user->getHometown())">
+										<td class="label"><span class="nobold">{tr("hometown")}:</span></td>
+										<td class="data"><a href="/search?section=users&q=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
+									</tr>
+									<tr>
+										<td class="label"><span class="nobold">{tr("politViews")}:</span></td>
+										<td class="data">{var $pviews = $user->getPoliticalViews()}{tr("politViews_$pviews")}</td>
+									</tr>
+									<tr n:if="!is_null($user->getBirthday())">
+										<td class="label"><span class="nobold">{tr("birth_date")}:</span></td>
+										<td n:if="$user->getBirthdayPrivacy() == 0" class="data">{$user->getBirthday()->format('%e %B %Y')},
+											{tr("years", $user->getAge())}</td>
+										<td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="profile_more_info" n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+							<a class="profile_info profile_more_info_link" onclick="switchProfileInfo();" id="showFullInfoButton">{tr('show_comments')}</a>
+							<div class="profileinfoblock profile_info_full" style="display:none;">
+								{capture $contactInfo_Tmp}
+									{var $contactFields = [
+										['label' => email, 'value' => $user->getContactEmail(), 'type' => 'email'],
+										['label' => telegram, 'value' => $user->getTelegram(), 'type' => 'telegram'],
+										['label' => personal_website, 'value' => $user->getWebsite(), 'type' => 'website'],
+										['label' => city, 'value' => $user->getCity(), 'type' => 'city'],
+										['label' => address, 'value' => $user->getPhysicalAddress(), 'type' => 'address'],
+									]}
+									<table class="ugc-table" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+									<tbody n:ifcontent>
+										{foreach $contactFields as $field}
+											<tr n:if="!is_null($field['value'])">
+												<td class="label"><span class="nobold">{tr($field['label'])	}: </span></td>
+												<td>
+													{if $field['type'] === 'email'}
+														<a href="mailto:{$field['value']}" rel="ugc">{$field['value']}</a>
+													{elseif $field['type'] === 'telegram'}
+														<a href="https://t.me/{$field['value']}" rel="ugc" target="_blank">@{$field['value']}</a>
+													{elseif $field['type'] === 'website'}
+														<a href="{$field['value']}" rel="ugc" target="_blank">{$field['value']}</a>
+													{elseif $field['type'] === 'city'}
+														<a href="/search?type=section&q=&city={$field['value']}">{$field['value']}</a>
+													{else}
+														{$field['value']}
+													{/if}
+												</td>
+											</tr>
+										{/foreach}
+										{if $additionalFields}
+											<tr n:foreach="$additionalFields['contacts'] as $field">
+												<td class="label"><span class="nobold">{$field->getName()}:</span></td>
+												<td class="data">{$field->getContent()}</td>
+											</tr>
+										{/if}
+									</tbody>
+									</table>
+								{/capture}
+								{capture $uInfo_Tmp}
+									{var $personalFields = [
+										['label' => interests, 'value' => $user->getInterests(), 'type' => 'list'],
+										['label' => favorite_music, 'value' => $user->getFavoriteMusic(), 'type' => 'audio', 'url' => '/search?section=audios&q='],
+										['label' => favorite_films, 'value' => $user->getFavoriteFilms(), 'type' => 'films', 'url' => '/search?section=users&q=&fav_films='],
+										['label' => favorite_shows, 'value' => $user->getFavoriteShows(), 'type' => 'shows', 'url' => '/search?section=users&q=&fav_shows='],
+										['label' => favorite_books, 'value' => $user->getFavoriteBooks(), 'type' => 'books', 'url' => '/search?section=users&q=&fav_books='],
+										['label' => favorite_quotes, 'value' => $user->getFavoriteQuote(), 'type' => 'plain'],
+										['label' => favorite_games, 'value' => $user->getFavoriteGames(), 'type' => 'plain'],
+										['label' => information_about, 'value' => $user->getDescription(), 'type' => 'plain'],
+									]}
+									<table class="ugc-table" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
+										<tbody n:ifcontent>
+											{foreach $personalFields as $field}
+												<tr n:if="!is_null($field['value'])">
+													<td class="label"><span class="nobold">{tr($field['label'])}: </span></td>
+													<td class="data">
+														{if $field['type'] === 'list'}
+															{var $items = explode(', ', $field['value'])}
+															{foreach $items as $item}
+																<span>{$item}</span>{if $item != end($items)},{/if}
+															{/foreach}
+														{elseif $field['type'] === 'audio' || $field['type'] === 'films' || $field['type'] === 'shows' || $field['type'] === 'books'}
+															{var $items = explode(', ', $field['value'])}
+															{foreach $items as $item}
+																<a href="{$field['url']}{urlencode($item)}">{$item}</a>{if $item != end($items)},{/if}
+															{/foreach}
+														{else}
+															{$field['value']}
+														{/if}
+													</td>
+												</tr>
+											{/foreach}
+											{if $additionalFields}
+												<tr n:foreach="$additionalFields['interests'] as $field">
+													<td class="label"><span class="nobold">{$field->getName()}:</span></td>
+													<td class="data">{$field->getContent()}</td>
+												</tr>
+											{/if}
+										</tbody>
+									</table>
+								{/capture}
+								<div class="profile_info_block clear_fix">
+									<div class="profile_info_header_wrap">
+										<span class="profile_info_header">{_contact_information}</span>
+									</div>
+									{if !empty($contactInfo_Tmp)}
+										{$contactInfo_Tmp|noescape}
+									{else}
+										<div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+									{/if}
+								</div>
+								<div class="profile_info_block clear_fix">
+									<div class="profile_info_header_wrap">
+										<span class="profile_info_header">{_personal_information}</span>
+									</div>
+									{if !empty($uInfo_Tmp)}
+										{$uInfo_Tmp|noescape}
+									{else}
+										<div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+									{/if}
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="module clear people_module" n:if="$user->getFriendsOnlineCount() > 0 && $thisUser != NULL && $thisUser->getId() == $user->getId()">
-					<a href="/friends{$user->getId()}?act=online" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_friends_online}
-							</span>
-							<span class="header_count fl_l">
-								{$user->getFriendsOnlineCount()}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="people_row" n:foreach="array_chunk(array_slice(($friendsOnline = iterator_to_array($user->getFriendsOnline(1))) && shuffle($friendsOnline) ? $friendsOnline : $friendsOnline, 0, 6), 3) as $friendRow">
-							<div class="people_cell" n:foreach="$friendRow as $friend">
-								<a class="people_cell_ava" href="{$friend->getURL()}">
-									<div class="people_cell_img">
-										<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
-									</div>
-								</a>
-								<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="page_block" id="gifts_block" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
-				<div class="module clear profile_gifts">
-					<a class="module_header" href="/gifts{$user->getId()}">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">{_gifts}</span>
-							<span class="header_count fl_l" id="gifts_module_count">{$giftCount}</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<a class="profile_gifts_cont" href="/gifts{$user->getId()}">
-							<img width="64" height="64" class="profile_gift_img" n:foreach="$user->getGifts(1, 3) as $giftDescriptor" 
-								src="{$giftDescriptor->gift->getImage(2)}" 
-								title="{$giftDescriptor->anon ? tr('gift') : tr('sender') . ': ' . $giftDescriptor->sender->getFirstName()}{$giftDescriptor->caption ? ($giftDescriptor->anon ? ' - ' : "\n") . $giftDescriptor->caption : ''}" />
+					<div class="counts_module" n:ifcontent>
+						<a class="page_counter" n:if="$user->getFollowersCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)" href="/friends{$user->getId()}?act=incoming">
+							<div class="count">{$user->getFollowersCount()}</div>
+							<div class="label">{tr("followers")}</div>
+						</a>
+						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)" href="/albums{$user->getId()}">
+							<div class="count">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
+							<div class="label">{tr("mobile_photos")}</div>
+						</a>
+						<a class="page_counter" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0" href="/gifts{$user->getId()}">
+							<div class="count">{$giftCount}</div>
+							<div class="label">{tr("gifts")}</div>
+						</a>
+						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user) > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)" href="/videos{$user->getId()}">
+							<div class="count">{(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user)}</div>
+							<div class="label">{tr("videos")}</div>
+						</a>
+						<a class="page_counter" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)" href="/audios{$user->getId()}">
+							<div class="count">{$audiosCount}</div>
+							<div class="label">{tr("audios")}</div>
 						</a>
 					</div>
 				</div>
-			</div>
-			<div class="page_block" n:if="($albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || ($videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL))">
-				<div class="module clear page_list_module" n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-					<a href="/groups{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_groups}
-							</span>
-							<span class="header_count fl_l">
-								{$user->getClubCount()}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="line_cell clear_fix" n:foreach="array_slice(($clubs = iterator_to_array($user->getClubs(1))) && shuffle($clubs) ? $clubs : $clubs, 0, 5) as $club">
-							<div class="thumb">
-								<a href="club{$club->getId()}">
-									<img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-										/themepack/vkify16/1.0.0.0/resource/community_200.png
-									{else}
-										{$club->getAvatarUrl()}
-									{/if}" alt="{$club->getCanonicalName()}" />
-								</a>
-							</div>
-							<div class="desc_info">
-								<div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
-								<div class="group_desc">
-									<span>{$club->getDescription()}</span>
-								</div>
-							</div>
+				{var $photoCount = (new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}
+				<div class="page_block {if $photoCount > 0}module photos_module{/if}" n:if="($photoCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || (isset($thisUser) && $user->getId() == $thisUser->getId())">
+					<a class="module_header" href="/albums{$user->getId()}" n:if="$photoCount > 0">
+						<div class="header_top clear_fix">
+							<span class="header_label fl_l">{_mobile_photos}</span>
+							<span class="header_count fl_l">{$photoCount}</span>
 						</div>
-					</div>
-				</div>
-				<div class="module clear page_list_module" n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-					<a href="/groups{$user->getId()}?act=meetings" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_meetings}
-							</span>
-							<span class="header_count fl_l">
-								{$user->getMeetingCount()}
-							</span>
-						</h3>
 					</a>
-					<div class="module_body clear_fix">
-						<div class="line_cell clear_fix" n:foreach="array_slice(($meetings = iterator_to_array($user->getMeetings(1))) && shuffle($meetings) ? $meetings : $meetings, 0, 5) as $meeting">
-							<div class="thumb">
-								<a href="/event{$meeting->getId()}">
-									<img class="cell_img" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
-										/themepack/vkify16/1.0.0.0/resource/community_200.png
-									{else}
-										{$meeting->getAvatarUrl()}
-									{/if}" alt="{$meeting->getName()}" />
-								</a>
-							</div>
-							<div class="desc_info">
-								<div class="group_name"><a href="/event{$meeting->getId()}">{$meeting->getName()}</a></div>
-								<div class="group_desc">
-									<span>{$meeting->getDescription()}</span>
-								</div>
-							</div>
+					{if $photoCount > 0 }
+						<div class="page_photos_module clear_fix">
+							<a class="page_square_photo" n:foreach="($photos = iterator_to_array((new \openvk\Web\Models\Repositories\Photos())->getEveryUserPhoto($user, 0, 4))) as $photo" href="{$photo->getPageURL()}" onclick="OpenMiniature(event, {$photo->getURLBySizeId('larger')}, null, {$photo->getPrettyId()}, null)" style="background-image: url({$photo->getURLBySizeId('normal')})"></a>
 						</div>
-					</div>
-				</div>
-				<div class="module notes_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
-					<a href="/notes{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_notes}
-							</span>
-							<span class="header_count fl_l">
-								$notesCount
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div style="padding: 5px 8px 15px 8px;">
-							<ul class="notes_titles" n:foreach="$notes as $note">
-								<li class="written">
-									<a href="/note{$note->getPrettyId()}">
-										{$note->getName()}
-									</a>
-									<small>
-										{$note->getPublicationTime()}
-										<span class="divide">|</span>
-										<a href="/note{$note->getPrettyId()}">{_comments}</a>
-									</small>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="module album_module" n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
-					<a href="/albums{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_albums}
-							</span>
-							<span class="header_count fl_l">
-								{$albumsCount}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="clear_fix clear page_album_row" n:foreach="$albums as $album">
-							<a href="/album{$album->getPrettyId()}" class="page_album_link {if is_null($album->getCoverPhoto())}page_album_nocover{/if}">
-								{var $cover = $album->getCoverPhoto()}
-								<div class="page_album_thumb_wrap">
-									<img n:if="!is_null($cover)"
-										src="{$cover->getURLBySizeId('normal')}"
-										class="page_album_thumb" loading="lazy" />
-								</div>
-								<div class="page_album_title">
-									<div class="page_album_size">{$album->getPhotosCount()}</div>
-									<div class="page_album_title_text">{$album->getName()}</div>
-								</div>
+					{else}
+						{if isset($thisUser) && $user->getId() == $thisUser->getId()}
+							<a href="/albums/create">
+								<div class="noPhotosTip"><img src="/themepack/vkify16/1.0.0.0/resource/camera.png" alt="add_photos" class="addPhotoTip_icon"><span class="addPhotoTip_text">{_add_photos}</span></div>
 							</a>
-						</div>
-					</div>
-				</div>
-				<div class="module video_module" n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
-					<a href="/videos{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_videos}
-							</span>
-							<span class="header_count fl_l">
-								{$videosCount}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="video_row" n:foreach="$videos as $video">
-							<a class="video fl_l" href="/video{$video->getPrettyId()}">
-								<div class="video_thumb_label">
-								{if $video->getType() != 0}
-									<span class="video_thumb_label_item">
-										<vkifyloc name="external" />
-									</span>
-								{/if}
-									<span class="video_thumb_label_item">{$video->getLength()}</span>
-								</div>
-								<div class="page_video_play_icon"></div>
-								<span class="page_video_thumb" style="background-image: url('{$video->getThumbnailURL()}');"></span>
-							</a>
-							<div class="info clear">
-								<a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="module audio_module" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
-					<a href="/audios{$user->getId()}" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_audios}
-							</span>
-							<span class="header_count fl_l">
-								{$audiosCount}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body clear_fix">
-						<div class="audio_row" n:foreach="$audios as $audio">
-							<a class="audio fl_l" href="/audios{$user->getId()}">
-								<div class="page_audio_play_icon"></div>
-							</a>
-							<div class="info clear">
-								{include "../Audio/player.xml", audio => $audio}
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-    </div>
-    
-    <div class="right_big_block">
-        <div class="page_block">
-			<div class="page_info_wrap">
-				<div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
-				{var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
-				<div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
-					<form name="status_popup_form" onsubmit="changeStatus(); return false;">
-						<div style="margin-bottom: 10px;">
-							<input type="text" name="status" size="50" value="{$user->getStatus()}" />
-							<label style="width: 316px;display: block;">
-								<input type="checkbox" name="broadcast" n:attr="checked => $user->isBroadcastEnabled()" />
-								{_broadcast_audio}
-							</label>
-						</div>
-						<input type="hidden" name="hash" value="{$csrfToken}" />
-						<button type="submit" name="submit" class="button" style="height: 25px;">{_send}</button>
-					</form>
-				</div>
-				<div class="accountInfo clearFix">
-					<div class="page_top">
-						<!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
-						<div class="profile_online" n:if="$user->getOnline()->timestamp() + 2505600 > time() || $user->onlineStatus() == 2">
-							{if $user->onlineStatus() == 2}
-								<div class="profile_online_status">{_deceased_person}</div>
-							{else}
-								{if $user->isOnline()}
-									<div class="profile_online_status">{_online}</div>
-								{else}
-									<div class="profile_online_status">{$user->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$user->getOnline()}</div>
-								{/if}
-								{var $platform = $user->getOnlinePlatform()}
-								{var $platformDetails = $user->getOnlinePlatformDetails()}
-								<a n:if="!empty($platform)" class="client_app client_app_titlebar" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
-									<img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(this)}.svg">
-								</a>
-							{/if}
-						</div>
-						<h2 class="page_name">{$user->getFullName()} <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a></h2>
-
-						{if !$audioStatus}
-							{if $user->getStatus()}
-								<div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
-							{elseif $thatIsThisUser}
-								<div class="page_status">
-									<div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">{_change_status}</div>
-								</div>
-							{/if}
-						{else}
-							<div class="page_status" style="display: flex;">
-								<div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
-									{$audioStatus->getName()}
-								</div>
-							</div>
 						{/if}
-					</div>
-				</div>
-				<div class="basicInfo">
-					<table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
-						<tbody>
-							<tr>
-								<td class="label"><span class="nobold">{_pronouns}: </span></td>
-								<td class="data">{$user->isFemale() ? tr("female") : ($user->isNeutral() ? tr("neutral") : tr("male"))}</td>
-							</tr>
-							<tr>
-								<td class="label"><span class="nobold">{_relationship}:</span></td>
-								<td class="data">
-									{$user->getLocalizedMaritalStatus()}
-									{if $user->getMaritalStatusUser()}
-										{$user->getMaritalStatusUserPrefix()}
-										<a href="{$user->getMaritalStatusUser()->getURL()}" target="_blank">
-											{$user->getMaritalStatusUser()->getCanonicalName()}
-										</a>
-									{/if}
-								</td>
-							</tr>
-							<tr>
-								<td class="label"><span class="nobold">{tr("registration_date")}: </span></td>
-								<td class="data">{$user->getRegistrationTime()}</td>
-							</tr>
-							<tr n:if="!is_null($user->getHometown())">
-								<td class="label"><span class="nobold">{tr("hometown")}:</span></td>
-								<td class="data"><a href="/search?section=users&q=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
-							</tr>
-							<tr>
-								<td class="label"><span class="nobold">{tr("politViews")}:</span></td>
-								<td class="data">{var $pviews = $user->getPoliticalViews()}{tr("politViews_$pviews")}</td>
-							</tr>
-							<tr n:if="!is_null($user->getBirthday())">
-								<td class="label"><span class="nobold">{tr("birth_date")}:</span></td>
-								<td n:if="$user->getBirthdayPrivacy() == 0" class="data">{$user->getBirthday()->format('%e %B %Y')},
-									{tr("years", $user->getAge())}</td>
-								<td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-						<div class="profile_more_info" n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
-				<a class="profile_info profile_more_info_link" onclick="switchProfileInfo();" id="showFullInfoButton">{tr('show_comments')}</a>
-				<div class="profileinfoblock" style="display:none;">
-					{capture $contactInfo_Tmp}
-						{var $contactFields = [
-							['label' => email, 'value' => $user->getContactEmail(), 'type' => 'email'],
-							['label' => telegram, 'value' => $user->getTelegram(), 'type' => 'telegram'],
-							['label' => personal_website, 'value' => $user->getWebsite(), 'type' => 'website'],
-							['label' => city, 'value' => $user->getCity(), 'type' => 'city'],
-							['label' => address, 'value' => $user->getPhysicalAddress(), 'type' => 'address'],
-						]}
-						<table class="ugc-table" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
-						  <tbody n:ifcontent>
-							{foreach $contactFields as $field}
-								<tr n:if="!is_null($field['value'])">
-									<td class="label"><span class="nobold">{tr($field['label'])	}: </span></td>
-									<td>
-										{if $field['type'] === 'email'}
-											<a href="mailto:{$field['value']}" rel="ugc">{$field['value']}</a>
-										{elseif $field['type'] === 'telegram'}
-											<a href="https://t.me/{$field['value']}" rel="ugc" target="_blank">@{$field['value']}</a>
-										{elseif $field['type'] === 'website'}
-											<a href="{$field['value']}" rel="ugc" target="_blank">{$field['value']}</a>
-										{elseif $field['type'] === 'city'}
-											<a href="/search?type=section&q=&city={$field['value']}">{$field['value']}</a>
-										{else}
-											{$field['value']}
-										{/if}
-									</td>
-								</tr>
-							{/foreach}
-							{if $additionalFields}
-								<tr n:foreach="$additionalFields['contacts'] as $field">
-									<td class="label"><span class="nobold">{$field->getName()}:</span></td>
-									<td class="data">{$field->getContent()}</td>
-								</tr>
-							{/if}
-						  </tbody>
-						</table>
-					{/capture}
-					{capture $uInfo_Tmp}
-						{var $personalFields = [
-							['label' => interests, 'value' => $user->getInterests(), 'type' => 'list'],
-							['label' => favorite_music, 'value' => $user->getFavoriteMusic(), 'type' => 'audio', 'url' => '/search?section=audios&q='],
-							['label' => favorite_films, 'value' => $user->getFavoriteFilms(), 'type' => 'films', 'url' => '/search?section=users&q=&fav_films='],
-							['label' => favorite_shows, 'value' => $user->getFavoriteShows(), 'type' => 'shows', 'url' => '/search?section=users&q=&fav_shows='],
-							['label' => favorite_books, 'value' => $user->getFavoriteBooks(), 'type' => 'books', 'url' => '/search?section=users&q=&fav_books='],
-							['label' => favorite_quotes, 'value' => $user->getFavoriteQuote(), 'type' => 'plain'],
-							['label' => favorite_games, 'value' => $user->getFavoriteGames(), 'type' => 'plain'],
-							['label' => information_about, 'value' => $user->getDescription(), 'type' => 'plain'],
-						]}
-						<table class="ugc-table" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
-						  <tbody n:ifcontent>
-							{foreach $personalFields as $field}
-								<tr n:if="!is_null($field['value'])">
-									<td class="label"><span class="nobold">{tr($field['label'])}: </span></td>
-									<td class="data">
-										{if $field['type'] === 'list'}
-											{var $items = explode(', ', $field['value'])}
-											{foreach $items as $item}
-												<span>{$item}</span>{if $item != end($items)},{/if}
-											{/foreach}
-										{elseif $field['type'] === 'audio' || $field['type'] === 'films' || $field['type'] === 'shows' || $field['type'] === 'books'}
-											{var $items = explode(', ', $field['value'])}
-											{foreach $items as $item}
-												<a href="{$field['url']}{urlencode($item)}">{$item}</a>{if $item != end($items)},{/if}
-											{/foreach}
-										{else}
-											{$field['value']}
-										{/if}
-									</td>
-								</tr>
-							{/foreach}
-							{if $additionalFields}
-								<tr n:foreach="$additionalFields['interests'] as $field">
-									<td class="label"><span class="nobold">{$field->getName()}:</span></td>
-									<td class="data">{$field->getContent()}</td>
-								</tr>
-							{/if}
-						  </tbody>
-						</table>
-				</div>
-					{/capture}
-					<h4 class="profile_info_header_wrap"><text style="max-width: fit-content;">{_contact_information}</text><div class="editline"></div> {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link" style="text-transform: lowercase;">{_edit}</a>{/if}{/ifset}</h4>
-					{if !empty($contactInfo_Tmp)}
-						{$contactInfo_Tmp|noescape}
-					{else}
-						<div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
 					{/if}
-					<br>
-					<h4 class="profile_info_header_wrap"><text style="max-width: fit-content;">{_personal_information}</text><div class="editline"></div> {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link" style="text-transform: lowercase;">{_edit}</a>{/if}{/ifset}</h4>
-					{if !empty($uInfo_Tmp)}
-						{$uInfo_Tmp|noescape}
-					{else}
-						<div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
-					{/if}
+				</div>
+
+				{presenter "openvk!Wall->wallEmbedded", $user->getId()}
 			</div>
 		</div>
-			<div class="counts_module" n:if="((new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || ((new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user) > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)) || ($user->getFollowersCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL))">
-            <a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)" href="/albums{$user->getId()}">
-				<div class="count">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
-				<div class="label">{tr("mobile_photos")}</div>
-			</a>
-            <a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user) > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)" href="/videos{$user->getId()}">
-				<div class="count">{(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user)}</div>
-				<div class="label">{tr("videos")}</div>
-			</a>
-            <a class="page_counter" n:if="$user->getFollowersCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)" href="/friends{$user->getId()}?act=incoming">
-				<div class="count">{$user->getFollowersCount()}</div>
-				<div class="label">{tr("followers")}</div>
-			</a>
-			</div>
-        </div>
-		{var $photoCount = (new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}
-		<div class="page_block {if $photoCount > 0}module photos_module{/if}" n:if="($photoCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || (isset($thisUser) && $user->getId() == $thisUser->getId())">
-			<a class="module_header" href="/albums{$user->getId()}" n:if="$photoCount > 0">
-				<div class="header_top clear_fix">
-					<span class="header_label fl_l">{_mobile_photos}</span>
-					<span class="header_count fl_l">{$photoCount}</span>
-				</div>
-			</a>
-			{if $photoCount > 0 }
-				<div class="page_photos_module clear_fix">
-					<a class="page_square_photo" n:foreach="($photos = iterator_to_array((new \openvk\Web\Models\Repositories\Photos())->getEveryUserPhoto($user, 0, 4))) as $photo" href="{$photo->getPageURL()}" onclick="OpenMiniature(event, {$photo->getURLBySizeId('larger')}, null, {$photo->getPrettyId()}, null)" style="background-image: url({$photo->getURLBySizeId('normal')})"></a>
-				</div>
-			{else}
-				{if isset($thisUser) && $user->getId() == $thisUser->getId()}
-					<a href="/albums/create">
-						<div class="noPhotosTip"><img src="/themepack/vkify16/1.0.0.0/resource/camera.png" alt="add_photos" class="addPhotoTip_icon"><span class="addPhotoTip_text">{_add_photos}</span></div>
-					</a>
-				{/if}
-			{/if}
-		</div>
-        
-        {presenter "openvk!Wall->wallEmbedded", $user->getId()}
-        
-        <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
-            function banUser() {
-                uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
-                uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
-                uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />"
-                uBanMsgTxt += "<br/><br/><b>Заблокировать до</b>: <input type='date' id='uBanMsgDate' />";
-                uBanMsgTxt += "<br/><br/><input id='uBanMsgIncr' type='checkbox' checked='1'/>Автоматически <b>(до " + {date('d.m.Y H\h', time() + $user->getNewBanTime())} + ")</b>";
+	</div>
+	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
+		function banUser() {
+			uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
+			uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
+			uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />"
+			uBanMsgTxt += "<br/><br/><b>Заблокировать до</b>: <input type='date' id='uBanMsgDate' />";
+			uBanMsgTxt += "<br/><br/><input id='uBanMsgIncr' type='checkbox' checked='1'/>Автоматически <b>(до " + {date('d.m.Y H\h', time() + $user->getNewBanTime())} + ")</b>";
 
-                MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
-                    (function() {
-                        res = document.querySelector("#uBanMsgInput").value;
-                        date = document.querySelector("#uBanMsgDate").value;
-                        incr = document.querySelector("#uBanMsgIncr").checked ? '1' : '0';
-                        xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&incr=" + incr + "&date=" + date + "&hash=" + {rawurlencode($csrfToken)}, true);
-                        xhr.onload = (function() {
-                            if(xhr.responseText.indexOf("success") === -1)
-                                MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
-                            else
-                                MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
-                        });
-                        xhr.send(null);
-                    }),
-                    Function.noop
-                ]);
-            }
-            
-            function warnUser() {
-                uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
-                uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
-                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />";
-                
-                MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
-                    (function() {
-                        res = document.querySelector("#uWarnMsgInput").value;
-                        xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/admin/warn/" + {$user->getId()} + "?message=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
-                        xhr.onload = (function() {
-                            if(xhr.responseText.indexOf("message") === -1)
-                                MessageBox("Ошибка", "Не удалось отправить предупреждение...", ["OK"], [Function.noop]);
-                            else
-                                MessageBox("Операция успешна", "Предупреждение отправлено", ["OK"], [Function.noop]);
-                        });
-                        xhr.send(null);
-                    }),
-                    Function.noop
-                ]);
-            }
-        </script>
+			MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+				(function() {
+					res = document.querySelector("#uBanMsgInput").value;
+					date = document.querySelector("#uBanMsgDate").value;
+					incr = document.querySelector("#uBanMsgIncr").checked ? '1' : '0';
+					xhr = new XMLHttpRequest();
+					xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&incr=" + incr + "&date=" + date + "&hash=" + {rawurlencode($csrfToken)}, true);
+					xhr.onload = (function() {
+						if(xhr.responseText.indexOf("success") === -1)
+							MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
+						else
+							MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
+					});
+					xhr.send(null);
+				}),
+				Function.noop
+			]);
+		}
+		
+		function warnUser() {
+			uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
+			uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
+			uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />";
+			
+			MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+				(function() {
+					res = document.querySelector("#uWarnMsgInput").value;
+					xhr = new XMLHttpRequest();
+					xhr.open("GET", "/admin/warn/" + {$user->getId()} + "?message=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+					xhr.onload = (function() {
+						if(xhr.responseText.indexOf("message") === -1)
+							MessageBox("Ошибка", "Не удалось отправить предупреждение...", ["OK"], [Function.noop]);
+						else
+							MessageBox("Операция успешна", "Предупреждение отправлено", ["OK"], [Function.noop]);
+					});
+					xhr.send(null);
+				}),
+				Function.noop
+			]);
+		}
+	</script>
 
-        <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
-            {if $user->isBannedInSupport()}
-                function toggleBanInSupport() {
-                    uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
-                    uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
+	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+		{if $user->isBannedInSupport()}
+			function toggleBanInSupport() {
+				uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+				uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
 
-                    MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
-                        (function() {
-                            xhr = new XMLHttpRequest();
-                            xhr.open("GET", "/admin/support/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
-                            xhr.onload = (function() {
-                                if(xhr.responseText.indexOf("success") === -1)
-                                    MessageBox("Ошибка", "Не удалось разблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
-                                else
-                                    MessageBox("Операция успешна", "Пользователь разблокирован в поддержке", ["OK"], [Function.noop]);
-                            });
-                            xhr.send(null);
-                        }),
-                        Function.noop
-                    ]);
-                }
-            {else}
-                function toggleBanInSupport() {
-                    uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
-                    uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
-                    uBanMsgTxt += "<br/><br/><input type='checkbox' id='uBanClsTicketsInput' /><label for='uBanClsTicketsInput'>Закрыть все обращения пользователя</label>";
+				MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+					(function() {
+						xhr = new XMLHttpRequest();
+						xhr.open("GET", "/admin/support/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
+						xhr.onload = (function() {
+							if(xhr.responseText.indexOf("success") === -1)
+								MessageBox("Ошибка", "Не удалось разблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+							else
+								MessageBox("Операция успешна", "Пользователь разблокирован в поддержке", ["OK"], [Function.noop]);
+						});
+						xhr.send(null);
+					}),
+					Function.noop
+				]);
+			}
+		{else}
+			function toggleBanInSupport() {
+				uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+				uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+				uBanMsgTxt += "<br/><br/><input type='checkbox' id='uBanClsTicketsInput' /><label for='uBanClsTicketsInput'>Закрыть все обращения пользователя</label>";
 
-                    MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
-                        (function() {
-                            res = document.querySelector("#uBanMsgInput").value;
-                            cls = document.querySelector("#uBanClsTicketsInput").value;
-                            xhr = new XMLHttpRequest();
-                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&close_tickets=" + cls + "&hash=" + {rawurlencode($csrfToken)}, true);
-                            xhr.onload = (function() {
-                                if(xhr.responseText.indexOf("success") === -1)
-                                    MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
-                                else
-                                    MessageBox("Операция успешна", "Пользователь заблокирован в поддержке", ["OK"], [Function.noop]);
-                            });
-                            xhr.send(null);
-                        }),
-                        Function.noop
-                    ]);
-                }
-            {/if}
-        </script>
-    </div>
-    
+				MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+					(function() {
+						res = document.querySelector("#uBanMsgInput").value;
+						cls = document.querySelector("#uBanClsTicketsInput").value;
+						xhr = new XMLHttpRequest();
+						xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&close_tickets=" + cls + "&hash=" + {rawurlencode($csrfToken)}, true);
+						xhr.onload = (function() {
+							if(xhr.responseText.indexOf("success") === -1)
+								MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+							else
+								MessageBox("Операция успешна", "Пользователь заблокирован в поддержке", ["OK"], [Function.noop]);
+						});
+						xhr.send(null);
+					}),
+					Function.noop
+				]);
+			}
+		{/if}
+	</script>
     {/if}
     
     {else} {* isBanned() *}

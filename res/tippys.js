@@ -72,8 +72,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         safeSetupTooltip('#moreAttachTrigger', 'moreAttachTooltip');
-        safeSetupTooltip('#postOptsTrigger', 'postOptsTooltip', {
-            appendTo: 'parent'
+        safeSetupTooltip('#postOptsTrigger', 'postOptsTooltip');
+        safeSetupTooltip('#profile_more_btn', 'profile_actions_tooltip', {
+            placement: 'bottom-end'
         });
         safeSetupTooltip('#moreOptionsLink', 'moreOptionsContent', {
             trigger: 'mouseenter focus',

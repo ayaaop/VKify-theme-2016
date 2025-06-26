@@ -2,6 +2,12 @@
     margin: 0 20px;
 }
 
+.settings_list_row {
+    margin-inline: auto;
+    width: 455px;
+    display: block;
+}
+
 .settings_list_row:not(:last-child) {
     margin-bottom: 10px;
 }
@@ -82,7 +88,7 @@
 }
 
 .settings_privacy_row {
-    border: solid var(--border-color);
+    border-bottom: solid var(--border-color);
     border-width: 1px 0;
     padding: 11px 0 14px;
     margin: -1px 0 0

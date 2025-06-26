@@ -1,9 +1,7 @@
 {extends "../@layout.xml"}
 {block title}{_my_settings} - {_two_factor_authentication}{/block}
 
-{block headIncludes}
-    <link rel="stylesheet" href="/themepack/vkify16/1.0.0.0/resource/css/settings.css">
-{/block}
+
 
 {block header}
     <a href="/settings">{_my_settings}</a> » {_two_factor_authentication}

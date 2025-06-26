@@ -74,7 +74,7 @@
                     {_post_is_ad}
                 </div>
             </div>
-            <div class="post_actions" n:if="$compact == false">
+            <div class="post_actions" n:if="$compact == false && $thisUser">
                 <div class="post_actions_icon"></div>
                 <div class="tippy-menu">
                     {if $feedIgnoreButton && !$canBeDeleted}
@@ -96,11 +96,11 @@
             </div>
         </div>
     </div>
-    <div class="post_content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
+    <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
         <div class="text wall_text" id="text{$post->getPrettyId()}">
-            <div data-text="{$post->getText(false)}" class="really_text wall_post_text">{$post->getText()|noescape}</div>
+            <div data-text="{$post->getText(false)}" n:ifcontent class="really_text wall_post_text">{$post->getText()|noescape}</div>
             
-            {var $width = 510}
+            {var $width = 514}
             {if isset($GLOBALS["_nesAttGloCou"])}
                 {var $width = $width - 70 * $GLOBALS["_nesAttGloCou"]}
             {/if}
@@ -139,25 +139,27 @@
         </div>
     </div>
     <div class='post_edit'></div>
-    <div class="post_full_like_wrap clear_fix" n:if="$compact == false">
-        {if isset($thisUser)}            
-            <div class="post_full_like">
-                {if !($forceNoLike ?? false)}
-                    {var $liked = $post->hasLikeFrom($thisUser)}
-                    <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post_like _like_wrap {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
-                        <i class="heart post_like_icon _icon" id="{if $liked}liked{/if}"></i>
-                        <span class="post_like_link _link">{tr('mobile_like')}</span>
-                        <span class="likeCnt post_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
-                    </a>
-                {/if}
-                <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_share _share_wrap" href="javascript:repost('{$post->getPrettyId()}', 'post')">
-                    <i class="repost-icon post_share_icon _icon" style="opacity: 0.4;"></i>
-                    <span class="post_share_link _link">{tr('share')}</span>
-                    <span class="likeCnt post_share_count _count" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
+    <div class="post_full_like_wrap clear_fix" n:if="$thisUser && $compact == false" n:ifcontent>
+        <div class="post_full_like" n:ifcontent>
+            {if !($forceNoLike ?? false)}
+                {var $liked = $post->hasLikeFrom($thisUser)}
+                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post_like _like_wrap {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
+                    <i class="heart post_like_icon _icon" id="{if $liked}liked{/if}"></i>
+                    <span class="post_like_link _link">{tr('mobile_like')}</span>
+                    <span class="likeCnt post_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
                 </a>
-            </div>
-            <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
-        {/if}
+            {/if}
+            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_share _share_wrap" href="javascript:repost('{$post->getPrettyId()}', 'post')">
+                <i class="repost-icon post_share_icon _icon" style="opacity: 0.4;"></i>
+                <span class="post_share_link _link">{tr('share')}</span>
+                <span class="likeCnt post_share_count _count" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
+            </a>
+        </div>
+        <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
+        <div n:if="$suggestion && $canBePinned" class="suggestionControls">
+            <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
+            <input type="button" class="button button_gray" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
+        </div>
     </div>
     <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
         <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
@@ -169,9 +171,5 @@
             {var $club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
             {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
         </div>
-    </div>
-    <div n:if="$suggestion && $canBePinned" class="suggestionControls">
-        <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
-        <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
     </div>
 </div>
