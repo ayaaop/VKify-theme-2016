@@ -697,8 +697,8 @@
 						</div>
 					{else}
 						{if isset($thisUser) && $user->getId() == $thisUser->getId()}
-							<a href="/albums/create">
-								<div class="noPhotosTip"><img src="/themepack/vkify16/1.0.0.0/resource/camera.png" alt="add_photos" class="addPhotoTip_icon"><span class="addPhotoTip_text">{_add_photos}</span></div>
+							<a href="/albums/create" class="page_module_upload">
+								<div class="page_upload_label page_photos_upload"></div>{_add_photos}
 							</a>
 						{/if}
 					{/if}

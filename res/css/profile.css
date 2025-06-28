@@ -512,20 +512,6 @@
     padding-bottom: 5px;
 }
 
-.noPhotosTip {
-    text-align: center;
-    vertical-align: middle;
-    padding: 20px 15px;
-}
-
-.noPhotosTip img, .addPhotoTip_text {
-    vertical-align: middle;
-}
-
-.addPhotoTip_text {
-    padding: 5px 0 5px 12px;
-}
-
 div.avatar_block:hover .avatar_variants {
     margin-bottom: 0;
 }
@@ -834,4 +820,52 @@ div.avatar_block:hover .avatar_variants {
     display: -ms-flexbox;
     display: flex;
     white-space: nowrap;
+}
+
+.page_module_upload {
+  padding:28px 13px 28px 230px;
+  text-align:left;
+  line-height:16px;
+  white-space:nowrap;
+  display:block
+}
+.page_upload_label {
+  background:url(/themepack/vkify16/1.0.0.0/resource/icons/group_icons.png) no-repeat;
+  position:absolute;
+  display:block;
+  width:17px;
+  height:19px;
+  margin-left:-27px;
+  opacity:.75;
+  transition:opacity 100ms ease
+}
+.narrow_column .page_module_upload {
+  padding:17px 13px 17px 47px
+}
+.wide_column .page_upload_label {
+  background:url(/themepack/vkify16/1.0.0.0/resource/icons/group_icons_big.png) no-repeat;
+  width:25px;
+  height:27px;
+  margin-left:-37px;
+  margin-top:-4px
+}
+a.page_module_upload:hover,
+.page_module_upload.hover {
+  text-decoration:none
+}
+a.page_module_upload:hover .page_upload_label,
+.page_module_upload.hover .page_upload_label {
+  opacity:1
+}
+.page_upload_label.page_docs_upload {
+	background-position: 1px -92px;
+}
+.page_upload_label.page_audios_upload {
+	background-position: 0px -35px
+}
+.page_upload_label.page_photos_upload {
+	background-position: 0px 2px;
+}
+.wide_column .page_upload_label.page_photos_upload {
+	background-position: 0px -32px;
 }

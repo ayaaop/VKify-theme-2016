@@ -279,6 +279,66 @@ function setupTooltipCheckboxListeners() {
 
 setupTooltipCheckboxListeners();
 
+function switchAvatar(el, targetType) {
+    const formContext = el.closest('#write') || el.closest('form');
+    const userImg = formContext ? formContext.querySelector('.post_field_user_image') : document.querySelector('.post_field_user_image');
+    const groupImg = formContext ? formContext.querySelector('.post_field_user_image') : document.querySelector('.post_field_user_image');
+    const anonImg = formContext ? formContext.querySelector('.post_field_user_image') : document.querySelector('.post_field_user_image');
+    const avatarLink = formContext ? formContext.querySelector('.post_field_user_link') : document.querySelector('.post_field_user_link');
+
+    if (!userImg) return;
+
+    const targetImg = targetType === 'group' ? groupImg : anonImg;
+    if (!targetImg) return;
+
+    if (el.checked) {
+        // Hide other images
+        if (targetType === 'group' && anonImg) anonImg.style.opacity = '0';
+        if (targetType === 'anon' && groupImg) groupImg.style.opacity = '0';
+
+        // Animate from user to target
+        userImg.classList.remove('avatar-showing');
+        userImg.classList.add('avatar-flipping');
+
+        setTimeout(() => {
+            targetImg.classList.remove('avatar-flipping');
+            targetImg.classList.add('avatar-showing');
+
+            const targetUrl = targetType === 'group' ? targetImg.dataset.groupUrl : targetImg.dataset.anonUrl;
+            if (avatarLink && targetUrl) {
+                avatarLink.href = targetUrl;
+            }
+
+            setTimeout(() => {
+                userImg.style.opacity = '0';
+                userImg.classList.remove('avatar-flipping');
+                targetImg.style.opacity = '1';
+                targetImg.classList.remove('avatar-showing');
+            }, 150);
+        }, 150);
+    } else {
+        // Animate from target back to user
+        targetImg.classList.remove('avatar-showing');
+        targetImg.classList.add('avatar-flipping');
+
+        setTimeout(() => {
+            userImg.classList.remove('avatar-flipping');
+            userImg.classList.add('avatar-showing');
+
+            if (avatarLink && userImg.dataset.userUrl) {
+                avatarLink.href = userImg.dataset.userUrl;
+            }
+
+            setTimeout(() => {
+                targetImg.style.opacity = '0';
+                targetImg.classList.remove('avatar-flipping');
+                userImg.style.opacity = '1';
+                userImg.classList.remove('avatar-showing');
+            }, 150);
+        }, 150);
+    }
+}
+
 window.handleWallAsGroupClick = function(el) {
     window.wallCheckboxStates.as_group = el.checked;
 
@@ -301,54 +361,7 @@ window.handleWallAsGroupClick = function(el) {
         }
     }
 
-    // Look for avatar elements in the form context first, then globally
-    const formContext = el.closest('#write') || form;
-    const userImg = formContext ? formContext.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
-    const groupImg = formContext ? formContext.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
-    const anonImg = formContext ? formContext.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
-    const avatarLink = formContext ? formContext.querySelector('._post_field_author') : document.querySelector('._post_field_author');
-
-    if (userImg && groupImg) {
-        if (el.checked) {
-            if (anonImg) anonImg.style.opacity = '0';
-
-            userImg.classList.remove('avatar-showing');
-            userImg.classList.add('avatar-flipping');
-
-            setTimeout(() => {
-                groupImg.classList.remove('avatar-flipping');
-                groupImg.classList.add('avatar-showing');
-                if (avatarLink && groupImg.dataset.groupUrl) {
-                    avatarLink.href = groupImg.dataset.groupUrl;
-                }
-
-                setTimeout(() => {
-                    userImg.style.opacity = '0';
-                    userImg.classList.remove('avatar-flipping');
-                    groupImg.style.opacity = '1';
-                    groupImg.classList.remove('avatar-showing');
-                }, 150);
-            }, 150);
-        } else {
-            groupImg.classList.remove('avatar-showing');
-            groupImg.classList.add('avatar-flipping');
-
-            setTimeout(() => {
-                userImg.classList.remove('avatar-flipping');
-                userImg.classList.add('avatar-showing');
-                if (avatarLink && userImg.dataset.userUrl) {
-                    avatarLink.href = userImg.dataset.userUrl;
-                }
-
-                setTimeout(() => {
-                    groupImg.style.opacity = '0';
-                    groupImg.classList.remove('avatar-flipping');
-                    userImg.style.opacity = '1';
-                    userImg.classList.remove('avatar-showing');
-                }, 150);
-            }, 150);
-        }
-    }
+    switchAvatar(el, 'group');
 };
 
 window.handleWallAnonClick = function(el) {
@@ -369,54 +382,7 @@ window.handleWallAnonClick = function(el) {
         }
     }
 
-    // Look for avatar elements in the form context first, then globally
-    const formContext = el.closest('#write') || form;
-    const userImg = formContext ? formContext.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
-    const groupImg = formContext ? formContext.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
-    const anonImg = formContext ? formContext.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
-    const avatarLink = formContext ? formContext.querySelector('._post_field_author') : document.querySelector('._post_field_author');
-
-    if (userImg && anonImg) {
-        if (el.checked) {
-            if (groupImg) groupImg.style.opacity = '0';
-
-            userImg.classList.remove('avatar-showing');
-            userImg.classList.add('avatar-flipping');
-
-            setTimeout(() => {
-                anonImg.classList.remove('avatar-flipping');
-                anonImg.classList.add('avatar-showing');
-                if (avatarLink && anonImg.dataset.anonUrl) {
-                    avatarLink.href = anonImg.dataset.anonUrl;
-                }
-
-                setTimeout(() => {
-                    userImg.style.opacity = '0';
-                    userImg.classList.remove('avatar-flipping');
-                    anonImg.style.opacity = '1';
-                    anonImg.classList.remove('avatar-showing');
-                }, 150);
-            }, 150);
-        } else {
-            anonImg.classList.remove('avatar-showing');
-            anonImg.classList.add('avatar-flipping');
-
-            setTimeout(() => {
-                userImg.classList.remove('avatar-flipping');
-                userImg.classList.add('avatar-showing');
-                if (avatarLink && userImg.dataset.userUrl) {
-                    avatarLink.href = userImg.dataset.userUrl;
-                }
-
-                setTimeout(() => {
-                    anonImg.style.opacity = '0';
-                    anonImg.classList.remove('avatar-flipping');
-                    userImg.style.opacity = '1';
-                    userImg.classList.remove('avatar-showing');
-                }, 150);
-            }, 150);
-        }
-    }
+    switchAvatar(el, 'anon');
 };
 
 u(document).on("submit", "#write form", function(e) {

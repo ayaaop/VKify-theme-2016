@@ -68,122 +68,142 @@
 						</div>
 					</div>
 				</div>
+				{var $followersCount = $club->getFollowersCount()}
+				<div n:if="$thisUser && $followersCount > 0" class="page_block module people_module">
 
-				<div n:if="$thisUser && $club->getFollowersCount() > 0" class="page_block module people_module">
-					{var $followersCount = $club->getFollowersCount()}
-					<a href="/club{$club->getId()}/followers" class="module_header">
-						<h3 class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_participants}
-							</span>
-							<span class="header_count fl_l">
-								{$followersCount}
-							</span>
-						</h3>
-					</a>
-					<div class="module_body">
-						<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
-							<div class="people_cell" n:foreach="$followerRow as $follower">
-								<a class="people_cell_ava" href="{$follower->getURL()}">
-									<div class="people_cell_img">
-										<img src="{$follower->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$follower->getFirstName()}">
-									</div>
-								</a>
-								<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="page_block">
-					<div n:if="$albumsCount > 0 && $club->isDisplayTopicsAboveWallEnabled()" class="module">
-						<a href="/albums{$club->getId() * -1}" class="module_header">
+						<a href="/club{$club->getId()}/followers" class="module_header">
 							<h3 class="header_top clear_fix">
 								<span class="header_label fl_l">
-									{_albums}
+									{_participants}
 								</span>
 								<span class="header_count fl_l">
-									{$albumsCount}
+									{$followersCount}
 								</span>
 							</h3>
 						</a>
-						<div class="module_body clear_fix">
-							<div class="clear_fix clear page_album_row" n:foreach="array_slice(iterator_to_array($albums), 0, 3) as $album">
-								<a href="/album{$album->getPrettyId()}" class="page_album_link {if is_null($album->getCoverPhoto())}page_album_nocover{/if}">
-									{var $cover = $album->getCoverPhoto()}
-									<div class="page_album_thumb_wrap">
-										<img n:if="!is_null($cover)"
-											src="{$cover->getURLBySizeId('normal')}"
-											class="page_album_thumb" loading="lazy" />
-									</div>
-									<div class="page_album_title">
-										<div class="page_album_size">{$album->getPhotosCount()}</div>
-										<div class="page_album_title_text">{$album->getName()}</div>
-									</div>
-								</a>
+						<div class="module_body">
+							<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
+								<div class="people_cell" n:foreach="$followerRow as $follower">
+									<a class="people_cell_ava" href="{$follower->getURL()}">
+										<div class="people_cell_img">
+											<img src="{$follower->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$follower->getFirstName()}">
+										</div>
+									</a>
+									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
+								</div>
 							</div>
 						</div>
+				</div>
+				<div class="page_block">
+					<div n:if="$club->isDisplayTopicsAboveWallEnabled()" class="module">
+						{if $albumsCount > 0}
+							<a href="/albums{$club->getId() * -1}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_albums}
+									</span>
+									<span class="header_count fl_l">
+										{$albumsCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body clear_fix">
+								<div class="clear_fix clear page_album_row" n:foreach="array_slice(iterator_to_array($albums), 0, 3) as $album">
+									<a href="/album{$album->getPrettyId()}" class="page_album_link {if is_null($album->getCoverPhoto())}page_album_nocover{/if}">
+										{var $cover = $album->getCoverPhoto()}
+										<div class="page_album_thumb_wrap">
+											<img n:if="!is_null($cover)"
+												src="{$cover->getURLBySizeId('normal')}"
+												class="page_album_thumb" loading="lazy" />
+										</div>
+										<div class="page_album_title">
+											<div class="page_album_size">{$album->getPhotosCount()}</div>
+											<div class="page_album_title_text">{$album->getName()}</div>
+										</div>
+									</a>
+								</div>
+							</div>
+						{else}
+							<a href="/albums{$club->getId() * -1}" class="page_module_upload">
+								<div class="page_upload_label page_photos_upload"></div>{_upload_photo}</a>
+						{/if}
 					</div>
 
 					<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics()) && !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
-						<a href="/board{$club->getId()}" class="module_header">
-							<h3 class="header_top clear_fix">
-								<span class="header_label fl_l">
-									{_discussions}
-								</span>
-								<span class="header_count fl_l">
-									{$topicsCount}
-								</span>
-							</h3>
-						</a>
-						<div class="module_body">
-							<div class="topic_row" n:foreach="$topics as $topic">
-								<div class="topic_info_wrap">
-									<a href="/topic{$topic->getPrettyId()}">
-										<div class="topic_icon"></div>
-										<div class="topic_title">{$topic->getTitle()}</div>
-									</a>
-									<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
+						{if $topicsCount > 0}
+							<a href="/board{$club->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_discussions}
+									</span>
+									<span class="header_count fl_l">
+										{$topicsCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body">
+								<div class="topic_row" n:foreach="$topics as $topic">
+									<div class="topic_info_wrap">
+										<a href="/topic{$topic->getPrettyId()}">
+											<div class="topic_icon"></div>
+											<div class="topic_title">{$topic->getTitle()}</div>
+										</a>
+										<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
+									</div>
 								</div>
 							</div>
-						</div>
+						{else}
+							<a href="/board{$club->getId()}" class="page_module_upload">
+								<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
+						{/if}
 					</div>
 
 					<div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))" class="module">
-						<a href="/docs{$club->getRealId()}" class="module_header">
-							<h3 class="header_top clear_fix">
-								<span class="header_label fl_l">
-									{_documents}
-								</span>
-								<span class="header_count fl_l">
-									{$docsCount}
-								</span>
-							</h3>
-						</a>
-						<div class="module_body">
-							{foreach $docs as $doc}
-								{include "../Documents/components/doc.xml", doc => $doc, hideButtons => true, noTags => true}
-							{/foreach}
-						</div>
+						{if $docsCount > 0}
+							<a href="/docs{$club->getRealId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_documents}
+									</span>
+									<span class="header_count fl_l">
+										{$docsCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body">
+								{foreach $docs as $doc}
+									{include "../Documents/components/doc.xml", doc => $doc, hideButtons => true, noTags => true}
+								{/foreach}
+							</div>
+						{else}
+							<a href="/docs{$club->getRealId()}" class="page_module_upload">
+								<div class="page_upload_label page_docs_upload"></div>{_document_uploading_in_general}</a>
+						{/if}
 					</div>
 
 					<div n:if="$thisUser" class="module">
-						<a href="/audios-{$club->getId()}" class="module_header">
-							<h3 class="header_top clear_fix">
-								<span class="header_label fl_l">
-									{_audios}
-								</span>
-								<span class="header_count fl_l">
-									{$audiosCount}
-								</span>
-							</h3>
-						</a>
-						<div class="module_body">
-							<div class="content_list long">
-								<div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
-									{include "../Audio/player.xml", audio => $audio}
+						{if $audiosCount > 0}
+							<a href="/audios-{$club->getId()}" class="module_header">
+								<h3 class="header_top clear_fix">
+									<span class="header_label fl_l">
+										{_audios}
+									</span>
+									<span class="header_count fl_l">
+										{$audiosCount}
+									</span>
+								</h3>
+							</a>
+							<div class="module_body">
+								<div class="content_list long">
+									<div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
+										{include "../Audio/player.xml", audio => $audio}
+									</div>
 								</div>
 							</div>
-						</div>
+						{else}
+							<a href="/audios-{$club->getId()}" class="page_module_upload">
+								<div class="page_upload_label page_audios_upload"></div>{_add_audio_to_club}</a>
+						{/if}
 					</div>
 				</div>
 
@@ -284,22 +304,27 @@
 				</div>
 				<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))) && $club->isDisplayTopicsAboveWallEnabled()"
 				class="page_block module topics_module">
-					<a href="/board{$club->getId()}" class="module_header">
-						<div class="header_top clear_fix">
-							<span class="header_label fl_l">
-								{_discussions}
-							</span>
-							<span class="header_count fl_l">
-								{$topicsCount}
-							</span>
-						</div>
-					</a>
-					<div class="module_body">
-						<a href="/topic{$topic->getPrettyId()}" n:foreach="$topics as $topic" class="topic_row">
-							<div class="topic_title">{$topic->getTitle()}</div>
-							<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
+					{if $topicsCount > 0}
+						<a href="/board{$club->getId()}" class="module_header">
+							<div class="header_top clear_fix">
+								<span class="header_label fl_l">
+									{_discussions}
+								</span>
+								<span class="header_count fl_l">
+									{$topicsCount}
+								</span>
+							</div>
 						</a>
-					</div>
+						<div class="module_body">
+							<a href="/topic{$topic->getPrettyId()}" n:foreach="$topics as $topic" class="topic_row">
+								<div class="topic_title">{$topic->getTitle()}</div>
+								<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
+							</a>
+						</div>
+					{else}
+						<a href="/board{$club->getId()}" class="page_module_upload">
+							<div class="page_upload_label page_topics_upload"></div>Start a discussion</a>
+					{/if}
 				</div>
 				
 				<div n:if="!is_null($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist hidden">
@@ -314,9 +339,6 @@
 			</div>
 		</div>
 	</div>
-
-	{* я эту всю хуйню ебал блять как же я сука заебался *}
-
 	{* детка, ты сделала костыль на 5 с плюсом ! *}
 	{* ты меня зажгла.. появилось оч сильное и реальное желание сделать ещё парочку.. нет.. именно намутить хорошенько. *}
 	{* чтобы папа Вова и дальше был доволен, жду в ближайшее время всех описанных и перечисленных тобою костылей. ну кроме последнего сценария..)) хотя... ;) *}

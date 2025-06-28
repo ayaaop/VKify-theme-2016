@@ -204,6 +204,7 @@ ol li, ul li {
 
 .page_body {
     font-size: 13px;
+    line-height: 150%;
     margin-top: 58px;
     margin-right: 0;
     padding: 0;
@@ -2201,7 +2202,7 @@ a.ui_box_header_link {
     background: none;
     border: none;
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: 10px;
     margin-right: 10px;
     opacity: 0.75;
 }
@@ -2687,6 +2688,10 @@ select:focus {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+.post.reply .page_verified {
+	display: inline-block;
+	transform: translateY(2px);
 }
 .reply_image {
     display: block;

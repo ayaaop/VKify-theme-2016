@@ -8,25 +8,22 @@
 <div id="write" class='model_content_textarea'>
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
     {if $thisUser ?? NULL}
-        <a class="post_field_user_link _post_field_author" href="{$thisUser->getURL()}">
-            <!-- User avatar image - visible by default -->
-            <img class="post_field_user_image _post_field_user_image"
+        <a class="post_field_user_link" href="{$thisUser->getURL()}">
+            <img class="post_field_user_image"
                     src="{$thisUser->getAvatarUrl('miniscule')}"
                     alt="{$thisUser->getCanonicalName()}"
                     width="28" height="28"
                     data-user-url="{$thisUser->getURL()}" />
-            <!-- Group avatar image - hidden by default -->
             {if !is_null($club ?? NULL)}
-            <img class="post_field_user_image _post_field_group_image"
+            <img class="post_field_user_image"
                     src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/1.0.0.0/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
                     alt="{$club->getCanonicalName()}"
                     width="28" height="28"
                     style="opacity: 0;"
                     data-group-url="{$club->getURL()}" />
             {/if}
-            <!-- Anonymous avatar image - hidden by default -->
             {if $anonEnabled && $anonUser}
-            <img class="post_field_user_image _post_field_anon_image"
+            <img class="post_field_user_image"
                     src="{$anonUser->getAvatarUrl('miniscule')}"
                     alt="{$anonUser->getCanonicalName()}"
                     width="28" height="28"

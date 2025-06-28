@@ -127,8 +127,15 @@
                     'url' => "/audios" . $ownerId,
                     'title' => $ownerId > 0 ? 'music_user' : 'music_club',
                     'active' => $mode === 'list',
-                    'id' => $mode === 'list' ? 'used' : 'ki'
+                    'id' => $mode === 'list' ? 'used' : 'ki',
+                    'extraItem' => [
+                        'url' => "/player/upload?gid=" . abs($ownerId),
+                        'class' => "addAudioSmall",
+                        'content' => "<div class='addIcon'></div>",
+                        'condition' => isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser)
+                    ]
                 ]}
+                
 
                 {if isset($thisUser) && isset($ownerId) && !$isMy}
                     {var $tabMenuItems[] = [

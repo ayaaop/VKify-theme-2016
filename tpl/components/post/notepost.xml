@@ -1,7 +1,6 @@
 {var $author = $note->getOwner()}
 {var $comments = $note->getLastComments(3)}
 {var $commentsCount = $note->getCommentsCount()}
-{var $compact = isset($compact) ? true : false}
 
 {var $commentTextAreaId = $note === NULL ? rand(1,300) : $note->getId()}
 <div class="scroll_node page_block">
@@ -43,9 +42,9 @@
         </div>
         <div class='post_edit'></div>
         <div class="post_full_like_wrap" n:if="$thisUser" n:ifcontent>
-            <a n:if="$commentsCount == 0 && $commentSection == true" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
+            <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
         </div>
-        <div n:if="$commentSection == true && $compact == false" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
+        <div n:if="!($forceNoCommentsLink ?? false)" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
             <a n:if="$commentsCount > 3" href="/note{$note->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
             <div n:ifcontent class="comments">
                 {foreach $comments as $comment}

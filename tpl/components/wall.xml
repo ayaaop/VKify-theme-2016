@@ -29,8 +29,8 @@
                 {/foreach}
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}
-				<div class="page_block module_body" style="border-top: 0px;">
-					{_no_posts_abstract}
+				<div class="page_block page_padding">
+					{include "../components/content_error.xml", description => tr("no_posts_abstract")}
 				</div>
             {/if}
         </div>

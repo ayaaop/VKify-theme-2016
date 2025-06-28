@@ -4,40 +4,39 @@
     {_upload_audio}
 {/block}
 
-{block header}
+{block content}
     {if !$playlist}
         {if !is_null($group)}
-            <a href="{$group->getURL()}">{$group->getCanonicalName()}</a>
-            »
-            <a href="/audios-{$group->getId()}">{_audios}</a>
+            {include "../components/page_crumb_header.xml", crumbs: [
+                ['href' => $group->getURL(), 'title' => $group->getCanonicalName()],
+                ['href' => "/audios-{$group->getId()}", 'title' => tr("audios")],
+                ['title' => tr("upload_audio")]
+            ]}
         {else}
-            <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
-            »
-            <a href="/audios{$thisUser->getId()}">{_audios}</a>
+            {include "../components/page_crumb_header.xml", crumbs: [
+                ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+                ['href' => "/audios{$thisUser->getId()}", 'title' => tr("audios")],
+                ['title' => tr("upload_audio")]
+            ]}
         {/if}
     {else}
-        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
-        »
-        <a href="/playlists{$owner->getRealId()}">{_playlists}</a>
-        »
-        <a href="/playlist{$playlist->getPrettyId()}">{_playlist}</a>
+        {include "../components/page_crumb_header.xml", crumbs: [
+            ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+            ['href' => "/playlists{$owner->getRealId()}", 'title' => tr("playlists")],
+            ['href' => "/playlist{$playlist->getPrettyId()}", 'title' => tr("playlist")],
+            ['title' => tr("upload_audio")]
+        ]}
     {/if}
-
-    »
-    {_upload_audio}
-{/block}
-
-{block content}
-    <div class="container_gray" style="border: 0;margin-top: -10px;">
-        <div id="upload_container">
+    <div class="page_block page_padding">
+        <div id="upload_container" style="width: 455px; margin-inline: auto;">
             <div id="firstStep">
-                <h4>{_select_audio}</h4><br/>
+                <h2>{_select_audio}</h2>
                 <b><a href="javascript:void(0)">{_limits}</a></b>
                 <ul>
                     <li>{tr("audio_requirements", 1, 30, 25)}</li>
                     <li>{tr("audio_requirements_2")}</li>
                 </ul>
-                <div id="audio_upload">
+                <div id="audio_upload" style="width: 100%">
                     <input id="audio_input" multiple type="file" name="blob" accept="audio/*" style="display:none" />
                     <input value="{_upload_button}" class="button" type="button" onclick="document.querySelector('#audio_input').click()">
                 </div><br/>

@@ -42,7 +42,7 @@
                     ['title' => $note->getName()]
                 ]}
 
-                {include "../components/post/notepost.xml", note => $note, commentSection => false}
+                {include "../components/post/notepost.xml", note => $note, forceNoCommentsLink => true}
                 {include "../components/comments.xml",
                     comments => $comments,
                     count => $cCount,

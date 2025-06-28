@@ -16,6 +16,7 @@
                         - url: URL for the extra item
                         - class: CSS class for the extra item
                         - content: HTML content for the extra item
+                        - condition: (optional) Condition to show this item
                         - onclick: (optional) onclick handler
   @param id           (optional) ID for the menu element
   @param additionalCssClass (optional) Additional CSS classes
@@ -27,6 +28,7 @@
                         - url: URL for the extra item
                         - class: CSS class for the extra item
                         - content: HTML content for the extra item
+                        - condition: (optional) Condition to show this item
                         - onclick: (optional) onclick handler
                       Note: If not provided, will be auto-generated based on $wallOwner. Will be auto-generated based on $user or $club if $ownblock is true
 *}
@@ -52,12 +54,12 @@
         <a class="ui_ownblock clear_fix" href="{$ownblockData['url']}">
             <img class="ui_ownblock_img" src="{$ownblockData['img']}" n:if="isset($ownblockData['img'])">
             <div class="ui_ownblock_info">
-                {if isset($ownblockData['extraItem'])}
-                    <a href="{$ownblockData['extraItem']['url']}" 
-                        class="ui_rmenu_extra_item {$ownblockData['extraItem']['class']}"
-                        n:attr="onclick => isset($ownblockData['extraItem']['onclick']) ? $ownblockData['extraItem']['onclick'] : null">
+                {if isset($ownblockData['extraItem']) && (!isset($ownblockData['extraItem']['condition']) || $ownblockData['extraItem']['condition'])}
+                    <span class="ui_rmenu_extra_item {$ownblockData['extraItem']['class']}"
+                          data-href="{$ownblockData['extraItem']['url']}"
+                          n:attr="onclick => !isset($ownblockData['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $ownblockData['extraItem']['onclick']">
                         {$ownblockData['extraItem']['content']|noescape}
-                    </a>
+                    </span>
                 {/if}
                 <div class="ui_ownblock_label">{$ownblockData['name']}</div>
                 <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
@@ -75,24 +77,24 @@
                         {if $item['isRich']}
                             <img class="ui_ownblock_img" src="{$item['avatar']}" />
                             <div class="ui_ownblock_info">
-                                {if isset($item['extraItem'])}
-                                    <a href="{$item['extraItem']['url']}" 
-                                       class="ui_rmenu_extra_item {$item['extraItem']['class']}"
-                                       n:attr="onclick => isset($item['extraItem']['onclick']) ? $item['extraItem']['onclick'] : null">
+                                {if isset($item['extraItem']) && (!isset($item['extraItem']['condition']) || $item['extraItem']['condition'])}
+                                    <span class="ui_rmenu_extra_item {$item['extraItem']['class']}"
+                                          data-href="{$item['extraItem']['url']}"
+                                          n:attr="onclick => !isset($item['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $item['extraItem']['onclick']">
                                         {$item['extraItem']['content']|noescape}
-                                    </a>
+                                    </span>
                                 {/if}
                                 <div class="ui_ownblock_label">{if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}</div>
                                 <div class="ui_ownblock_hint">{$item['additionalInfo']}</div>
                             </div>
                         {else}
                             <span>
-                                {if isset($item['extraItem'])}
-                                    <button href="{$item['extraItem']['url']}" 
-                                       class="ui_rmenu_extra_item {$item['extraItem']['class']}"
-                                       n:attr="onclick => isset($item['extraItem']['onclick']) ? $item['extraItem']['onclick'] : null">
+                                {if isset($item['extraItem']) && (!isset($item['extraItem']['condition']) || $item['extraItem']['condition'])}
+                                    <span class="ui_rmenu_extra_item {$item['extraItem']['class']}"
+                                          data-href="{$item['extraItem']['url']}"
+                                          n:attr="onclick => !isset($item['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $item['extraItem']['onclick']">
                                         {$item['extraItem']['content']|noescape}
-                                    </button>
+                                    </span>
                                 {/if}
                                 {if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}
                             </span>

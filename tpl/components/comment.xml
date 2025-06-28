@@ -20,7 +20,7 @@
                 <a class="author" href="{$author->getURL()}">
                     {$author->getCanonicalName()}
                 </a>
-                <div class="page_verified" n:if="$author->isVerified()"></div>
+                <a class="page_verified" n:if="$author->isVerified()" href="/verify"></a>
             </div>
             <div class="post_content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
@@ -67,9 +67,6 @@
                     </a>
                 </div>
             </div>
-            <span n:if="$compact ?? false" class="compact_footer">
-                <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
-            </span>
         </div>
     </div>
 </div>
