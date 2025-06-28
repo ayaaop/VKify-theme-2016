@@ -21,7 +21,7 @@
 							</div>
 						{/if}
 						<a href="{$avatarLink|nocheck}">
-							<img src="{(is_null($avatarPhoto) ? '/themepack/vkify16/1.0.0.0/resource/community_200.png' : $club->getAvatarUrl('normal'))}"
+							<img src="{(is_null($avatarPhoto) ? '/themepack/vkify16/3.0.0.0/resource/community_200.png' : $club->getAvatarUrl('normal'))}"
 								id="bigAvatar"
 								style="width: 100%; image-rendering: -webkit-optimize-contrast;"
 								{if ($club->getAvatarPhoto())}
