@@ -55,27 +55,17 @@
         <div class="narrow_column_wrap">
             <div class="narrow_column">
                 {include "../components/ui_rmenu.xml", items => $tabs}
-                <div class="page_block page_padding" style="padding-block: 15px">
+                <div class="page_block module module_body" style="padding-block: 15px">
                     {include searchOptions}
                 </div>
             </div>
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                {include "../components/page_block_header.xml", title => "search_for_$section"}
-                {include "../components/search_bar.xml",
-                    form_id => 'real_search_form',
-                    form_class => 'search_page_form',
-                    placeholder => tr('header_search'),
-                    action => '/search',
-                    input_name => 'q',
-                    input_value => $_REQUEST['q'],
-                    input_title => tr('header_search'),
-                    input_maxlength => '59',
-                    autocomplete => 'off'
-                }
                 {if $section == 'audios' && $count > 1}
-                    {include "../Audio/bigplayer.xml", tidy => true}
+                    <div class="page_block">
+                        {include "../Audio/bigplayer.xml", tidy => true}
+                    </div>
                     <script>
                         window.__current_page_audio_context = {
                             'name': 'classic_search_context',
@@ -90,11 +80,23 @@
                     </script>
                 {/if}
 
-                <div class='page_block page_search'>
-                    <div n:class='list_view, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
+                {include "../components/page_block_header.xml", title => "search_for_$section"}
+                {include "../components/search_bar.xml",
+                    form_id => 'real_search_form',
+                    form_class => 'search_page_form',
+                    placeholder => tr('header_search'),
+                    action => '/search',
+                    input_name => 'q',
+                    input_value => $_REQUEST['q'],
+                    input_title => tr('header_search'),
+                    input_maxlength => '59',
+                    autocomplete => 'off'
+                }
+                <div n:class='$section !== "posts" ? page_block, page_search'>
+                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
-                                <div class='scroll_node people_row' n:foreach="$data as $dat">
+                                <div class='scroll_node search_row' n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
                                     </a>
@@ -143,7 +145,7 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'groups'}
-                                <div class='scroll_node people_row' n:foreach="$data as $dat">
+                                <div class='scroll_node search_row' n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
                                             ? '/themepack/vkify16/1.0.0.0/resource/community_200.png' 
@@ -175,67 +177,61 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'apps'}
-                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td valign="top">
-                                                    <a href="/app{$dat->getId()}">
-                                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
-                                                    </a>
-                                                </td>
-                                                <td valign="top" style="width: 100%">
-                                                    <a href="/app{$dat->getId()}">
-                                                        <b>
-                                                            <text style="overflow: hidden;">
-                                                                &nbsp;{$dat->getName()}
-                                                            </text>
-                                                        </b>
-                                                    </a><br/>
-                                                    <span style='margin-left: 2px;' data-highlight='_appDesc'>
-                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class='scroll_node search_row' n:foreach="$data as $dat">
+                                    <a href="/app{$dat->getId()}" class="img">
+                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="/app{$dat->getId()}">
+                                                {$dat->getName()}
+                                            </a>
+                                        </div>
+                                        <div class="labeled">
+                                            {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
                                     }
 
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'posts'}
-                                <div class='scroll_node search_content' n:foreach="$data as $dat">
+                                {foreach $data as $dat}
                                     {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
-                                        <div class="closedWallPost">{_closed_group_post}.</div>
+                                        <div class="page_block page_padding">
+                                            <div class="closedWallPost">{_closed_group_post}.</div>
+                                        </div>
                                     {else}
                                         {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
                                     {/if}
-                                </div>
+                                {/foreach}
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
+                                        highlightText({$query}, '.page_search', [".post:not(.comment) .text .really_text"])
                                     }
 
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'videos'}
-                                <div class='scroll_node search_content' n:foreach="$data as $dat">
-                                    {include "../components/video.xml", video => $dat}
-                                </div>    
+                                <div class="videos" style="margin-inline: -2px">
+                                    <span class='scroll_node search_content' n:foreach="$data as $dat">
+                                        {include "../components/video.xml", video => $dat}
+                                    </span>
 
-                                <script n:if='$count > 0 && !empty($query)'>
-                                    function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', [".video_name", ".video_description"])
-                                    }
+                                    <script n:if='$count > 0 && !empty($query)'>
+                                        function __scrollHook(page) {
+                                            highlightText({$query}, '.page_search', [".video_item_title"])
+                                        }
 
-                                    __scrollHook()
-                                </script>
+                                        __scrollHook()
+                                    </script>
+                                </div>
                             {elseif $section === 'audios'}
                                 <div class='scroll_node search_content' n:foreach="$data as $dat">
                                     {include "../Audio/player.xml", audio => $dat}
@@ -243,7 +239,7 @@
                                 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                        highlightText({$query}, '.page_search', [".mediaInfo .performer a", ".mediaInfo .title"])
                                     }
 
                                     __scrollHook()
@@ -255,7 +251,7 @@
 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
+                                        highlightText({$query}, '.page_search', [".playlistName", ".playlistDesc"])
                                     }
 
                                     __scrollHook()
@@ -267,7 +263,7 @@
 
                                 <script n:if="$count > 0 && !empty($query)">
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_wrap_content_main', [".doc_content .noOverflow"])
+                                        highlightText({$query}, '.page_search', [".doc_content .noOverflow"])
                                     }
 
                                     __scrollHook()

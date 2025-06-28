@@ -1,31 +1,24 @@
 {extends "../@layout.xml"}
 {block title}{_new_topic}{/block}
 
-{block header}
-    <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
-    » 
-    <a href="/board{$club->getId()}">{_discussions}</a>
-    » 
-    {_new_topic}
-{/block}
-
 {block content}
-    <form method="POST" enctype="multipart/form-data">
-        <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
-            <tbody>
-                <tr>
-                    <td width="120" valign="top">
-                        <span class="nobold">{_title}</span>
-                    </td>
-                    <td>
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
+        ['href' => "/board{$club->getId()}", 'title' => tr("discussions")],
+        ['title' => tr("new_topic")]
+    ]}
+    <div class="page_block">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="settings_panel group_settings settings_padding" style="width: 455px;margin-inline: auto;">
+                <div class="settings_list_row">
+                    <div class="settings_label">{_title}</div>
+                    <div class="settings_labeled_text">
                         <input type="text" name="title" style="width: 100%;" />
-                    </td>
-                </tr>
-                <tr>
-                    <td width="120" valign="top">
-                        <span class="nobold">{_text}</span>
-                    </td>
-                    <td>
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_text}</div>
+                    <div class="settings_labeled_text">
                         <textarea id="wall-post-input1" name="text" style="width: 100%; resize: none;"></textarea>
                         <div n:if="$club->canBeModifiedBy($thisUser)" class="post-opts">
                             <label>
@@ -38,44 +31,37 @@
                             </div>
                             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display: none;" />
                             <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display: none;" />
-                            <br/>
-                            <div style="float: right; display: flex; flex-direction: column;">
-                                <a href="javascript:void(u('#post-buttons1 #wallAttachmentMenu').toggleClass('hidden'));">
+                            <div>
+                                <a id="moreAttachTrigger">
                                     {_attach}
                                 </a>
-                                
-                                <div id="wallAttachmentMenu" class="hidden">
-                                    <a href="javascript:void(document.querySelector('#post-buttons1 input[name=_pic_attachment]').click());">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+
+                                <div class="tippy-menu" id="moreAttachTooltip">
+                                    <a class="attach_photo" href="javascript:void(document.querySelector('#post-buttons1 input[name=_pic_attachment]').click());">
+                                        <div class="post-attach-menu__icon"></div>
                                         {_attach_photo}
                                     </a>
-                                    <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons1 input[name=_vid_attachment]').click());">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                    <a class="attach_video" n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons1 input[name=_vid_attachment]').click());">
+                                        <div class="post-attach-menu__icon"></div>
                                         {_attach_video}
                                     </a>
-                                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti(1);">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                                    <a class="attach_graffiti" n:if="$graffiti ?? false" href="javascript:initGraffiti(1);">
+                                        <div class="post-attach-menu__icon"></div>
                                         {_draw_graffiti}
                                     </a>
                                 </div>
                             </div>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        
-                    </td>
-                    <td>
-                        <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_create_topic}" class="button" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <input type="hidden" name="hash" value="{$csrfToken}" />
-    </form>
+                    </div>
+                </div>
+                <div class="settings_save_footer">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" value="{_create_topic}" class="button" />
+                </div>
+            </div>
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+        </form>
+    </div>
 
     <script>
         $(document).ready(() => {

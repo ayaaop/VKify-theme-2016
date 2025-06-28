@@ -1,131 +1,73 @@
-{extends "../@listView.xml"}
-{var $iterator = iterator_to_array($notes)}
+{extends "../@layout.xml"}
+{var $iterator = $notes}
+{var $count = $paginatorConf->count}
+{var $page = $paginatorConf->page}
 
-{block title}{_notes}{/block}
+{block title}{_notes} {$owner->getCanonicalName()}{/block}
 
-{block header}
-        {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
-            {_my_notes}
-        {else}
-            <a href="{$owner->getURL()}">
-            {$owner->getCanonicalName()}</a>
-            »
-            {_notes}
-        {/if}
-{/block}
-
-{block size}
-    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
-        <div class="summary">
-                {tr("notes_list", $count)}
-                <span n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()">
-                    &nbsp;|&nbsp;
-                    <a href="/notes/create" rel='nofollow'>{_create_note}</a>
-                </span>
-        </div>
-    </div>
-{/block}
-
-{block actions}
-    
-{/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block specpage}
-    <style>
-        #userContent img {
-            max-width: 245pt;
-            max-height: 200pt;
-        }
-
-        #userContent blockquote {
-            background-color: #f3f3f3;
-            border-bottom: 5px solid #969696;
-            padding: 1;
-        }
-
-        #userContent cite {
-            margin-top: 1em;
-            display: block;
-        }
-
-        #userContent cite::before {
-            content: "— ";
-        }
-
-        #userContent .underline {
-            text-decoration: underline;
-        }
-    </style>
-
-    <div class="container_gray scroll_container" style="background: white; border-top: none;">
-
-        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-        {if sizeof($data) > 0}
-
-        <div class='scroll_node' n:foreach="$data as $dat">
-            <div class="profile_thumb">
-                <a href="{$owner->getURL()}">
-                <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
-                </a>
+{block content}
+{var $menuItems = [
+    [
+        'url' => "/wall" . $owner->getId() . "?type=owners",
+        'title' => tr("users_posts", ovk_proc_strtr($owner->getFirstName(), 20)),
+        'translate' => false,
+        'active' => false
+    ],
+    [
+        'url' => "/wall" . $owner->getId(),
+        'title' => 'all_posts',
+        'active' => false
+    ],
+    [
+        'url' => "/notes" . $owner->getId(),
+        'title' => 'notes',
+        'active' => true
+    ]
+]}
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $menuItems}
             </div>
-            <article class="note_body" id="userContent" style="width: 540px; display: inline-block; margin-bottom: 35px;">
-                <div class="note_header">
-                    <div class="note_title">
-                        <div class="note_title">
-                            <a href="/note{$dat->getPrettyId()}">{$dat->getName()}</a>
-                        </div>
-                    </div>
-                    <div class="byline">
-                        <span><a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a></span> {$dat->getPublicationTime()}
-                        <span n:if="$dat->getEditTime() > $dat->getPublicationTime()">({_edited} {$dat->getEditTime()})</span>
-                    </div>
-                </div>
-                <div style="margin-left: 6px;">
-                    {$dat->getText(750)|noescape}
-                </div>
-                <div class="note_footer" style="margin: 10px 0 0;">
-                    <div class="comments_count">
-                        <a href="/note{$dat->getPrettyId()}">
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                {include "../components/page_crumb_header.xml", crumbs: [
+                    ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+                    ['title' => tr("notes"), 'count' => $count]
+                ], extra => '<a class="button" href="/notes/create">'.tr("create_note").'</a>'
+                }
+                <div class="notes_list_layout">
+                    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+                    {if sizeof($data) > 0}
+                        {foreach $data as $note}
+                            {include "../components/post/notepost.xml", note => $note, commentSection => true, compact => true}
+                        {/foreach}
 
-                            {if $dat->getCommentsCount() > 0}
-                                {_comments} ({$dat->getCommentsCount()})
+                        {include "../components/paginator.xml", conf => (object) [
+                            "page"     => $page,
+                            "count"    => $count,
+                            "amount"   => sizeof($data),
+                            "perPage"  => 10,
+                            "atBottom" => true,
+                        ]}
+
+                    {else}
+                        <div class="page_block page_padding">
+                            {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
+                                <h4>{_welcome}</h4>
+                                <p>{_notes_start_screen}</p>
                             {else}
-                                {_no_comments}
+                                {ifset customErrorMessage}
+                                    {include ../customErrorMessage}
+                                {else}
+                                    {include ../components/nothing.xml}
+                                {/ifset}
                             {/if}
-                            
-                        </a>
-                        <span n:if="isset($thisUser) && $thisUser->getId() === $dat->getOwner()->getId()">&nbsp;|&nbsp;
-                            <a id="_noteDelete" href="/note{$dat->getOwner()->getId()}_{$dat->getId()}/delete">{_delete}</a>
-                            &nbsp;|&nbsp;
-                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
-                        </span>
-                    </div>
+                        </div>
+                    {/if}
                 </div>
-            </article>    
-        </div>      
-        
-        {include "../components/paginator.xml", conf => (object) [
-            "page"     => $page,
-            "count"    => $count,
-            "amount"   => sizeof($data),
-            "perPage"  => 10,
-            "atBottom" => true,
-        ]}
-        
-        {else}
-            {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
-
-                <div style="padding: 10px 20px 20px;"><h4 style="border: none;padding-bottom: 5px;">{_welcome}</h4>{_notes_start_screen}</div>
-            
-            {else}
-                {ifset customErrorMessage}
-                    {include ../customErrorMessage}
-                {else}
-                    {include ../components/nothing.xml}
-                {/ifset}
-            {/if}
-        {/if} 
+            </div>
+        </div>
     </div>
 {/block}

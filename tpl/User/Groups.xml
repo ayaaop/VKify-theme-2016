@@ -119,8 +119,56 @@
 
 {block bottom}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-        <div class="page_block" style="text-align:center;padding:120px 0;">
-            продам гараж
+        <div class="page_block module page_list_module groups_module">
+            <a href="/search?section=groups" class="module_header">
+                <h3 class="header_top clear_fix">
+                    <span class="header_label fl_l">
+                        <vkifyloc name="recommended_groups"/>
+                    </span>
+                </h3>
+            </a>
+            <div class="module_body clear_fix">
+                {var $clubsRepo = new \openvk\Web\Models\Repositories\Clubs()}
+                {var $totalClubs = $clubsRepo->getCount()}
+                {var $randomClubs = []}
+                {if $totalClubs > 0}
+                    {var $randomIds = []}
+                    {var $attempts = 0}
+                    {var $maxAttempts = min(50, $totalClubs * 2)}
+                    {while count($randomClubs) < 5 && $attempts < $maxAttempts}
+                        {var $randomId = rand(1, $totalClubs)}
+                        {if !in_array($randomId, $randomIds)}
+                            {var $randomClub = $clubsRepo->get($randomId)}
+                            {if $randomClub && !$randomClub->isHideFromGlobalFeedEnabled() && !$randomClub->isHidingFromGlobalFeedEnforced() && !$randomClub->isBanned()}
+                                {var $randomIds[] = $randomId}
+                                {var $randomClubs[] = $randomClub}
+                            {/if}
+                        {/if}
+                        {var $attempts = $attempts + 1}
+                    {/while}
+                {/if}
+                {if count($randomClubs) > 0}
+                    <div class="line_cell clear_fix" n:foreach="$randomClubs as $club">
+                        <div class="thumb">
+                            <a href="club{$club->getId()}">
+                                <img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
+                                    /themepack/vkify16/1.0.0.0/resource/community_200.png
+                                {else}
+                                    {$club->getAvatarUrl()}
+                                {/if}" alt="{$club->getCanonicalName()}" />
+                            </a>
+                        </div>
+                        <div class="desc_info">
+                            <div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
+                            <div class="group_desc">
+                                <span>{$club->getDescription()}</span>
+                            </div>
+                        </div>
+                    </div>
+                {else}
+                    {include "../components/content_error.xml" description => tr("groups_zero")}
+                {/if}
+            </div>
         </div>
     {/if}
 {/block}

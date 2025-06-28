@@ -1,50 +1,47 @@
 {extends "../@layout.xml"}
 {block title}{_upload_video}{/block}
 
-{block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
-    »
-    <a href="/videos{$thisUser->getId()}">{_videos}</a>
-    » 
-    {_upload_video}
-{/block}
-
 {block content}
-<div class="container_gray">
-    <h4>{_upload_video}</h4>
+<div class="page_block">
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+        ['href' => "/videos{$thisUser->getId()}", 'title' => tr("videos")],
+        ['title' => tr("upload_video")]
+    ]}
     <form method="post" enctype="multipart/form-data">
-      <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-        <tbody>
-          <tr>
-            <td width="120" valign="top"><span class="nobold">{_name}:</span></td>
-            <td><input type="text" name="name" /></td>
-          </tr>
-          <tr>
-            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
-            <td><textarea name="desc"></textarea></td>
-          </tr>
-          <tr>
-            <td width="120" valign="top"><span class="nobold">{_video}:</span></td>
-            <td>
-              <label class="button" style="">{_browse}
-                <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" accept="video/*" />
-              </label>
-              <div id="filename" style="margin-top: 10px;"></div>
-            </td>
-          </tr>
-          <tr>
-            <td width="120" valign="top"><span class="nobold">{_video_link_to_yt}:</span></td>
-            <td><input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" /></td>
-          </tr>
-          <tr>
-            <td width="120" valign="top"></td>
-            <td>
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button" name="submit" value="{_upload_button}" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="settings_panel settings_padding" style="width: 455px;margin-inline: auto;">
+        <div class="settings_list_row">
+            <div class="settings_label">{_name}</div>
+            <div class="settings_labeled_text">
+                <input type="text" name="name" />
+            </div>
+        </div>
+        <div class="settings_list_row">
+            <div class="settings_label">{_description}</div>
+            <div class="settings_labeled_text">
+                <textarea name="desc"></textarea>
+            </div>
+        </div>
+        <div class="settings_list_row">
+            <div class="settings_label">{_video}</div>
+            <div class="settings_labeled_text">
+                <label class="button" style="">{_browse}
+                    <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" accept="video/*" />
+                </label>
+                <div id="filename" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+        <div class="settings_list_row">
+            <div class="settings_label">{_video_link_to_yt}</div>
+            <div class="settings_labeled_text">
+                <input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" />
+            </div>
+        </div>
+        <div class="settings_save_footer">
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" class="button" name="submit" value="{_upload_button}" />
+        </div>
+      </div>
     </form>
 </div>
 {/block}

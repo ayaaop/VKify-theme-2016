@@ -1,3 +1,9 @@
+function escapeHtml(text) {
+    const div = document.createElement('div')
+    div.textContent = text
+    return div.innerHTML
+}
+
 function setTip(obj, text, interactive = false) {
     tippy(obj, {
         content: `<text style="font-size: 11px;">${text}</text>`,
@@ -14,10 +20,7 @@ window.showBlueWarning = function (content) {
 }
 
 Object.defineProperty(window.player, 'ajCreate', {
-    value: function() {
-        console.log('ajCreate override called');
-        // override: do nothing
-    },
+    value: function() {},
     writable: false,
     configurable: false
 });
@@ -471,12 +474,12 @@ window.initVKGraffiti = function (event) {
     <script src="${window.location.origin}/themepack/vkify16/2.0.0.0/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
-            "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ", 
-            "graffiti_flash_opacity": "${window.vkifylang ? window.vkifylang.graffitiopacity : 'Opacity:'} ", 
-            "graffiti_flash_thickness": "${window.vkifylang ? window.vkifylang.graffitithickness : 'Thickness:'} ", 
-            "graffiti_normal_size": "Оконный режим", 
+            "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
+            "graffiti_flash_opacity": "${window.vkifylang ? window.vkifylang.graffitiopacity : 'Opacity:'} ",
+            "graffiti_flash_thickness": "${window.vkifylang ? window.vkifylang.graffitithickness : 'Thickness:'} ",
+            "graffiti_normal_size": "Оконный режим",
             "graffiti_full_screen": "Полноэкранный режим"
-        }}; 
+        }};
         window.onload = function() {
             Graffiti.init();
         };
@@ -541,15 +544,12 @@ window.initVKGraffiti = function (event) {
 window.toggle_comment_textarea = function (id) {
     var el = document.getElementById('commentTextArea' + id);
     var wi = document.getElementById('wall-post-input' + id);
-    var pm = document.getElementsByClassName('post-menu-s')[0];
-    if (el.style.display === "block") {
-        el.style.display = "none";
+    if (!el.classList.contains("hidden")) {
+        el.classList.add("hidden");
         wi.blur();
-        pm.classList.add('hidden');
     } else {
-        el.style.display = "block";
+        el.classList.remove("hidden");
         wi.focus();
-        pm.classList.remove('hidden');
     }
 }
 
@@ -785,10 +785,7 @@ window.uiSearch = {
         return false;
     },
 
-    // Handle form submission
-    handleSubmit: function(event) {
-        // Let the form submit naturally - don't prevent default
-        // The form will submit to its action URL (typically /search)
+    handleSubmit: function() {
         return true;
     },
 
@@ -798,30 +795,7 @@ window.uiSearch = {
 window.uiSearch.init();
 
 window.addEventListener('DOMContentLoaded', async () => {
-    // Watch for .tip_result elements in tippy content and override their max left value
-    const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            mutation.addedNodes.forEach((node) => {
-                if (node.nodeType === 1 && node.classList.contains('tip_result')) {
-                    if (node.closest('.tippy-content')) {
-                        const currentStyle = node.getAttribute('style');
-                        if (currentStyle && currentStyle.includes('left:min(')) {
-                            const width = parseFloat(currentStyle.match(/left:min\((.*?)px/)[1]);
-                            node.setAttribute('style', `left:min(${width}px, 578px)!important`);
-                        }
-                    }
-                }
-            });
-        });
-    });
-
-    // Start observing the document with the configured parameters
-    observer.observe(document.body, { 
-        childList: true, 
-        subtree: true 
-    });
-
-    u(document).on('click', `.ovk-diag-body #upload_container #uploadMusicPopup`, async (e) => {
+    u(document).on('click', `.ovk-diag-body #upload_container #uploadMusicPopup`, async () => {
         const current_upload_page = '/player/upload'
         let error = null
         let end_redir = ''
@@ -916,39 +890,28 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
                 /* я не умею считать так что пусть будет пиксель пёрфект) */
                 const time = this.audioPlayer.currentTime;
-                const ps = ((time * 104) / current_track.length).toFixed(3);
+                const ps = ((time * 100) / current_track.length).toFixed(3);
                 this.uiPlayer.find(".time").html(fmtTime(time));
                 this.__updateTime(time);
 
-                if (ps <= 104) {
+                if (ps <= 100) {
                     this.uiPlayer.find(".track .selectableTrack .slider").attr('style', `padding-left:${ps}%`);
 
                     if (this.linkedInlinePlayer) {
                         this.linkedInlinePlayer.find(".subTracks .lengthTrackWrapper .slider").attr('style', `padding-left:${ps}%`);
                         this.linkedInlinePlayer.find('.mini_timer .nobold').html(fmtTime(time));
                     }
-
-                    if (this.ajaxPlayer) {
-                        this.ajaxPlayer.find('#aj_player_track_length .slider').attr('style', `padding-left:${ps}%`);
-                        this.ajaxPlayer.find('#aj_player_track_name #aj_time').html(fmtTime(time));
-                    }
                 }
             };
 
             this.audioPlayer.onvolumechange = () => {
                 const volume = this.audioPlayer.volume;
-                const ps = Math.ceil((volume * 132) / 1);
+                const ps = (volume * 100).toFixed(1);
 
-                if (ps <= 132) {
-                    this.uiPlayer.find(".volumePanel .selectableTrack .slider").attr('style', `padding-left:${ps}%`);
+                this.uiPlayer.find(".volumePanel .selectableTrack .slider").attr('style', `padding-left:${ps}%`);
 
-                    if (this.linkedInlinePlayer) {
-                        this.linkedInlinePlayer.find(".subTracks .volumeTrackWrapper .slider").attr('style', `padding-left:${ps}%`);
-                    }
-
-                    if (this.ajaxPlayer) {
-                        this.ajaxPlayer.find('#aj_player_volume .slider').attr('style', `padding-left:${ps}%`);
-                    }
+                if (this.linkedInlinePlayer) {
+                    this.linkedInlinePlayer.find(".subTracks .volumeTrackWrapper .slider").attr('style', `padding-left:${ps}%`);
                 }
 
                 localStorage.setItem('audio.volume', volume);
@@ -966,7 +929,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             last_name: item.last_name
         }));
     let friendshtml = ''
-    friendsmap.forEach((user, index) => {
+    friendsmap.forEach((user) => {
         friendshtml += `
     <a onclick="tippy.hideAll();" href="/audios${user.id}">
         <div class="elem">
@@ -983,10 +946,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 <div class="bigPlayer ctx_place">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-title="${tr('play_tip')}"></div>
+            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title="${tr('play_tip')}"></div>
             <div class="arrowsButtons">
-                <div class="nextButton musicIcon" data-tip="simple-black" data-title=""></div>
-                <div class="backButton musicIcon" data-tip="simple-black" data-title=""></div>
+                <div class="nextButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
+                <div class="backButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
             </div>
         </div>
 
@@ -1020,16 +983,16 @@ window.addEventListener('DOMContentLoaded', async () => {
             <div class="volumePanelTrack">
                 <div class="selectableTrack">
                     <div id="bigPlayerVolumeSliderWrapper">&nbsp;
-                        <div class="slider" style="padding-left:122%"></div>
+                        <div class="slider" style="padding-left:100%"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="additionalButtons">
-            <div class="repeatButton musicIcon" data-tip="simple-black" data-title="${tr('repeat_tip')}"></div>
-            <div class="shuffleButton musicIcon" data-tip="simple-black" data-title="${tr('shuffle_tip')}"></div>
-            <div class="deviceButton musicIcon" data-tip="simple-black" data-title="${tr('mute_tip')}"></div>
+            <div class="repeatButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('repeat_tip')}"></div>
+            <div class="shuffleButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('shuffle_tip')}"></div>
+            <div class="deviceButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('mute_tip')}"></div>
         </div>
     </div>
 </div>
@@ -1102,12 +1065,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 }
             }]
         },
-        onHidden(instance) {
+        onHidden() {
             window.musHtml = undefined;
             document.querySelector('.top_audio_player').classList.remove('audio_top_btn_active');
         },
-        onShow(instance) {
-            const clickedElement = instance.reference;
+        onShow() {
             document.querySelector('.top_audio_player').classList.add('audio_top_btn_active');
         },
         async onMount(instance) {
@@ -1237,7 +1199,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         updateTopPlayer();
     }
 
-    $(document).on("click", "#ajclosebtn", function (event) {
+    $(document).on("click", "#ajclosebtn", function () {
         window.player.ajClose();
     });
 
@@ -1286,31 +1248,79 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
-    u(document).on('mouseover mousemove mouseout', `div[data-tip='simple-black']`, (e) => {
-        if (e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
+
+    let tooltipTimeout = null;
+
+    function getTooltipPosition(offset, align) {
+        const scrollX = window.scrollX
+        const scrollY = window.scrollY
+
+        switch(align) {
+            case 'top-start':
+                return `left:${offset.left+scrollX}px;top:${offset.top-30+scrollY}px`
+            case 'top-end':
+                return `left:${offset.right+scrollX}px;top:${offset.top-30+scrollY}px;`
+            case 'top-center':
+                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.top-30+scrollY}px;`
+            case 'bottom-start':
+                return `left:${offset.left+scrollX}px;top:${offset.bottom+5+scrollY}px;`
+            case 'bottom-end':
+                return `left:${offset.right+scrollX}px;top:${offset.bottom+5+scrollY}px;`
+            case 'bottom-center':
+                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.bottom+5+scrollY}px;`
+            default:
+                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.top-30+scrollY}px;`
+        }
+    }
+
+    u(document).on('mouseover mousemove mouseout', `[data-tip='simple-black']`, (e) => {
+        if(e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
             return
         }
 
         if (e.type === 'mouseout') {
+            clearTimeout(tooltipTimeout);
             $('.tip_result_black_el').removeClass('shown');
-            setTimeout(() => { u('.tip_result_black_el').remove(); }, 50)
+            setTimeout(() => {u('.tip_result_black_el').remove();}, 50)
             return;
         }
 
-        const target = u(e.target);
-        const title = target.attr('data-title')
-        if (title == '') {
+        // Clear any pending tooltip creation and remove existing tooltips
+        clearTimeout(tooltipTimeout);
+        u('.tip_result_black_el').remove();
+
+        // Find the element with tooltip attributes (might be a parent)
+        let tooltipElement = e.target;
+        while (tooltipElement && !tooltipElement.hasAttribute('data-tip')) {
+            tooltipElement = tooltipElement.parentElement;
+        }
+
+        if (!tooltipElement) {
+            return;
+        }
+
+        const target = u(tooltipElement);
+        const title  = target.attr('data-title')
+        const align  = target.attr('data-align') || 'top-center'
+
+        if(!title || title.trim() === '' || title.startsWith('{_')) {
             return
         }
-        const offset = target.nodes[0].getBoundingClientRect()
-        u('body').nodes[0].insertAdjacentHTML('afterbegin', `
-	<div class='tip_result_black_el' style='left:${offset.left - (offset.width / 2) + window.scrollX}px;top:${offset.top - 25 + window.scrollY}px;'>
-        <div class='tip_result_black'>
-            ${escapeHtml(title)}
-        </div>
-	</div>
-    `)
-        setTimeout(() => { $('.tip_result_black_el').addClass('shown'); }, 0)
+
+        // Debounce tooltip creation to prevent glitches
+        tooltipTimeout = setTimeout(() => {
+            const offset = target.nodes[0].getBoundingClientRect()
+            const tooltipStyle = getTooltipPosition(offset, align)
+
+            u('body').nodes[0].insertAdjacentHTML('afterbegin', `
+                <div class='tip_result_black_el' style='${tooltipStyle}'>
+                    <div class='tip_result_black' data-align='${align}'>
+                        ${escapeHtml(title)}
+                    </div>
+                </div>
+                `)
+            setTimeout(() => {$('.tip_result_black_el').addClass('shown');}, 0)
+        }, 50)
     })
 
     window.router.route = async function (params = {}) {
@@ -1359,15 +1369,12 @@ window.addEventListener('DOMContentLoaded', async () => {
             history.replaceState({ 'from_router': 1 }, '', next_page_request.url)
         }
 
-        // CSS loading and vkifyloc processing now handled by router_patch.js
-
         this.__closeMsgs()
         this.__unlinkObservers()
 
         try {
             this.__appendPage(parsed_content)
             await this.__integratePage()
-            // vkifyloc processing now happens in router_patch.js
         } catch (e) {
             console.error(e)
             next_page_url.searchParams.delete('al', 1)
@@ -1419,7 +1426,7 @@ searchbox.oninput = async function () {
                         }));
                 }
                 let fastusers = ""
-                minusers.forEach((user, index) => {
+                minusers.forEach((user) => {
                     fastusers += `
                     <a class="fastavatarlnk" href="/id${user.id}">
                         <img class="fastavatar" src="${user.photo_50}">
@@ -1506,8 +1513,7 @@ searchbox.oninput = async function () {
         if (friendson > 0) { document.querySelector('.friendslink').style.display = "unset"; }
     }
 }
-/* я украл эту хрень из исходников, хз как оно работает лол */
-u(`#search_box form input[type="search"]` || `#search_box #searchBoxFastTips a`).on('blur', (e) => {
+u(`#search_box form input[type="search"]` || `#search_box #searchBoxFastTips a`).on('blur', () => {
     {
         setTimeout(() => {
             const focusedElement = document.activeElement;
@@ -1577,40 +1583,27 @@ if (today.getDate() === 1 && today.getMonth() === 3) {
     });
 }
 
-// Override track slider behavior for all players
-u(document).on("mousemove click mouseup", ".bigPlayer .trackPanel .selectableTrack, .audioEntry .subTracks .lengthTrackWrapper .selectableTrack, #aj_player_track_length .selectableTrack", (e) => {
-    if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
-        return
-
-    if(u('.ui-draggable-dragging').length > 0) {
-        return
-    }
-
-    function __defaultAction(i_time) {
-        window.player.listen_coef -= 0.5
-        window.player.audioPlayer.currentTime = i_time
-    }
-
-    const taggart = u(e.target).closest('.selectableTrack')
-    const parent  = taggart.parent()
-    const rect = taggart.nodes[0].getBoundingClientRect()
-    const width = e.clientX - rect.left
-    const time = Math.ceil((width * window.player.currentTrack.length) / (rect.right - rect.left))
-    
-    if(e.type == "mousemove") {
-        let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
-        if(buttonsPresseed[0])
-            __defaultAction(time)
-    }
-
-    if(e.type == 'click' || e.type == 'mouseup') {
-        __defaultAction(time)
-    }
-
-    if(parent.find('.tip_result').length < 1) {
-        parent.append(`<div class='tip_result'></div>`)
-    }
-
-    const maxLeft = taggart.closest('.tippy-content') ? 578 : 315.5;
-    parent.find('.tip_result').html(fmtTime(time)).attr('style', `left:min(${width - 15}px, ${maxLeft}px)`)
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+            const element = mutation.target;
+            if (element.classList.contains('tip_result')) {
+                const isInTippy = element.closest('.tippy-content');
+                if (isInTippy) {
+                    const currentStyle = element.getAttribute('style');
+                    if (currentStyle && currentStyle.includes('315.5px') && !currentStyle.includes('578px')) {
+                        const newStyle = currentStyle.replace('315.5px', '578px');
+                        element.setAttribute('style', newStyle);
+                    }
+                }
+            }
+        }
+    });
 });
+
+observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['style'],
+    subtree: true
+});
+

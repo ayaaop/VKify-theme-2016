@@ -19,49 +19,51 @@
                         - onclick: (optional) onclick handler
   @param id           (optional) ID for the menu element
   @param additionalCssClass (optional) Additional CSS classes
-  @param ownblock     (optional) Object containing:
+  @param ownblockData (optional) Object containing:
                       - url: URL to navigate back to
                       - name: Name to display
                       - img: Image URL
-                      OR string "club" or "user" to auto-setup based on $club or $user variable
+                      - extraItem: (optional) Object containing:
+                        - url: URL for the extra item
+                        - class: CSS class for the extra item
+                        - content: HTML content for the extra item
+                        - onclick: (optional) onclick handler
+                      Note: If not provided, will be auto-generated based on $wallOwner. Will be auto-generated based on $user or $club if $ownblock is true
 *}
 <div class="page_block tabs ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
-    {if isset($ownblock)}
-        {if is_string($ownblock)}
-            {if $ownblock === "club" && isset($club)}
-                {var $ownblockData = [
-                    'url' => "/club" . $club->getId(),
-                    'name' => $club->getName(),
-                    'img' => $club->getAvatarURL()
-                ]}
-            {elseif $ownblock === "user" && isset($user)}
-                {var $ownblockData = [
-                    'url' => "/id" . $user->getId(),
-                    'name' => $user->getFirstName() . " " . $user->getLastName(),
-                    'img' => $user->getAvatarURL()
-                ]}
-            {/if}
+    {var $owner = isset($ownblock) && $ownblock ? (isset($club) ? $club : $user) : $wallOwner}
+    {if isset($owner)}
+        {if $owner instanceof \openvk\Web\Models\Entities\Club}
+            {var $ownblockData = [
+                'url' => "/club" . $owner->getId(),
+                'name' => $owner->getName(),
+                'img' => $owner->getAvatarURL()
+            ]}
         {else}
-            {var $ownblockData = $ownblock}
+            {var $ownblockData = [
+                'url' => "/id" . $owner->getId(),
+                'name' => $owner->getFirstName() . " " . $owner->getLastName(),
+                'img' => $owner->getAvatarURL()
+            ]}
         {/if}
+    {/if}
 
-        {if isset($ownblockData)}
-            <a class="ui_ownblock clear_fix" href="{$ownblockData['url']}">
-                <img class="ui_ownblock_img" src="{$ownblockData['img']}">
-                <div class="ui_ownblock_info">
-                    {if isset($item['extraItem'])}
-                        <a href="{$item['extraItem']['url']}" 
-                           class="ui_rmenu_extra_item {$item['extraItem']['class']}"
-                           n:attr="onclick => isset($item['extraItem']['onclick']) ? $item['extraItem']['onclick'] : null">
-                            {$item['extraItem']['content']|noescape}
-                        </a>
-                    {/if}
-                    <div class="ui_ownblock_label">{$ownblockData['name']}</div>
-                    <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
-                </div>
-            </a>
-            <div class="ui_rmenu_sep"></div>
-        {/if}
+    {if isset($ownblockData)}
+        <a class="ui_ownblock clear_fix" href="{$ownblockData['url']}">
+            <img class="ui_ownblock_img" src="{$ownblockData['img']}" n:if="isset($ownblockData['img'])">
+            <div class="ui_ownblock_info">
+                {if isset($ownblockData['extraItem'])}
+                    <a href="{$ownblockData['extraItem']['url']}" 
+                        class="ui_rmenu_extra_item {$ownblockData['extraItem']['class']}"
+                        n:attr="onclick => isset($ownblockData['extraItem']['onclick']) ? $ownblockData['extraItem']['onclick'] : null">
+                        {$ownblockData['extraItem']['content']|noescape}
+                    </a>
+                {/if}
+                <div class="ui_ownblock_label">{$ownblockData['name']}</div>
+                <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
+            </div>
+        </a>
+        <div class="ui_rmenu_sep"></div>
     {/if}
     {foreach $items as $item}
         {if !isset($item['condition']) || $item['condition']}

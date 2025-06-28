@@ -19,13 +19,16 @@ let locales = {
 		"loginPromoIos": "For iOS",
 		"newUserQuestionMark": `New to OpenVK?`,
 		"newUserSubhead": "Instant registration",
+		"external": "External",
 		"left_edge": "Left edge:",
 		"right_edge": "Right edge:",
 		"back_to_page": "back to page",
 		"clear_playlist": "Clear playlist",
 		"users_posts": "Posts from user",
 		"profile_recommendations": "Show recommendations on filling out your profile",
-	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account."
+	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account.",
+		"recommended_groups": "Recommended groups",
+		"show_less": "Show less"
 	},
 	'ru': {
 		"language": "Язык",
@@ -47,13 +50,16 @@ let locales = {
 		"loginPromoIos": "Для iOS",
 		"newUserQuestionMark": `Впервые в OpenVK?`,
 		"newUserSubhead": "Мгновенная регистрация",
+		"external": "Внешний",
 		"left_edge": "Левая граница:",
 		"right_edge": "Правая граница:",
 		"back_to_page": "вернуться к странице",
 		"clear_playlist": "Очистить плейлист",
 		"users_posts": "Записи от пользователя",
 		"profile_recommendations": "Показывать рекомендации по заполнению профиля",
-	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт."
+	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
+		"recommended_groups": "Рекомендуемые сообщества",
+		"show_less": "Показать меньше"
 	},
 	"uk": {
 		"language": "Мова",
@@ -75,13 +81,16 @@ let locales = {
 		"loginPromoIos": "Для iOS",
 		"newUserQuestionMark": "Вперше в OpenVK?",
 		"newUserSubhead": "Миттєва реєстрація",
+		"external": "Зовнішній",
 		"left_edge": "Ліва межа:",
 		"right_edge": "Права межа:",
 		"back_to_page": "Повернутися до сторінки",
 		"clear_playlist": "Очистити плейлист",
 		"users_posts": "Дописи користувача",
 		"profile_recommendations": "Показувати поради щодо заповнення профілю",
-		"guest_actions": "<a href='/register'>Зареєструйтесь</a>, щоб залишатися на зв'язку з $1 та іншими людьми, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис."
+		"guest_actions": "<a href='/register'>Зареєструйтесь</a>, щоб залишатися на зв'язку з $1 та іншими людьми, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
+		"recommended_groups": "Рекомендовані групи",
+		"show_less": "Показати менше"
 	}
 }
 
@@ -91,7 +100,6 @@ window.vkifylocalize = function(langcode) {
 		fetch(`/themepack/vkify16/2.0.0.0/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
-					console.error('failed to load vkify theme localization:', response.status, ' using en...');
 					langcode = 'en';
 					patchpage(langcode);
 					return;
@@ -105,7 +113,6 @@ window.vkifylocalize = function(langcode) {
 				}
 			})
 		} catch(error) {
-			console.error('failed to load vkify theme localization:', error)
 			langcode = 'en';
 			patchpage(langcode);
 		}
@@ -114,7 +121,6 @@ window.vkifylocalize = function(langcode) {
 	}
 }
 
-// Process a single vkifyloc element
 window.processVkifyLocElement = function(element) {
 	if (!window.vkifylang) return;
 
@@ -122,7 +128,6 @@ window.processVkifyLocElement = function(element) {
 	if (locName && window.vkifylang[locName]) {
 		let translatedText = window.vkifylang[locName];
 
-		// Handle arguments like $1, $2, etc.
 		const args = element.getAttribute('args');
 		if (args) {
 			const argArray = args.split(',').map(arg => arg.trim());
@@ -136,7 +141,6 @@ window.processVkifyLocElement = function(element) {
 	}
 }
 
-// Process all vkifyloc tags on the page
 window.processVkifyLocTags = function() {
 	if (!window.vkifylang) return;
 
@@ -147,9 +151,8 @@ window.processVkifyLocTags = function() {
 
 function patchpage(langcode) {
 	window.vkifylang = locales[langcode];
-	// Handle all vkifyloc tags on the page
 	window.processVkifyLocTags();
-	
+
 	if (location.protocol.includes('http:')) {
 		if (location.host.includes('openvk.xyz')) {
 			showBlueWarning(window.vkifylang.httpwarnovk);
@@ -159,15 +162,13 @@ function patchpage(langcode) {
 	}
 }
 
-// Create a MutationObserver to process vkifyloc tags in dynamically added content
 window.addEventListener('DOMContentLoaded', () => {
 	if (!window.vkifylang) return;
-	
+
 	const observer = new MutationObserver((mutations) => {
 		mutations.forEach(mutation => {
 			mutation.addedNodes.forEach(node => {
 				if (node.nodeType === Node.ELEMENT_NODE) {
-					// Check for vkifyloc tags in the added node
 					const locTags = node.querySelectorAll('vkifyloc');
 					if (locTags.length > 0) {
 						locTags.forEach(element => {
@@ -175,7 +176,6 @@ window.addEventListener('DOMContentLoaded', () => {
 						});
 					}
 
-					// Check if the added node itself is a vkifyloc tag
 					if (node.nodeName === 'VKIFYLOC') {
 						window.processVkifyLocElement(node);
 					}
@@ -183,8 +183,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	});
-	
-	// Observe the entire document for added nodes
+
 	observer.observe(document.body, {
 		childList: true,
 		subtree: true

@@ -4,34 +4,70 @@
     {$title}
 {/block}
 
-{block header}
-    {$title}
-{/block}
-
 {block content}
-    <style>
-        .sidebar {
-            display: none;
-        }
+    {var $menuItems = [
+        [
+            'url' => "/wall" . $thisUser->getId() . "?type=owners",
+            'title' => tr("users_posts", ovk_proc_strtr($thisUser->getFirstName(), 20)),
+            'translate' => false,
+            'active' => false
+        ],
+        [
+            'url' => "/wall" . $thisUser->getId(),
+            'title' => 'all_posts',
+            'active' => false
+        ],
+        [
+            'url' => "/notes" . $thisUser->getId(),
+            'title' => 'notes',
+            'active' => false
+        ],
+        [
+            'url' => "javascript:void(0)",
+            'title' => 'note',
+            'active' => true
+        ]
+    ]}
 
-        .page_header {
-            display: none;
-        }
-
-        .page_content {
-            display: unset;
-            width: unset;
-        }
-
-        .page_body {
-            width: unset;
-            float: unset;
-        }
-
-        .page_footer {
-            display: none;
-        }
-    </style>
-
-    {$html|noescape}
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $menuItems}
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                {include "../components/page_crumb_header.xml", crumbs: [
+                    ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+                    ['href' => "/notes{$thisUser->getId()}", 'title' => tr("notes")],
+                    ['title' => $title]
+                ]}
+                <div class="page_block post note_post">
+                    <div class="post_header">
+                        <a class="post_image{if $thisUser->isOnline()} online{/if}" href="{$thisUser->getURL()}">
+                            <img src="{$thisUser->getAvatarURL('miniscule')}" width="50" class="post_img" />
+                        </a>
+                        <div class="post_header_info">
+                            <div class="post_author">
+                                <a class="author" href="{$thisUser->getURL()}">
+                                    {$thisUser->getCanonicalName()}
+                                </a>
+                            </div>
+                            <div class="post_date">
+                                <a href="#" class="post_link">
+                                    {_time_just_now}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="text wall_text" id="text">
+                            <div class="wall_note_type">{$title}</div>
+                            <div n:ifcontent class="really_text wall_post_text note_text_preview">{$html|noescape}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}

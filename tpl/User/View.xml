@@ -230,7 +230,7 @@
 								</h3>
 							</a>
 							<div class="module_body clear_fix">
-								<div class="people_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
+								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
 											<div class="people_cell_img">
@@ -254,7 +254,7 @@
 								</h3>
 							</a>
 							<div class="module_body clear_fix">
-								<div class="people_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriendsOnline(1)), 0, 6), 3) as $friendRow">
+								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriendsOnline(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
 											<div class="people_cell_img">
@@ -347,31 +347,29 @@
 								</div>
 							</div>
 						</div>
-						<div class="module notes_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
+						<div class="module topics_module page_list_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
 							<a href="/notes{$user->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
 									<span class="header_label fl_l">
 										{_notes}
 									</span>
 									<span class="header_count fl_l">
-										$notesCount
+										{$notesCount}
 									</span>
 								</h3>
 							</a>
-							<div class="module_body clear_fix">
-								<div style="padding: 5px 8px 15px 8px;">
-									<ul class="notes_titles" n:foreach="$notes as $note">
-										<li class="written">
-											<a href="/note{$note->getPrettyId()}">
-												{$note->getName()}
-											</a>
-											<small>
-												{$note->getPublicationTime()}
-												<span class="divide">|</span>
-												<a href="/note{$note->getPrettyId()}">{_comments}</a>
-											</small>
-										</li>
-									</ul>
+							<div class="module_body" style="padding-block: 10px;">
+								<div class="topic_row clear_fix" n:foreach="$notes as $note" style="padding-top: 0;">
+									<div class="topic_info">
+										<a class="topic_title" href="/note{$note->getPrettyId()}">
+											{$note->getName()}
+										</a>
+										<div class="topic_info">
+											{$note->getPublicationTime()}
+											<span class="divide"></span>
+											<a href="/note{$note->getPrettyId()}">{_comments}</a>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

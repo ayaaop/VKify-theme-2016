@@ -48,12 +48,6 @@
             'active' => $isBackDrop
         ]
     ]}
-
-    {var $ownblockData = [
-        'url' => "/id" . $user->getId(),
-        'name' => $user->getFirstName() . " " . $user->getLastName(),
-        'img' => $user->getAvatarURL()
-    ]}
     
 
     <div n:if="$user->hasPendingNumberChange()" class="msg">
@@ -65,7 +59,7 @@
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
-                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => "user"}
+                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => true}
             </div>
         </div>
         <div class="wide_column_wrap">

@@ -725,7 +725,7 @@
                             {include "../components/error.xml", description => tr("bl_count_zero_desc")}
                         {else}
                             <div class="list_view">
-                                <div n:foreach="$blItems as $item" class="people_row">
+                                <div n:foreach="$blItems as $item" class="search_row">
                                     <a href="{$item->getURL()}" class="img">
                                         <img src='{$item->getAvatarURL()}'>
                                     </a>

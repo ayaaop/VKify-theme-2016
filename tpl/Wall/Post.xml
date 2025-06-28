@@ -5,9 +5,10 @@
 
 {var $menuItems = [
     [
-        'url' => "javascript:void(0)",
-        'title' => 'post',
-        'active' => true
+        'url' => "/wall" . $post->getTargetWall() . "?type=owners",
+        'title' => $post->getTargetWall() < 0 ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($wallOwner->getFirstName(), 20)),
+        'translate' => $post->getTargetWall() < 0 ? true : false,
+        'active' => false
     ],
     [
         'url' => "/wall" . $post->getTargetWall(),
@@ -15,43 +16,41 @@
         'active' => false
     ],
     [
-        'url' => "/wall" . $post->getTargetWall() . "?type=owners",
-        'title' => $post->getTargetWall() < 0 ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($wallOwner->getFirstName(), 20)),
-        'translate' => $post->getTargetWall() < 0 ? true : false,
-        'active' => false
+        'url' => "/notes" . $post->getTargetWall(),
+        'title' => 'notes',
+        'active' => false,
+        'condition' => $wallOwner instanceof \openvk\Web\Models\Entities\User
     ],
     [
-        'url' => "/wall" . $post->getTargetWall() . "?type=others",
-        'title' => 'others_posts',
-        'active' => false
+        'url' => "javascript:void(0)",
+        'title' => 'post',
+        'active' => true
     ]
 ]}
     <div class="wide_column_left">
         <div class="wide_column_left">
             <div class="narrow_column_wrap">
                 <div class="narrow_column">
-                    {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => $isWallOfGroup ? "club" : "user"}
+                    {include "../components/ui_rmenu.xml", items => $menuItems}
                 </div>
             </div>
             <div class="wide_column_wrap">
                 {include "../components/post.xml", post => $post, forceNoCommentsLink => TRUE}
                 {include "../components/comments.xml",
-                 comments => $comments,
-                 count => $cCount,
-                 page => $cPage,
-                 model => "posts",
-                 parent => $post }
-                 {* Пока что не понял че с этим делать *}
-                <div style="float: left; min-height: 100px; width: 32%;">
-                    <a
-                    n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
-                    style="display:block;width:96%;"
-                    class="profile_link"
-                    href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
-                    >
-                       {_changes_history}
-                    </a>
-                </div>
+                comments => $comments,
+                count => $cCount,
+                page => $cPage,
+                model => "posts",
+                parent => $post }
+                {* Пока что не понял че с этим делать *}
+                <a
+                n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
+                style="display:block;width:96%;"
+                class="profile_link"
+                href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
+                >
+                {_changes_history}
+                </a>
             </div>
         </div>
     </div>

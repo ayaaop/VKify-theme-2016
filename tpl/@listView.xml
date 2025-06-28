@@ -21,8 +21,8 @@
                     {/ifset}
 
                     {if sizeof($data) > 0}
-                        <div class="people_row" n:foreach="$data as $dat" n:attr="id => is_null($table_body_id) ? NULL : $table_body_id">
-                            <div class="img">
+                        <div class="search_row" n:foreach="$data as $dat" n:attr="id => is_null($table_body_id) ? NULL : $table_body_id">
+                            <div n:ifset="preview" class="img">
                                 <a href="{include link, x => $dat}">
                                     {include preview, x => $dat}
                                 </a>

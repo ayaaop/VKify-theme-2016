@@ -4,26 +4,27 @@
 {block content}
 {var $menuItems = [
     [
-        'url' => '/wall' . $owner,
-        'title' => 'all_posts',
-        'active' => $type == 'all'
-    ],
-    [
         'url' => '/wall' . $owner . '?type=owners',
         'title' => isset($club) ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20)),
         'translate' => isset($club) ? true : false,
         'active' => $type == 'owners'
     ],
     [
-        'url' => '/wall' . $owner . '?type=others',
-        'title' => 'others_posts',
-        'active' => $type == 'others'
+        'url' => '/wall' . $owner,
+        'title' => 'all_posts',
+        'active' => $type == 'all'
+    ],
+    [
+        'url' => "/notes" . $owner,
+        'title' => 'notes',
+        'active' => false,
+        'condition' => $owner > 0
     ]
 ]}
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
-                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => isset($club) ? 'club' : 'user'}
+                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => true}
             </div>
         </div>
         <div class="wide_column_wrap">

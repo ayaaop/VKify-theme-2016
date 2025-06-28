@@ -3,28 +3,36 @@
 {var $likesCount = $comment->getLikesCount()}
 {var $target = $comment->getTarget()}
 {var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
-<div data-id="1_{$comment->getId()}" class="post reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
+<div data-id="1_{$comment->getId()}" class="post scroll_node reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <div class="reply_wrap">
-        <a class="reply_image{if $author->isOnline()} online{/if}" href="{$author->getURL()}">
+        <a class="reply_image{if !$author instanceof $Club && $author->isOnline()} online{/if}" href="{$author->getURL()}">
             <img src="{$author->getAvatarURL('miniscule')}" width="30" class="reply_img" />
         </a>
         <div class="reply_content">
             <div class="fl_r reply_actions_wrap">
                 <div class="reply_actions" n:if="isset($thisUser) && !($timeOnly ?? false)">
-                    <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="editPost2" data-id="{$comment->getId()}" data-tippy-content="{_edit}"></a>
-                    <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tippy-content="{_delete}"></a>
-                    <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tippy-content="{_report}"></a>
+                    <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="editPost" data-id="{$comment->getId()}" data-tip="simple-black" data-title="{_edit}"></a>
+                    <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tip="simple-black" data-title="{_delete}"></a>
+                    <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tip="simple-black" data-title="{_report}"></a>
                 </div>
             </div>
             <div class="reply_author">
                 <a class="author" href="{$author->getURL()}">
                     {$author->getCanonicalName()}
                 </a>
-                <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                <div class="page_verified" n:if="$author->isVerified()"></div>
             </div>
             <div class="post_content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
-                    <div class="really_text">{$comment->getText()|noescape}</div>
+                    <div class="really_text">
+                        {if strlen($comment->getText()) > 500}
+                            <span class="truncated_text">{substr($comment->getText(), 0, 500)}...</span> 
+                            <span class="full_text hidden">{$comment->getText()|noescape}</span>
+                            <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+                        {else}
+                            {$comment->getText()|noescape}
+                        {/if}
+                    </div>
                     
                     {var $attachmentsLayout = $comment->getChildrenWithLayout(288)}
                     <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">

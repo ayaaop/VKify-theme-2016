@@ -69,7 +69,7 @@
 					</div>
 				</div>
 
-				<div n:if="$thisUser && $club->getFollowersCount() > 0" class="module page_block">
+				<div n:if="$thisUser && $club->getFollowersCount() > 0" class="page_block module people_module">
 					{var $followersCount = $club->getFollowersCount()}
 					<a href="/club{$club->getId()}/followers" class="module_header">
 						<h3 class="header_top clear_fix">
@@ -82,7 +82,7 @@
 						</h3>
 					</a>
 					<div class="module_body">
-						<div class="people_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
+						<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
 							<div class="people_cell" n:foreach="$followerRow as $follower">
 								<a class="people_cell_ava" href="{$follower->getURL()}">
 									<div class="people_cell_img">
@@ -124,7 +124,7 @@
 						</div>
 					</div>
 
-					<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics()) && !$club->isDisplayTopicsAboveWallEnabled()" class="module">
+					<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics()) && !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
 						<a href="/board{$club->getId()}" class="module_header">
 							<h3 class="header_top clear_fix">
 								<span class="header_label fl_l">
@@ -136,14 +136,19 @@
 							</h3>
 						</a>
 						<div class="module_body">
-							<a href="/topic{$topic->getPrettyId()}" n:foreach="$topics as $topic" class="topic_row">
-								<div class="topic_title">{$topic->getTitle()}</div>
-								<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
-							</a>
+							<div class="topic_row" n:foreach="$topics as $topic">
+								<div class="topic_info_wrap">
+									<a href="/topic{$topic->getPrettyId()}">
+										<div class="topic_icon"></div>
+										<div class="topic_title">{$topic->getTitle()}</div>
+									</a>
+									<div class="topic_info">{tr("updated_at", $topic->getUpdateTime())}</div>
+								</div>
+							</div>
 						</div>
 					</div>
 
-					<div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
+					<div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))" class="module">
 						<a href="/docs{$club->getRealId()}" class="module_header">
 							<h3 class="header_top clear_fix">
 								<span class="header_label fl_l">

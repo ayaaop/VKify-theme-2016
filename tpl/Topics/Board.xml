@@ -1,61 +1,60 @@
-{extends "../@listView.xml"}
-{var $iterator = iterator_to_array($topics)}
+{extends "../@layout.xml"}
+{var $topics = iterator_to_array($topics)}
 {var $page     = $paginatorConf->page}
 
 {block title}{_discussions} {$club->getCanonicalName()}{/block}
 
-{block header}
-    <a href="{$club->getURL()}">{$club->getCanonicalName()}</a> » {_discussions}
-    
-    <div n:if="$club->isEveryoneCanCreateTopics() || $club->canBeModifiedBy($thisUser)" style="float: right;">
-        <a href="/board{$club->getId()}/create">{_create_topic}</a>
-    </div>
-{/block}
+{block content}
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
+        ['title' => tr("discussions"), 'count' => sizeof($topics)]
+    ], extra => '<a class="button" href="/board'.$club->getId().'/create">'.tr("create_topic").'</a>'
+    }
+    {include "../components/search_bar.xml",
+        action => '/board'.$club->getId(),
+        input_value => $_GET['query'] ?? '',
+        input_name => 'query',
+        id => 'topics_search_header',
+    }
 
-{block tabs}
-    <form style="margin-left: 12px;">
-        <input name="query" class="header_search_input" placeholder="{_header_search}" value="{$_GET['query'] ?? ''}" style="width: 86%" />
-        <input type="submit" class="button" value="{_search_button}" style="width: 7.5%;padding: 5px 7px 4px;" />
-    </form>
-    
-    <p style="margin-left: 15px;">
-        <b>{tr("results", $count)}</b>
-    </p>
-{/block}
+    <div class="page_block list_view">
+        {var $data = is_array($topics) ? $topics : iterator_to_array($topics)}
 
-{block actions}
-    
-{/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block link|strip|stripHtml}
-    /topic{$x->getPrettyId()}
-{/block}
-
-{block preview}
-
-{/block}
-
-{block name}
-    {$x->getTitle()}
-    <div n:if="$x->isPinned()" class="pinned-mark"></div>
-{/block}
-
-{block description}
-    <div style="float: left;">
-        {tr("messages", $x->getCommentsCount())}
-    </div>
-    {var $lastComment = $x->getLastComment()}
-    <div n:if="$lastComment" class="avatar-list-item" style="float: right;">
-        <div class="avatar">
-            <a href="{$lastComment->getOwner()->getURL()}">
-                <img class="ava" src="{$lastComment->getOwner()->getAvatarUrl()}" />
-            </a>
-        </div>
-        <div class="info">
-            <a href="{$lastComment->getOwner()->getURL()}" class="title">{$lastComment->getOwner()->getCanonicalName()}</a>
-            <div class="subtitle">{_replied} {$lastComment->getPublicationTime()}</div>
-        </div>
+        {if sizeof($data) > 0}
+            <div class="search_row" n:foreach="$data as $x">
+                <div class="info fl_l">
+                    <div class="labeled name">
+                        <a href="/topic{$x->getPrettyId()}">
+                            <b>
+                                {$x->getTitle()}
+                                <div n:if="$x->isPinned()" class="pinned-mark"></div>
+                            </b>
+                        </a>
+                    </div>
+                    <div class="labeled">
+                        {tr("messages", $x->getCommentsCount())}
+                    </div>
+                    {var $lastComment = $x->getLastComment()}
+                </div>
+                <a href="/topic{$x->getPrettyId()}#_comment{$lastComment->getId()}" n:if="$lastComment" class="controls blist_last">
+                    <div class="avatar">
+                        <img class="ava" src="{$lastComment->getOwner()->getAvatarUrl()}" />
+                    </div>
+                    <div class="info">
+                        <div class="labeled name">{$lastComment->getOwner()->getCanonicalName()}</div>
+                        <div class="subtitle">{_replied} {$lastComment->getPublicationTime()}</div>
+                    </div>
+                </a>
+            </div>
+            {include "../components/paginator.xml", conf => (object) [
+                "page"     => $page,
+                "count"    => $paginatorConf->count,
+                "amount"   => sizeof($data),
+                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                "atBottom" => true,
+            ]}
+        {else}
+            {include "../components/nothing.xml"}
+        {/if}
     </div>
 {/block}

@@ -2,29 +2,28 @@
 
 {block title}{_edit_note}{/block}
 
-{block header}
-    {var $author = $note->getOwner()}
-    <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
-    »
-    <a href="/notes{$author->getId()}">{_notes}</a>
-    »
-    <a href="/note{$author->getId()}_{$note->getVirtualId()}">{$note->getName()}</a>
-{/block}
-
 {block content}
-    <form id="noteFactory" method="POST">
-        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" value="{$note->getName()}" />
-        <br/><br/>
-        <textarea name="html" style="display:none;"></textarea>
-        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
-        
-        <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
-        
-        <input type="hidden" name="hash" value="{$csrfToken}" />
-        <button class="button">{_save}</button>
-        &nbsp;
-        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
-    </form>
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+        ['href' => "/notes{$thisUser->getId()}", 'title' => tr("notes")],
+        ['href' => "/note{$thisUser->getId()}_{$note->getVirtualId()}", 'title' => $note->getName()],
+        ['title' => tr("edit_note")]
+    ]}
+    <div class="page_block page_padding">
+        <form id="noteFactory" method="POST">
+            <input type="text" name="name" placeholder="{_name_note}" value="{$note->getName()}" />
+            <br/><br/>
+            <textarea name="html" style="display:none;"></textarea>
+            <div id="editor" style="height:50vh;border:1px solid var(--border-color)"></div>
+            
+            <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <button class="button">{_save}</button>
+            &nbsp;
+            <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_gray">{_cancel}</a>
+        </form>
+    </div>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
     {script "js/node_modules/requirejs/bin/r.js"}

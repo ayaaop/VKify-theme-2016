@@ -1,5 +1,26 @@
-<h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
+{if sizeof($comments) > 0}
+    <div class="page_block comments">
+        {if !is_null($sort) && $count > 5}
+            <div class="post_replies_header">
+            <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
+                {if $sort == 'desc'}
+                    {_new_first}
+                {else}
+                    {_old_first}
+                {/if}
 
+                <div n:class="sort_link_icon, $sort == 'desc' ? sort_link_icon_desc : sort_link_icon_asc"></div>
+            </a>
+            </div>
+        {/if}
+        <div class='scroll_container'>
+            {foreach $comments as $comment}
+                {include "comment.xml", comment => $comment}
+            {/foreach}
+            {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+        </div>
+    </div>
+{/if}
 <div n:ifset="$thisUser" id="standaloneCommentBox">
     {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
     {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : $club}
@@ -7,16 +28,3 @@
         {include "textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club, custom_id => $custom_id}
     {/if}
 </div>
-
-{if sizeof($comments) > 0}
-    <div class='scroll_container page_block'>
-        <div class='scroll_node' n:foreach="$comments as $comment">
-            {include "comment.xml", comment => $comment}
-        </div>
-    </div>
-    <div style="margin-top: 11px;">
-        {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
-    </div>
-{else}
-    {_comments_tip}
-{/if}

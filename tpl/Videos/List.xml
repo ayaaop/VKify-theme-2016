@@ -1,57 +1,60 @@
-{extends "../@listView.xml"}
-{var $iterator = $videos}
-{var $count    = $paginatorConf->count}
-{var $page     = $paginatorConf->page}
+{extends "../@layout.xml"}
+{var $iterator    = $videos}
+{var $count       = $paginatorConf->count}
+{var $page        = $paginatorConf->page}
 
 {block title}{_videos} {$user->getCanonicalName()}{/block}
 
-{block header}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
-    » {_videos}
-{/block}
-
-{block size}
-    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
-        <div class="summary">
-            {tr("videos", $count)}
-            <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId() && !OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']">
-                &nbsp;|&nbsp;
-                <a href="/videos/upload">{_upload_video}</a>
-            </span>
+{block content}
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+        ['title' => tr("videos")]
+    ], extra => '<a class="button" href="/videos/upload">'.tr("upload_video").'</a>'
+    }
+    <div class="page_block video_block_layout">
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        <div class="video_items_list" style="padding-top: 15px;">
+            {if sizeof($data) > 0}
+                <div class="video_item" n:foreach="$data as $x">
+                    <a href="/video{$x->getPrettyId()}">
+                        <div class="video_item_thumb_wrap" id="videoOpen" data-id="{$x->getPrettyId()}">
+                            <img src="{$x->getThumbnailURL()}"
+                                alt="{$x->getName()}"
+                                class="video_item_thumb "/>
+                            <div class="video_item_controls">
+                                <div class="video_thumb_label">
+                                {if $x->getType() != 0}
+                                    <span class="video_thumb_label_item">
+                                        <vkifyloc name="external" />
+                                    </span>
+                                {/if}
+                                    <span class="video_thumb_label_item">{$x->getLength()}</span>
+                                </div>
+                                <div class="video_thumb_play">
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="video_item_info">
+                        <a class="video_item_title" href="/video{$x->getPrettyId()}">
+                            <span id="videoOpen" data-id="{$x->getPrettyId()}">{$x->getName()}</span>
+                        </a>
+                        <a class="video_item_author" href="/{$x->getOwner()->getId()}">{$x->getOwner()->getCanonicalName()}</a>
+                        <div class="video_item_add_info">
+                            <span class="video_item_date_info">{$x->getPublicationTime()}</span>
+                        </div>
+                    </div>
+                </div>
+                {include "../components/paginator.xml", conf => (object) [
+                    "page"     => $page,
+                    "count"    => $count,
+                    "amount"   => sizeof($data),
+                    "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    "atBottom" => true,
+                ]}
+            {else}
+                {include "../components/nothing.xml"}
+            {/if}
         </div>
     </div>
-{/block}
-
-{block actions}
-    
-{/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block link|strip|stripHtml}
-    /video{$x->getPrettyId()}
-{/block}
-
-{block preview}
-    <div class="video-preview" id="videoOpen" data-id="{$x->getPrettyId()}">
-        <img src="{$x->getThumbnailURL()}"
-            alt="{$x->getName()}"
-            style="max-width: 170px; max-height: 127px; margin: auto;" />
-    </div>
-{/block}
-
-{block name}
-    <span id="videoOpen" data-id="{$x->getPrettyId()}" style="color:unset;">{$x->getName()}</span>
-{/block}
-
-{block description}
-    <p>
-        <span>{$x->getDescription() ?? ""}</span>
-    </p>
-    <span style="color: grey;">{_video_uploaded} {$x->getPublicationTime()}</span><br/>
-    <span style="color: grey;">{_video_updated} {$x->getEditTime() ?? $x->getPublicationTime()}</span>
-    <p>
-        <a href="/video{$x->getPrettyId()}" data-id="{$x->getPrettyId()}">{_view_video}</a>
-        {if $x->getCommentsCount() > 0}| <a href="/video{$x->getPrettyId()}#comments">{_comments} ({$x->getCommentsCount()})</a>{/if}
-    </p>
 {/block}

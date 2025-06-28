@@ -5,7 +5,7 @@
 {var $anonAccountId = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['account'] ?? 100}
 {var $anonUser = $anonEnabled ? (new \openvk\Web\Models\Repositories\Users())->get($anonAccountId) : NULL}
 
-<div id="write" class='model_content_textarea' style="padding: 4px 1px 2px 1px;">
+<div id="write" class='model_content_textarea'>
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
     {if $thisUser ?? NULL}
         <a class="post_field_user_link _post_field_author" href="{$thisUser->getURL()}">
@@ -57,14 +57,14 @@
             <div class="post-bottom-acts">
                 <div class="post-attach-menu">
                     <div id="wallAttachmentMenu">
-                        <a id="__photoAttachment" title="{_photo}"
+                        <a id="__photoAttachment" class="attach_photo" data-tip="simple-black" data-align="bottom-center" data-title="{_photo}"
                            {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        <a id="__videoAttachment" title="{_video}">
+                        <a id="__videoAttachment" class="attach_video" data-tip="simple-black" data-align="bottom-center" data-title="{_video}">
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        <a id="__audioAttachment" title="{_audio}">
+                        <a id="__audioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-center" data-title="{_audio}">
                             <div class="post-attach-menu__icon"></div>
                         </a>
 
@@ -72,28 +72,28 @@
                             {_show_more}
                         </a>
                         <div class="tippy-menu" id="moreAttachTooltip">
-                            <a n:if="$docs ?? true" id="__documentAttachment"
+                            <a n:if="$docs ?? true" id="__documentAttachment" class="attach_document"
                                {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
                                 <div class="post-attach-menu__icon"></div>
                                 {_document}
                             </a>
-                            <a n:if="$notes ?? false" id="__notesAttachment">
+                            <a n:if="$notes ?? false" id="__notesAttachment" class="attach_note">
                                 <div class="post-attach-menu__icon"></div>
                                 {_note}
                             </a>
-                            <a n:if="$graffiti ?? false" id="__graffitiAttachment" onclick="window.vkifyGraffiti(event);">
+                            <a n:if="$graffiti ?? false" class="attach_graffiti" onclick="window.vkifyGraffiti(event);">
                                 <div class="post-attach-menu__icon"></div>
                                 {_graffiti}
                             </a>
-                            <a n:if="$polls ?? false" id="__pollAttachment" onclick="initPoll(event);">
+                            <a n:if="$polls ?? false" class="attach_poll" onclick="initPoll(event);">
                                 <div class="post-attach-menu__icon"></div>
                                 {_poll}
                             </a>
-                            <a n:if="$geo ?? false" id="__geoAttacher">
+                            <a n:if="$geo ?? false" id="__geoAttacher" class="attach_geo">
                                 <div class="post-attach-menu__icon"></div>
                                 {_geo_place}
                             </a>
-                            <a n:if="$hasSource ?? false" id="__sourceAttacher">
+                            <a n:if="$hasSource ?? false" id="__sourceAttacher" class="attach_source">
                                 <div class="post-attach-menu__icon"></div>
                                 {_source}
                             </a>
@@ -108,35 +108,8 @@
                 
                         <div class="post-opts" id="postOptsTooltip">
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
-                                <script>
-                                    function onWallAsGroupClick(el) {
-                                        document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
-                                        {if $anonEnabled}
-                                            document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";                                            
-                                        {/if}
-
-                                        // Call the main handler in patch_wall.js
-                                        if (window.handleWallAsGroupClick) {
-                                            window.handleWallAsGroupClick(el);
-                                        }
-                                    }
-
-                                    function onWallAnonClick(el) {
-                                        {if $anonEnabled}
-                                            const asGroupCheckbox = document.querySelector('input[name="as_group"]');
-                                            if (asGroupCheckbox) {
-                                                asGroupCheckbox.disabled = el.checked;
-                                            }
-                                        {/if}
-
-                                        // Call the main handler in patch_wall.js
-                                        if (window.handleWallAnonClick) {
-                                            window.handleWallAnonClick(el);
-                                        }
-                                    }
-                                </script>
                                 <label>
-                                    <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" />
+                                    <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
                                     {_post_as_group}
                                 </label>
                                 <label id="forceSignOpt" style="display: none;">
@@ -145,7 +118,7 @@
                             {/if}
                 
                             <label n:if="$anonEnabled" id="octoberAnonOpt">
-                                <input type="checkbox" name="anon" onchange="onWallAnonClick(this)" /> {_as_anonymous}
+                                <input type="checkbox" name="anon" onchange="window.onWallAnonClick(this)" /> {_as_anonymous}
                             </label>
                 
                             <label>
@@ -153,7 +126,19 @@
                             </label>
                         </div>
                     {/if}
-                    <input type="submit" value="{_write}" class="button" />
+                    {if !($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}
+                        <div class="post_settings" id="postOptsTrigger" role="button">
+                            <div class="common_icon"></div>
+                        </div>
+
+                        <div class="post-opts" id="postOptsTooltip">
+                            <label>
+                                <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
+                                {_comment_as_group}
+                            </label>
+                        </div>
+                    {/if}
+                     <input type="submit" value="{_write}" class="button" />
                 </div>
             </div>
         </div>

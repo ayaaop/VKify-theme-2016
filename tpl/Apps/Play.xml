@@ -1,6 +1,9 @@
 {extends "../@layout.xml"}
 {var $canReport = $owner->getId() !== $thisUser->getId()}
 
+{var $layoutWidth = "815px"}
+{var $pageWidth = "650px"}
+
 {block title}
     {$name}
 {/block}
@@ -11,23 +14,28 @@
 {/block}
 
 {block content}
-    <center>
-        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="600"
+    <style>
+    body {
+        --layout-width: 815px;
+    }
+    .page_body {
+        width: 650px
+    }
+    </style>
+    <div class="page_block">
+        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="100%"
             sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
-    </center>
 
-    <div n:if="!is_null($news)" id="news">
-        <h4>{$news->getName()}</h4>
-        <div id="app_news_container">
-            {$news->getText()|noescape}
-        </div>
+            <div n:if="!is_null($news)" id="news">
+                <h4>{$news->getName()}</h4>
+                <div id="app_news_container">
+                    {$news->getText()|noescape}
+                </div>
+            </div>
+            <div class="settings_block_footer">
+                {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
+            </div>
     </div>
-
-    <center>
-        <p>
-            {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
-        </p>
-    </center>
 
     <script>
         window.appId     = {$id};

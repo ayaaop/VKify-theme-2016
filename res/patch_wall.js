@@ -301,10 +301,12 @@ window.handleWallAsGroupClick = function(el) {
         }
     }
 
-    const userImg = form ? form.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
-    const groupImg = form ? form.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
-    const anonImg = form ? form.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
-    const avatarLink = form ? form.querySelector('._post_field_author') : document.querySelector('._post_field_author');
+    // Look for avatar elements in the form context first, then globally
+    const formContext = el.closest('#write') || form;
+    const userImg = formContext ? formContext.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
+    const groupImg = formContext ? formContext.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
+    const anonImg = formContext ? formContext.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
+    const avatarLink = formContext ? formContext.querySelector('._post_field_author') : document.querySelector('._post_field_author');
 
     if (userImg && groupImg) {
         if (el.checked) {
@@ -367,10 +369,12 @@ window.handleWallAnonClick = function(el) {
         }
     }
 
-    const userImg = form ? form.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
-    const groupImg = form ? form.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
-    const anonImg = form ? form.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
-    const avatarLink = form ? form.querySelector('._post_field_author') : document.querySelector('._post_field_author');
+    // Look for avatar elements in the form context first, then globally
+    const formContext = el.closest('#write') || form;
+    const userImg = formContext ? formContext.querySelector('._post_field_user_image') : document.querySelector('._post_field_user_image');
+    const groupImg = formContext ? formContext.querySelector('._post_field_group_image') : document.querySelector('._post_field_group_image');
+    const anonImg = formContext ? formContext.querySelector('._post_field_anon_image') : document.querySelector('._post_field_anon_image');
+    const avatarLink = formContext ? formContext.querySelector('._post_field_author') : document.querySelector('._post_field_author');
 
     if (userImg && anonImg) {
         if (el.checked) {
@@ -579,3 +583,55 @@ if (window.router && window.router.addEventListener) {
     // Fallback for when router isn't available yet
     document.addEventListener('page:loaded', addSuggestedTabToWall);
 }
+
+// Template helper functions for inline event handlers
+window.onWallAsGroupClick = function(el) {
+    // Only try to manipulate elements if they exist (main post form)
+    const forceSignOpt = document.querySelector("#forceSignOpt");
+    if (forceSignOpt) {
+        forceSignOpt.style.display = el.checked ? "block" : "none";
+    }
+
+    const anonOpt = document.querySelector("#octoberAnonOpt");
+    if (anonOpt) {
+        anonOpt.style.display = el.checked ? "none" : "block";
+    }
+
+    if (window.handleWallAsGroupClick) {
+        window.handleWallAsGroupClick(el);
+    }
+};
+
+window.onWallAnonClick = function(el) {
+    const asGroupCheckbox = document.querySelector('input[name="as_group"]');
+    if (asGroupCheckbox) {
+        asGroupCheckbox.disabled = el.checked;
+    }
+
+    if (window.handleWallAnonClick) {
+        window.handleWallAnonClick(el);
+    }
+};
+
+function toggleLongText(el) {
+    const container = el.closest('.really_text');
+    const truncated = container.querySelector('.truncated_text');
+    const full = container.querySelector('.full_text');
+
+    if (!truncated || !full) {
+        console.log('Elements not found:', { truncated, full, container });
+        return;
+    }
+
+    if(full.classList.contains('hidden')) {
+        truncated.style.display = 'none';
+        full.classList.remove('hidden');
+        el.innerHTML = "<vkifyloc name='show_less'></vkifyloc>";
+    } else {
+        truncated.style.display = 'inline';
+        full.classList.add('hidden');
+        el.textContent = tr('show_more');
+    }
+}
+
+window.toggleLongText = toggleLongText;

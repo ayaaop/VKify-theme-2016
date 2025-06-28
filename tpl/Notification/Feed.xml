@@ -5,12 +5,11 @@
     {_feedback}
 {/block}
 
-{block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a> »
-    {_feedback}
-{/block}
-
 {block content}
+{include "../components/page_crumb_header.xml", crumbs => [
+    ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+    ['title' => tr("feedback")]
+]}
 <div n:ifcontent class="tabs">
     <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?act=new">{_unread}</a>

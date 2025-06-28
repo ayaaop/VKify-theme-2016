@@ -25,7 +25,7 @@
         <div class="content scroll_container">
             {if sizeof($posts) > 0}
                 {foreach $posts as $post}
-                    {include "../components/post.xml", post => $post, commentSection => true}
+                    {include "../components/post.xml", post => $post, commentSection => true, onWallOf => true}
                 {/foreach}
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}

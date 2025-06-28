@@ -2,23 +2,26 @@
 
 {block title}{_create_note}{/block}
 
-{block header}
-    {_create_note}
-{/block}
-
 {block content}
-    <form id="noteFactory" method="POST">
-        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" />
-        <br/><br/>
-        <textarea name="html" style="display:none;"></textarea>
-        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
-        
-        <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
-        
-        <input type="hidden" name="hash" value="{$csrfToken}" />
-        <button class="button">{_save}</button>
-        <a href="javascript:openPreviewWindow()" style="float: right;">{_note_preview}</a>
-    </form>
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+        ['href' => "/notes{$thisUser->getId()}", 'title' => tr("notes")],
+        ['title' => tr("create_note")]
+    ]}
+    <div class="page_block page_padding">
+        <form id="noteFactory" method="POST">
+            <input type="text" name="name" placeholder="{_name_note}" />
+            <br/><br/>
+            <textarea name="html" style="display:none;"></textarea>
+            <div id="editor" style="height:300px;border:1px solid var(--border-color)"></div>
+            
+            <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <button class="button">{_save}</button>
+            <a href="javascript:openPreviewWindow()" style="float: right;">{_note_preview}</a>
+        </form>
+    </div>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
     {script "js/node_modules/requirejs/bin/r.js"}

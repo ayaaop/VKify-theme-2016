@@ -2,38 +2,34 @@
   Reusable breadcrumb header component
   
   @param crumbs       Array of breadcrumb items with 'title' and optional 'href' keys
-  @param current      (optional) Current page title (will be displayed as non-clickable)
   @param extra        (optional) HTML content to display on the right side of the header
   @param extra_left   (optional) HTML content to display on the left side of the header
 *}
 <h2 class="page_block_h2">
   <div class="page_block_header clear_fix">
     {ifset $extra_left}
-    <div class="page_block_header_extra_left _header_extra_left">
+    <div class="page_block_header_extra_left">
       {$extra_left}
     </div>
     {/ifset}
     {ifset $extra}
-    <div class="page_block_header_extra _header_extra">
+    <div class="page_block_header_extra">
       {$extra|noescape}
     </div>
     {/ifset}
-    <div class="page_block_header_inner _header_inner">
+    <div class="page_block_header_inner">
     {foreach $crumbs as $crumb}
       {if isset($crumb['href'])}
-        <a class="ui_crumb" href="{$crumb['href']}">{$crumb['title']}</a>
+        {if !$iterator->isFirst()}
+          <div class="ui_crumb_sep"></div>
+        {/if}
+        <a class="ui_crumb" href="{$crumb['href']}">{$crumb['title']}<span class="ui_crumb_count" n:if="isset($crumb['count'])">{$crumb['count']}</span></a>
       {else}
-        <div class="ui_crumb">{$crumb['title']}</div>
-      {/if}
-      {if !$iterator->isLast()}
-        <div class="ui_crumb_sep"></div>
+        {if !$iterator->isFirst()}
+          <div class="ui_crumb_sep"></div>
+        {/if}
+        <div class="ui_crumb">{$crumb['title']}<span class="ui_crumb_count" n:if="isset($crumb['count'])">{$crumb['count']}</span></div>
       {/if}
     {/foreach}
-    {ifset $current}
-      {if count($crumbs) > 0}
-        <div class="ui_crumb_sep"></div>
-      {/if}
-      <div class="ui_crumb" data-testid="breadcrumb-current">{$current}</div>
-    {/ifset}
   </div>
 </h2>

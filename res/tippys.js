@@ -14,24 +14,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const config = {
             ...commonConfig,
-            content: typeof contentCallback === 'function' 
-                ? contentCallback 
-                : contentCallback instanceof Element 
-                    ? contentCallback 
+            content: typeof contentCallback === 'function'
+                ? contentCallback
+                : contentCallback instanceof Element
+                    ? contentCallback
                     : (reference) => {
-                        // For string IDs, first try to find adjacent .tippy-menu
                         const adjacentMenu = reference.nextElementSibling;
                         if (adjacentMenu && adjacentMenu.classList.contains('tippy-menu')) {
                             return adjacentMenu;
                         }
-                        
-                        // Fallback to ID lookup
+
                         const menu = document.getElementById(contentCallback);
                         return menu || document.createElement('div');
                     }
         };
 
-        // Apply custom options after the default config
         Object.assign(config, options);
 
         return tippy(selector, config);
@@ -39,12 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.postActionTooltipConfig = {
         content: (reference) => {
-            const menu = reference.closest('.post_actions')?.querySelector('.tippy-menu');
-            if (!menu) return document.createElement('div');
-            
-            const menuClone = menu.cloneNode(true);
-            reference.setAttribute('data-tippy-content-html', menu.innerHTML);
-            return menuClone;
+            const menuElement = reference._tippyMenuElement;
+            return menuElement || document.createElement('div');
         },
         ...commonConfig,
         'placement': 'bottom-end',
@@ -53,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         onDestroy: (instance) => {
             instance.reference.removeAttribute('data-tippy-initialized');
-            instance.reference.removeAttribute('data-tippy-content-html');
         }
     };
 
@@ -95,17 +87,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         document.querySelectorAll('.post_actions_icon').forEach(element => {
             if (!hasTippy(element)) {
+                const menu = element.closest('.post_actions')?.querySelector('.tippy-menu');
+                if (menu) {
+                    menu.remove();
+                    element._tippyMenuElement = menu;
+                }
                 tippy(element, window.postActionTooltipConfig);
             }
         });
-
-        safeSetupTooltip('.reply_action', 
-            (reference) => reference.getAttribute('data-tippy-content'),
-            {
-                placement: 'top',
-                theme: 'dark'
-            }
-        );
     };
 
     window.initializeTippys();

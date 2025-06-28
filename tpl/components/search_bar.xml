@@ -21,7 +21,7 @@
 {var $search_form_id = $form_id ?? ''}
 {var $search_form_class = $form_class ?? ''}
 {var $search_name = $name ?? ''}
-{var $search_placeholder = $placeholder ?? tr('search')}
+{var $search_placeholder = $placeholder ?? tr('header_search')}
 {var $search_action = $action ?? '/search'}
 {var $search_section = $section ?? ''}
 {var $search_input_name = $input_name ?? 'q'}

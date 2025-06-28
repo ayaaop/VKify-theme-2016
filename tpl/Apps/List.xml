@@ -34,7 +34,7 @@
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
         {if sizeof($data) > 0}
-            <div class="people_row" n:foreach="$data as $x">
+            <div class="search_row" n:foreach="$data as $x">
                 <div class="img">
                     <a href="/app{$x->getId()}">
                         <img style="max-width: 80px;" src="{$x->getAvatarUrl()}" />

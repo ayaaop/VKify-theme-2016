@@ -22,10 +22,6 @@
     margin-bottom: 0;
 }
 
-.settings_labeled_text label:has(input[type="checkbox"], input[type="radio"]):first-child {
-    margin-top: 0;
-}
-
 .settings_list_row .settings_label,
 .settings_list_row .settings_labeled_text {
     padding-top: 2px;
@@ -182,8 +178,10 @@
 /* followers */
 .group_l_row {
 	position: relative;
-	border-bottom: 1px solid var(--border-color);
 	padding: 15px 0;
+}
+.group_l_row:not(:last-child) {
+	border-bottom: 1px solid var(--border-color);
 }
 .group_u_bigph_wrap {
 	position: relative;

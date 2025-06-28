@@ -1,40 +1,32 @@
 {block content}
-<table>
-<tbody>
-    <tr>
-        <td valign="top">
-            <a href="/video{$video->getPrettyId()}" id='videoOpen' data-id="{$video->getPrettyId()}">
-                <div class="video-preview">
-                    <img src="{$video->getThumbnailURL()}"
-                    style="max-width: 170px; max-height: 127px; margin: auto;" >
-                </div>
-            </a>
-        </td>
-        <td valign="top" style="width: 100%">
-            {ifset infotable}
-                {include infotable, x => $dat}
-            {else}
+    <div class="video_item">
         <a href="/video{$video->getPrettyId()}">
-            <b class='video_name' id='videoOpen' data-id="{$video->getPrettyId()}">
-            {$video->getName()}
-            </b>
+            <div class="video_item_thumb_wrap" id="videoOpen" data-id="{$video->getPrettyId()}">
+                <img src="{$video->getThumbnailURL()}"
+                    alt="{$video->getName()}"
+                    class="video_item_thumb "/>
+                <div class="video_item_controls">
+                    <div class="video_thumb_label">
+                    {if $video->getType() != 0}
+                        <span class="video_thumb_label_item">
+                            <vkifyloc name="external" />
+                        </span>
+                    {/if}
+                        <span class="video_thumb_label_item">{$video->getLength()}</span>
+                    </div>
+                    <div class="video_thumb_play">
+                    </div>
+                </div>
+            </div>
         </a>
-        {if $video->getLength()}
-            ({$video->getFormattedLength()})
-        {/if}
-        <br/>
-            <p>
-                <span class='video_description'>{$video->getDescription() ?? ""}</span>
-            </p>
-            <span style="color: grey;">{_video_uploaded} {$video->getPublicationTime()}</span><br/>
-            
-            <p>
-                <a href="/video{$video->getPrettyId()}" data-id="{$video->getPrettyId()}">{_view_video}</a>
-                {if $video->getCommentsCount() > 0}| <a href="/video{$video->getPrettyId()}#comments">{_comments} ({$video->getCommentsCount()})</a>{/if}
-            </p>
-            {/ifset}
-        </td>
-    </tr>
-</tbody>
-</table>
+        <div class="video_item_info">
+            <a class="video_item_title" href="/video{$video->getPrettyId()}">
+                <span id="videoOpen" data-id="{$video->getPrettyId()}">{$video->getName()}</span>
+            </a>
+            <a class="video_item_author" href="/{$video->getOwner()->getId()}">{$video->getOwner()->getCanonicalName()}</a>
+            <div class="video_item_add_info">
+                <span class="video_item_date_info">{$video->getPublicationTime()}</span>
+            </div>
+        </div>
+    </div>
 {/block}
