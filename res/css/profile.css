@@ -89,7 +89,7 @@
 
 .page_album_title {
     font-size: 12.5px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/album_top_shadow.png);
+    background: url(/themepack/vkify16/3.2.0.1/resource/album_top_shadow.png);
     color: #fff;
     position: absolute;
     bottom: 0;
@@ -130,7 +130,7 @@
 }
 
 .page_album_nocover {
-    background: #ecf1f5 url(/themepack/vkify16/3.2.0.0/resource/camera_big.png) no-repeat 50% 45%;
+    background: #ecf1f5 url(/themepack/vkify16/3.2.0.1/resource/camera_big.png) no-repeat 50% 45%;
     width: 279px;
     height: 185px
 }
@@ -204,7 +204,7 @@
     left: 0;
     right: 0;
     background: #000;
-    background: rgba(0, 0, 0, .5) url(/themepack/vkify16/3.2.0.0/resource/video_play_small.png) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, .5) url(/themepack/vkify16/3.2.0.1/resource/video_play_small.png) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -559,7 +559,7 @@ div.avatar_block:hover .avatar_variants {
     width: 21px;
     height: 21px;
     margin: 10px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/add_info_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/add_info_icons.png) no-repeat 0 0
 }
 
 .profile_warning_img.bday {
@@ -611,7 +611,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
     width: 9px;
     height: 9px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/attach_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/attach_icons.png) no-repeat 0 0
 }
 
 .profile_warning_label {
@@ -662,13 +662,13 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/gift_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/gift_icon.png) no-repeat;
     background-position: left 2px;
     padding-right: 21px;
 }
 
 .profile_more_btn {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/more_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/more_icon.png) no-repeat;
     background-position: 100% 13px;
     width: 36px;
     padding-right: 7px;
@@ -737,7 +737,7 @@ div.avatar_block:hover .avatar_variants {
     display: block;
     position: absolute;
     content: '';
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/group_info_cons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/group_info_cons.png) no-repeat 0 0;
     height: 15px;
     width: 15px;
     margin: 2px 0 0 -24px;
@@ -747,7 +747,7 @@ div.avatar_block:hover .avatar_variants {
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
     .group_info_row:before {
-        background-image: url(/themepack/vkify16/3.2.0.0/resource/icons/group_info_cons_2x.png);
+        background-image: url(/themepack/vkify16/3.2.0.1/resource/icons/group_info_cons_2x.png);
         background-size: 15px 149px
     }
 }
@@ -775,7 +775,7 @@ div.avatar_block:hover .avatar_variants {
     left: 0;
     width: 12px;
     height: 12px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/topic_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/topic_icon.png) no-repeat 0 0;
 }
 .wide_column .topics_module .module_body {
     padding: 1px 20px 5px;
@@ -830,7 +830,7 @@ div.avatar_block:hover .avatar_variants {
   display:block
 }
 .page_upload_label {
-  background:url(/themepack/vkify16/3.2.0.0/resource/icons/group_icons.png) no-repeat;
+  background:url(/themepack/vkify16/3.2.0.1/resource/icons/group_icons.png) no-repeat;
   position:absolute;
   display:block;
   width:17px;
@@ -843,7 +843,7 @@ div.avatar_block:hover .avatar_variants {
   padding:17px 13px 17px 47px
 }
 .wide_column .page_upload_label {
-  background:url(/themepack/vkify16/3.2.0.0/resource/icons/group_icons_big.png) no-repeat;
+  background:url(/themepack/vkify16/3.2.0.1/resource/icons/group_icons_big.png) no-repeat;
   width:25px;
   height:27px;
   margin-left:-37px;

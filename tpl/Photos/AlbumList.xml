@@ -57,7 +57,7 @@
 
 {block preview}
     {var $cover   = $x->getCoverPhoto()}
-    {var $preview = is_null($cover) ? "/themepack/vkify16/3.2.0.0/resource/m_noalbum_2x.png" : $cover->getURLBySizeId("normal")}
+    {var $preview = is_null($cover) ? "/themepack/vkify16/3.2.0.1/resource/m_noalbum_2x.png" : $cover->getURLBySizeId("normal")}
 
     <a href="/album{$x->getPrettyId()}">
         <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" loading=lazy />

@@ -29,19 +29,19 @@ window.changeLangPopup = function () {
     window.langPopup = new CMessageBox({
         title: tr('select_language'),
         body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-<div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
+<div class="langSelect"><img src="/themepack/vkify16/3.2.0.1/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
 </a>
 <a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.0/resource/lang_flags/uk.png"><b>Україньска</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.1/resource/lang_flags/uk.png"><b>Україньска</b></div>
 </a>
 <a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.1/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
 </a>
 <a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.1/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
 </a>
 <a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.0/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.1/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
 </a>
 <a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
    <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
@@ -433,8 +433,8 @@ function parseAudio(onlyscnodes = false) {
 }
 
 const vkfavicon = {
-    "fav": "/themepack/vkify16/3.2.0.0/resource/favicon_vk.ico",
-	"fav_chat": "/themepack/vkify16/3.2.0.0/resource/fav_chat.ico",
+    "fav": "/themepack/vkify16/3.2.0.1/resource/favicon_vk.ico",
+	"fav_chat": "/themepack/vkify16/3.2.0.1/resource/fav_chat.ico",
     "playiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAvkQAAL/4AADBsAAAw2wAAMUoAADG6AAAyKgAAMpsAADMNAAAzfwAAM/EAADRlAAA02AAANU0AADXCAAA2Nw==",
     "pauseiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
 }
@@ -452,8 +452,8 @@ window.initVKGraffiti = function (event) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.0/stylesheet/styles.css">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.0/resource/vkgraffiti/graffiti.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.1/stylesheet/styles.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.1/resource/vkgraffiti/graffiti.css">
 </head>
 <body style="background: none">
     <div style="margin: 10px"><a onclick="Graffiti.flushHistory();">${window.vkifylang ? window.vkifylang.graffitiflushhistory : 'Clear'}</a> | <a onclick="Graffiti.backHistory();">${window.vkifylang ? window.vkifylang.graffitibackhistory : 'Undo'}</a></div>
@@ -472,7 +472,7 @@ window.initVKGraffiti = function (event) {
     <div id="graffiti_cpwrap" style="display:none; top:-210px;">
         <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
     </div>
-    <script src="${window.location.origin}/themepack/vkify16/3.2.0.0/resource/vkgraffiti/graffiti.js"></script>
+    <script src="${window.location.origin}/themepack/vkify16/3.2.0.1/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
@@ -1560,7 +1560,7 @@ function switchProfileInfo() {
 const today = new Date();
 if (today.getDate() === 1 && today.getMonth() === 3) {
     const doge = document.createElement('script');
-    doge.setAttribute('src', '/themepack/vkify16/3.2.0.0/resource/doge.js');
+    doge.setAttribute('src', '/themepack/vkify16/3.2.0.1/resource/doge.js');
     document.head.appendChild(doge);
     u(document).on('click', '.post-like-button', function () {
         if (u(this).find('#liked').length) { Doge.show(); }

@@ -148,7 +148,7 @@
                                 <div class='scroll_node search_row' n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
-                                            ? '/themepack/vkify16/3.2.0.0/resource/community_200.png' 
+                                            ? '/themepack/vkify16/3.2.0.1/resource/community_200.png' 
                                             : $dat->getAvatarUrl('miniscule')}" 
                                             width="75" alt="{_photo}" loading='lazy' />
                                     </a>

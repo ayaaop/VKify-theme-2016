@@ -22,6 +22,8 @@
 body {
     --layout-width: 960px;
     --page-width: 795px;
+    --module-border-radius: 2px;
+    --button-border-radius: 2px;
 
     --body-background-color: #edeef0;
     --module-background-color: #fff;
@@ -123,7 +125,7 @@ body {
 }
 
 .home_button div {
-    background: url("/themepack/vkify16/3.2.0.0/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.2.0.1/resource/icons/head_icons.png") no-repeat;
     background-position: 0 -98px;
     height: 19px;
     width: 32px;
@@ -307,7 +309,7 @@ span {
 
 .page_block {
     background-color: var(--module-background-color);
-    border-radius: 2px;
+    border-radius: var(--module-border-radius);
     box-shadow: 0 1px 0 0 var(--shadow-bottom-color), 0 0 0 1px var(--shadow-outline-color);
 }
 
@@ -401,7 +403,7 @@ input:focus, textarea:focus {
 }
 
 .button, input[class=button], .frenMenu .button {
-    border-radius: 2px;
+    border-radius: var(--button-border-radius);
     line-height: 15px;
     text-align: center;
     padding: 7px 16px 8px;
@@ -508,7 +510,7 @@ input:focus, textarea:focus {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -580,7 +582,7 @@ input:focus, textarea:focus {
 .top_audio_player .top_audio_player_btn>div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.2.0.0/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.2.0.1/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -829,7 +831,7 @@ input:focus, textarea:focus {
 }
 
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -852,7 +854,7 @@ input:focus, textarea:focus {
     border-radius: 14px;
     -o-transition: background-color .05s, color .05s;
     transition: background-color .05s, color .05s;
-    background: var(--search-color) url(/themepack/vkify16/3.2.0.0/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.2.0.1/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -915,7 +917,7 @@ input:focus, textarea:focus {
 }
 
 .navigation .link:before {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/menu_icon.png) no-repeat 7px -441px;
     content: '';
     height: 25px;
     width: 35px;
@@ -943,7 +945,7 @@ input:focus, textarea:focus {
     background-position: 7px -161px
 }
 .navigation .link[href="/settings"]::before {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/common.png);
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/common.png);
     background-position: 10px 175px;
     height: 20px;
 }
@@ -957,7 +959,7 @@ input:focus, textarea:focus {
     background-position: 7px -105px;
 }
 .navigation .link[href="/donate"]::before {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .navigation .link[href="/docs"]:before {
@@ -982,7 +984,7 @@ input:focus, textarea:focus {
 .left_menu_nav_wrap #moreOptionsLink:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1181,10 +1183,10 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 input[type="checkbox"] {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/dev_check.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/dev_check.png) 0 0 no-repeat;
 }
 input[type="radio"] {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/dev_radio.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/dev_radio.png) 0 0 no-repeat;
     height: 14px;
     width: 14px;
 }
@@ -1302,11 +1304,13 @@ body.dimmed>.dimmer {
     background-color: var(--module-background-color);
     margin: 0;
     border: 0;
+    border-radius: var(--module-border-radius);
 }
 .ovk-diag-cont {
     background: none;
 }
 .ovk-diag-head {
+    border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
     background-color: #6287ae;
     font-weight: 400;
     font-size: 14px;
@@ -1330,7 +1334,7 @@ body.dimmed>.dimmer {
 .ovk-diag-head-close {
     float: right;
     padding: 21px 25px 21px 12px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/cross.png) no-repeat 12px 21px;
+    background: url(/themepack/vkify16/3.2.0.1/resource/cross.png) no-repeat 12px 21px;
     width: 12px;
     height: 12px;
     opacity: 0.75;
@@ -1347,7 +1351,7 @@ body.dimmed>.dimmer {
 .ovk-diag-action {
     background-color: var(--module-header-background-color);
     border-top: solid 1px var(--border-color);
-    border-radius: 0 0 2px 2px;
+    border-radius: 0 0 var(--module-border-radius) var(--module-border-radius);
     padding: 15px;
 }
 
@@ -1669,7 +1673,7 @@ img[src="/assets/packages/static/openvk/img/donate_en.png"] {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -1933,7 +1937,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .post-attach-menu__icon {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_icon.png) no-repeat;
     opacity: .7
 }
 .post-attach-menu a:hover .post-attach-menu__icon, .post_settings:hover, .post_settings[aria-expanded="true"] {
@@ -2276,7 +2280,7 @@ a.ui_box_header_link {
     opacity: 1;
 }
 .ui_rmenu_extra_item .addIcon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
     width: 13px;
     height: 13px;
 }
@@ -2366,14 +2370,14 @@ a.ui_crumb {
     font-size: 9px;
     position: relative;
     top: -2px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
     padding-left: 6px;
     margin: 23px 10px 21px 7px;
 }
 
 @media (-webkit-min-device-pixel-ratio:2), (min-resolution:192dpi) {
     .ui_crumb_sep {
-        background-image: url(/themepack/vkify16/3.2.0.0/resource/icons/breadcrumbs_2x.png);
+        background-image: url(/themepack/vkify16/3.2.0.1/resource/icons/breadcrumbs_2x.png);
         background-size: 12px 11px
     }
 }
@@ -2429,13 +2433,13 @@ select:focus {
 }
 
 .page_verified {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/verify.png?1) no-repeat 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/verify.png?1) no-repeat 0;
     display: inline;
     margin-left: 6px;
     padding: 2px 16px 2px 0;
 }
 .post .page_verified {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/verify_small.png) no-repeat 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/verify_small.png) no-repeat 0;
     margin: 0 4px 0 0;
     padding: 0;
     height: 14px;
@@ -2605,7 +2609,7 @@ select:focus {
 }
 
 .post_like_icon, .post_share_icon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_icon.png) no-repeat 0 0;
     display: inline-block;
     width: 16px;
     height: 13px;
@@ -2725,7 +2729,7 @@ select:focus {
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -2792,7 +2796,7 @@ select:focus {
     vertical-align: top;
 }
 .like_icon {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -2827,7 +2831,7 @@ select:focus {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     filter: alpha(opacity=0);
     cursor: pointer;
@@ -2947,7 +2951,7 @@ input.ui_search_field, input.ui_search_field~.placeholder .ph_input {
 }
 
 input.ui_search_field {
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/search_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/search_icon.png) no-repeat;
     padding-left: 28px;
     border-left: 20px solid transparent;
     background-position: 0;
@@ -3008,7 +3012,7 @@ input.ui_search_field:focus~.placeholder .ph_content {
 .ui_search_reset {
     position: absolute;
     width: 38px;
-    background: url(/themepack/vkify16/3.2.0.0/resource/icons/cross.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.2.0.1/resource/icons/cross.png) no-repeat 50%;
     top: 0;
     bottom: 0;
     right: 6px;
@@ -3062,7 +3066,7 @@ input.ui_search_field:focus~.placeholder .ph_content {
 }
 
 .ui_search_loading .ui_search_reset {
-    background-image: url(/themepack/vkify16/3.2.0.0/resource/icons/c_upload.gif);
+    background-image: url(/themepack/vkify16/3.2.0.1/resource/icons/c_upload.gif);
     -o-transition: none;
     transition: none;
     visibility: visible;
@@ -3131,7 +3135,7 @@ input.ui_search_field:focus~.placeholder .ph_content {
     margin-top: 0;
 }
 .msg.msg_yellow {
-    background: #ffefe9 url(/themepack/vkify16/3.2.0.0/resource/icons/msg_error.png) no-repeat 12px 12px;
+    background: #ffefe9 url(/themepack/vkify16/3.2.0.1/resource/icons/msg_error.png) no-repeat 12px 12px;
     padding-left: 55px;
     border-color: #f2ab99;
     min-height: 40px;
@@ -3220,7 +3224,7 @@ input.ui_search_field:focus~.placeholder .ph_content {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.2.0.0/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.2.0.1/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -3625,7 +3629,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
 	height: 48px;
 	width: 48px;
-	background: url(/themepack/vkify16/3.2.0.0/resource/icons/post_more.png) no-repeat center center;
+	background: url(/themepack/vkify16/3.2.0.1/resource/icons/post_more.png) no-repeat center center;
 	cursor: pointer;
 }
 

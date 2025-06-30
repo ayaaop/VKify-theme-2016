@@ -24,7 +24,7 @@
             <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}" href="{$author->getURL()}">
                 {if method_exists($author, 'getOwner')}
                     <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                        ? '/themepack/vkify16/3.2.0.0/resource/community_200.png' 
+                        ? '/themepack/vkify16/3.2.0.1/resource/community_200.png' 
                         : $author->getAvatarUrl('miniscule')}" 
                         width="50" 
                         class="post-avatar" />

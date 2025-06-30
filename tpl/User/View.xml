@@ -59,7 +59,7 @@
 							</div>
 						{/if}
 							<a href="{$user->getAvatarLink()|nocheck}">
-								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/3.2.0.0/resource/camera_200.png{/if}"
+								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/3.2.0.1/resource/camera_200.png{/if}"
 									alt="{$user->getCanonicalName()}"
 									id="bigAvatar"
 									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
@@ -301,7 +301,7 @@
 									<div class="thumb">
 										<a href="club{$club->getId()}">
 											<img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/3.2.0.0/resource/community_200.png
+												/themepack/vkify16/3.2.0.1/resource/community_200.png
 											{else}
 												{$club->getAvatarUrl()}
 											{/if}" alt="{$club->getCanonicalName()}" />
@@ -332,7 +332,7 @@
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
 											<img class="cell_img" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/3.2.0.0/resource/community_200.png
+												/themepack/vkify16/3.2.0.1/resource/community_200.png
 											{else}
 												{$meeting->getAvatarUrl()}
 											{/if}" alt="{$meeting->getName()}" />

@@ -54,28 +54,28 @@ u(document).on("click", "#editPost", async (e) => {
                         <input type="hidden" id="source" name="source" value="none" />
                         <div class="post-bottom-acts">
                             <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
-                                <a id="__photoAttachment">
+                                <a class="attach_photo" id="__photoAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a id="__videoAttachment">
+                                <a class="attach_video" id="__videoAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a id="__audioAttachment">
+                                <a class="attach_audio" id="__audioAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a class="post-attach-menu__trigger" id="moreAttachTrigger">
                                     ${tr('show_more')}
                                 </a>
                                 <div class="tippy-menu" id="moreAttachTooltip2">
-                                        <a id="__documentAttachment">
+                                        <a class="attach_document" id="__documentAttachment">
                                             <div class="post-attach-menu__icon"></div>
                                             ${tr('document')}
                                         </a>
-                                        ${type == 'post' ? `<a id="__notesAttachment">
+                                        ${type == 'post' ? `<a class="attach_note" id="__notesAttachment">
                                             <div class="post-attach-menu__icon"></div>
                                             ${tr('note')}
                                         </a>
-                                        <a id='__sourceAttacher'>
+                                        <a class="attach_source" id='__sourceAttacher'>
                                             <div class="post-attach-menu__icon"></div>
                                             ${tr('source')}
                                         </a>` : ''}
