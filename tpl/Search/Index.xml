@@ -148,7 +148,7 @@
                                 <div class='scroll_node search_row' n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
-                                            ? '/themepack/vkify16/3.0.0.0/resource/community_200.png' 
+                                            ? '/themepack/vkify16/3.2.0.0/resource/community_200.png' 
                                             : $dat->getAvatarUrl('miniscule')}" 
                                             width="75" alt="{_photo}" loading='lazy' />
                                     </a>
@@ -270,7 +270,9 @@
                                 </script>
                             {/if}
                         {else}
-                            {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
+                            <div style="padding-top: 20px;">
+                                {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
+                            </div>
                         {/if}
                     </div>
                 </div>
@@ -411,5 +413,5 @@
         </div>
     </div>
 
-    <input class="button" id="search_reset" type="button" value="{_reset}">
+    <input class="button button_gray button_wide" id="search_reset" type="button" value="{_reset}">
 {/block}

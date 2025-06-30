@@ -3,7 +3,7 @@
 {var $likesCount = $comment->getLikesCount()}
 {var $target = $comment->getTarget()}
 {var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
-<div data-id="1_{$comment->getId()}" class="post scroll_node reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
+<div data-id="1_{$comment->getId()}" class="post reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <div class="reply_wrap">
         <a class="reply_image{if !$author instanceof $Club && $author->isOnline()} online{/if}" href="{$author->getURL()}">
             <img src="{$author->getAvatarURL('miniscule')}" width="30" class="reply_img" />
@@ -26,7 +26,7 @@
                 <div class="text reply_text" id="text{$comment->getId()}">
                     <div class="really_text">
                         {if strlen($comment->getText()) > 500}
-                            <span class="truncated_text">{substr($comment->getText(), 0, 500)}...</span> 
+                            <span class="truncated_text">{$comment->getText()|truncate:500|noescape}</span> 
                             <span class="full_text hidden">{$comment->getText()|noescape}</span>
                             <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
                         {else}
@@ -51,7 +51,7 @@
             <div class='post_edit'></div>
             <div class="reply_footer clear_fix" n:if="isset($thisUser) && !($timeOnly ?? false)">
                 {var $isLiked = $comment->hasLikeFrom($thisUser)}
-                <a class="like_wrap {if $isLiked}my_like{/if}" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
+                <a class="post-like-button like_wrap {if $isLiked}my_like{/if}" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
                     <i class="heart like_icon _icon" id="{if $isLiked}liked{/if}"></i>
                     <span class="likeCnt reply_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
                 </a>

@@ -15,22 +15,21 @@
                     width="28" height="28"
                     data-user-url="{$thisUser->getURL()}" />
             {if !is_null($club ?? NULL)}
-            <img class="post_field_user_image"
-                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/3.0.0.0/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
+            <img class="post_field_user_image post_field_user_image_group"
+                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/3.2.0.0/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
                     alt="{$club->getCanonicalName()}"
                     width="28" height="28"
                     style="opacity: 0;"
                     data-group-url="{$club->getURL()}" />
             {/if}
-            {if $anonEnabled && $anonUser}
-            <img class="post_field_user_image"
+            {if $anonEnabled && ($postOpts ?? true) && $anonUser}
+            <img class="post_field_user_image post_field_user_image_anon"
                     src="{$anonUser->getAvatarUrl('miniscule')}"
                     alt="{$anonUser->getCanonicalName()}"
                     width="28" height="28"
                     style="opacity: 0;"
                     data-anon-url="{$anonUser->getURL()}" />
             {/if}
-
         </a>
     {/if}
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text"
@@ -90,10 +89,6 @@
                                 <div class="post-attach-menu__icon"></div>
                                 {_geo_place}
                             </a>
-                            <a n:if="$hasSource ?? false" id="__sourceAttacher" class="attach_source">
-                                <div class="post-attach-menu__icon"></div>
-                                {_source}
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -103,7 +98,7 @@
                             <div class="common_icon"></div>
                         </div>
                 
-                        <div class="post-opts" id="postOptsTooltip">
+                        <div class="post-opts tippy-menu" id="postOptsTooltip">
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
                                 <label>
                                     <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
@@ -121,6 +116,13 @@
                             <label>
                                 <input type="checkbox" name="nsfw" /> {_contains_nsfw}
                             </label>
+                            {if $hasSource}
+                                <div class="separator"></div>
+                                <a id="__sourceAttacher" class="attach_source">
+                                    <div class="post-attach-menu__icon"></div>
+                                    {_set_source}
+                                </a>
+                            {/if}
                         </div>
                     {/if}
                     {if !($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}

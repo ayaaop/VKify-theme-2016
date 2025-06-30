@@ -716,7 +716,7 @@ var Graffiti = {
 
     }
     this.W = 586;
-    this.H = 293;
+    this.H = 350;
     this.factor = 1;
     this.brush = {
       size: 0,
@@ -726,7 +726,7 @@ var Graffiti = {
     this.resizing = false;
     this.resDif = 0;
     this.resW = 586;
-    this.resH = 293;
+    this.resH = 350;
     this.fsEnabled = false;
     this.resizer = ge("graffiti_resizer");
     this.histHelpCanv = ge("graffiti_hist_helper");
@@ -816,6 +816,15 @@ var Graffiti = {
     addEvent(document, "contextmenu", evs.cancel);
     addEvent(document.body, "selectstart", evs.cancel);
     addEvent(Graffiti.resizer, "mousedown", evs.resize);
+
+    // If we're in an iframe, also listen to parent window events
+    if (window.parent && window.parent !== window) {
+      try {
+        addEvent(window.parent.document, "keydown keyup", evs.keyboard);
+      } catch(e) {
+        // Cross-origin iframe, can't access parent
+      }
+    }
   },
 
 
@@ -830,6 +839,15 @@ var Graffiti = {
     removeEvent(document.body, "selectstart", evs.cancel);
     removeEvent(Graffiti.resizer, "mousedown", evs.resize);
     removeEvent(document, "contextmenu", evs.cancel);
+
+    // Clean up parent window listeners if they exist
+    if (window.parent && window.parent !== window) {
+      try {
+        removeEvent(window.parent.document, "keydown keyup", evs.keyboard);
+      } catch(e) {
+        // Cross-origin iframe, can't access parent
+      }
+    }
   },
 
   handleResize: function(e) {
@@ -853,7 +871,7 @@ var Graffiti = {
           var width = parseInt(Graffiti.canvWrapper.style.width);
           var newHeight = height + mouse.y - Graffiti.resDif;
           if(newHeight > 586) newHeight = 586;
-          if(newHeight < 293) newHeight = 293;
+          if(newHeight < 350) newHeight = 350;
           var newWidth = newHeight / Graffiti.H * Graffiti.W;
           Graffiti.resW = newWidth;
           Graffiti.resH = newHeight;
@@ -872,7 +890,7 @@ var Graffiti = {
           Graffiti.resDif = 0;
           Graffiti.controlsCanv.style.cursor = "default";
           document.body.style.cursor = "default";
-          Graffiti.factor = Graffiti.resH / 293;
+          Graffiti.factor = Graffiti.resH / 350;
           Graffiti.W = Graffiti.resW;
           Graffiti.H = Graffiti.resH;
           Graffiti.resizeCanvases(Graffiti.resW, Graffiti.resH);
@@ -905,6 +923,7 @@ var Graffiti = {
   shiftPressed: false,
 
   keyboardEvents: function(e) {
+    console.log('Graffiti keyboard event:', e.type, e.keyCode, e.ctrlKey);
     switch(e.type) {
       case "keydown":
         if(e.shiftKey || e.keyCode == 16) {
@@ -912,15 +931,65 @@ var Graffiti = {
           return;
         }
         switch(e.keyCode) {
-          case 90:
+          case 90: // Ctrl+Z - Undo
             if(!e.ctrlKey) return;
             if(Graffiti.keyboardBlocked) return;
             Graffiti.keyboardBlocked = true;
             Graffiti.backHistory();
           break;
-          case 70:
+          case 70: // Ctrl+F - Fullscreen
             if(!e.ctrlKey) return;
             Graffiti.fullScreen();
+          break;
+          case 67: // Ctrl+C - Clear canvas
+            if(!e.ctrlKey) return;
+            Graffiti.flushHistory();
+          break;
+          case 187: // Plus key - Increase brush size
+          case 61:  // Plus key (Firefox)
+            Graffiti.adjustBrushSize(5);
+          break;
+          case 189: // Minus key - Decrease brush size
+          case 173: // Minus key (Firefox)
+            Graffiti.adjustBrushSize(-5);
+          break;
+          case 219: // [ - Decrease opacity
+            Graffiti.adjustBrushOpacity(-0.1);
+          break;
+          case 221: // ] - Increase opacity
+            Graffiti.adjustBrushOpacity(0.1);
+          break;
+          case 49: // 1 - Set small brush
+            if(e.ctrlKey) return;
+            Graffiti.setBrushSize(0.1);
+          break;
+          case 50: // 2 - Set medium brush
+            if(e.ctrlKey) return;
+            Graffiti.setBrushSize(0.5);
+          break;
+          case 51: // 3 - Set large brush
+            if(e.ctrlKey) return;
+            Graffiti.setBrushSize(1.0);
+          break;
+          case 82: // R - Red color
+            if(e.ctrlKey) return;
+            Graffiti.setColor("255, 0, 0");
+          break;
+          case 71: // G - Green color
+            if(e.ctrlKey) return;
+            Graffiti.setColor("0, 255, 0");
+          break;
+          case 66: // B - Blue color
+            if(e.ctrlKey) return;
+            Graffiti.setColor("0, 0, 255");
+          break;
+          case 75: // K - Black color
+            if(e.ctrlKey) return;
+            Graffiti.setColor("0, 0, 0");
+          break;
+          case 87: // W - White color
+            if(e.ctrlKey) return;
+            Graffiti.setColor("255, 255, 255");
           break;
         }
       break;
@@ -1133,6 +1202,47 @@ var Graffiti = {
         throw new Error("Slider " + id + " is not exist");
       break;
     }
+  },
+
+  adjustBrushSize: function(delta) {
+    var currentSize = Graffiti.brush.size;
+    var newSize = Math.max(1, Math.min(64, currentSize + delta));
+    Graffiti.brush.size = newSize;
+
+    var sizeSlider = Graffiti.sliders[0];
+    var newPos = sizeSlider.x + (newSize / 64 * 95);
+    Graffiti.redrawSlider("size", Graffiti.controlsCtx, {x: sizeSlider.x, y: sizeSlider.y}, newPos);
+    Graffiti.sliders[0].holder = newPos;
+    Graffiti.updateSample();
+  },
+
+  adjustBrushOpacity: function(delta) {
+    var currentOpacity = Graffiti.brush.opacity;
+    var newOpacity = Math.max(0.01, Math.min(1, currentOpacity + delta));
+    Graffiti.brush.opacity = newOpacity;
+
+    var opacitySlider = Graffiti.sliders[1];
+    var newPos = opacitySlider.x + (newOpacity * 95);
+    Graffiti.redrawSlider("opacity", Graffiti.controlsCtx, {x: opacitySlider.x, y: opacitySlider.y}, newPos);
+    Graffiti.sliders[1].holder = newPos;
+    Graffiti.updateSample();
+  },
+
+  setBrushSize: function(ratio) {
+    var newSize = ratio * 64;
+    Graffiti.brush.size = newSize;
+
+    var sizeSlider = Graffiti.sliders[0];
+    var newPos = sizeSlider.x + (ratio * 95);
+    Graffiti.redrawSlider("size", Graffiti.controlsCtx, {x: sizeSlider.x, y: sizeSlider.y}, newPos);
+    Graffiti.sliders[0].holder = newPos;
+    Graffiti.updateSample();
+  },
+
+  setColor: function(color) {
+    Graffiti.brush.color = color;
+    Graffiti.redrawColorPickerButton(Graffiti.controlsCtx, Graffiti.gpXY.x, Graffiti.gpXY.y, color, false);
+    Graffiti.updateSample();
   },
 
   redrawColorPickerButton: function(ctx, x, y, color, mouseover) {
@@ -1569,13 +1679,13 @@ var Graffiti = {
       });
 
       var width = Math.min(window.innerWidth - 40, 586 * 2);
-      var height = Math.min(intval((293 / 586) * width), window.innerHeight - 120);
-      width = height * (586 / 293);
+      var height = Math.min(intval((350 / 586) * width), window.innerHeight - 120);
+      width = height * (586 / 350);
 
       Graffiti.W = width;
       Graffiti.H = height;
 
-      Graffiti.factor = Graffiti.H / 293;
+      Graffiti.factor = Graffiti.H / 350;
 
       hide(Graffiti.mainCanv);
 
@@ -1606,9 +1716,9 @@ var Graffiti = {
       Graffiti.blockResize = true;
 
       Graffiti.W = Graffiti.resW || 586;
-      Graffiti.H = Graffiti.resH || 293;
+      Graffiti.H = Graffiti.resH || 350;
 
-      Graffiti.factor = Graffiti.H / 293;
+      Graffiti.factor = Graffiti.H / 350;
 
       hide(Graffiti.mainCanv);
 
@@ -1731,7 +1841,7 @@ var Graffiti = {
     var b = {w: Graffiti.W, h: Graffiti.H, f: Graffiti.factor};
     /*Graffiti.factor = 1;
     Graffiti.W = 586;
-    Graffiti.H = 293;*/
+    Graffiti.H = 350;*/
 
     Graffiti.factor = 1280/586;
     Graffiti.W = 1280;

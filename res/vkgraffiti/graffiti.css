@@ -54,7 +54,7 @@
   margin: 0 auto;
   overflow: hidden;
   width: 586px;
-  height: 293px;
+  height: 350px;
   border: 1px solid #CCC;
   background-color: #fff;
   z-index: 10003;
@@ -66,7 +66,7 @@
 
 #graffiti_overlay {
  position: relative;
- top: -293px;
+ top: -350px;
  z-index: 10012;
  display: block;
 }
@@ -79,7 +79,7 @@
 #graffiti_helper {
   display: block;
   position: relative;
-  top: -586px;
+  top: -700px;
   z-index: 10011;
 }
 

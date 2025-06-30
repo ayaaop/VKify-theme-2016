@@ -29,19 +29,19 @@ window.changeLangPopup = function () {
     window.langPopup = new CMessageBox({
         title: tr('select_language'),
         body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-<div class="langSelect"><img src="/themepack/vkify16/3.0.0.0/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
+<div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
 </a>
 <a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.0.0.0/resource/lang_flags/uk.png"><b>Україньска</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.0/resource/lang_flags/uk.png"><b>Україньска</b></div>
 </a>
 <a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.0.0.0/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
 </a>
 <a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.0.0.0/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.0/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
 </a>
 <a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.0.0.0/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.0/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
 </a>
 <a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
    <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
@@ -433,8 +433,8 @@ function parseAudio(onlyscnodes = false) {
 }
 
 const vkfavicon = {
-    "fav": "/themepack/vkify16/3.0.0.0/resource/favicon_vk.ico",
-	"fav_chat": "/themepack/vkify16/3.0.0.0/resource/fav_chat.ico",
+    "fav": "/themepack/vkify16/3.2.0.0/resource/favicon_vk.ico",
+	"fav_chat": "/themepack/vkify16/3.2.0.0/resource/fav_chat.ico",
     "playiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAvkQAAL/4AADBsAAAw2wAAMUoAADG6AAAyKgAAMpsAADMNAAAzfwAAM/EAADRlAAA02AAANU0AADXCAAA2Nw==",
     "pauseiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
 }
@@ -444,34 +444,35 @@ if (window.location.href.includes('im?sel=')) {
 }
 
 window.initVKGraffiti = function (event) {
-    // Create the iframe content as a separate string
+    const writeContainer = u(event.target).closest('#write');
+
     const iframeContent = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.0.0.0/resource/vkgraffiti/graffiti.css">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.0.0.0/resource/vkgraffiti/common.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.0/stylesheet/styles.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.0/resource/vkgraffiti/graffiti.css">
 </head>
-<body>
+<body style="background: none">
     <div style="margin: 10px"><a onclick="Graffiti.flushHistory();">${window.vkifylang ? window.vkifylang.graffitiflushhistory : 'Clear'}</a> | <a onclick="Graffiti.backHistory();">${window.vkifylang ? window.vkifylang.graffitibackhistory : 'Undo'}</a></div>
     <div style="background-color: #F7F7F7; padding-top: 20px; padding-bottom: 1px;">
         <div id="graffiti_aligner">
-            <canvas id="graffiti_common" width="586" height="293"></canvas>
-            <canvas id="graffiti_overlay" width="586" height="293"></canvas>
-            <canvas id="graffiti_helper" width="586" height="293"></canvas>
+            <canvas id="graffiti_common" width="586" height="350"></canvas>
+            <canvas id="graffiti_overlay" width="586" height="350"></canvas>
+            <canvas id="graffiti_helper" width="586" height="350"></canvas>
         </div>
         <div id="graffiti_resizer" style="margin-top: 5px;"></div>
     </div>
     <div>
         <canvas id="graffiti_controls" width="586" height="70"></canvas>
     </div>
-    <canvas id="graffiti_hist_helper" width="1172" height="586" style="display:none;"></canvas>
+    <canvas id="graffiti_hist_helper" width="1172" height="350" style="display:none;"></canvas>
     <div id="graffiti_cpwrap" style="display:none; top:-210px;">
         <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
     </div>
-    <script src="${window.location.origin}/themepack/vkify16/3.0.0.0/resource/vkgraffiti/graffiti.js"></script>
+    <script src="${window.location.origin}/themepack/vkify16/3.2.0.0/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
@@ -488,7 +489,6 @@ window.initVKGraffiti = function (event) {
 </html>
 `;
 
-    // Escape the iframe content properly
     const escapedIframeContent = iframeContent
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
@@ -498,20 +498,19 @@ window.initVKGraffiti = function (event) {
 
     var msgbox = new CMessageBox({
         title: tr("draw_graffiti"),
-        body: `<iframe style="width: 100%; height: 100%; border: medium;" srcdoc="${escapedIframeContent}"></iframe>`,
+        body: `<iframe id="graffiti-iframe" style="width: 100%; height: 100%; border: medium;" srcdoc="${escapedIframeContent}" tabindex="0"></iframe>`,
         close_on_buttons: false,
         warn_on_exit: true,
         buttons: [tr("save"), tr("cancel")],
         callbacks: [function () {
             msgbox.getNode().find('iframe').nodes[0].contentWindow.Graffiti.getImage(function (dataURL) {
-                // ваще кому нужен этот комментарий лол
                 var blob = dataURLtoBlob(dataURL);
                 let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
                 let image = new File([blob], fName, {
                     type: "image/jpeg",
                     lastModified: new Date().getTime()
                 });
-                __uploadToTextarea(image, u(event.target).closest('#write'))
+                __uploadToTextarea(image, writeContainer)
             });
             msgbox.close()
         }, async function () {
@@ -525,6 +524,16 @@ window.initVKGraffiti = function (event) {
     var msgboxsel = document.querySelector(`.ovk-diag-cont.ovk-msg-all[data-id="${msgbox.id}"]`);
     msgboxsel.style.width = '800px';
     msgbox.getNode().find('.ovk-diag-body').attr('style', 'height:550px;');
+
+    const iframe = msgbox.getNode().find('iframe').nodes[0];
+
+    setTimeout(() => {
+        iframe.focus();
+    }, 100);
+
+    iframe.addEventListener('click', () => {
+        iframe.focus();
+    });
 
     function dataURLtoBlob(dataURL) {
         var arr = dataURL.split(','),
@@ -658,39 +667,32 @@ $(document).ready(function () {
     }
 });
 
-// Search Bar Component JavaScript
 window.uiSearch = {
-    // Initialize search functionality
     init: function() {
         document.addEventListener('DOMContentLoaded', () => {
             this.bindEvents();
         });
     },
 
-    // Bind events to search elements
     bindEvents: function() {
-        // Handle input changes for all search fields
         document.addEventListener('input', (e) => {
             if (e.target && e.target.classList && e.target.classList.contains('ui_search_field')) {
                 this.handleInputChange(e.target);
             }
         });
 
-        // Handle reset button clicks
         document.addEventListener('click', (e) => {
             if (e.target && e.target.classList && e.target.classList.contains('ui_search_reset')) {
                 this.reset(e.target, false, e);
             }
         });
 
-        // Handle form submissions
         document.addEventListener('submit', (e) => {
             if (e.target && e.target.closest && e.target.closest('.ui_search')) {
                 this.handleSubmit(e);
             }
         });
 
-        // Handle focus/blur for styling
         document.addEventListener('focus', (e) => {
             if (e.target && e.target.classList && e.target.classList.contains('ui_search_field')) {
                 this.handleFocus(e.target);
@@ -704,25 +706,21 @@ window.uiSearch = {
         }, true);
     },
 
-    // Handle input field changes
     handleInputChange: function(input) {
         const searchContainer = input.closest('.ui_search');
         if (!searchContainer) return;
 
         const value = input.value.trim();
 
-        // Toggle empty state
         if (value === '') {
             searchContainer.classList.add('ui_search_field_empty');
         } else {
             searchContainer.classList.remove('ui_search_field_empty');
         }
 
-        // Update reset button visibility
         this.updateResetButton(searchContainer, value);
     },
 
-    // Handle focus events
     handleFocus: function(input) {
         const searchContainer = input.closest('.ui_search');
         if (searchContainer) {
@@ -730,7 +728,6 @@ window.uiSearch = {
         }
     },
 
-    // Handle blur events
     handleBlur: function(input) {
         const searchContainer = input.closest('.ui_search');
         if (searchContainer) {
@@ -738,7 +735,6 @@ window.uiSearch = {
         }
     },
 
-    // Update reset button visibility and state
     updateResetButton: function(container, value) {
         const resetButton = container.querySelector('.ui_search_reset');
         if (!resetButton) return;
@@ -752,7 +748,6 @@ window.uiSearch = {
         }
     },
 
-    // Reset search field
     reset: function(resetButton, clearFocus = false, event = null) {
         if (event) {
             event.preventDefault();
@@ -765,21 +760,16 @@ window.uiSearch = {
         const input = searchContainer.querySelector('.ui_search_field');
         if (!input) return false;
 
-        // Clear the input
         input.value = '';
 
-        // Update container state
         searchContainer.classList.add('ui_search_field_empty');
 
-        // Hide reset button
         this.updateResetButton(searchContainer, '');
 
-        // Focus input if requested
         if (!clearFocus) {
             input.focus();
         }
 
-        // Trigger input event for any listeners
         input.dispatchEvent(new Event('input', { bubbles: true }));
 
         return false;
@@ -791,13 +781,11 @@ window.uiSearch = {
 
 };
 
-// Initialize search functionality
 window.uiSearch.init();
 
 window.addEventListener('DOMContentLoaded', async () => {
     u(document).on('click', `.ovk-diag-body #upload_container #uploadMusicPopup`, async () => {
         const current_upload_page = '/player/upload'
-        let error = null
         let end_redir = ''
         u('.ovk-diag-body #lastStepButtons').addClass('lagged')
         for (const elem of u('.ovk-diag-body #lastStepContainers .upload_container_element').nodes) {
@@ -812,7 +800,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             elem_u.addClass('lagged').find('.upload_container_name').addClass('uploading')
-            // Upload process
             const fd = serializeForm(elem)
             fd.append('blob', file.file)
             fd.append('ajax', 1)
@@ -864,10 +851,18 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
     window.vkifyGraffiti = function (e) {
+        const contextToUse = window.graffitiWriteContext && window.graffitiWriteContext.length
+            ? { target: window.graffitiWriteContext.nodes[0] }
+            : e;
+
         if (localStorage.getItem('vkify.graffitiType') == "1") {
-            window.initVKGraffiti(e);
+            window.initVKGraffiti(contextToUse);
         } else {
-            initGraffiti(e)
+            initGraffiti(contextToUse);
+        }
+
+        if (window.graffitiWriteContext) {
+            window.graffitiWriteContext = null;
         }
     }
 
@@ -1033,7 +1028,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         getReferenceClientRect: () => {
             const searchBox = document.querySelector('.home_search');
             if (!searchBox) {
-                // Fallback to original behavior if search box not found
                 const headerMusicBtn = document.querySelector('#headerMusicBtn');
                 const rect = headerMusicBtn.getBoundingClientRect();
                 return {
@@ -1124,7 +1118,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Move top player functionality outside of tippy
     const topPlayer = document.querySelector('#top_audio_player');
     const headerMusicBtn = document.querySelector('#headerMusicBtn');
     const topPlayerTitle = topPlayer.querySelector('.top_audio_player_title');
@@ -1139,7 +1132,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             topPlayer.classList.add('top_audio_player_enabled');
             headerMusicBtn.style.display = 'none';
             
-            // Only fade if the track has changed
             if (currentTrackId !== window.player.currentTrack.id) {
                 currentTrackId = window.player.currentTrack.id;
                 topPlayerTitle.style.opacity = '0';
@@ -1158,14 +1150,12 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    // Update top player when track changes
     const originalUpdateFace = window.player.__updateFace;
     window.player.__updateFace = function() {
         originalUpdateFace.call(this);
         updateTopPlayer();
     };
 
-    // Add button click handlers
     topPlayerPlay.addEventListener('click', (e) => {
         e.stopPropagation(); // Prevent tippy from opening
         if (window.player.audioPlayer.paused) {
@@ -1190,12 +1180,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // Update on play/pause
     if (window.player && window.player.audioPlayer) {
         window.player.audioPlayer.addEventListener('play', updateTopPlayer);
         window.player.audioPlayer.addEventListener('pause', updateTopPlayer);
         
-        // Initial update
         updateTopPlayer();
     }
 
@@ -1211,7 +1199,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         formData.append("broadcast", $(this).hasClass("pressed") ? 1 : 0);
         formData.append("hash", document.forms['status_popup_form'].hash.value);
 
-        // Отправляем AJAX-запрос
         $.ajax({
             url: "/edit?act=status",
             method: "POST",
@@ -1285,11 +1272,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
-        // Clear any pending tooltip creation and remove existing tooltips
         clearTimeout(tooltipTimeout);
         u('.tip_result_black_el').remove();
 
-        // Find the element with tooltip attributes (might be a parent)
         let tooltipElement = e.target;
         while (tooltipElement && !tooltipElement.hasAttribute('data-tip')) {
             tooltipElement = tooltipElement.parentElement;
@@ -1307,7 +1292,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             return
         }
 
-        // Debounce tooltip creation to prevent glitches
         tooltipTimeout = setTimeout(() => {
             const offset = target.nodes[0].getBoundingClientRect()
             const tooltipStyle = getTooltipPosition(offset, align)
@@ -1576,7 +1560,7 @@ function switchProfileInfo() {
 const today = new Date();
 if (today.getDate() === 1 && today.getMonth() === 3) {
     const doge = document.createElement('script');
-    doge.setAttribute('src', '/themepack/vkify16/3.0.0.0/resource/doge.js');
+    doge.setAttribute('src', '/themepack/vkify16/3.2.0.0/resource/doge.js');
     document.head.appendChild(doge);
     u(document).on('click', '.post-like-button', function () {
         if (u(this).find('#liked').length) { Doge.show(); }

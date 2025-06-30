@@ -14,17 +14,17 @@
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
-{var $compact = isset($compact) ? true : false}
+{var $compact = isset($compact) ? $compact : false}
 {var $club = isset($club) ? $club}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
-<div n:class="scroll_node, $compact !== true ? page_block"> {* некоторые скрипты таргетят именно .scroll_node .post *}
+<div n:class="$compact ? '', !$compact ? 'page_block scroll_node'"> {* некоторые скрипты таргетят именно .scroll_node .post *}
     <div data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote">
         <div class="post_header">
             <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}" href="{$author->getURL()}">
                 {if method_exists($author, 'getOwner')}
                     <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                        ? '/themepack/vkify16/3.0.0.0/resource/community_200.png' 
+                        ? '/themepack/vkify16/3.2.0.0/resource/community_200.png' 
                         : $author->getAvatarUrl('miniscule')}" 
                         width="50" 
                         class="post-avatar" />
@@ -98,14 +98,14 @@
             <div class="text wall_text" id="text{$post->getPrettyId()}">
                 <div data-text="{$post->getText(false)}" n:ifcontent class="really_text wall_post_text">
                     {if strlen($post->getText()) > 500 && !($forceNoCommentsLink ?? false)}
-                        <span class="truncated_text">{substr($post->getText(), 0, 500)}...</span> 
+                        <span class="truncated_text">{$post->getText()|truncate:500|noescape}</span>
                         <span class="full_text hidden">{$post->getText()|noescape}</span>
                         <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
                     {else}
                         {$post->getText()|noescape}
                     {/if}
                 </div>
-                
+
                 {var $width = 514}
                 {if isset($GLOBALS["_nesAttGloCou"])}
                     {var $width = $width - 70 * $GLOBALS["_nesAttGloCou"]}
@@ -122,6 +122,13 @@
                         {include "../attachment.xml", attachment => $attachment, post => $post}
                     </div>
                 </div>
+
+                {* Handle case when post has no text and no attachments *}
+                {if !$post->getText(false) && (!$attachmentsLayout->tiles || sizeof($attachmentsLayout->tiles) == 0) && (!$attachmentsLayout->extras || sizeof($attachmentsLayout->extras) == 0)}
+                    <div class="really_text wall_post_text deleted_content">
+                        {include "../content_error.xml", title => '<vkifyloc name="deleted_attachment"></vkifyloc>', description => '<vkifyloc name="deleted_attachment_2"></vkifyloc>'}
+                    </div>
+                {/if}
             </div>
             <div n:if="$post->getGeo()" class="post-geo">
                 <a onclick="javascript:openGeo({$post->getGeo()}, {$post->getTargetWall()}, {$post->getVirtualId()})">

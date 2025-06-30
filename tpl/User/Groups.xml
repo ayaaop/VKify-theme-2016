@@ -56,7 +56,7 @@
 
 {block preview}
 	<img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
-		/themepack/vkify16/3.0.0.0/resource/community_200.png
+		/themepack/vkify16/3.2.0.0/resource/community_200.png
 	{else}
 		{$x->getAvatarUrl('miniscule')}
 		{/if}" 
@@ -152,7 +152,7 @@
                         <div class="thumb">
                             <a href="club{$club->getId()}">
                                 <img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-                                    /themepack/vkify16/3.0.0.0/resource/community_200.png
+                                    /themepack/vkify16/3.2.0.0/resource/community_200.png
                                 {else}
                                     {$club->getAvatarUrl()}
                                 {/if}" alt="{$club->getCanonicalName()}" />
@@ -164,6 +164,9 @@
                                 <span>{$club->getDescription()}</span>
                             </div>
                         </div>
+                    </div>
+                    <div class="line_cell">
+                        <a href="/search?section=groups" class="button button_gray button_wide">{_show_more}</a>
                     </div>
                 {else}
                     {include "../components/content_error.xml" description => tr("groups_zero")}

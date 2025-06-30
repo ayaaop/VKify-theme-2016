@@ -1,25 +1,59 @@
 {extends "../@layout.xml"}
 {block title}{$correspondent->getCanonicalName()}{/block}
 
-{block header}
-<a href="/im">{_my_messages}</a> »
-<a href="{$correspondent->getURL()}">{$correspondent->getCanonicalName()}</a>    
-    <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" style="float: right;">
-        {var $diff = date_diff(date_create(), date_create('@' . $online))}
-        {if 5 >= $diff->i}
-            <span><b>{_online}</b></span>
-        {else}
-            <span>{$correspondent->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$correspondent->getOnline()}</span>
-        {/if}
-    </div>
-{/block}
-
-{block wrap}
+{block content}
+    <style>
+        body {
+            --layout-width: 870px;
+            --page-width: 550px;
+        }
+    </style>
     <div class="messenger-app">
+        <div class="messenger-app--header">
+            <div class="messenger-app--header--back">
+                <a href="/im">{_paginator_back}</a>
+            </div>
+            <div class="messenger-app--header--info">
+                <div class="messenger-app--header--name">
+                    <a href="{$correspondent->getURL()}">{$correspondent->getCanonicalName()}</a>
+                </div>
+                <div class="messenger-app--header--online" n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()">
+                    {var $diff = date_diff(date_create(), date_create('@' . $online))}
+                    {if 5 < $diff->i}
+                        {$correspondent->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$correspondent->getOnline()}
+                    {/if}
+                </div>
+            </div>
+            <div class="messenger-app-header--actions">
+                <div class="messenger-app-header--more-actions">
+                    <div id="profile_more_btn" class="messenger-app-header--more-actions--trigger"></div>
+                    <div id="profile_actions_tooltip" class="tippy-menu">
+                        {if $correspondent->isBlacklistedby($thisUser)}
+                            <a id="_bl_toggler" data-val="0" data-id="{$correspondent->getRealId()}">
+                                {_bl_remove}
+                            </a>
+                        {else}
+                            <a id="_bl_toggler" data-name="{$correspondent->getMorphedName('genitive', false)}" data-val="1" data-id="{$correspondent->getRealId()}">
+                                {_bl_add}
+                            </a>
+                        {/if}
+                        <a href="javascript:reportUser({$correspondent->getId()})">
+                            {_report}
+                        </a>
+                    </div>
+                </div>
+                <a href="{$correspondent->getURL()}" class="messenger-app--header--ava">
+                    <img class="post-avatar" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
+                    {if 5 >= $diff->i}
+                        <div class="messenger-app--header--online"></div>
+                    {/if}
+                </a>
+            </div>
+        </div>
         <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
             <div data-bind="foreach: messages">
                 <div class="messenger-app--messages---message" data-bind="css: { unread: !read }">
-                    <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
+                    <img n:class="ava, post-avatar" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
                     <div class="_content">
                         <a href="#" data-bind="attr: { href: sender.link }">
                             <strong data-bind="text: sender.name"></strong>
@@ -49,9 +83,8 @@
                             data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
                             name="message"
                             placeholder="{_enter_message}"></textarea>
-                    <button class="button" data-bind="click: sendMessage">{_send}</button>
+                    <button title="{_send}" data-bind="click: sendMessage"></button>
                 </div>
-                <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
             {else}
                 <div class="blocked" data-localized-text="{_messages_blocked}"></div>
             {/if}

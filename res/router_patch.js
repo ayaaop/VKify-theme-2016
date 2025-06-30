@@ -1,9 +1,111 @@
 /**
  * OpenVK Router Patch for VKify Theme
- * 
+ *
  * This script enhances the OpenVK router to properly handle localization
- * during AJAX transitions.
+ * and tooltip management during AJAX transitions.
  */
+
+window.reinitializeTooltips = function(container = document) {
+    if (container !== document) {
+        const elementsWithTippy = container.querySelectorAll('[aria-describedby]');
+        elementsWithTippy.forEach(element => {
+            if (element._tippy) {
+                element._tippy.destroy();
+            }
+        });
+
+        const tippyRoots = document.querySelectorAll('[data-tippy-root]');
+        tippyRoots.forEach(root => {
+            const targetId = root.getAttribute('aria-describedby') || root.id;
+            const target = container.querySelector(`[aria-describedby="${targetId}"]`);
+            if (target) {
+                root.remove();
+            }
+        });
+    } else {
+        const elementsWithTippy = document.querySelectorAll('[aria-describedby]');
+        elementsWithTippy.forEach(element => {
+            if (element._tippy) {
+                element._tippy.destroy();
+            }
+        });
+
+        const tippyRoots = document.querySelectorAll('[data-tippy-root]');
+        tippyRoots.forEach(root => {
+            root.remove();
+        });
+
+        if (window.tippy && window.tippy.instances) {
+            window.tippy.instances.forEach(instance => {
+                if (!instance.reference.isConnected) {
+                    instance.destroy();
+                }
+            });
+        }
+    }
+
+    if (window.initializeTippys) {
+        try {
+            window.initializeTippys();
+        } catch (error) {
+            console.warn('Error reinitializing tooltips:', error);
+        }
+    }
+};
+
+window.destroyTooltipsInContainer = function(container) {
+    if (!container) return;
+
+    const elementsWithTippy = container.querySelectorAll('[aria-describedby]');
+    elementsWithTippy.forEach(element => {
+        if (element._tippy) {
+            element._tippy.destroy();
+            delete element._tippy;
+        }
+    });
+
+    if (window.cleanupTooltipContent) {
+        window.cleanupTooltipContent(container);
+    }
+};
+
+
+
+window.cleanupModalTooltips = function(modalContainer) {
+    if (!modalContainer) return;
+
+    if (window.cleanupTooltipContent) {
+        window.cleanupTooltipContent(modalContainer);
+    }
+
+    window.destroyTooltipsInContainer(modalContainer);
+
+    const allTippyRoots = document.querySelectorAll('[data-tippy-root]');
+    allTippyRoots.forEach(root => {
+        if (!root.isConnected || !document.body.contains(root)) {
+            root.remove();
+        }
+    });
+
+    if (window.tippy && window.tippy.instances) {
+        window.tippy.instances = window.tippy.instances.filter(instance => {
+            if (!instance.reference.isConnected) {
+                try {
+                    instance.destroy();
+                } catch (e) {
+                }
+                return false;
+            }
+            return true;
+        });
+    }
+
+    setTimeout(() => {
+        if (window.reinitializeTooltips) {
+            window.reinitializeTooltips();
+        }
+    }, 50);
+};
 function processVkifyLocTags() {
     if (window.processVkifyLocTags) {
         window.processVkifyLocTags();
@@ -46,19 +148,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function reinitializeTooltips() {
-        const tippyInstances = document.querySelectorAll('[data-tippy-root]');
-        tippyInstances.forEach(instance => {
-            const tippyTarget = document.querySelector(`[aria-describedby="${instance.id}"]`);
-            if (tippyTarget && tippyTarget._tippy) {
-                tippyTarget._tippy.destroy();
-            }
-            instance.remove();
-        });
-
-        if (window.initializeTippys) {
-            window.initializeTippys();
-        }
+    function reinitializeTooltips(container = document) {
+        window.reinitializeTooltips(container);
     }
 
     waitForAndPatch(

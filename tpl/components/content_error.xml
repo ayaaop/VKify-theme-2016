@@ -1,6 +1,8 @@
 <div class='content_page_error'>
     <span>
-        <b n:if="!empty($title)">{$title}<br><br></b>
-        {$description}
+        <b n:if="!empty($title)">{$title|noescape}</b>
+        <div class="description">
+            {$description|noescape}
+        </div>
     </span>
 </div>

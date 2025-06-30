@@ -59,7 +59,7 @@
     {if $GLOBALS["_nesAttGloCou"] > 2}
         <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
     {else}
-        {include "post.xml", post => $attachment, compact => true}
+        {include "../components/post.xml", post => $attachment, compact => true}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">

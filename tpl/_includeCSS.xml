@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/profile.css" />
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/settings.css" />
+        <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/modals.css" />
 
         {if $isXmas}
             <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
@@ -56,5 +57,6 @@
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/profile.css" />
         <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/settings.css" />
+        <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/modals.css" />
     {/if}
 {/ifset}

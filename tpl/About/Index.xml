@@ -220,19 +220,19 @@
         }
 
         .login_app_device_android .login_app_device_screen {
-            background-image: url('/themepack/vkify16/3.0.0.0/resource/auth/android_ru.png');
+            background-image: url('/themepack/vkify16/3.2.0.0/resource/auth/android_ru.png');
         }
 
         .login_app_device_wp .login_app_device_screen {
-            background-image: url('/themepack/vkify16/3.0.0.0/resource/auth/wp_ru.png');
+            background-image: url('/themepack/vkify16/3.2.0.0/resource/auth/wp_ru.png');
         }
 
         .login_app_device_ios .login_app_device_screen {
-            background-image: url('/themepack/vkify16/3.0.0.0/resource/auth/ios_ru.png');
+            background-image: url('/themepack/vkify16/3.2.0.0/resource/auth/ios_ru.png');
         }
 
         .login_app_download_icon {
-            background-image:url('/themepack/vkify16/3.0.0.0/resource/auth/platforms.png');
+            background-image:url('/themepack/vkify16/3.2.0.0/resource/auth/platforms.png');
             width:18px;
             height:22px;
             display:inline-block;

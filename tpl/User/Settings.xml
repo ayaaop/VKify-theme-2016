@@ -395,7 +395,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="settings_list_row settings_privacy_row">
+                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']" class="settings_list_row settings_privacy_row">
                                 <div class="settings_label">{_privacy_setting_see_likes}</div>
                                 <div class="settings_labeled_text">
                                     <select name="likes.read", style="<!-- -->">
@@ -582,12 +582,22 @@
                                 <div class="settings_labeled_text" dir="auto">
                                     <label><input type="checkbox" name="vkgraffiti" value="0"> <vkifyloc name="graffitiswitch"></vkifyloc></label>
                                 </div>
+                            <script>
+                                document.querySelector('input[name="vkgraffiti"]').checked = localStorage.getItem('vkify.graffitiType') === '1';
+                                document.querySelector('input[name="vkgraffiti"]').onchange = () => localStorage.setItem('vkify.graffitiType', document.querySelector('input[name="vkgraffiti"]').checked ? '1' : '0');
+                            </script>
                             </div>
                             <div class="settings_list_row">
                                 <div class="settings_label">&nbsp;</div>
                                 <div class="settings_labeled_text" dir="auto">
                                     <label><input type="checkbox" name="newhat" value="0"> <vkifyloc name="ovkhat"></vkifyloc></label>
                                 </div>
+                            <script>
+                                document.querySelector('input[name="newhat"]').checked = document.cookie.includes('newhat=realno_novaya_shapochka');
+                                document.querySelector('input[name="newhat"]').onchange = () => {
+                                    document.cookie = `newhat=${ document.querySelector('input[name="newhat"]').checked ? 'realno_novaya_shapochka' : '' }; path=/; max-age=31536000`;
+                                };
+                            </script>
                             </div>
                             <div class="settings_list_row" id="_js_settings">
                                 <div class="settings_label">&nbsp;</div>

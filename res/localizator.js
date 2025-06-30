@@ -28,7 +28,9 @@ let locales = {
 		"profile_recommendations": "Show recommendations on filling out your profile",
 	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account.",
 		"recommended_groups": "Recommended groups",
-		"show_less": "Show less"
+		"show_less": "Show less",
+		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
+		"deleted_attachment_2": "As such, it can't be displayed."
 	},
 	'ru': {
 		"language": "Язык",
@@ -59,7 +61,9 @@ let locales = {
 		"profile_recommendations": "Показывать рекомендации по заполнению профиля",
 	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
 		"recommended_groups": "Рекомендуемые сообщества",
-		"show_less": "Показать меньше"
+		"show_less": "Показать меньше",
+		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
+		"deleted_attachment_2": "Поэтому она не может быть отображена."
 	},
 	"uk": {
 		"language": "Мова",
@@ -90,14 +94,16 @@ let locales = {
 		"profile_recommendations": "Показувати поради щодо заповнення профілю",
 		"guest_actions": "<a href='/register'>Зареєструйтесь</a>, щоб залишатися на зв'язку з $1 та іншими людьми, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
 		"recommended_groups": "Рекомендовані групи",
-		"show_less": "Показати менше"
+		"show_less": "Показати менше",
+		"deleted_attachment": "В цьому пості є видалене вкладення та немає тексту.",
+		"deleted_attachment_2": "Тому воно не може бути відображено."
 	}
 }
 
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.0.0.0/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.2.0.0/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';

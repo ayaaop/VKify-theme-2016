@@ -34,7 +34,7 @@
     {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="side_link" href="/app' . $id  . '">' . $name . '</a>'}
     <div class="page_block">
         <form method="POST" enctype="multipart/form-data">
-            <div class="settings_panel settings_padding game_edit">
+            <div class="settings_panel settings_padding group_settings game_edit">
                 <div class="settings_list_row">
                     <div class="settings_label">{_name}</div>
                     <div class="settings_labeled_text">

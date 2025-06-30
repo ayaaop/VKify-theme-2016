@@ -1,1 +1,1 @@
-{include "post/microblogpost.xml", post => $post, commentSection => $commentSection}
+{include "post/microblogpost.xml", post => $post, commentSection => $commentSection, compact => $compact ?? false}

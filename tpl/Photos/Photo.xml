@@ -2,73 +2,117 @@
 
 {block title}{_photo}{/block}
 
-{block header}
-    {ifset $album}
-        {var $album_owner = $album->getOwner()}
-        <a href="{$album_owner->getURL()}">
-            {$album_owner->getCanonicalName()}
-        </a>
-        {if ($album_owner instanceof openvk\Web\Models\Entities\Club)}
-            » <a href="/albums{$album_owner->getId() * -1}">{_albums}</a>
-        {else}
-            » <a href="/albums{$album_owner->getId()}">{_albums}</a>
-        {/if}
-        » <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
-    {else}
-        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
-    {/ifset}
-    » {_photo}
-{/block}
-
 {block content}
-    <div class='media-page-wrapper photo-page-wrapper'>
-        <div class='photo-page-wrapper-photo'>
-            <img src="{$photo->getURLBySizeId('large')}" />
-        </div>
-        
-        <div class='ovk-photo-details'>
-            <div class='media-page-wrapper-description'>
-                <p n:if='!empty($photo->getDescription())'>{$photo->getDescription()}</p>
-                <div class='upload_time'>
-                    {_info_upload_date}: {$photo->getPublicationTime()}
-                    {if isset($thisUser)}
-                        |
-                        {var $liked = $photo->hasLikeFrom($thisUser)}
-                        {var $likesCount = $photo->getLikesCount()}
-                        <div class='like_wrap tidy'>
-                            <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
-                                <div class="heart" id="{if $liked}liked{/if}"></div>
-                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
-                            </a>
-                        </div>
-                    {/if}
-                </div>
+    <style>
+    body {
+        --layout-width: 1075px;
+    }
+    .page_body {
+        width: 910px
+    }
+    </style>
+    {do $crumbs = [
+        ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+        ['href' => "/albums{$owner->getId()}", 'title' => tr("albums")]
+    ]}
+
+    {if $photo->getAlbum()}
+        {do $crumbs[] = [
+            'href' => "/album{$photo->getAlbum()->getPrettyId()}",
+            'title' => $photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()
+        ]}
+    {/if}
+
+    {do $crumbs[] = ['title' => $photo->getDescription()]}
+
+    {include "../components/page_crumb_header.xml", crumbs => $crumbs}
+    <div class="pv_wrapper">
+        <div class="pv_left">
+            <div class="pv_photo">
+                <img src="{$photo->getURLBySizeId('large')}" />
             </div>
-
-            <hr/>
-            
-            <div class="media-page-wrapper-details">
-                <div class='media-page-wrapper-comments'>
-                    {include "../components/comments.xml", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
+            <div class="pv_bottom_info">
+                <div class="pv_bottom_info_left" n:if="$photo->getAlbum()">
+                    <a href="/album{$photo->getAlbum()->getPrettyId()}" class="pv_album_name">{$photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()}</a>
                 </div>
-                <div class='media-page-wrapper-actions'>
-                    <a href="{$owner->getURL()}" class='media-page-author-block'>
-                        <img class='cCompactAvatars' src="{$owner->getAvatarURL('miniscule')}">
-
-                        <div class='media-page-author-block-name'>
-                            <b>{$owner->getCanonicalName()}</b>
-                        </div>
-                    </a>
-                    <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
-                        <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
-                        <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
-                    </div>
-                    <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
-                    <a n:if="isset($thisUser) && $thisUser->getId() != $photo->getOwner()->getId()" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
-                    <a n:if="isset($thisUser)" onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="profile_link" style="display:block;width:96%;">
+                <div class="pv_bottom_actions">
+                    <a n:if="isset($thisUser)" onclick="javascript:repost({$photo->getPrettyId()}, 'photo')">
                         {_share}
                     </a>
+                    <span class="divider"></span>
+                    {if isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()}
+                        <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete">{_delete}</a>
+                        <span class="divider"></span>
+                    {/if}
+                    <span class="pv_actions_more" role="button">
+                        {_show_more}
+                    </span>
+                    <div id="pv_actions_more_menu" class="tippy-menu">
+                        <a href="/photo{$photo->getPrettyId()}/edit">{_edit}</a>
+                        <a href="{$photo->getURL()}" target="_blank">{_open_original}</a>
+                        <a n:if="isset($thisUser) && $thisUser->getId() != $photo->getOwner()->getId()" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div class="pv_right">
+            <div class="pv_author_block clear_fix">
+                <div class="pv_author_img fl_l">
+                    <a href="{$owner->getURL()}">
+                        <img src="{$owner->getAvatarUrl('miniscule')}" />
+                    </a>
+                </div>
+                <div class="pv_author_info fl_l">
+                    <div class="pv_author_name">
+                        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+                        <a class="page_verified" href="/verify" n:if="$owner->isVerified()"></a>
+                    </div>
+                    <div class="pv_author_date">{$photo->getPublicationTime()}</div>
+                </div>
+            </div>
+            <div n:if="isset($thisUser)" class="post_full_like_wrap">
+                <div class="post_full_like">
+                    {var $liked = $photo->hasLikeFrom($thisUser)}
+                    <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post_like _like_wrap {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
+                        <i class="heart post_like_icon _icon" id="{if $liked}liked{/if}"></i>
+                        <span class="post_like_link _link">{tr('mobile_like')}</span>
+                        <span class="likeCnt post_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                    </a>
+                    <a n:if="isset($thisUser)" onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post_share-button post_share _share_wrap">
+                        <i class="repost-icon post_share_icon _icon"></i>
+                        <span class="post_share_link _link">{tr('share')}</span>
+                    </a>
+                </div>
+            </div>
+            {if ($thisUser->getId() === $photo->getOwner()->getId()) || !empty($photo->getDescription())}
+            <div class="pv_desc">
+                {if $thisUser->getId() === $photo->getOwner()->getId()}
+                <a class="pv_can_edit" href="/photo{$photo->getPrettyId()}/edit">
+                    {if strlen($photo->getDescription()) > 500}
+                        <span class="truncated_text">{$photo->getDescription()|truncate:500|noescape}</span>
+                        <span class="full_text hidden">{$photo->getDescription()|noescape}</span>
+                        <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+                    {elseif !empty($photo->getDescription())}
+                        {$photo->getDescription()|noescape}
+                    {else}
+                        <span class="pv_no_description">
+                            {_no_description}
+                        </span>
+                    {/if}
+                </a>
+                {else}
+                    {if strlen($photo->getDescription()) > 500}
+                        <span class="truncated_text">{$photo->getDescription()|truncate:500|noescape}</span>
+                        <span class="full_text hidden">{$photo->getDescription()|noescape}</span>
+                        <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+                    {else}
+                        {$photo->getDescription()|noescape}
+                    {/if}
+                {/if}
+            </div>
+            {/if}
+            <div class="pv_comments">
+                {include "../components/comments.xml", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo}
             </div>
         </div>
     </div>
