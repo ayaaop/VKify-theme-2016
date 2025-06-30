@@ -19,7 +19,9 @@
                 </div>
                 <div class="messenger-app--header--online" n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()">
                     {var $diff = date_diff(date_create(), date_create('@' . $online))}
-                    {if 5 < $diff->i}
+                    {if 5 >= $diff->i}
+                        {_online|lower}
+                    {else}
                         {$correspondent->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$correspondent->getOnline()}
                     {/if}
                 </div>
@@ -44,9 +46,7 @@
                 </div>
                 <a href="{$correspondent->getURL()}" class="messenger-app--header--ava">
                     <img class="post-avatar" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
-                    {if 5 >= $diff->i}
-                        <div class="messenger-app--header--online"></div>
-                    {/if}
+                    <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" class="messenger-app--header--online"></div>
                 </a>
             </div>
         </div>
