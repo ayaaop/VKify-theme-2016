@@ -11,8 +11,9 @@
                         <span class="video_thumb_label_item">
                             <vkifyloc name="external" />
                         </span>
+                        <div class="divider" n:if="$video->getFormattedLength() != ''"></div>
                     {/if}
-                        <span class="video_thumb_label_item">{$video->getLength()}</span>
+                        <span class="video_thumb_label_item">{$video->getFormattedLength()}</span>
                     </div>
                     <div class="video_thumb_play">
                     </div>

@@ -15,36 +15,9 @@
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         <div class="video_items_list" style="padding-top: 15px;">
             {if sizeof($data) > 0}
-                <div class="video_item" n:foreach="$data as $x">
-                    <a href="/video{$x->getPrettyId()}">
-                        <div class="video_item_thumb_wrap" id="videoOpen" data-id="{$x->getPrettyId()}">
-                            <img src="{$x->getThumbnailURL()}"
-                                alt="{$x->getName()}"
-                                class="video_item_thumb "/>
-                            <div class="video_item_controls">
-                                <div class="video_thumb_label">
-                                {if $x->getType() != 0}
-                                    <span class="video_thumb_label_item">
-                                        <vkifyloc name="external" />
-                                    </span>
-                                {/if}
-                                    <span class="video_thumb_label_item">{$x->getLength()}</span>
-                                </div>
-                                <div class="video_thumb_play">
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                    <div class="video_item_info">
-                        <a class="video_item_title" href="/video{$x->getPrettyId()}">
-                            <span id="videoOpen" data-id="{$x->getPrettyId()}">{$x->getName()}</span>
-                        </a>
-                        <a class="video_item_author" href="/{$x->getOwner()->getId()}">{$x->getOwner()->getCanonicalName()}</a>
-                        <div class="video_item_add_info">
-                            <span class="video_item_date_info">{$x->getPublicationTime()}</span>
-                        </div>
-                    </div>
-                </div>
+                {foreach $data as $x}
+                    {include "../components/video.xml", video => $x}
+                {/foreach}
                 {include "../components/paginator.xml", conf => (object) [
                     "page"     => $page,
                     "count"    => $count,

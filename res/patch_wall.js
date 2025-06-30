@@ -834,7 +834,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
                         <div id='__miniplayer_close' title="Close"></div>
                     </div>
                 </div>
-                <div class='miniplayer-body'></div>
+                <div class='miniplayer-body' style="overflow: hidden;"></div>
             </div>
         `);
 
@@ -847,7 +847,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
             miniplayer.find('.miniplayer-body').nodes[0].appendChild(videoContent);
         }
 
-        miniplayer.attr('style', 'position: fixed; left: 20px; bottom: 20px; z-index: 9999; width: 320px; height: 240px;');
+        miniplayer.attr('style', 'position: fixed; left: 20px; bottom: 20px; z-index: 9999; width: 320px;');
 
         miniplayer.find('#__miniplayer_return').on('click', (e) => {
             e.preventDefault();
@@ -874,12 +874,74 @@ async function OpenVideo(video_arr = [], init_player = true) {
             cancel: '.miniplayer-head-buttons'
         });
 
+        function adjustVideoPlayerSize() {
+            const miniplayerBody = miniplayer.find('.miniplayer-body').nodes[0];
+            const videoBlockLayout = miniplayer.find('.video_block_layout').nodes[0];
+
+            if (videoBlockLayout && miniplayerBody) {
+                const bodyWidth = miniplayerBody.offsetWidth;
+                const bodyHeight = miniplayerBody.offsetHeight;
+                const aspectRatio = 16 / 9;
+
+                // Calculate dimensions that fit within the container while maintaining aspect ratio
+                let newWidth = bodyWidth;
+                let newHeight = bodyWidth / aspectRatio;
+
+                if (newHeight > bodyHeight) {
+                    newHeight = bodyHeight;
+                    newWidth = bodyHeight * aspectRatio;
+                }
+
+                // Apply the calculated dimensions to the video block
+                videoBlockLayout.style.width = newWidth + 'px';
+                videoBlockLayout.style.height = newHeight + 'px';
+                videoBlockLayout.style.position = 'absolute';
+
+                // Center the video if it's smaller than the container
+                const leftOffset = (bodyWidth - newWidth) / 2;
+                const topOffset = (bodyHeight - newHeight) / 2;
+                videoBlockLayout.style.left = leftOffset + 'px';
+                videoBlockLayout.style.top = topOffset + 'px';
+
+                // Also adjust any iframe or video elements inside
+                const iframe = videoBlockLayout.querySelector('iframe');
+                const video = videoBlockLayout.querySelector('video');
+
+                if (iframe) {
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                }
+
+                if (video) {
+                    video.style.width = '100%';
+                    video.style.height = '100%';
+                }
+            }
+        }
+
         $(miniplayer.nodes[0]).resizable({
             maxHeight: 2000,
             maxWidth: 3000,
             minHeight: 150,
-            minWidth: 200
+            minWidth: 200,
+            resize: function() {
+                adjustVideoPlayerSize();
+            }
         });
+
+        // Initial size adjustment
+        setTimeout(adjustVideoPlayerSize, 100);
+
+        // Adjust on window resize
+        const resizeHandler = () => adjustVideoPlayerSize();
+        window.addEventListener('resize', resizeHandler);
+
+        // Clean up resize handler when miniplayer is removed
+        const originalRemove = miniplayer.remove;
+        miniplayer.remove = function() {
+            window.removeEventListener('resize', resizeHandler);
+            return originalRemove.call(this);
+        };
     });
 
 

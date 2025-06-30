@@ -433,7 +433,7 @@
         {script "js/scroll.js"}
         {script "js/player.js"}
         {script "js/al_wall.js"}
-        <script src="/themepack/vkify16/3.2.0.3/resource/patch_wall.js"></script>
+        <script src="/themepack/vkify16/3.2.0.4/resource/patch_wall.js"></script>
         {script "js/al_docs.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
