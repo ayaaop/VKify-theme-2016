@@ -24,7 +24,7 @@
             <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}" href="{$author->getURL()}">
                 {if method_exists($author, 'getOwner')}
                     <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                        ? '/themepack/vkify16/3.2.0.1/resource/community_200.png' 
+                        ? '/themepack/vkify16/3.2.0.3/resource/community_200.png' 
                         : $author->getAvatarUrl('miniscule')}" 
                         width="50" 
                         class="post-avatar" />
@@ -163,7 +163,7 @@
                     </a>
                 {/if}
                 <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_share _share_wrap" href="javascript:repost('{$post->getPrettyId()}', 'post')">
-                    <i class="repost-icon post_share_icon _icon" style="opacity: 0.4;"></i>
+                    <i class="repost-icon post_share_icon _icon"></i>
                     <span class="post_share_link _link">{tr('share')}</span>
                     <span class="likeCnt post_share_count _count" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
                 </a>
@@ -175,7 +175,7 @@
             </div>
         </div>
         <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
-            <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+            <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="button button_wide button_gray expand_button">{_view_other_comments}</a>
             <div n:ifcontent class="comments">
                 {foreach $comments as $comment}
                     {include "../comment.xml", comment => $comment, $compact => true}

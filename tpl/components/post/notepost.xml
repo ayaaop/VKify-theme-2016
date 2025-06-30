@@ -45,7 +45,7 @@
             <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
         </div>
         <div n:if="!($forceNoCommentsLink ?? false)" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
-            <a n:if="$commentsCount > 3" href="/note{$note->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+            <a n:if="$commentsCount > 3" href="/note{$note->getPrettyId()}" class="button button_wide button_gray expand_button">{_view_other_comments}</a>
             <div n:ifcontent class="comments">
                 {foreach $comments as $comment}
                     {include "../comment.xml", comment => $comment, $compact => true}

@@ -30,7 +30,10 @@ let locales = {
 		"recommended_groups": "Recommended groups",
 		"show_less": "Show less",
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
-		"deleted_attachment_2": "As such, it can't be displayed."
+		"deleted_attachment_2": "As such, it can't be displayed.",
+		"dark_mode": "Dark mode",
+		"light_mode": "Light mode",
+		"theme_mode": "Theme mode"
 	},
 	'ru': {
 		"language": "Язык",
@@ -63,7 +66,10 @@ let locales = {
 		"recommended_groups": "Рекомендуемые сообщества",
 		"show_less": "Показать меньше",
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
-		"deleted_attachment_2": "Поэтому она не может быть отображена."
+		"deleted_attachment_2": "Поэтому она не может быть отображена.",
+		"dark_mode": "Тёмная тема",
+		"light_mode": "Светлая тема",
+		"theme_mode": "Режим темы"
 	},
 	"uk": {
 		"language": "Мова",
@@ -96,14 +102,17 @@ let locales = {
 		"recommended_groups": "Рекомендовані групи",
 		"show_less": "Показати менше",
 		"deleted_attachment": "В цьому пості є видалене вкладення та немає тексту.",
-		"deleted_attachment_2": "Тому воно не може бути відображено."
+		"deleted_attachment_2": "Тому воно не може бути відображено.",
+		"dark_mode": "Темна тема",
+		"light_mode": "Світла тема",
+		"theme_mode": "Режим теми"
 	}
 }
 
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.2.0.1/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.2.0.3/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';

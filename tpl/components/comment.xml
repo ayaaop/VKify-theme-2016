@@ -22,7 +22,7 @@
                 </a>
                 <a class="page_verified" n:if="$author->isVerified()" href="/verify"></a>
             </div>
-            <div class="post_content" id="{$comment->getId()}">
+            <div class="post-content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
                     <div class="really_text">
                         {if strlen($comment->getText()) > 500}

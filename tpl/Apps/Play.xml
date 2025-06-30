@@ -26,9 +26,9 @@
         <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="100%"
             sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
 
-            <div n:if="!is_null($news)" id="news">
+            <div n:if="!is_null($news)" class="page_padding">
                 <h4>{$news->getName()}</h4>
-                <div id="app_news_container">
+                <div id="app_news_container" style="margin-bottom: 0">
                     {$news->getText()|noescape}
                 </div>
             </div>

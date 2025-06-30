@@ -16,7 +16,7 @@
                     data-user-url="{$thisUser->getURL()}" />
             {if !is_null($club ?? NULL)}
             <img class="post_field_user_image post_field_user_image_group"
-                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/3.2.0.1/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
+                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/3.2.0.3/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
                     alt="{$club->getCanonicalName()}"
                     width="28" height="28"
                     style="opacity: 0;"

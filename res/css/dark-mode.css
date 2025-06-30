@@ -1,0 +1,132 @@
+body.dark-mode {
+	/* Base colors */
+	--white: #ffffff;
+	--black: #000000;
+	--transparent: transparent;
+
+	/* Background colors */
+	--body-background-color: #1a1a1a;
+	--module-background-color: #222222;
+	--module-background-color--secondary: #333333;
+	--module-header-background-color:#292929;
+	--header-background-color: var(--module-background-color);
+	--header-background-color--hover: rgba(255, 255, 255, 0.08);
+	--header-background-color--active: rgba(255, 255, 255, 0.12);
+	--button-background-color: #333333;
+	--button-background-color--hover: #3c3c3c;
+	--button-background-color--light: rgba(255, 255, 255, 0.04);
+	--dimmer-background-color: var(--black);
+
+	/* Border and shadow colors */
+	--shadow-outline-color: var(--border-color);
+	--shadow-bottom-color: var(--border-color);
+	--border-color: #363738;
+	--border-color-2: #434343;
+	--border-color-3: #484848;
+	--border-color-4: #5a5a5b;
+
+	/* Text colors */
+	--text-color: #e1e3e6;
+	--header-text-color: var(--white);
+	--muted-text-color: #828282;
+	--muted-text-color-2: #939393;
+	--muted-text-color-3: #b2b2b2;
+	--heading-color: #ffffff;
+	--link-color: #71aaeb;
+	--link-color-2: #8fbdf1;
+
+	/* Sidebar colors */
+	--sidebar-color--hover: rgba(255, 255, 255, 0.06);
+	--sidebar-text-color: var(--text-color);
+	--sidebar-count-color: #363637;
+	--sidebar-count-color--hover: #454546;
+	--sidebar-count-text-color: #a5a5a5;
+
+	/* Search colors */
+	--search-color: #424242;
+	--search-color--active: var(--border-color-4);
+	--search-text-color: #ffffff;
+	--search-text-color--active: var(--text-color);
+	--search-text-color--placeholder: #858585;
+
+	/* Accent colors */
+	--accent-color: var(--white);
+	--accent-color--hover: rgba(255, 255, 255, .8);
+	--accent-text-color: var(--black);
+	--accent-color-2: #71aaeb;
+	--accent-color-3: #8fbdf1;
+	--accent-color-4: #5a9de0;
+	--accent-color-5: #4a8dd4;
+	--accent-color-6: #3a7dc8;
+
+	/* Success colors */
+	--success-color: #5cb85c;
+	--success-color--hover: #6fd16f;
+	--success-text-color: var(--white);
+
+	/* Audio player colors */
+	--audio-background-color: #2a2a2b;
+	--audio-background-color-2: #363637;
+	--audio-background-color-3: #454546;
+	--audio-slider-color: #363637;
+	--audio-slider-color-2: #5a5a5b;
+	--audio-slider-progress-color: rgba(113, 170, 235, .25);
+	--audio-count-color: #363637;
+	--audio-count-text-color: #a5a5a5;
+
+	/* Tooltip colors */
+	--tooltip-background-color: rgba(0, 0, 0, 0.85);
+	--tooltip-background-color-2: var(--module-background-color);
+	--tooltip-text-color: #ffffff;
+	--tooltip-text-color-2: #a5a5a5;
+
+	/* Additional UI colors */
+	--menu-divider-color: #454546;
+	--tab-border-color: #454546;
+	--tab-text-color: #a5a5a5;
+	--dropdown-border-color: #454546;
+	--dropdown-hover-color: rgba(255, 255, 255, 0.08);
+	--post-action-color: var(--text-color);
+	--post-action-active-color: var(--muted-text-color);
+	--post-meta-color: #a5a5a5;
+	--quote-border-color: #454546;
+	--search-placeholder-color: #858585;
+	--search-placeholder-focus-color: #a5a5a5;
+	--message-warning-background: #363637;
+	--message-warning-border: #e64d4d;
+	--overlay-background: rgba(0, 0, 0, 0.85);
+
+	/* Profile page colors */
+	--album-background-color: #323233;
+	--album-title-muted-color: #858585;
+	--profile-border-color: #454546;
+	--profile-button-border-color: #71aaeb;
+	--video-overlay-background: rgba(0, 0, 0, .7);
+	--video-overlay-background-hover: rgba(0, 0, 0, .8);
+}
+
+body.dark-mode .navigation .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .post_like_icon, body.dark-mode .post_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {
+	filter: brightness(140%);
+}
+body.dark-mode .home_navigation .top_nav_btn_icon {
+	filter: saturate(40%) brightness(250%);
+}
+body.dark-mode #liked {
+    filter: brightness(120%);
+}
+
+body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post-like-button,.button_light) i {
+	filter: invert(1)!important
+}
+
+body.dark-mode .tippy-menu a {
+	color: var(--text-color)
+}
+body.dark-mode .ovk-diag-head {
+	background: var(--module-header-background-color);
+	color: var(--text-color);
+	border-bottom: 1px solid var(--border-color);
+}
+body.dark-mode .button.button_gray {
+	color: var(--text-color)!important;
+}

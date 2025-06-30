@@ -1120,7 +1120,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     initializeNavigation();
 
     const keyboardHandler = function(e) {
-        if (!msgbox.isVisible()) return;
+        if (msgbox.hidden) return;
 
         if (e.keyCode === 37) { // Left arrow
             e.preventDefault();

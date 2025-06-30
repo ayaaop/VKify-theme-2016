@@ -1,76 +1,39 @@
-{extends "../@listView.xml"}
+{extends "../@layout.xml"}
 {var $iterator = iterator_to_array($albums)}
 {var $page     = $paginatorConf->page}
 
 {block title}{_albums} {$owner->getCanonicalName()}{/block}
 
-{block header}
-    {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
-        {_my_photos}
-    {else}
-        <a href="{$owner->getURL()}">
-        {$owner->getCanonicalName()}</a>
-        »
-        {_albums}
-    {/if}
-{/block}
+{block content}
+    {var $isClub = ($owner instanceof \openvk\Web\Models\Entities\Club)}
+    {var $createUrl = $isClub ? '/albums/create?gpid=' . $owner->getId() : '/albums/create'}
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+        ['title' => tr("albums"), 'count' => $count]
+    ], extra => '<a n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()" class="button" href="' . $createUrl . '">' . tr('create_album') . '</a>'}
 
-{block tabs}
-	{if isset($thisUser) && $thisUser->getId() == $owner->getId()}
-		<div id="activetabs" class="tab">
-			<a id="act_tab_a" href="/albums{$owner->getId()}">{_albums}</a>
-		</div>
-		<a style="float: right;margin-right: 3px;margin-top: 4px;" href="/albums/create{$isClub ? '?gpid=' . $owner->getId() : ''}">{_create_album}</a>
-	{else}
-		<div id="activetabs" class="tab">
-			<a id="act_tab_a" href="/albums{$owner->getId()}">{_albums}</a>
-		</div>
-	{/if}
-{/block}
-
-{block size}
-    <div style="padding-bottom: 0px;" class="summaryBar">
-        <div class="summary">
-            {if !is_null($thisUser) && $owner->getId() === $thisUser->getId()}
-                {tr("albums_list", $count)}
-            {else}
-                {tr("albums", $count)}
-            {/if}
-
-            <span n:if="$canEdit" style="float: right;">
-                {var $isClub = ($owner instanceof \openvk\Web\Models\Entities\Club)}
-                
-            </span>
+    <div class="page_block page_padding">
+        <div n:ifcontent class="photo_items_list">
+            {foreach $iterator as $x}
+                <div class="clear_fix clear page_album_row">
+                    <a href="/album{$x->getPrettyId()}" class="page_album_link {if is_null($x->getCoverPhoto())}page_album_nocover{/if}">
+                        {var $cover = $x->getCoverPhoto()}
+                        <div class="page_album_thumb_wrap">
+                            <img n:if="!is_null($cover)"
+                                src="{$cover->getURLBySizeId('normal')}"
+                                class="page_album_thumb" loading="lazy" />
+                        </div>
+                        <div class="page_album_title">
+                            <div class="page_album_size">{$x->getPhotosCount()}</div>
+                            <div class="page_album_title_text">{$x->getName()}</div>
+                            <div class="page_album_description">{$x->getDescription()}</div>
+                        </div>
+                    </a>
+                </div>
+            {/foreach}
         </div>
+        {if $count == 0}
+            {include "../components/content_error.xml", description => tr("albums_zero")}
+        {/if}
     </div>
-{/block}
-
-{block actions}
-
-{/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block link|strip|stripHtml}
-    /album{$x->getPrettyId()}
-{/block}
-
-{block preview}
-    {var $cover   = $x->getCoverPhoto()}
-    {var $preview = is_null($cover) ? "/themepack/vkify16/3.2.0.1/resource/m_noalbum_2x.png" : $cover->getURLBySizeId("normal")}
-
-    <a href="/album{$x->getPrettyId()}">
-        <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" loading=lazy />
-    </a>
-{/block}
-
-{block name}
-    {$x->getName()}
-{/block}
-
-{block description}
-    <span>{$x->getDescription() ?? $x->getName()}</span><br />
-    <span style="color: grey;">{$x->getPhotosCount()} {_photos}</span><br />
-    <span style="color: grey;">{tr("updated_at", $x->getEditTime() ?? $x->getCreationTime())}</span><br />
-    <span style="color: grey;">{_created} {$x->getCreationTime()}</span><br />
 {/block}

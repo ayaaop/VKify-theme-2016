@@ -535,6 +535,38 @@
                                 </div>
                             </div>
                             <div class="settings_list_row">
+                                <div class="settings_label">&nbsp;</div>
+                                <div class="settings_labeled_text" dir="auto">
+                                    <label><input type="checkbox" name="theme_mode" value="1"> <vkifyloc name="dark_mode"></vkifyloc></label>
+                                </div>
+                            <script>
+                                function initDarkModeToggle() {
+                                    const checkbox = document.querySelector('input[name="theme_mode"]');
+                                    const isDarkMode = localStorage.getItem('vkify.darkmode') === '1';
+
+                                    checkbox.checked = isDarkMode;
+
+                                    if (window.toggleDarkMode) {
+                                        window.toggleDarkMode(isDarkMode);
+                                    }
+
+                                    checkbox.onchange = function() {
+                                        const enabled = this.checked;
+                                        localStorage.setItem('vkify.darkmode', enabled ? '1' : '0');
+                                        if (window.toggleDarkMode) {
+                                            window.toggleDarkMode(enabled);
+                                        }
+                                    };
+                                }
+
+                                if (window.toggleDarkMode) {
+                                    initDarkModeToggle();
+                                } else {
+                                    window.addEventListener('load', initDarkModeToggle);
+                                }
+                            </script>
+                            </div>
+                            <div class="settings_list_row">
                                 <div class="settings_label">{_ui_settings_nsfw_content}</div>
                                 <div class="settings_labeled_text">
                                     <select name="nsfw">
