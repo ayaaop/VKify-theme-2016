@@ -2389,11 +2389,15 @@ a.ui_box_header_link {
 
 /* header */
 h2.page_block_h2 {
-	margin: 0px;
-	font-size: inherit;
-	font-weight: inherit;
-	color: inherit;
-	box-shadow: 0 0 0 1px var(--shadow-outline-color);
+    margin: 0px;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    box-shadow:
+        -1px 0 0 0 var(--shadow-outline-color),
+        1px 0 0 0 var(--shadow-outline-color),
+        0 -1px 0 0 var(--shadow-outline-color);
+    border-bottom: 1px solid var(--shadow-outline-color);
 }
 
 .page_block_header_extra {

@@ -233,7 +233,7 @@
 								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
-											<img class="people_cell_img" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
+											<img class="people_cell_img" width="50" height="50" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
 												/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
 											{else}
 												{$friend->getAvatarUrl()}
@@ -259,13 +259,11 @@
 								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriendsOnline(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
-											<div class="people_cell_img">
-												<img class="cell_img" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
+												<img class="people_cell_img" width="50" height="50" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
 													/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
 												{else}
 													{$friend->getAvatarUrl()}
 												{/if}" alt="{$friend->getFirstName()}" />
-											</div>
 										</a>
 										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
 									</div>
@@ -306,7 +304,7 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(($clubs = iterator_to_array($user->getClubs(1))) && shuffle($clubs) ? $clubs : $clubs, 0, 5) as $club">
 									<div class="thumb">
 										<a href="club{$club->getId()}">
-											<img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
+											<img class="people_cell_img" width="50" height="50" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
 												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
 											{else}
 												{$club->getAvatarUrl()}
@@ -337,7 +335,7 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(($meetings = iterator_to_array($user->getMeetings(1))) && shuffle($meetings) ? $meetings : $meetings, 0, 5) as $meeting">
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
-											<img class="cell_img" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
+											<img class="people_cell_img" width="50" height="50" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
 												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
 											{else}
 												{$meeting->getAvatarUrl()}
