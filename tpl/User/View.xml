@@ -59,7 +59,7 @@
 							</div>
 						{/if}
 							<a href="{$user->getAvatarLink()|nocheck}">
-								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/3.2.0.3/resource/camera_200.png{/if}"
+								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{/if}"
 									alt="{$user->getCanonicalName()}"
 									id="bigAvatar"
 									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
@@ -233,9 +233,11 @@
 								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
-											<div class="people_cell_img">
-												<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
-											</div>
+											<img class="people_cell_img" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
+												/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
+											{else}
+												{$friend->getAvatarUrl()}
+											{/if}" alt="{$friend->getFirstName()}" />
 										</a>
 										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
 									</div>
@@ -258,7 +260,11 @@
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
 											<div class="people_cell_img">
-												<img src="{$friend->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$friend->getFirstName()}">
+												<img class="cell_img" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
+													/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
+												{else}
+													{$friend->getAvatarUrl()}
+												{/if}" alt="{$friend->getFirstName()}" />
 											</div>
 										</a>
 										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
@@ -301,7 +307,7 @@
 									<div class="thumb">
 										<a href="club{$club->getId()}">
 											<img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/3.2.0.3/resource/community_200.png
+												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
 											{else}
 												{$club->getAvatarUrl()}
 											{/if}" alt="{$club->getCanonicalName()}" />
@@ -332,7 +338,7 @@
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
 											<img class="cell_img" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/3.2.0.3/resource/community_200.png
+												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
 											{else}
 												{$meeting->getAvatarUrl()}
 											{/if}" alt="{$meeting->getName()}" />

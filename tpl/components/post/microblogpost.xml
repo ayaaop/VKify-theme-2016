@@ -24,12 +24,14 @@
             <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}" href="{$author->getURL()}">
                 {if method_exists($author, 'getOwner')}
                     <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                        ? '/themepack/vkify16/3.2.0.3/resource/community_200.png' 
-                        : $author->getAvatarUrl('miniscule')}" 
+                        ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png'}" 
                         width="50" 
                         class="post-avatar" />
                 {else}
-                    <img src="{$author->getAvatarURL('miniscule')}" width="50" class="post_img" />
+                    <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
+                        ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png' : $author->getAvatarUrl('miniscule')}" 
+                        width="50" 
+                        class="post-avatar" />
                 {/if}
             </a>
             <div class="post_header_info">

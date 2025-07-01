@@ -1,7 +1,8 @@
 {var $user = $notification->getModel(1)}
-
-<a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
-{_nt_commented_yours} {include under}: "{$notification->getData()}".
-<div class="nobold">
+<div class="feedback_header">   
+    <a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
+    {_nt_commented_yours} {include under}: "{$notification->getData()}".
+</div>
+<div class="feedback_footer">
     {$notification->getDateTime()}
 </div>

@@ -1,11 +1,11 @@
 {block content}
-    <div class="video_item">
+    <div class="video_item scroll_node">
         <a href="/video{$video->getPrettyId()}">
-            <div class="video_item_thumb_wrap" id="videoOpen" data-id="{$video->getPrettyId()}">
-                <img src="{$video->getThumbnailURL()}"
+            <div class="video_item_thumb_wrap" data-id="{$video->getPrettyId()}">
+                <img id="videoOpen" src="{$video->getThumbnailURL()}"
                     alt="{$video->getName()}"
                     class="video_item_thumb "/>
-                <div class="video_item_controls">
+                <div id="videoOpen" data-id="{$video->getPrettyId()}" class="video_item_controls">
                     <div class="video_thumb_label">
                     {if $video->getType() != 0}
                         <span class="video_thumb_label_item">
@@ -16,6 +16,25 @@
                         <span class="video_thumb_label_item">{$video->getFormattedLength()}</span>
                     </div>
                     <div class="video_thumb_play">
+                    </div>
+                </div>
+                <div class="video_thumb_actions" n:if="$thisUser->getId() === $video->getOwner()->getId()">
+                    <div>
+                        <a href="/video{$video->getPrettyId()}/edit" class="video_thumb_action_edit" title="{tr('edit')}">
+                            <div class="icon"></div>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="/video{$video->getPrettyId()}/remove" class="video_thumb_action_delete" title="{tr('delete')}">
+                            <div class="icon"></div>
+                        </a>
+                    </div>
+                </div>
+                <div class="video_thumb_actions" n:if="$thisUser->getId() != $video->getOwner()->getId()">
+                    <div>
+                        <a href="javascript:reportVideo({$video->getId()})" class="video_thumb_action_delete" title="{tr('report')}">
+                            <div class="icon"></div>
+                        </a>
                     </div>
                 </div>
             </div>

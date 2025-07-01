@@ -5,6 +5,7 @@
   @param count        (optional) Number or string to display as a count badge
   @param extra        (optional) HTML content to display on the right side of the header
   @param extra_left   (optional) HTML content to display on the left side of the header
+  @param translate    (optional) Boolean, if false do not translate title
 *}
 <h2 class="page_block_h2">
   <div class="page_block_header clear_fix">
@@ -19,7 +20,7 @@
     </div>
     {/ifset}
     <div class="page_block_header_inner _header_inner">
-      {ifset $title}{tr($title)}{/ifset}
+      {ifset $title}{if isset($translate) && $translate === false}{$title}{else}{tr($title)}{/if}{/ifset}
       {ifset $count}
         <span class="page_block_header_count" id="fw_summary">{$count}</span>
       {/ifset}

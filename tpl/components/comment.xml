@@ -6,7 +6,9 @@
 <div data-id="1_{$comment->getId()}" class="post reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <div class="reply_wrap">
         <a class="reply_image{if !$author instanceof $Club && $author->isOnline()} online{/if}" href="{$author->getURL()}">
-            <img src="{$author->getAvatarURL('miniscule')}" width="30" class="reply_img" />
+            <img src="{if str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png')}{if $author instanceof $Club}/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png{else}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{/if}{else}{$author->getAvatarUrl('miniscule')}{/if}" 
+                width="30" 
+                class="reply_img" />
         </a>
         <div class="reply_content">
             <div class="fl_r reply_actions_wrap">

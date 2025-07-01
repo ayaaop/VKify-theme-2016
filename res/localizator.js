@@ -112,7 +112,7 @@ let locales = {
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.2.0.3/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.3.0.4/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';
@@ -168,7 +168,7 @@ function patchpage(langcode) {
 	window.vkifylang = locales[langcode];
 	window.processVkifyLocTags();
 
-	if (location.protocol.includes('http:')) {
+	if (location.protocol.includes('http:') && !location.host.includes('localhost')) {
 		if (location.host.includes('openvk.xyz')) {
 			showBlueWarning(window.vkifylang.httpwarnovk);
 		} else {

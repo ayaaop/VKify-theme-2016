@@ -7,7 +7,7 @@
             {ifset title}{include title} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
-        <link rel="shortcut icon" href="/themepack/vkify16/3.2.0.3/resource/favicon_vk.ico" />
+        <link rel="shortcut icon" href="/themepack/vkify16/{$theme->getVersion()}/resource/favicon_vk.ico" />
         <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
 
@@ -95,12 +95,12 @@
 
         <div class="toTop">
             <div id='to_up'>
-                <img style="width: 14px;margin-right: 2px;margin-left: 3px;" src="/themepack/vkify16/3.2.0.3/resource/toTop.png">
+                <img style="width: 14px;margin-right: 2px;margin-left: 3px;" src="/themepack/vkify16/{$theme->getVersion()}/resource/toTop.png">
                 <span>{_to_top}</span>
             </div>
             
             <div id='to_back'>
-                <img style="width: 14px;margin-right: 2px;rotate: 180deg;margin-left: 3px;" src="/themepack/vkify16/3.2.0.3/resource/toTop.png">
+                <img style="width: 14px;margin-right: 2px;rotate: 180deg;margin-left: 3px;" src="/themepack/vkify16/{$theme->getVersion()}/resource/toTop.png">
             </div>
         </div>
 
@@ -121,13 +121,18 @@
                                     </button>
                                 </form>
                             </div>
-                            <div id="searchBoxFastTips"></div>
+                            <div id="searchBoxFastTips" style="display: none"></div>
                         </div>
                         <div class="home_navigation">
                             {if isset($thisUser) && !$thisUser->isDeactivated()}
-                                <a class="top_nav_btn" id="top_notify_btn" href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
-                                    <div class="top_nav_btn_icon"></div>
-                                </a>
+                                <div id="top_notify_btn_div">
+                                    <a n:class="top_nav_btn, $thisUser->getNotificationsCount() > 0 ? 'has_notify'" id="top_notify_btn" href="/notifications" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
+                                        <div class="top_nav_btn_icon"></div>
+                                        <div class="top_notify_count" n:if="$thisUser->getNotificationsCount() > 0">
+                                            {$thisUser->getNotificationsCount() > 99 ? '99+' : $thisUser->getNotificationsCount()}
+                                        </div>
+                                    </a>
+                                </div>
                                 <div class="top_nav_audio" id="headerMusicLinkDiv">
                                     <a class="top_nav_btn" id="headerMusicBtn">
                                         <div class="top_nav_btn_icon"></div>
@@ -153,7 +158,7 @@
                                 <div class="link">
                                     <a id="userMenuTrigger">
                                         <div id="userMenuName">{$thisUser->getFirstName()}</div>
-                                        <img id="userMenuAvatar" src="{$thisUser->getAvatarUrl('miniscule')}">
+                                        <img id="userMenuAvatar" src="{if str_contains($thisUser->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$thisUser->getAvatarUrl('miniscule')}{/if}">
                                         <div id="userMenuArrow"></div>
                                     </a>
                                 </div>
@@ -433,16 +438,15 @@
         {script "js/scroll.js"}
         {script "js/player.js"}
         {script "js/al_wall.js"}
-        <script src="/themepack/vkify16/3.2.0.4/resource/patch_wall.js"></script>
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/patch_wall.js"></script>
         {script "js/al_docs.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}
         {script "js/al_suggestions.js"}
-        {script "js/al_navigation.js"}
         {script "js/al_comments.js"}
         {script "js/al_music.js"}
-	    <script src="/themepack/vkify16/3.2.0.3/resource/patch_page.js"></script>
+	    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/patch_page.js"></script>
         <script>
             if (localStorage.getItem('vkify.darkmode') === '1') {
                 document.body.classList.add('dark-mode');
@@ -453,7 +457,7 @@
                 const link = document.createElement('link');
                 link.id = 'dark-mode-css';
                 link.rel = 'stylesheet';
-                link.href = '/themepack/vkify16/3.2.0.3/resource/css/dark-mode.css';
+                link.href = '/themepack/vkify16/{$theme->getVersion()|noescape}/resource/css/dark-mode.css';
                 document.head.appendChild(link);
             }
         </script>
@@ -523,9 +527,9 @@
         {/ifset}
         {script "js/router.js"}
     </body>
-	<script src="/themepack/vkify16/3.2.0.3/resource/router_patch.js"></script>
-    <script src="/themepack/vkify16/3.2.0.3/resource/tippys.js"></script>
-	<script src="/themepack/vkify16/3.2.0.3/resource/localizator.js" crossorigin="anonymous"></script>
+	<script src="/themepack/vkify16/{$theme->getVersion()}/resource/router_patch.js"></script>
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/tippys.js"></script>
+	<script src="/themepack/vkify16/{$theme->getVersion()}/resource/localizator.js" crossorigin="anonymous"></script>
 	<script>
 		window.openvk.locales = {
         {foreach getLanguages() as $language}
@@ -534,7 +538,7 @@
 		}
 	</script>
 	<script>
-		window.vkifylocalize("{php echo getLanguage()}");
+        window.vkifylocalize("{php echo getLanguage()}");
 	</script>
 </html>
 {/if}

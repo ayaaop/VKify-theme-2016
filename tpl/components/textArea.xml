@@ -10,13 +10,13 @@
     {if $thisUser ?? NULL}
         <a class="post_field_user_link" href="{$thisUser->getURL()}">
             <img class="post_field_user_image"
-                    src="{$thisUser->getAvatarUrl('miniscule')}"
+                    src="{if str_contains($thisUser->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$thisUser->getAvatarUrl('miniscule')}{/if}"
                     alt="{$thisUser->getCanonicalName()}"
                     width="28" height="28"
                     data-user-url="{$thisUser->getURL()}" />
             {if !is_null($club ?? NULL)}
             <img class="post_field_user_image post_field_user_image_group"
-                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/3.2.0.3/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
+                    src="{if str_contains($club->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png{else}{$club->getAvatarUrl('miniscule')}{/if}"
                     alt="{$club->getCanonicalName()}"
                     width="28" height="28"
                     style="opacity: 0;"

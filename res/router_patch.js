@@ -112,6 +112,98 @@ function processVkifyLocTags() {
     }
 }
 
+window.initializeSearchOptions = function() {
+    const searchForm = document.getElementById('real_search_form');
+    const searchOptionsContainer = document.getElementById('search_options');
+    if (!searchForm || !searchOptionsContainer) return;
+
+    const performAjaxSearch = () => {
+        if (!window.router) {
+            searchForm.submit();
+            return;
+        }
+
+        const formData = new FormData(searchForm);
+        const searchParams = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            if (value && value.trim() !== '') {
+                searchParams.append(key, value);
+            }
+        }
+
+        const searchUrl = `/search?${searchParams.toString()}`;
+
+        window.router.route({
+            url: searchUrl,
+            push_state: false
+        });
+    };
+
+    const searchOptions = searchOptionsContainer.querySelectorAll('input[type="checkbox"], input[type="radio"], select');
+    searchOptions.forEach(element => {
+        element.removeEventListener('change', element._searchChangeHandler);
+        element._searchChangeHandler = () => {
+            setTimeout(performAjaxSearch, 100);
+        };
+        element.addEventListener('change', element._searchChangeHandler);
+    });
+
+    const textInputs = searchOptionsContainer.querySelectorAll('input[type="text"]');
+    textInputs.forEach(input => {
+        if (input._searchInputTimeout) {
+            clearTimeout(input._searchInputTimeout);
+        }
+        input.removeEventListener('input', input._searchInputHandler);
+        input._searchInputHandler = () => {
+            clearTimeout(input._searchInputTimeout);
+            input._searchInputTimeout = setTimeout(performAjaxSearch, 800);
+        };
+        input.addEventListener('input', input._searchInputHandler);
+    });
+
+    const resetButton = document.getElementById('search_reset');
+    if (resetButton) {
+        resetButton.removeEventListener('click', resetButton._searchResetHandler);
+        resetButton._searchResetHandler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const searchOptionsContainer = document.getElementById('search_options');
+            if (searchOptionsContainer) {
+                searchOptionsContainer.querySelectorAll('input[type="text"]').forEach(inp => {
+                    inp.value = '';
+                });
+                searchOptionsContainer.querySelectorAll('input[type="checkbox"]').forEach(chk => {
+                    chk.checked = false;
+                });
+                searchOptionsContainer.querySelectorAll('input[type="radio"]').forEach(rad => {
+                    if (rad.dataset.default) {
+                        rad.checked = true;
+                        return;
+                    }
+                    rad.checked = false;
+                });
+                searchOptionsContainer.querySelectorAll('select').forEach(sel => {
+                    sel.value = sel.dataset.default || '';
+                });
+            }
+
+            resetButton.disabled = true;
+            resetButton.value = resetButton.value.replace(/\.\.\.$/, '') + '...';
+
+            setTimeout(() => {
+                performAjaxSearch();
+                setTimeout(() => {
+                    resetButton.disabled = false;
+                    resetButton.value = resetButton.value.replace(/\.\.\.$/, '');
+                }, 500);
+            }, 100);
+        };
+        resetButton.addEventListener('click', resetButton._searchResetHandler);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     processVkifyLocTags();
 
@@ -120,6 +212,12 @@ document.addEventListener('DOMContentLoaded', function() {
         reinitializeTooltips();
         if (window.addSuggestedTabToWall) {
             setTimeout(window.addSuggestedTabToWall, 100);
+        }
+        if (window.location.pathname === '/search') {
+            setTimeout(initializeSearchOptions, 100);
+        }
+        if (window.initializeSearchFastTips) {
+            setTimeout(window.initializeSearchFastTips, 100);
         }
     }
 

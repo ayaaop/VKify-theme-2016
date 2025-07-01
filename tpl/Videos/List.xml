@@ -8,16 +8,17 @@
 {block content}
     {include "../components/page_crumb_header.xml", crumbs: [
         ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
-        ['title' => tr("videos")]
+        ['title' => tr("videos"), 'count' => $count]
     ], extra => '<a class="button" href="/videos/upload">'.tr("upload_video").'</a>'
     }
     <div class="page_block video_block_layout">
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-        <div class="video_items_list" style="padding-top: 15px;">
-            {if sizeof($data) > 0}
+        {if sizeof($data) > 0}
+            <div class="video_items_list scroll_container" style="padding-top: 15px;">
                 {foreach $data as $x}
                     {include "../components/video.xml", video => $x}
                 {/foreach}
+            </div>
                 {include "../components/paginator.xml", conf => (object) [
                     "page"     => $page,
                     "count"    => $count,
@@ -25,9 +26,8 @@
                     "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
                     "atBottom" => true,
                 ]}
-            {else}
-                {include "../components/nothing.xml"}
-            {/if}
-        </div>
+        {else}
+            {include "../components/nothing.xml"}
+        {/if}
     </div>
 {/block}

@@ -7,7 +7,6 @@
 		opacity: 1;
 	}
 }
-
 @keyframes notification_ballon_disappears {
 	0% {
 		opacity: 1;
@@ -25,7 +24,6 @@
     z-index: 1001;
     position: fixed;
 }
-
 .notification_ballon {
 	background-color: rgba(0, 0, 0, 0.7);
 	height: unset;
@@ -45,7 +43,6 @@
 	animation-name: notification_ballon_disappears;
 	animation-duration: 0.5s;
 }
-
 .notification_ballon_wrap {
 	margin: 0 0 8px 10px;
 }
@@ -93,4 +90,76 @@
 	height: 50px;
 	object-fit: cover;
 	border-radius: 50%;
+}
+
+.feedback_row {
+	padding: 12px 20px;
+	border-top:1px solid var(--border-color);
+	margin-top: -1px;
+}
+.feedback_image {
+	display: block;
+	float: left;
+	position: relative;
+}
+.feedback_image img {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	-moz-force-broken-image-icon: 0;
+	background-color: var(--module-background-color--secondary);
+	position: relative;
+	vertical-align: top;
+}
+.feedback_content {
+	margin: 0 0 0 62px;
+	word-wrap: break-word;
+	min-height: 50px;
+	font-size: 12.5px;
+}
+.feedback_header {
+	padding: 2px 0 0 0;
+	color: var(--text-color);
+	line-height: 17px;
+}
+.feedback_footer {
+	font-size: 12.5px;
+	padding: 2px 0;
+	color: var(--muted-text-color);
+	overflow: hidden;
+	line-height: 1.417;
+}
+
+.tippy-content .ui_tab, .ui_tab_plain,.tippy-content .ui_tab:hover, .tippy-content .ui_tabs .ui_tab:hover {
+	padding: 11px 5px 10px;
+}
+.tippy-content .feedback_row {
+	padding: 10px 14px;
+}
+.tippy-content .feedback_image img {
+	height: 40px;
+	width: 40px;
+}
+.tippy-content .feedback_content {
+	margin: 0 0 0 52px;
+	min-height: 40px;
+}
+.tippy-content .pr {
+	width: 100%;
+	margin: auto;
+}
+.tippy-box[data-theme~="notifications"] {
+	width: 470px;
+}
+.notifications_loading {
+	width: 100%;
+	height: 300px;
+	text-align: center;
+	position: relative;
+}
+.notifications_loading .pr {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%);
 }

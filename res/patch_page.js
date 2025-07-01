@@ -29,19 +29,19 @@ window.changeLangPopup = function () {
     window.langPopup = new CMessageBox({
         title: tr('select_language'),
         body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-<div class="langSelect"><img src="/themepack/vkify16/3.2.0.3/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
+<div class="langSelect"><img src="/themepack/vkify16/3.3.0.4/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
 </a>
 <a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.3/resource/lang_flags/uk.png"><b>Україньска</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.0.4/resource/lang_flags/uk.png"><b>Україньска</b></div>
 </a>
 <a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.3/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.0.4/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
 </a>
 <a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.2.0.3/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.0.4/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
 </a>
 <a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.2.0.3/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.0.4/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
 </a>
 <a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
    <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
@@ -72,6 +72,60 @@ window.allLangsPopup = function () {
         body: container.innerHTML,
         buttons: [tr('close')],
         callbacks: [() => { langPopup.close() }]
+    });
+}
+
+async function fetchNotificationsContent() {
+    try {
+        const response = await fetch('/notifications');
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const notificationsContainer = doc.querySelector('.notifications');
+
+        if (notificationsContainer) {
+            return notificationsContainer.innerHTML;
+        } else {
+            return `<div class="no_notifications">${tr('no_data_description')}</div>`;
+        }
+    } catch (error) {
+        console.error('Failed to fetch notifications:', error);
+        return `<div class="notifications_error">${tr('error')}</div>`;
+    }
+}
+
+window.initNotificationsPopup = async function() {
+    const targetElement = document.querySelector('#top_notify_btn_div');
+    const loadingContent = '<div class="notifications_loading"><div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div></div>';
+
+    targetElement.addEventListener('click', function(e) { e.preventDefault(); });
+
+    tippy(targetElement, {
+        content: loadingContent,
+        allowHTML: true,
+        trigger: 'click',
+        interactive: true,
+        placement: 'bottom-start',
+        theme: 'light vk notifications',
+        maxWidth: 470,
+        arrow: false,
+        appendTo: 'parent',
+        popperOptions: {
+            modifiers: [{
+                name: 'offset',
+                options: {
+                    offset: [0, 0]
+                }
+            }]
+        },
+        onHidden() {
+            document.querySelector('#top_notify_btn').classList.remove('top_nav_btn_active');
+        },
+        async onShow(instance) {
+            document.querySelector('#top_notify_btn').classList.add('top_nav_btn_active');
+            const freshNotificationsContent = await fetchNotificationsContent();
+            instance.setContent(freshNotificationsContent);
+        }
     });
 }
 
@@ -433,8 +487,8 @@ function parseAudio(onlyscnodes = false) {
 }
 
 const vkfavicon = {
-    "fav": "/themepack/vkify16/3.2.0.3/resource/favicon_vk.ico",
-	"fav_chat": "/themepack/vkify16/3.2.0.3/resource/fav_chat.ico",
+    "fav": "/themepack/vkify16/3.3.0.4/resource/favicon_vk.ico",
+	"fav_chat": "/themepack/vkify16/3.3.0.4/resource/fav_chat.ico",
     "playiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAvkQAAL/4AADBsAAAw2wAAMUoAADG6AAAyKgAAMpsAADMNAAAzfwAAM/EAADRlAAA02AAANU0AADXCAAA2Nw==",
     "pauseiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
 }
@@ -452,8 +506,8 @@ window.initVKGraffiti = function (event) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.3/stylesheet/styles.css">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.2.0.3/resource/vkgraffiti/graffiti.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.0.4/stylesheet/styles.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.0.4/resource/vkgraffiti/graffiti.css">
 </head>
 <body style="background: none">
     <div style="margin: 10px"><a onclick="Graffiti.flushHistory();">${window.vkifylang ? window.vkifylang.graffitiflushhistory : 'Clear'}</a> | <a onclick="Graffiti.backHistory();">${window.vkifylang ? window.vkifylang.graffitibackhistory : 'Undo'}</a></div>
@@ -472,7 +526,7 @@ window.initVKGraffiti = function (event) {
     <div id="graffiti_cpwrap" style="display:none; top:-210px;">
         <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
     </div>
-    <script src="${window.location.origin}/themepack/vkify16/3.2.0.3/resource/vkgraffiti/graffiti.js"></script>
+    <script src="${window.location.origin}/themepack/vkify16/3.3.0.4/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
@@ -1191,6 +1245,8 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.player.ajClose();
     });
 
+    window.initNotificationsPopup();
+
     $(document).on("click", ".statusButton.musicIcon", function (event) {
         event.preventDefault();
         $(this).toggleClass("pressed");
@@ -1369,147 +1425,174 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 });
 
-const searchbox = document.querySelector('#search_box form input[type="search"]');
-var searchTimeout;
-searchbox.onfocus = function () {
-    if (!(searchbox.value.length < 3)) { document.querySelector('#searchBoxFastTips').style.display = "block"; }
-    else { document.querySelector('#searchBoxFastTips').style.display = "none"; }
-}
-searchbox.onblur = function () {
-    if (searchbox.value == "") { if (friendson > 0) { document.querySelector('.friendslink').style.display = "unset"; } }
-    else { document.querySelector('.friendslink').style.display = "none"; }
-}
-searchbox.oninput = async function () {
-    if (!(searchbox.value.length < 3)) {
-        document.querySelector('#searchBoxFastTips').style.display = "block";
-        document.querySelector('.friendslink').style.display = "none";
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(async () => {
-            const srq = document.querySelector('#search_box form input[type="search"]').value;
-            document.querySelector('#searchBoxFastTips').innerHTML = `<div class="fastpreload"></div>`;
-            try {
-                const groupsd = await window.OVKAPI.call("groups.search", { "q": srq })
-                const usersd = await window.OVKAPI.call("users.search", { "q": srq, "fields": "photo_50" })
-                const audiosd = await window.OVKAPI.call("audio.search", { "q": srq })
-                const docsd = await window.OVKAPI.call("docs.search", { "q": srq })
-                if (usersd.count > 5) {
-                    var minusers = usersd.items
-                        .slice(0, 5)
-                        .map(item => ({
-                            id: item.id,
-                            photo_50: item.photo_50,
-                            first_name: item.first_name
-                        }));
-                } else {
-                    var minusers = usersd.items
-                        .slice(0, usersd.count)
-                        .map(item => ({
-                            id: item.id,
-                            photo_50: item.photo_50,
-                            first_name: item.first_name
-                        }));
+function initializeSearchFastTips() {
+    const searchInput = u('#search_box input[type="search"]');
+    const fastTipsContainer = u('#searchBoxFastTips');
+
+    if (!searchInput.length || !fastTipsContainer.length) return;
+
+    let searchTimeout;
+    let currentSearchId = 0;
+
+    searchInput.on('input', async function(e) {
+        const query = u(e.target).first().value.trim();
+
+        if (query.length >= 3) {
+            fastTipsContainer.first().style.display = "block";
+            clearTimeout(searchTimeout);
+
+            currentSearchId++;
+            const thisSearchId = currentSearchId;
+
+            searchTimeout = setTimeout(async () => {
+                const currentQuery = u(e.target).first().value.trim();
+                if (currentQuery !== query || currentQuery.length < 3 || thisSearchId !== currentSearchId) return;
+
+                fastTipsContainer.html(`<div class="fastpreload"></div>`);
+
+                try {
+                    const [groupsd, usersd, audiosd, docsd] = await Promise.all([
+                        window.OVKAPI.call("groups.search", { "q": currentQuery }),
+                        window.OVKAPI.call("users.search", { "q": currentQuery, "fields": "photo_50" }),
+                        window.OVKAPI.call("audio.search", { "q": currentQuery }),
+                        window.OVKAPI.call("docs.search", { "q": currentQuery })
+                    ]);
+
+                    if (thisSearchId !== currentSearchId) return;
+
+                    const maxUsers = Math.min(5, usersd.count);
+                    const minusers = usersd.items.slice(0, maxUsers).map(item => ({
+                        id: item.id,
+                        photo_50: item.photo_50,
+                        first_name: item.first_name
+                    }));
+
+                    let fastusers = "";
+                    minusers.forEach((user) => {
+                        fastusers += `
+                            <a class="fastavatarlnk" href="/id${user.id}">
+                                <img class="fastavatar" src="${user.photo_50}" alt="${escapeHtml(user.first_name)}">
+                                <span>${escapeHtml(user.first_name)}</span>
+                            </a>
+                        `;
+                    });
+
+                    fastTipsContainer.html(`
+                        <div>
+                            <div class="useravas">
+                                ${fastusers}
+                            </div>
+                            <a href="/search?section=users&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('users')} <b>${escapeHtml(currentQuery)}</b> (${usersd.count})
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=groups&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('groups')} <b>${escapeHtml(currentQuery)}</b> (${groupsd.count})
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=audios&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('audios')} <b>${escapeHtml(currentQuery)}</b> (${audiosd.count})
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=docs&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('documents')} <b>${escapeHtml(currentQuery)}</b> (${docsd.count})
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                    `);
+                } catch (error) {
+                    console.error('Failed to load search tip results:', error);
+                    if (thisSearchId !== currentSearchId) return;
+                    fastTipsContainer.html(`
+                        <div>
+                            <a href="/search?section=users&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('users')} <b>${escapeHtml(currentQuery)}</b>
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=groups&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('groups')} <b>${escapeHtml(currentQuery)}</b>
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=audios&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('audios')} <b>${escapeHtml(currentQuery)}</b>
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                        <div>
+                            <a href="/search?section=docs&q=${encodeURIComponent(currentQuery)}">
+                                <div class="fastresult">
+                                    ${tr('documents')} <b>${escapeHtml(currentQuery)}</b>
+                                    <div class="arrow"></div>
+                                </div>
+                            </a>
+                        </div>
+                    `);
                 }
-                let fastusers = ""
-                minusers.forEach((user) => {
-                    fastusers += `
-                    <a class="fastavatarlnk" href="/id${user.id}">
-                        <img class="fastavatar" src="${user.photo_50}">
-                        <span>${escapeHtml(user.first_name)}</span>
-                    </a>
-                    `;
-                });
-                document.querySelector('#searchBoxFastTips').innerHTML = `
-                                <div>
-                                    <div class="useravas">
-                                        ${fastusers}
-                                    </div>
-                                    <a href="/search?section=users&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('users')} <b>${escapeHtml(srq)}</b> (${usersd.count})
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=groups&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('groups')} <b>${escapeHtml(srq)}</b> (${groupsd.count})
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=audios&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('audios')} <b>${escapeHtml(srq)}</b> (${audiosd.count})
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=docs&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('documents')} <b>${escapeHtml(srq)}</b> (${docsd.count})
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                            `} catch (error) {
-                console.error('failed to load search tip results, using simple template:', error)
-                document.querySelector('#searchBoxFastTips').innerHTML = `
-                                <div>
-                                    <a href="/search?section=users&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('users')} <b>${escapeHtml(srq)}</b>
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=groups&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('groups')} <b>${escapeHtml(srq)}</b>
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=audios&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('audios')} <b>${escapeHtml(srq)}</b>
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div>
-                                    <a href="/search?section=docs&q=${srq}">
-                                        <div class="fastresult">
-                                            ${tr('documents')} <b>${escapeHtml(srq)}</b>
-                                            <div class="arrow"></div>
-                                        </div>
-                                    </a>
-                                </div>
-                            `}
-        }, 1500);
-    }
-    else {
-        document.querySelector('#searchBoxFastTips').style.display = "none";
-        if (friendson > 0) { document.querySelector('.friendslink').style.display = "unset"; }
-    }
-}
-u(`#search_box form input[type="search"]` || `#search_box #searchBoxFastTips a`).on('blur', () => {
-    {
+            }, 1000);
+        } else {
+            fastTipsContainer.first().style.display = "none";
+        }
+    });
+
+    searchInput.on('focus', function(e) {
+        const inputValue = u(e.target).first().value;
+        if (inputValue.length >= 3) {
+            fastTipsContainer.first().style.display = "block";
+        } else {
+            fastTipsContainer.first().style.display = "none";
+        }
+    });
+
+    searchInput.on('blur', function() {
         setTimeout(() => {
             const focusedElement = document.activeElement;
-
-            if (!u(focusedElement).is('#search_box form input[type="search"]')) {
-                $('#searchBoxFastTips').css("display", "none")
+            if (!u(focusedElement).closest('#search_box').length) {
+                fastTipsContainer.first().style.display = "none";
             }
         }, 250);
-    } /* ладно я понял как оно работает и поэтому я в целом убрал время ОЖИДания */
-})
-u(`#search_box form input[type="search"]`).off('focus');
+    });
+}
 
+u(document).on('DOMContentLoaded', initializeSearchFastTips);
+window.initializeSearchFastTips = initializeSearchFastTips;
+
+if (window.location.pathname === '/search') {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (window.initializeSearchOptions) {
+            window.initializeSearchOptions();
+        } else {
+            setTimeout(() => {
+                if (window.initializeSearchOptions) {
+                    window.initializeSearchOptions();
+                }
+            }, 100);
+        }
+    });
+}
 
 async function changeStatus() {
     const status = document.status_popup_form.status.value;
@@ -1560,7 +1643,7 @@ function switchProfileInfo() {
 const today = new Date();
 if (today.getDate() === 1 && today.getMonth() === 3) {
     const doge = document.createElement('script');
-    doge.setAttribute('src', '/themepack/vkify16/3.2.0.3/resource/doge.js');
+    doge.setAttribute('src', '/themepack/vkify16/3.3.0.4/resource/doge.js');
     document.head.appendChild(doge);
     u(document).on('click', '.post-like-button', function () {
         if (u(this).find('#liked').length) { Doge.show(); }
@@ -1605,7 +1688,7 @@ window.toggleDarkMode = function(enabled) {
             const link = document.createElement('link');
             link.id = 'dark-mode-css';
             link.rel = 'stylesheet';
-            link.href = '/themepack/vkify16/3.2.0.3/resource/css/dark-mode.css';
+            link.href = '/themepack/vkify16/3.3.0.4/resource/css/dark-mode.css';
             document.head.appendChild(link);
         }
     } else {

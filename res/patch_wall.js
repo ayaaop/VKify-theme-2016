@@ -349,12 +349,16 @@ window.handleWallAsGroupClick = function(el) {
             form.dataset.originalAction = form.action;
         }
 
-        const currentUrl = window.location.pathname;
-        const groupMatch = currentUrl.match(/^\/club(\d+)/);
-        if (groupMatch && el.checked) {
-            form.action = `/wall-${groupMatch[1]}/makePost`;
-        } else if (form.dataset.originalAction) {
-            form.action = form.dataset.originalAction;
+        const isCommentForm = form.dataset.originalAction && form.dataset.originalAction.includes('/al_comments/create/');
+
+        if (!isCommentForm) {
+            const currentUrl = window.location.pathname;
+            const groupMatch = currentUrl.match(/^\/club(\d+)/);
+            if (groupMatch && el.checked) {
+                form.action = `/wall-${groupMatch[1]}/makePost`;
+            } else if (form.dataset.originalAction) {
+                form.action = form.dataset.originalAction;
+            }
         }
     }
 
@@ -736,7 +740,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
                     </div>
                 </div>
                 <div class="page_block">
-                    <div class="video_block_layout" style="padding-top: 20px;">
+                    <div class="video_block_layout">
                         ${player_html}
                     </div>
                     <div class="video_info">

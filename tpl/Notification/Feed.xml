@@ -10,41 +10,35 @@
     ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
     ['title' => tr("feedback")]
 ]}
-<div n:ifcontent class="tabs">
-    <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?act=new">{_unread}</a>
-    </div>
-    <div n:attr="id => ($mode === 'archived' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($mode === 'archived' ? 'act_tab_a' : 'ki')" href="?act=archived">{_archive}</a>
-    </div>
-</div>
-{var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-{if sizeof($data) > 0}
-<div n:class="$mode !== 'new' ? scroll_container">
-    <table class="scroll_node post post-divider" border="0" style="font-size: 11px;" n:foreach="$data as $dat">
-        <tbody>
-            <tr>
+<div class="page_block notifications">
+    {include "../components/page_tabs_header.xml", white => true, tabs => [
+        [
+            'url' => '?act=new',
+            'title' => 'unread',
+            'active' => $mode === 'new'
+        ],
+        [
+            'url' => '?act=archived',
+            'title' => 'archive',
+            'active' => $mode === 'archived'
+        ]
+    ]}
+    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+    {if sizeof($data) > 0}
+        <div n:class="$mode !== 'new' ? scroll_container">
+            <div class="feedback_row scroll_node" n:foreach="$data as $dat">
                 {var $sxModel = $dat->getModel(1)}
                 {if !(method_exists($sxModel, "getURL") && method_exists($sxModel, "getAvatarUrl"))}
                     {var $sxModel = $dat->getModel(0)}
                 {/if}
-
-                <td width="54" valign="top">
-                    <a href="{$sxModel->getURL()}">
-                        <img src="{$sxModel->getAvatarUrl('miniscule')}" width=50 />
-                    </a>
-                </td>
-                <td width="100%" valign="top">
-                    <div class="post-content">
-                        <div class="text" style="line-height: 12pt;">
-                            {include $dat->getTemplatePath(), notification => $dat}
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                <a href="{$sxModel->getURL()}" class="feedback_image" n:if="method_exists($sxModel, 'getURL') && method_exists($sxModel, 'getAvatarUrl')">
+                    <img src="{$sxModel->getAvatarUrl('miniscule')}" width=50 />
+                </a>
+                <div class="feedback_content">
+                    {include $dat->getTemplatePath(), notification => $dat}
+                </div>
+            </div>
+        </div>
         {include "../components/paginator.xml", conf => (object) [
             "page"     => $page,
             "count"    => $count,
@@ -52,11 +46,12 @@
             "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
             "atBottom" => true,
         ]}
-{else}
-    {ifset customErrorMessage}
-        {include customErrorMessage}
     {else}
-        {include "../components/nothing.xml"}
-    {/ifset}
-{/if}
+        {ifset customErrorMessage}
+            {include customErrorMessage}
+        {else}
+            {include "../components/nothing.xml"}
+        {/ifset}
+    {/if}
+</div>
 {/block}
