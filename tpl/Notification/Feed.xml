@@ -13,12 +13,12 @@
 <div class="page_block notifications">
     {include "../components/page_tabs_header.xml", white => true, tabs => [
         [
-            'url' => '?act=new',
+            'url' => '/notifications?act=new',
             'title' => 'unread',
             'active' => $mode === 'new'
         ],
         [
-            'url' => '?act=archived',
+            'url' => '/notifications?act=archived',
             'title' => 'archive',
             'active' => $mode === 'archived'
         ]

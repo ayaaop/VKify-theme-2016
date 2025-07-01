@@ -130,8 +130,8 @@
 	line-height: 1.417;
 }
 
-.tippy-content .ui_tab, .ui_tab_plain,.tippy-content .ui_tab:hover, .tippy-content .ui_tabs .ui_tab:hover {
-	padding: 11px 5px 10px;
+.tippy-content .ui_tab, .tippy-content .ui_tab_plain,.tippy-content .ui_tab:hover, .tippy-content .ui_tabs .ui_tab:hover {
+	padding: 11px 5px 10px!important;
 }
 .tippy-content .feedback_row {
 	padding: 10px 14px;

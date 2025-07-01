@@ -314,11 +314,6 @@
     border-radius: 50%
 }
 
-.module_body .people_cell_img img {
-    width: 100%;
-    height: 100%;
-}
-
 .module_body .people_cell_name {
     line-height: 15px;
     white-space: nowrap;

@@ -2186,12 +2186,10 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .ui_tabs {
     position: relative;
     background: var(--module-background-color);
-    border-bottom: 1px solid var(--border-color);
     padding: 0 10px;
     margin: 0;
     list-style: none;
     user-select: none;
-    border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
 }
 .ui_tabs li {
     list-style: none;
@@ -2242,7 +2240,7 @@ a.ui_box_header_link {
 .ui_tabs_header {
     background: var(--module-header-background-color);
     font-size: 14px;
-    border-radius: 2px 2px 0 0;
+    border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
 }
 .ui_tabs_box .ui_tab, .ui_tabs_box .ui_tab_sel, .ui_tabs_header .ui_tab, .ui_tabs_header .ui_tab_plain, .ui_tabs_header .ui_tab_sel, .ui_tabs_sub_header .ui_tab, .ui_tabs_sub_header .ui_tab_plain, .ui_tabs_sub_header .ui_tab_sel {
     padding: 18px 6px 20px;
