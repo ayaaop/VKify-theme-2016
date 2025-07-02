@@ -64,12 +64,12 @@
                 {/if}
             </div>
             <div class="video_info_author clear_fix">
-                <a href="/{$video->getOwner()->getId()}" class="video_info_author_image">
+                <a href="{$video->getOwner()->getURL()}" class="video_info_author_image">
                     <img class="post-avatar" src="{$video->getOwner()->getAvatarUrl('miniscule')}" />
                 </a>
                 <div class="video_info_author_info">
                     <div class="video_info_author_name">
-                        <a href="/{$video->getOwner()->getId()}">{$video->getOwner()->getCanonicalName()}</a>
+                        <a href="{$video->getOwner()->getURL()}">{$video->getOwner()->getCanonicalName()}</a>
                     </div>
                     <div class="video_info_author_date">
                         {$video->getPublicationTime()}
