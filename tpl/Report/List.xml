@@ -14,10 +14,6 @@
     {_list_of_reports}
 {/block}
 
-{block actions}
-    
-{/block}
-
 {block top}
     {if !is_null($orig)}
         <h4>Дубликаты жалобы №{$orig}</h4>
@@ -28,10 +24,6 @@
 
 {block link|strip|stripHtml}
     /admin/report{$x->getId()}
-{/block}
-
-{block preview}
-    <center><img src="/assets/packages/static/openvk/img/note_icon.png" style="margin-top: 17px;" /></center>
 {/block}
 
 {block name}
@@ -55,6 +47,6 @@
 
 {block bottom}
     <center id="reports-loader" style="display: none; padding: 64px;">
-        <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
+        <div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>
     </center>
 {/block}

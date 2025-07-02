@@ -41,20 +41,6 @@
             <div class="wide_column">
                     {include "../components/page_block_header.xml", title => "bookmarks_tab"}
                     <div n:class='scroll_container, ($section == "photos" && $count > 0) ? album-flex'>
-                        <style>
-                            .scroll_node:first-of-type .comment {
-                                border-top: unset;
-                                padding: 0px;
-                            }
-
-                            .scroll_node:last-of-type .post {
-                                border-bottom: unset;
-                            }
-
-                            .content_page_error {
-                                min-height: 400px;
-                            }
-                        </style>
                         {if $count > 0}
                             {foreach $data as $dat}
                                 {if $dat->isDeleted()}

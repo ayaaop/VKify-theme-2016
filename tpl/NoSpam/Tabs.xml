@@ -1,9 +1,17 @@
-<div n:attr="id => ($mode === 'form' ? 'activetabs' : 'ki')" class="tab">
-    <a n:attr="id => ($mode === 'form' ? 'act_tab_a' : 'ki')" href="/noSpam">{_template_ban}</a>
-</div>
-<div n:attr="id => ($mode === 'templates' ? 'activetabs' : 'ki')" class="tab">
-    <a n:attr="id => ($mode === 'templates' ? 'act_tab_a' : 'ki')" href="/noSpam?act=templates">{_active_templates}</a>
-</div>
-<div n:attr="id => ($mode === 'reports' ? 'activetabs' : 'ki')" class="tab">
-    <a n:attr="id => ($mode === 'reports' ? 'act_tab_a' : 'ki')" href="/scumfeed">{_users_reports}</a>
-</div>
+{include "../components/page_tabs_header.xml", tabs => [
+    [
+        'url' => '/noSpam',
+        'title' => 'template_ban',
+        'active' => $mode === 'form'
+    ],
+    [
+        'url' => '/noSpam?act=templates',
+        'title' => 'active_templates',
+        'active' => $mode === 'templates'
+    ],
+    [
+        'url' => '/scumfeed',
+        'title' => 'users_reports',
+        'active' => $mode === 'reports'
+    ]
+], white => true}

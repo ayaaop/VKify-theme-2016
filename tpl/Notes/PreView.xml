@@ -45,7 +45,7 @@
                 <div class="page_block post note_post">
                     <div class="post_header">
                         <a class="post_image{if $thisUser->isOnline()} online{/if}" href="{$thisUser->getURL()}">
-                            <img src="{$thisUser->getAvatarURL('miniscule')}" width="50" class="post_img" />
+                            <img src="{$thisUser->getAvatarURL('miniscule')}" width="50" class="post-avatar" />
                         </a>
                         <div class="post_header_info">
                             <div class="post_author">

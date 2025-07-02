@@ -19,7 +19,7 @@
     color: var(--muted-text-color)
 }
 
-.page_list_module .people_extra_lnk,.edit_link {
+.page_list_module .people_extra_lnk, .edit_link {
     color: var(--muted-text-color)
 }
 
@@ -76,8 +76,8 @@
 .page_album_link {
     position: relative;
     display: block;
-	height: 100%;
-	overflow: hidden;
+    height: 100%;
+    overflow: hidden;
 }
 
 .page_album_thumb_wrap {
@@ -149,17 +149,17 @@
 }
 
 .page_album_description {
-	max-height: 0;
-	margin-top: 6px;
-	margin-bottom: -6px;
-	line-height: 15px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	transition: max-height .2s ease,margin .2s ease;
+    max-height: 0;
+    margin-top: 6px;
+    margin-bottom: -6px;
+    line-height: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: max-height .2s ease, margin .2s ease;
 }
 .page_album_row:hover .page_album_description {
-	margin-bottom: 0;
-	max-height: 90px;
+    margin-bottom: 0;
+    max-height: 90px;
 }
 
 .page_album_nocover .page_album_thumb_wrap {
@@ -444,16 +444,16 @@
 }
 
 .audioStatus {
-	color: var(--link-color);
-	padding: 0;
-	margin: 0;
+    color: var(--link-color);
+    padding: 0;
+    margin: 0;
 }
 .audioStatus::before {
-	background-image: url('/themepack/vkify16/3.3.0.4/resource/icons/video_actions.png');
-	width: 13px;
-	height: 13px;
-	background-position: 0px -44px;
-	margin-top: 0px;
+    background-image: url('/themepack/vkify16/3.3.0.4/resource/icons/video_actions.png');
+    width: 13px;
+    height: 13px;
+    background-position: 0px -44px;
+    margin-top: 0px;
 }
 
 #basicInfo {
@@ -721,10 +721,6 @@ div.avatar_block:hover .avatar_variants {
     margin: 0;
 }
 
-.left_big_block>.content_divider, .right_big_block>.content_divider {
-    background: none;
-    padding: 0;
-}
 .profile_info_block {
     padding: 0 0 29px;
     border-top: 1px solid var(--border-color);
@@ -856,49 +852,51 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .page_module_upload {
-  padding:28px 13px 28px 230px;
-  text-align:left;
-  line-height:16px;
-  white-space:nowrap;
-  display:block
+    padding: 28px 13px 28px 230px;
+    text-align: left;
+    line-height: 16px;
+    white-space: nowrap;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .page_upload_label {
-  background:url(/themepack/vkify16/3.3.0.4/resource/icons/group_icons.png) no-repeat;
-  position:absolute;
-  display:block;
-  width:17px;
-  height:19px;
-  margin-left:-27px;
-  opacity:.75;
-  transition:opacity 100ms ease
+    background: url(/themepack/vkify16/3.3.0.4/resource/icons/group_icons.png) no-repeat;
+    position: absolute;
+    display: block;
+    width: 17px;
+    height: 19px;
+    margin-left: -27px;
+    opacity: .75;
+    transition: opacity 100ms ease
 }
 .narrow_column .page_module_upload {
-  padding:17px 13px 17px 47px
+    padding: 17px 13px 17px 47px
 }
 .wide_column .page_upload_label {
-  background:url(/themepack/vkify16/3.3.0.4/resource/icons/group_icons_big.png) no-repeat;
-  width:25px;
-  height:27px;
-  margin-left:-37px;
-  margin-top:-4px
+    background: url(/themepack/vkify16/3.3.0.4/resource/icons/group_icons_big.png) no-repeat;
+    width: 25px;
+    height: 27px;
+    margin-left: -37px;
+    margin-top: -4px
 }
 a.page_module_upload:hover,
 .page_module_upload.hover {
-  text-decoration:none
+    text-decoration: none
 }
 a.page_module_upload:hover .page_upload_label,
 .page_module_upload.hover .page_upload_label {
-  opacity:1
+    opacity: 1
 }
 .page_upload_label.page_docs_upload {
-	background-position: 1px -92px;
+    background-position: 1px -92px;
 }
 .page_upload_label.page_audios_upload {
-	background-position: 0px -35px
+    background-position: 0px -35px
 }
 .page_upload_label.page_photos_upload {
-	background-position: 0px 2px;
+    background-position: 0px 2px;
 }
 .wide_column .page_upload_label.page_photos_upload {
-	background-position: 0px -32px;
+    background-position: 0px -32px;
 }

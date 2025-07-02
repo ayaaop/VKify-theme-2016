@@ -32,7 +32,7 @@
                         - onclick: (optional) onclick handler
                       Note: If not provided, will be auto-generated based on $wallOwner. Will be auto-generated based on $user or $club if $ownblock is true
 *}
-<div class="page_block tabs ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
+<div class="page_block ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
     {var $owner = isset($ownblock) && $ownblock ? (isset($club) ? $club : $user) : (isset($wallOwner) ? $wallOwner : $oObj)}
     {if isset($owner)}
         {if $owner instanceof \openvk\Web\Models\Entities\Club}

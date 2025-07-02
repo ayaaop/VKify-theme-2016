@@ -31,9 +31,7 @@ let locales = {
 		"show_less": "Show less",
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
 		"deleted_attachment_2": "As such, it can't be displayed.",
-		"dark_mode": "Dark mode",
-		"light_mode": "Light mode",
-		"theme_mode": "Theme mode"
+		"dark_mode": "Dark mode"
 	},
 	'ru': {
 		"language": "Язык",
@@ -67,23 +65,21 @@ let locales = {
 		"show_less": "Показать меньше",
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
 		"deleted_attachment_2": "Поэтому она не может быть отображена.",
-		"dark_mode": "Тёмная тема",
-		"light_mode": "Светлая тема",
-		"theme_mode": "Режим темы"
+		"dark_mode": "Тёмная тема"
 	},
-	"uk": {
+	'uk': {
 		"language": "Мова",
-		"currentlyplaying": "Зараз відтворюється: ",
+		"currentlyplaying": "Зараз грає: ",
 		"loadmore": "Завантажити ще",
 		"graffitiflushhistory": "Очистити",
 		"graffitibackhistory": "Скасувати",
 		"graffiticolor": "Колір:",
-		"graffitiopacity": "Інтенсивність:",
+		"graffitiopacity": "Непрозорість:",
 		"graffitithickness": "Товщина:",
-		"graffitiswitch": "Використовувати графіті з ВКонтакті",
+		"graffitiswitch": "Використовувати графіті з ВКонтакте",
 		"ovkhat": "Використовувати логотип OpenVK у шапці",
-		"httpwarn": "Цей інстанс OpenVK використовує застарілий протокол <b>http</b>.<br>Будь ласка, перейдіть на <b>https</b>.",
-		"httpwarnovk": "Ви використовуєте небезпечний протокол <b>http</b>. Завжди використовуйте <b>https</b>.<br><a href='https://{url}/'>Перейти на https »</a>",
+		"httpwarn": "Цей інстанс OpenVK використовує застарілий протокол <b>HTTP</b>.<br>Будь ласка, перейдіть на <b>HTTPS</b>.",
+		"httpwarnovk": "Ви використовуєте незахищений протокол <b>HTTP</b>. Завжди використовуйте <b>HTTPS</b>.<br><a href='https://{url}/'>Перейти на HTTPS »</a>",
 		"loginPromo": "OpenVK для мобільних пристроїв",
 		"loginPromoInfo": "Встановіть офіційний застосунок OpenVK і залишайтеся в курсі новин друзів, де б ви не були.",
 		"loginPromoAndroid": "Для Android",
@@ -91,21 +87,18 @@ let locales = {
 		"loginPromoIos": "Для iOS",
 		"newUserQuestionMark": "Вперше в OpenVK?",
 		"newUserSubhead": "Миттєва реєстрація",
-		"external": "Зовнішній",
-		"left_edge": "Ліва межа:",
-		"right_edge": "Права межа:",
+		"external": "Зовнішнє",
+		"left_edge": "Лівий край:",
+		"right_edge": "Правий край:",
 		"back_to_page": "Повернутися до сторінки",
-		"clear_playlist": "Очистити плейлист",
+		"clear_playlist": "Очистити список відтворення",
 		"users_posts": "Дописи користувача",
-		"profile_recommendations": "Показувати поради щодо заповнення профілю",
-		"guest_actions": "<a href='/register'>Зареєструйтесь</a>, щоб залишатися на зв'язку з $1 та іншими людьми, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
-		"recommended_groups": "Рекомендовані групи",
-		"show_less": "Показати менше",
-		"deleted_attachment": "В цьому пості є видалене вкладення та немає тексту.",
-		"deleted_attachment_2": "Тому воно не може бути відображено.",
-		"dark_mode": "Темна тема",
-		"light_mode": "Світла тема",
-		"theme_mode": "Режим теми"
+		"profile_recommendations": "Показувати рекомендації щодо заповнення профілю",
+		"guest_actions": "<a href='/register'>Зареєструйтеся</a>, щоб залишатися на зв'язку з $1 та іншими, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
+		"recommended_groups": "Рекомендовані спільноти",
+		"deleted_attachment": "Цей допис містить видалене вкладення та не має тексту.",
+		"deleted_attachment_2": "Тому він не може бути відображений.",
+		"dark_mode": "Темний режим"
 	}
 }
 

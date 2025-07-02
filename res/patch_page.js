@@ -1437,6 +1437,10 @@ function initializeSearchFastTips() {
     let searchTimeout;
     let currentSearchId = 0;
 
+    function hideFastTips() {
+        fastTipsContainer.first().style.display = "none";
+    }
+
     searchInput.on('input', async function(e) {
         const query = u(e.target).first().value.trim();
 
@@ -1517,6 +1521,10 @@ function initializeSearchFastTips() {
                             </a>
                         </div>
                     `);
+
+                    u('#searchBoxFastTips a').on('click', function() {
+                        hideFastTips();
+                    });
                 } catch (error) {
                     console.error('Failed to load search tip results:', error);
                     if (thisSearchId !== currentSearchId) return;
@@ -1554,6 +1562,10 @@ function initializeSearchFastTips() {
                             </a>
                         </div>
                     `);
+
+                    u('#searchBoxFastTips a').on('click', function() {
+                        hideFastTips();
+                    });
                 }
             }, 1000);
         } else {
@@ -1565,6 +1577,12 @@ function initializeSearchFastTips() {
         const inputValue = u(e.target).first().value;
         if (inputValue.length >= 3) {
             fastTipsContainer.first().style.display = "block";
+
+            setTimeout(() => {
+                u('#searchBoxFastTips a').on('click', function() {
+                    hideFastTips();
+                });
+            }, 50);
         } else {
             fastTipsContainer.first().style.display = "none";
         }
@@ -1578,19 +1596,39 @@ function initializeSearchFastTips() {
             }
         }, 250);
     });
+
+    u(document).on('click', function(e) {
+        const searchBox = u('#search_box').first();
+        const fastTips = fastTipsContainer.first();
+
+        if (fastTips.style.display === "block" &&
+            !searchBox.contains(e.target) &&
+            !fastTips.contains(e.target)) {
+            hideFastTips();
+        }
+    });
+
+
 }
 
 u(document).on('DOMContentLoaded', initializeSearchFastTips);
 window.initializeSearchFastTips = initializeSearchFastTips;
 
+window.hideSearchFastTips = function() {
+    const fastTipsContainer = u('#searchBoxFastTips');
+    if (fastTipsContainer.length) {
+        fastTipsContainer.first().style.display = "none";
+    }
+};
+
 if (window.location.pathname === '/search') {
     document.addEventListener('DOMContentLoaded', () => {
-        if (window.initializeSearchOptions) {
-            window.initializeSearchOptions();
+        if (window.initializeSearchFastTips) {
+            window.initializeSearchFastTips();
         } else {
             setTimeout(() => {
-                if (window.initializeSearchOptions) {
-                    window.initializeSearchOptions();
+                if (window.initializeSearchFastTips) {
+                    window.initializeSearchFastTips();
                 }
             }, 100);
         }
@@ -1705,4 +1743,251 @@ window.toggleDarkMode = function(enabled) {
         }
     }
 };
+
+function reportNote(noteId) {
+    uReportMsgTxt = tr("going_to_report_note");
+    uReportMsgTxt += "<br/>" + tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>" + tr("report_reason") + "</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function () {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + noteId + "?reason=" + res + "&type=note", true);
+            xhr.onload = (function () {
+                if (xhr.responseText.indexOf("reason") === -1)
+                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                else
+                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+        }),
+        Function.noop
+    ]);
+}
+
+window.reportsManager = {
+    currentMode: null,
+    refreshInterval: null,
+    isLoading: false,
+
+    init() {
+        if (!window.location.pathname.includes('/scumfeed')) return;
+
+        this.currentMode = this.getModeFromUrl();
+        this.bindEvents();
+        this.startAutoRefresh();
+    },
+
+    getModeFromUrl() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('act') || 'all';
+    },
+
+    bindEvents() {
+        u(document).on('click', '.ui_rmenu_item', (e) => {
+            const link = e.target.closest('a');
+            if (!link || !link.href.includes('/scumfeed')) return;
+
+            e.preventDefault();
+            const url = new URL(link.href);
+            const mode = url.searchParams.get('act') || 'all';
+            this.switchMode(mode);
+        });
+    },
+
+    async switchMode(mode) {
+        if (this.isLoading || mode === this.currentMode) return;
+
+        this.currentMode = mode;
+        this.updateActiveTab(mode);
+        this.showLoading();
+
+        try {
+            await this.loadReports(mode);
+            if (window.router && window.router.route) {
+                window.router.route(`/scumfeed?act=${mode}`);
+            } else {
+                history.pushState(null, null, `/scumfeed?act=${mode}`);
+            }
+        } catch (error) {
+            console.error('Failed to load reports:', error);
+            this.showError();
+        } finally {
+            this.hideLoading();
+        }
+    },
+
+    updateActiveTab(mode) {
+        u('.ui_rmenu_item').removeClass('ui_rmenu_item_sel');
+        u(`.ui_rmenu_item[href*="act=${mode}"]`).addClass('ui_rmenu_item_sel');
+        u(`.ui_rmenu_item[href="/scumfeed"]`).toggleClass('ui_rmenu_item_sel', mode === 'all');
+    },
+
+    showLoading() {
+        this.isLoading = true;
+        const listView = u('.page_block.list_view');
+        if (listView.length) {
+            listView.html('<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>');
+        }
+    },
+
+    hideLoading() {
+        this.isLoading = false;
+    },
+
+    async loadReports(mode) {
+        const formData = new FormData();
+        const csrfToken = window.router?.csrf ||
+                         u('input[name="hash"]').first()?.value ||
+                         u('meta[name="csrf-token"]').attr('content');
+
+        if (csrfToken) {
+            formData.append('hash', csrfToken);
+        }
+
+        const response = await fetch(`/scumfeed?act=${mode}`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-OpenVK-Ajax-Query': '1'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error('Invalid response format');
+        }
+
+        const data = await response.json();
+        this.renderReports(data.reports || []);
+        
+        // Update reports counter
+        const counterElement = u('.page_block_header_count');
+        if (counterElement.length) {
+            counterElement.text(data.reports.length);
+        }
+
+        if (data.reports && data.reports.length > 0) {
+            this.checkForNewReports(data.reports.length);
+        }
+    },
+
+    renderReports(reports) {
+        const listView = u('.page_block.list_view');
+        if (!listView.length) return;
+
+        if (reports.length === 0) {
+            listView.html(`
+                <div class="content_page_error">
+                        Нет данных для отображения
+                </div>
+            `);
+            return;
+        }
+
+        const reportsHtml = reports.map(report => this.renderReport(report)).join('');
+        listView.html(reportsHtml);
+    },
+
+    renderReport(report) {
+        const duplicatesHtml = report.duplicates > 0 ? `
+            <br>
+            <b>Другие жалобы на этот контент: <a href="/scumfeed?orig=${report.id}">${report.duplicates} шт.</a></b>
+        ` : '';
+
+        const contentLink = report.content.type === "user" ?
+            `<a href="${report.content.url}">${report.content.name}</a>` :
+            report.content.name;
+
+        return `
+            <div class="search_row">
+                <div class="info">
+                    <div class="labeled name">
+                        <a href="/admin/report${report.id}">
+                            <b>Жалоба №${report.id}</b>
+                        </a>
+                    </div>
+                    <a href="${report.author.url}">${report.author.name}</a>
+                    пожаловал${report.author.is_female ? "ась" : "ся"} на
+                    ${contentLink}
+                    ${duplicatesHtml}
+                </div>
+            </div>
+        `;
+    },
+
+    checkForNewReports(currentCount) {
+        if (this.lastReportCount && currentCount > this.lastReportCount) {
+            if (window.NewNotification) {
+                NewNotification("Обратите внимание", "В списке появились новые жалобы. Работа ждёт :)");
+            }
+        }
+        this.lastReportCount = currentCount;
+    },
+
+    showError() {
+        const listView = u('.page_block.list_view');
+        if (listView.length) {
+            listView.html(`
+                <div class="content_page_error">
+                    Ошибка загрузки данных. Попробуйте обновить страницу.
+                </div>
+            `);
+        }
+    },
+
+    startAutoRefresh() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+
+        this.refreshInterval = setInterval(() => {
+            if (!this.isLoading && this.currentMode) {
+                this.loadReports(this.currentMode).catch(console.error);
+            }
+        }, 10000);
+    },
+
+    stopAutoRefresh() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
+    },
+
+    destroy() {
+        this.stopAutoRefresh();
+        u(document).off('click', '.ui_rmenu_item');
+    }
+};
+
+function initReportsManager() {
+    if (window.reportsManager) {
+        window.reportsManager.init();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initReportsManager);
+
+if (window.router && window.router.addEventListener) {
+    window.router.addEventListener('route', () => {
+        setTimeout(initReportsManager, 100);
+    });
+} else {
+    document.addEventListener('page:loaded', () => {
+        setTimeout(initReportsManager, 100);
+    });
+}
+
+window.addEventListener('beforeunload', () => {
+    if (window.reportsManager) {
+        window.reportsManager.destroy();
+    }
+});
 

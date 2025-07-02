@@ -23,7 +23,7 @@
         ]}
     {/if}
 
-    {do $crumbs[] = ['title' => $photo->getDescription()]}
+    {do $crumbs[] = ['title' => tr("photo")]}
 
     {include "../components/page_crumb_header.xml", crumbs => $crumbs}
     <div class="pv_wrapper">

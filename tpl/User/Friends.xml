@@ -99,18 +99,14 @@
 
 {block name}
     {$x->getCanonicalName()}
-    <img n:if="$x->isVerified()" 
-        class="name-checkmark" 
-        src="/assets/packages/static/openvk/img/checkmark.png" 
-    />
+    <a href="/verify" n:if="$x->isVerified()" 
+        class="page_verified" >
+    </a>
 {/block}
 
 {block description}
     <div class="labeled">
-        {$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))}</td>
-    </div>
-    <div class="labeled">
-        {$x->getCity()}
+        {$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))} {if !is_null($x->getCity())}<span class="divider"></span> {$x->getCity()}{/if}
     </div>
     {if $x->getSubscriptionStatus($thisUser) === 3}
         <div class="labeled message">

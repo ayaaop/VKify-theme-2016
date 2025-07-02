@@ -1,7 +1,7 @@
 {block ViewContent}
-    <div class="container_gray" style="margin-top: 16px; margin-bottom: 16px; max-width: 100%;">
+    <div style="margin-block: 15px">
         {if $type == "post"}
-            {include "../components/post/oldpost.xml",
+            {include "../components/post/microblogpost.xml",
                 post => $object,
                 forceNoDeleteLink => true,
                 forceNoPinLink => true,
@@ -18,11 +18,16 @@
         {elseif $type == "comment"}
             {include "../components/comment.xml", comment => $object, timeOnly => true, correctLink => true}
         {elseif $type == "note"}
-            {include "./content/note.xml", note => $object}
+            {include "../components/post/notepost.xml",
+                note => $object,
+                forceNoDeleteLink => true,
+                forceNoPinLink => true,
+                forceNoCommentsLink => true,
+                forceNoShareLink => true,
+                forceNoLike => true
+            }
         {elseif $type == "app"}
-            {if $appsSoftDeleting}
-                {include "./content/app.xml", app => $object}
-            {/if}
+            {include "./content/app.xml", app => $object}
         {elseif $type == "audio"}
             {include "../Audio/player.xml", audio => $object}
         {elseif $type == "doc"}

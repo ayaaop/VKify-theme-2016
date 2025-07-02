@@ -7,7 +7,7 @@
     <div data-id="{$note->getPrettyId()}" class="post note_post">
         <div class="post_header">
             <a class="post_image{if $author->isOnline()} online{/if}" href="{$author->getURL()}">
-                <img src="{$author->getAvatarURL('miniscule')}" width="50" class="post_img" />
+                <img src="{$author->getAvatarURL('miniscule')}" width="50" class="post-avatar" />
             </a>
             <div class="post_header_info">
                 <div class="post_author">
@@ -26,8 +26,8 @@
                     <div class="post_actions_icon"></div>
                     <div class="tippy-menu">
                         <a n:if="$note->canBeModifiedBy($thisUser)" href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
-                        <a n:if="$note->canBeModifiedBy($thisUser)" class="delete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
-                        <a n:if="$thisUser->getId() != $note->getOwner()->getId()" class="report" href="javascript:reportPost({$note->getId()})">{_report}</a>
+                        <a n:if="$note->canBeModifiedBy($thisUser) && !($forceNoDeleteLink ?? false)" class="delete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
+                        <a n:if="$thisUser->getId() != $note->getOwner()->getId()" class="report" href="javascript:reportNote({$note->getId()})">{_report}</a>
                     </div>
                 </div>
             </div>
@@ -41,8 +41,9 @@
             </div>
         </div>
         <div class='post_edit'></div>
-        <div class="post_full_like_wrap" n:if="$thisUser" n:ifcontent>
+        <div class="post_full_like_wrap" n:if="$thisUser && !($forceNoLike ?? false)" n:ifcontent>
             <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
+            <a n:if="!($forceNoShareLink ?? false)" class="share_link_wrap" href="javascript:repost({$note->getId()}, 'note')">{_share}</a>
         </div>
         <div n:if="!($forceNoCommentsLink ?? false)" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
             <a n:if="$commentsCount > 3" href="/note{$note->getPrettyId()}" class="button button_wide button_gray expand_button">{_view_other_comments}</a>

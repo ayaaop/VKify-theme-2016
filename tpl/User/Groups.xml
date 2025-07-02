@@ -5,14 +5,6 @@
 {block noscroll}{/block}
 {block title}
     {_groups}
-{/block} 
-
-{block header}
-    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-        {_my_groups}
-    {else}
-        <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_groups}
-    {/if}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

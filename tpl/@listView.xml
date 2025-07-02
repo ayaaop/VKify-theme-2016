@@ -1,14 +1,24 @@
 {extends "@layout.xml"}
 
 {block wrap}
-<div class="wrap2">
-    <div class="wrap1">
-        <div class="left_big_block">
-            {ifset specpage}
-                {include specpage, x => $dat}
-            {else}
+<div class="wide_column_left">
+    <div class="wide_column_wrap">
+        <div class="wide_column">
+                {ifset specpage}
+                    {include specpage, x => $dat}
+                {else}
                 {ifset size}
                     {include size, x => $dat}
+                {/ifset}
+                {ifset header}
+                    <div class="page_block_h2">
+                        <div class="page_block_header clear_fix">
+                            <div class="page_block_header_inner">
+                                {include header}
+                                <span n:ifset="$count" class="page_block_header_count">{$count}</span>
+                            </div>
+                        </div>
+                    </div>
                 {/ifset}
                 <div n:ifset="tabs" n:ifcontent>
                     {include tabs}
@@ -56,13 +66,15 @@
                         {ifset customErrorMessage}
                             {include customErrorMessage}
                         {else}
-                            {include "components/nothing.xml"}
+                            {include "components/content_error.xml", description => tr("no_data_description")}
                         {/ifset}
                     {/if}
                 </div>
             {/ifset}
         </div>
-        <div class="right_small_block">
+    </div>
+    <div class="narrow_column_wrap">
+        <div class="narrow_column">
             {ifset rtabs}
                 {include rtabs}
             {/ifset}

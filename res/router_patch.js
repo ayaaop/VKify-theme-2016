@@ -224,6 +224,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.initializeSearchFastTips) {
             setTimeout(window.initializeSearchFastTips, 100);
         }
+        if (window.hideSearchFastTips) {
+            window.hideSearchFastTips();
+        }
     }
 
     function patchFunction(obj, methodName, callback) {
