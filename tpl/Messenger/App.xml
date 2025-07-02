@@ -45,8 +45,8 @@
                     </div>
                 </div>
                 <a href="{$correspondent->getURL()}" class="messenger-app--header--ava">
-                    <img class="post-avatar" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
-                    <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" class="messenger-app--header--online"></div>
+                    <img class="post-avatar" src="{if str_contains($correspondent->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$correspondent->getAvatarUrl('miniscule')}{/if}" alt="{$correspondent->getCanonicalName()}" />
+                    <div n:if="5 >= $diff->i" class="messenger-app--header--online"></div>
                 </a>
             </div>
         </div>

@@ -20,9 +20,9 @@
                             <div n:class="nim-peer, $recipient->isOnline() ? online">
                                 <div class="nim-peer--photo-w">
                                     <div class="nim-peer--photo _im_dialog_photo">
-                                        <a href="{$recipient->getURL()}" class="_im_peer_target _online_reader" target="_blank">
+                                        <a href="{$recipient->getURL()}" target="_blank">
                                             <div class="im_grid">
-                                                <img src="{$recipient->getAvatarURL('miniscule')}" width="50" height="50" alt="{_photo}" loading="lazy">
+                                                <img src="{if str_contains($recipient->getAvatarURL('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$recipient->getAvatarURL('miniscule')}{/if}" width="50" height="50" alt="{_photo}" loading="lazy">
                                             </div>
                                         </a>
                                     </div>
@@ -46,7 +46,7 @@
                                         <span class="nim-dialog--preview _dialog_body" tabindex="0">
                                             <span class="nim-dialog--who">
                                                 <div class="im-prebody">
-                                                    <img alt="" src="{$lastMsg->getSender()->getAvatarURL('miniscule')}">
+                                                    <img alt="" src="{if str_contains($lastMsg->getSender()->getAvatarURL('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$lastMsg->getSender()->getAvatarURL('miniscule')}{/if}">
                                                 </div>
                                             </span>
                                             <span class="nim-dialog--inner-text">{$lastMsg->getText()|noescape}</span>
