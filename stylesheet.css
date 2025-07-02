@@ -1822,6 +1822,9 @@ img[src="/assets/packages/static/openvk/img/donate_en.png"] {
     width: 155px;
     order: 3;
 }
+.search_row .controls form + form {
+    margin-top: 10px;
+}
 .search_row .info {
     overflow: hidden;
     order: 2;

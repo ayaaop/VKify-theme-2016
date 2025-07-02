@@ -12,7 +12,7 @@
             ]
         ],
         [
-            'url' => '?act=online',
+            'url' => '/friends' . $thisUser->getId() . '?act=online',
             'title' => 'online',
             'active' => false,
             'extraItem' => [
@@ -20,12 +20,15 @@
             ]
         ],
         [
-            'url' => '?act=incoming',
+            'url' => '/friends' . $thisUser->getId() . '?act=incoming',
             'title' => 'req',
             'active' => false,
             'extraItem' => [
                 'content' => ($act === 'incoming' || $act === 'followers' || $act === 'outcoming') ? $count : ''
             ]
+        ],
+        [
+            'isSeparator' => true
         ],
         [
             'url' => '/invite',

@@ -62,6 +62,9 @@
             ]
         ],
         [
+            'isSeparator' => true
+        ],
+        [
             'url' => '/invite',
             'title' => 'invite',
             'active' => false,
@@ -87,7 +90,11 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading=lazy />
+    <img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
+        /themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
+    {else}
+        {$x->getAvatarUrl('miniscule')}
+        {/if}" width="75" alt="{_photo}" loading=lazy />
 {/block}
 
 {block name}
@@ -134,7 +141,7 @@
                     <input type="hidden" name="act" value="rej" />
                     <input type="hidden" name="id"  value="{$x->getId()}" />
                     <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" class="button button_wide button_small" value="{_friends_leave_in_flw}" />
+                    <input type="submit" class="button button_wide button_gray button_small" value="{_friends_leave_in_flw}" />
                 </form>
             {/if}
         {elseif $subStatus === 2}
@@ -142,14 +149,14 @@
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button button_wide button_small button_gray" value="{_friends_reject}" />
+                <input type="submit" class="button button_wide button_gray button_gray" value="{_friends_reject}" />
             </form>
         {elseif $subStatus === 3}
             <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button button_wide button_small button_gray" value="{_friends_delete}" />
+                <input type="submit" class="button button_wide button_gray button_gray" value="{_friends_delete}" />
             </form>
         {/if}
     {/if}
