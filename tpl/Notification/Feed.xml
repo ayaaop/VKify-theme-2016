@@ -32,7 +32,7 @@
                     {var $sxModel = $dat->getModel(0)}
                 {/if}
                 <a href="{$sxModel->getURL()}" class="feedback_image" n:if="method_exists($sxModel, 'getURL') && method_exists($sxModel, 'getAvatarUrl')">
-                    <img src="{$sxModel->getAvatarUrl('miniscule')}" width=50 />
+                    <img src="{if str_contains($sxModel->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$sxModel->getAvatarUrl('miniscule')}{/if}" width=50 />
                 </a>
                 <div class="feedback_content">
                     {include $dat->getTemplatePath(), notification => $dat}

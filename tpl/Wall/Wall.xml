@@ -22,24 +22,10 @@
     ]
 ]}
 
-{if $oObj instanceof \openvk\Web\Models\Entities\Club}
-    {var $ownblockData = [
-        'url' => $oObj->getURL(),
-        'name' => $oObj->getName(),
-        'img' => $oObj->getAvatarURL()
-    ]}
-{else}
-    {var $ownblockData = [
-        'url' => $oObj->getURL(),
-        'name' => $oObj->getFirstName() . " " . $oObj->getLastName(),
-        'img' => $oObj->getAvatarURL()
-    ]}
-{/if}
-
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
-                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => true, ownblockData => $ownblockData}
+                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => true}
             </div>
         </div>
         <div class="wide_column_wrap">

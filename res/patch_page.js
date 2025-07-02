@@ -123,6 +123,7 @@ window.initNotificationsPopup = async function() {
         },
         async onShow(instance) {
             document.querySelector('#top_notify_btn').classList.add('top_nav_btn_active');
+            document.querySelector('#top_notify_btn').classList.remove('has_notify');
             instance.setContent(loadingContent);
             const freshNotificationsContent = await fetchNotificationsContent();
             instance.setContent(freshNotificationsContent);
@@ -981,12 +982,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     let friendshtml = ''
     friendsmap.forEach((user) => {
         friendshtml += `
-    <a onclick="tippy.hideAll();" href="/audios${user.id}">
-        <div class="elem">
-            <img src="${user.photo_50}">
-            <div class="additionalInfo">
-                <span class="name noOverflow">${escapeHtml(user.first_name)} ${escapeHtml(user.last_name)}</span>
-            </div>
+    <a class="ui_rmenu_item ui_ownblock" onclick="tippy.hideAll();" href="/audios${user.id}">
+        <img class="ui_ownblock_img" src="${user.photo_50}">
+        <div class="ui_ownblock_info">
+            <div class="ui_ownblock_label">${escapeHtml(user.first_name)} ${escapeHtml(user.last_name)}</div>
         </div>
     </a>
   `;
@@ -1046,25 +1045,28 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
     </div>
 </div>
-<div class="audio_content_wrap">
-    <div class="audio_content">
-        <div class="vkifytracksplaceholder"></div>
-            <div class="musfooter"><span class="playingNow"></span>
-            <a id="ajclosebtn" onclick="tippy.hideAll();"><vkifyloc name="clear_playlist"></vkifyloc></a>
+<div class="wide_column_left">
+    <div class="wide_column_wrap">
+        <div class="wide_column">
+            <div class="vkifytracksplaceholder"></div>
+            <div class="musfooter">
+                <span class="playingNow"></span>
+                <a id="ajclosebtn" onclick="tippy.hideAll();"><vkifyloc name="clear_playlist"></vkifyloc></a>
+            </div>
         </div>
     </div>
-    <div class="rightlist">
-        <div class="verticalGrayTabs">
-            <div class="with_padding">
-                <a onclick="tippy.hideAll();" href="/audios${window.openvk.current_id}">${tr('my_music')}</a>
-                <a onclick="tippy.hideAll();" href="/player/upload">${tr('upload_audio')}</a>
-                <a onclick="tippy.hideAll();" href="/search?section=audios" id="ki">${tr('audio_new')}</a>
-                <a onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
-                <hr>
-                <a onclick="tippy.hideAll();" href="/playlists${window.openvk.current_id}" id="ki">${tr('my_playlists')}</a>
-                <a onclick="tippy.hideAll();" href="/audios/newPlaylist">${tr('new_playlist')}</a>
+    <div class="narrow_column_wrap">
+        <div class="narrow_column">
+            <div class="ui_rmenu ui_rmenu_pr audio_tabs">
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios${window.openvk.current_id}">${tr('my_music')}</a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/player/upload">${tr('upload_audio')}</a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios" id="ki">${tr('audio_new')}</a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
+                <div class="ui_rmenu_sep"></div>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/playlists${window.openvk.current_id}" id="ki">${tr('my_playlists')}</a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios/newPlaylist">${tr('new_playlist')}</a>
             </div>
-            <div class="friendsAudiosList">
+            <div class="ui_rmenu ui_rmenu_pr friends_audio_list">
             ${friendshtml}
             </div>
         </div>

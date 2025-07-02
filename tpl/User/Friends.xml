@@ -71,7 +71,7 @@
             'condition' => isset($thisUser) && $thisUser->getId() == $user->getId()
         ]
     ]}
-    {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => 'user'}
+    {include "../components/ui_rmenu.xml", items => $menuItems}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

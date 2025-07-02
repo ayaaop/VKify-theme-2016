@@ -51,6 +51,7 @@ body.dark-mode {
 
 	/* Accent colors */
 	--accent-color: var(--white);
+	--accent-color--rgb: 255, 255, 255;
 	--accent-color--hover: rgba(255, 255, 255, .8);
 	--accent-text-color: var(--black);
 	--accent-color-2: #71aaeb;
