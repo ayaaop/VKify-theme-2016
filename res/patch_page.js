@@ -123,6 +123,7 @@ window.initNotificationsPopup = async function() {
         },
         async onShow(instance) {
             document.querySelector('#top_notify_btn').classList.add('top_nav_btn_active');
+            instance.setContent(loadingContent);
             const freshNotificationsContent = await fetchNotificationsContent();
             instance.setContent(freshNotificationsContent);
         }

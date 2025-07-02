@@ -443,6 +443,19 @@
     color: var(--text-color)
 }
 
+.audioStatus {
+	color: var(--link-color);
+	padding: 0;
+	margin: 0;
+}
+.audioStatus::before {
+	background-image: url('/themepack/vkify16/3.3.0.4/resource/icons/video_actions.png');
+	width: 13px;
+	height: 13px;
+	background-position: 0px -44px;
+	margin-top: 0px;
+}
+
 #basicInfo {
     padding-top: 10px;
 }
