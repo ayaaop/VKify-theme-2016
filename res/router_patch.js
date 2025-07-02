@@ -169,6 +169,11 @@ window.initializeSearchOptions = function() {
             e.preventDefault();
             e.stopPropagation();
 
+            const searchInput = searchForm.querySelector('input[name="q"]');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+
             const searchOptionsContainer = document.getElementById('search_options');
             if (searchOptionsContainer) {
                 searchOptionsContainer.querySelectorAll('input[type="text"]').forEach(inp => {

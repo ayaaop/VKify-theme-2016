@@ -580,7 +580,7 @@ input:focus, textarea:focus {
 .top_notify_count {
 	display: none;
 	padding: 1px 4px;
-	border: 2px solid #507299;
+	border: 2px solid var(--header-background-color);
 	border-radius: 12px;
 	color: #fff;
 	font-size: 9px;
