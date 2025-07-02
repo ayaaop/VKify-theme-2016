@@ -84,7 +84,7 @@ async function fetchNotificationsContent() {
         const notificationsContainer = doc.querySelector('.notifications');
 
         if (notificationsContainer) {
-            return notificationsContainer.innerHTML;
+            return notificationsContainer.innerHTML + `<a href="/notifications" class="top_notify_show_all">${tr('show_more')}</a>`;
         } else {
             return `<div class="no_notifications">${tr('no_data_description')}</div>`;
         }

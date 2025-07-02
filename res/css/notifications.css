@@ -151,6 +151,21 @@
 .tippy-box[data-theme~="notifications"] {
 	width: 470px;
 }
+.tippy-box[data-theme~="notifications"] .scroll_container {
+	max-height: 400px;
+	overflow-y:auto;
+}
+.top_notify_show_all {
+	display: block;
+	padding: 10px 0 12px;
+	background-color: inherit;
+	border-top: 1px solid var(--border-color);
+	text-align: center;
+	border-radius: 0 0 var(--module-border-radius) var(--module-border-radius);
+}
+.top_notify_show_all:hover {
+	background-color: var(--button-background-color--light);
+}
 .notifications_loading {
 	width: 100%;
 	height: 300px;
