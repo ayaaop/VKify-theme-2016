@@ -281,7 +281,7 @@
 				<div class="page_block">
 					<div class="page_top">
 						<h2 class="page_name">{$club->getName()}
-							<div class="page_verified" n:if="$club->isVerified()" href="/verify"></div>
+							<a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>
 						</h2>
 					</div>
 					<div class="page_block_h2 page_info_header_tabs">

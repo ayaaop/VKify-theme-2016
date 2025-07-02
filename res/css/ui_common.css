@@ -88,9 +88,6 @@ a:hover {
 /* Checkboxes and radio buttons */
 input[type="checkbox"], input[type="radio"] {
     background-color: var(--transparent);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
     width: 17px;
     height: 15px;
     margin: 0 7px 0 0;

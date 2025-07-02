@@ -321,7 +321,7 @@
 	line-height: 23px;
 	max-height: 46px;
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow-x: hidden;
 	overflow-y: hidden;

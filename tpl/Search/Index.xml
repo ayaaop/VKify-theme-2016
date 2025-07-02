@@ -105,12 +105,12 @@
                                         <div class="labeled name">
                                             <a href="{$dat->getURL()}">
                                                 {$dat->getCanonicalName()}
-                                                <div class="page_verified"
-                                                     n:if="$dat->isVerified()" href="/verify"></div>
                                                 {if $dat->getId() == $thisUser->getId()}
                                                     ({_s_it_is_you})
                                                 {/if}
                                             </a>
+                                            <a class="page_verified"
+                                                n:if="$dat->isVerified()" href="/verify"></a>
                                         </div>
                                         <div class="labeled" n:if="$dat->getCity()">
                                             {$dat->getCity()}
@@ -157,9 +157,9 @@
                                         <div class="labeled name">
                                             <a href="{$dat->getURL()}">
                                                 {$dat->getCanonicalName()}
-                                                <div class="page_verified"
-                                                     n:if="$dat->isVerified()" href="/verify"></div>
                                             </a>
+                                            <a class="page_verified"
+                                                n:if="$dat->isVerified()" href="/verify"></a>
                                         </div>
                                         <div class="labeled">
                                             {tr("participants", $dat->getFollowersCount())}

@@ -1898,7 +1898,6 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .reply_action {
     background: url(/themepack/vkify16/3.3.0.4/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
-    filter: alpha(opacity=0);
     cursor: pointer;
     height: 13px;
     width: 13px;
