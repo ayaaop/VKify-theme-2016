@@ -304,8 +304,8 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(($clubs = iterator_to_array($user->getClubs(1))) && shuffle($clubs) ? $clubs : $clubs, 0, 5) as $club">
 									<div class="thumb">
 										<a href="club{$club->getId()}">
-											<img class="people_cell_img" width="50" height="50" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
+											<img class="cell_img" width="40" height="40" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
+												/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
 											{else}
 												{$club->getAvatarUrl()}
 											{/if}" alt="{$club->getCanonicalName()}" />
@@ -335,8 +335,8 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(($meetings = iterator_to_array($user->getMeetings(1))) && shuffle($meetings) ? $meetings : $meetings, 0, 5) as $meeting">
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
-											<img class="people_cell_img" width="50" height="50" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/'.{$theme->getVersion()}.'/resource/community_200.png
+											<img class="cell_img" width="40" height="40" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
+												/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
 											{else}
 												{$meeting->getAvatarUrl()}
 											{/if}" alt="{$meeting->getName()}" />
