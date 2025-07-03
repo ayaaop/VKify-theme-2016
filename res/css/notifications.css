@@ -45,6 +45,7 @@
 }
 .notification_ballon_wrap {
 	margin: 0 0 8px 10px;
+	min-height: 90px;
 }
 .notification_ballon notification_title {
 	margin: 0;
