@@ -1,0 +1,71 @@
+{extends "@layout.xml"}
+{var $search = true}
+
+{block title}
+    {_admin_user_search}
+{/block}
+
+{block heading}
+    {_users}
+{/block}
+
+{block searchTitle}
+    {include title}
+{/block}
+
+{block content}
+    {var $users  = iterator_to_array($users)}
+    {var $amount = sizeof($users)}
+    <div class="page_padding">
+        <div class="page_table_wrapper">
+            <table class="page_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>UUID</th>
+                        <th>{_admin_name}</th>
+                        <th>{_gender}</th>
+                        <th>{_admin_shortcode}</th>
+                        <th>{_registration_date}</th>
+                        <th>{_admin_actions}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr n:foreach="$users as $user">
+                        <td>{$user->getId()}</td>
+                        <td>{$user->getChandlerGUID()}</td>
+                        <td>
+                            <span class="avatar">
+                                <img src="{$user->getAvatarUrl('miniscule')}" alt="{$user->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
+                            </span>
+
+                            <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+
+                            <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
+                        </td>
+                        <td>{$user->isFemale() ? tr("female") : tr("male")}</td>
+                        <td>{$user->getShortCode() ?? "(" . tr("none") . ")"}</td>
+                        <td>{$user->getRegistrationTime()}</td>
+                        <td>
+                            <a class="button" href="/admin/users/id{$user->getId()}">
+                                {_edit}
+                            </a>
+                            {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                                <a class="button button_gray" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+                                    {_admin_loginas}
+                                </a>
+                            {/if}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <br />
+        <div align="right">
+            {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+
+            <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+            <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
+        </div>
+    </div>
+{/block}

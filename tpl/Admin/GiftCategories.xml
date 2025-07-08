@@ -1,0 +1,56 @@
+{extends "@layout.xml"}
+
+{block title}
+    {_admin_giftsets}
+{/block}
+
+{block headingWrap}
+    <a style="float: right;" class="button" href="/admin/gifts/new.0.meta">
+        {_create}
+    </a>
+
+    <span>{_admin_giftsets}</span>
+{/block}
+
+{block content}
+    <div class="page_padding">
+        {if sizeof($categories) > 0}
+            <div class="page_table_wrapper">
+                <table class="page_table">
+                    <tbody>
+                        <tr n:foreach="$categories as $cat">
+                            <td>
+                                {$cat->getName()}
+                            </td>
+                            <td>
+                                {ovk_proc_strtr($cat->getDescription(), 128)}
+                            </td>
+                            <td style="text-align: right;">
+                                <a class="button" href="/admin/gifts/{$cat->getSlug()}.{$cat->getId()}.meta">
+                                    {_edit}
+                                </a>
+
+                                <a class="button button_gray" href="/admin/gifts/{$cat->getSlug()}.{$cat->getId()}/">
+                                    {_admin_open}
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {else}
+            <center>
+                <p>{_admin_giftsets_none}</p>
+            </center>
+        {/if}
+
+        {if isset($count) && $count > 0}
+            {include "../components/paginator.xml", conf => [
+                'page' => $_GET['p'] ?? 1,
+                'count' => $count,
+                'perPage' => 20,
+                'atBottom' => true
+            ]}
+        {/if}
+    </div>
+{/block}

@@ -21,7 +21,7 @@
         </div>
     </div>
     {else}
-    <div class="page_block page_padding comments">
+    <div class="page_block comments">
         {include "../components/content_error.xml", title => tr("no_comments"), description=> tr("comments_tip")}
     </div>
 {/if}

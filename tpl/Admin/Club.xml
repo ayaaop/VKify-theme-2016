@@ -1,0 +1,173 @@
+{extends "@layout.xml"}
+
+{block title}
+    {_edit} {$club->getCanonicalName()}
+{/block}
+
+{block heading}
+    {$club->getCanonicalName()}
+{/block}
+
+{block afterHeader}
+    {var $tabs = [
+        [
+            'url' => '?act=main',
+            'title' => 'admin_tab_main',
+            'active' => $mode === 'main'
+        ],
+        [
+            'url' => '?act=ban',
+            'title' => 'admin_tab_ban',
+            'active' => $mode === 'ban'
+        ],
+        [
+            'url' => '?act=followers',
+            'title' => 'admin_tab_followers',
+            'active' => $mode === 'followers'
+        ]
+    ]}
+
+    {include "../components/page_tabs_header.xml", tabs => $tabs, white => true}
+{/block}
+
+{block content}
+
+    {var $isMain       = $mode === 'main'}
+    {var $isBan        = $mode === 'ban'}
+    {var $isFollowers  = $mode === 'followers'}
+
+    {if $isMain}
+        <form method="POST">
+            <div class="settings_panel clear_fix group_settings settings_padding">
+                <div class="settings_list_row">
+                    <div class="settings_label">{_avatar}</div>
+                    <div class="settings_labeled_text">
+                        <div class="avatar_block">
+                            <div class="avatar_block_inner">
+                                <img src="{$club->getAvatarUrl('tiny')}" style="object-fit: cover;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">ID</div>
+                    <div class="settings_labeled_text" dir="auto">{$club->getId()}</div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_ownerid}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="id_owner" name="id_owner" value="{$club->getOwner()->getId()}" />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_title}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="name" name="name" value="{$club->getName()}" />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_description}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="about" name="about" value="{$club->getDescription()}" />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_shortcode}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="shortcode" name="shortcode" value="{$club->getShortCode()}" />
+                    </div>
+                </div>
+                <div class="settings_line"></div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_settings}</div>
+                    <div class="settings_labeled_text">
+                        <label><input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" n:attr="checked => $club->isVerified()" /> {_admin_verification}</label>
+                        <label><input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled()" /> {_admin_club_excludeglobalfeed}</label>
+                        <label><input class="toggle-large" type="checkbox" id="enforce_hiding_from_global_feed" name="enforce_hiding_from_global_feed" value="1" n:attr="checked => $club->isHidingFromGlobalFeedEnforced()" /> {_admin_club_enforceexcludeglobalfeed}</label>
+                    </div>
+                </div>
+                <div class="settings_line"></div>
+                <div class="settings_list_row">
+                    <div class="settings_label"></div>
+                    <div class="settings_labeled_text">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input class="button" type="submit" value="{_save}">
+                    </div>
+                </div>
+            </div>
+        </form>
+    {/if}
+
+    {if $isBan}
+        <form method="POST">
+            <div class="settings_panel clear_fix group_settings settings_padding">
+                <div class="settings_list_row">
+                    <div class="settings_label">{_admin_banreason}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text long-field" type="text" id="ban_reason" name="ban_reason" value="{$club->getBanReason()}" />
+                    </div>
+                </div>
+                <div class="settings_line"></div>
+                <div class="settings_list_row">
+                    <div class="settings_label"></div>
+                    <div class="settings_labeled_text">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input class="button" type="submit" value="{_save}">
+                    </div>
+                </div>
+            </div>
+        </form>
+    {/if}
+
+    {if $isFollowers}
+        {var $followers  = iterator_to_array($followers)}
+        {var $amount = sizeof($followers)}
+
+        <div class="page_padding">
+            <div class="page_table_wrapper">
+                <table class="page_table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>{_admin_name}</th>
+                            <th>{_gender}</th>
+                            <th>{_admin_shortcode}</th>
+                            <th>{_registration_date}</th>
+                            <th>{_admin_actions}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr n:foreach="$followers as $follower">
+                            <td>{$follower->getId()}</td>
+                            <td>
+                                <span class="avatar">
+                                    <img src="{$follower->getAvatarUrl()}" alt="{$follower->getCanonicalName()}" role="presentation" />
+                                </span>
+
+                                <a href="{$follower->getURL()}">{$follower->getCanonicalName()}</a>
+
+                                <span n:if="$follower->isBanned()" class="ui_tab_count" style="background-color: #e74c3c; color: white;">{_admin_banned}</span>
+                            </td>
+                            <td>{$follower->isFemale() ? tr("female") : tr("male")}</td>
+                            <td>{$follower->getShortCode() ?? "(" . tr("none") . ")"}</td>
+                            <td>{$follower->getRegistrationTime()}</td>
+                            <td>
+                                <a class="button" href="/admin/users/id{$follower->getId()}">
+                                    {_edit}
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {if isset($count) && $count > 0}
+                {include "../components/paginator.xml", conf => [
+                    'page' => $_GET['p'] ?? 1,
+                    'count' => $count,
+                    'perPage' => 20,
+                    'atBottom' => true
+                ]}
+            {/if}
+        </div>
+    {/if}
+{/block}

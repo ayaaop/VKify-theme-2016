@@ -949,6 +949,11 @@ async function OpenVideo(video_arr = [], init_player = true) {
     });
 
 
+    msgbox.getNode().find('.ovk-photo-view-dimmer').on('click', (e) => {
+        if (u(e.target).hasClass('ovk-photo-view-dimmer') || u(e.target).hasClass('dimmer')) {
+            msgbox.close();
+        }
+    });
 
     CMessageBox.toggleLoader();
 }
@@ -1276,6 +1281,12 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     }
 
     loadPhotoInfo();
+
+    msgbox.getNode().find('.ovk-photo-view-dimmer').on('click', (e) => {
+        if (u(e.target).hasClass('ovk-photo-view-dimmer') || u(e.target).hasClass('dimmer')) {
+            msgbox.close();
+        }
+    });
 
     CMessageBox.toggleLoader();
 }

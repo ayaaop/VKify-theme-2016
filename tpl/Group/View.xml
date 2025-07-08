@@ -284,11 +284,11 @@
 							<a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>
 						</h2>
 					</div>
-					<div class="page_block_h2 page_info_header_tabs">
+					<h2 class="page_block_h2 page_info_header_tabs">
 						<ul class="ui_tabs clear_fix page_info_tabs">
 							<li class="ui_tab_default"><div class="ui_tab_plain" href="/club{$club->getId()}">{_information}</div></li>
 						</ul>
-					</div>	
+					</h2>	
 					<div class="page_info_wrap info">
 						<div class="group_info_block info">
 							<div class="group_info_rows">

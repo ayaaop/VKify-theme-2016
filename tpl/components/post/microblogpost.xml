@@ -7,8 +7,8 @@
 {var $repostsCount = $post->getRepostCount()}
 {var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
 {var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
-{var $feedIgnoreButton = isset($thisUser) && $post->getOwner()->getId() !== $thisUser->getId() && $post->canBeDeletedBy($thisUser)}
 {var $wallOwner = $post->getWallOwner()}
+{var $feedIgnoreButton = isset($thisUser) && $wallOwner->getRealId() !== $thisUser->getId() && !$post->canBeDeletedBy($thisUser)}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -22,9 +22,9 @@
     <div data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote">
         <div class="post_header">
             <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}" href="{$author->getURL()}">
-                {if method_exists($author, 'getOwner')}
+                {if $author instanceof \openvk\Web\Models\Entities\Club}
                     <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                        ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png'}" 
+                        ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' : $author->getAvatarUrl('miniscule')}" 
                         width="50" 
                         class="post-avatar" />
                 {else}
@@ -89,7 +89,7 @@
                             {/if}
                         {/if}
                         {if $feedIgnoreButton}
-                            <a id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{if $wallOwner instanceof \openvk\Web\Models\Entities\Club}{_ignore_club}{else}{_ignore_user}{/if}</a>
+                            <a id="__ignoreSomeoneFeed"  data-val='1' data-id="{$wallOwner->getRealId()}">{if $wallOwner instanceof \openvk\Web\Models\Entities\Club}{_ignore_club}{else}{_ignore_user}{/if} ({$wallOwner->getCanonicalName()})</a>
                         {/if}
                         <a n:if="$thisUser->getId() != $post->getOwner()->getId()"  class="report" href="javascript:reportPost({$post->getId()})">{_report}</a>
                     </div>

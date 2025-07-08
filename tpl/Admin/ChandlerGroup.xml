@@ -1,0 +1,179 @@
+{extends "@layout.xml"}
+
+{block title}
+    {$group->name}
+{/block}
+
+{block heading}
+    <a href="/admin/chandler/groups">{_c_groups}</a>
+    » {$group->name}
+{/block}
+
+{block afterHeader}
+    {var $tabs = [
+        [
+            'url' => '?act=main',
+            'title' => 'admin_tab_main',
+            'active' => $mode === 'main'
+        ],
+        [
+            'url' => '?act=permissions',
+            'title' => 'c_group_permissions',
+            'active' => $mode === 'permissions'
+        ],
+        [
+            'url' => '?act=members',
+            'title' => 'c_group_members',
+            'active' => $mode === 'members'
+        ]
+    ]}
+
+    {include "../components/page_tabs_header.xml", tabs => $tabs, white => true}
+{/block}
+
+{block content}
+    {var $isMain        = $mode === 'main'}
+    {var $isPermissions = $mode === 'permissions'}
+    {var $isMembers     = $mode === 'members'}
+
+    {if $isMain}
+        <form method="POST">
+            <div class="settings_panel clear_fix settings_padding">
+                <div class="settings_list_row">
+                    <div class="settings_label">ID</div>
+                    <div class="settings_labeled_text" dir="auto">{$group->id}</div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_name}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="name" name="name" value="{$group->name}" />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label">{_c_color}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text medium-field" type="text" id="color" name="color" value="{$group->color}" />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label"></div>
+                    <div class="settings_labeled_text">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input class="button" type="submit" value="{_save}">
+                    </div>
+                </div>
+            </div>
+        </form>
+    {elseif $isMembers}
+        <div class="page_padding">
+            <form method="POST" style="margin-bottom: 20px;">
+                <div class="settings_panel clear_fix">
+                    <div class="settings_list_row">
+                        <div class="settings_label">UID</div>
+                        <div class="settings_labeled_text">
+                            <input class="text" type="text" id="uid" name="uid" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input class="button" type="submit" value="{_add}">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="page_table_wrapper">
+                <table class="page_table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>UUID</th>
+                            <th>{_admin_name}</th>
+                            <th>{_gender}</th>
+                            <th>{_admin_shortcode}</th>
+                            <th>{_registration_date}</th>
+                            <th>{_admin_actions}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr n:foreach="$members as $user">
+                            <td>{$user->getId()}</td>
+                            <td>{$user->getChandlerGUID()}</td>
+                            <td>
+                                <span class="avatar">
+                                    <img src="{$user->getAvatarUrl('miniscule')}" alt="{$user->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
+                                </span>
+
+                                <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+
+                                <span n:if="$user->isBanned()" class="ui_tab_count" style="background-color: #e74c3c; color: white;">{_admin_banned}</span>
+                            </td>
+                            <td>{$user->isFemale() ? tr("female") : tr("male")}</td>
+                            <td>{$user->getShortCode() ?? "(" . tr("none") . ")"}</td>
+                            <td>{$user->getRegistrationTime()}</td>
+                            <td>
+                                <a class="button button_gray" href="/admin/chandler/groups/{$group->id}?act=removeMember&uid={$user->getChandlerGUID()}">
+                                    {_delete}
+                                </a>
+                                <a class="button" href="/admin/users/id{$user->getId()}">
+                                    {_edit}
+                                </a>
+                                {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                                <a class="button" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+                                    {_admin_loginas}
+                                </a>
+                                {/if}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {elseif $isPermissions}
+        <div class="page_padding">
+            <form method="POST" style="margin-bottom: 20px;">
+                <div class="settings_panel clear_fix">
+                    <div class="settings_list_row">
+                        <div class="settings_label">{_c_model}</div>
+                        <div class="settings_labeled_text">
+                            <input class="text" type="text" id="model" name="model" placeholder="{_c_model}" />
+                        </div>
+                    </div>
+                    <div class="settings_list_row">
+                        <div class="settings_label">{_c_permission}</div>
+                        <div class="settings_labeled_text">
+                            <input class="text" type="text" id="permission" name="permission" placeholder="{_c_permission}" />
+                        </div>
+                    </div>
+                    <div class="settings_list_row">
+                        <div class="settings_label"></div>
+                        <div class="settings_labeled_text">
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input class="button" type="submit" value="{_add}">
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="page_table_wrapper">
+                <table class="page_table">
+                    <thead>
+                        <tr>
+                            <th>{_c_model}</th>
+                            <th>{_c_permission}</th>
+                            <th>{_admin_actions}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr n:foreach="$perms as $perm">
+                            <td>{$perm->model}</td>
+                            <td>{$perm->permission}</td>
+                            <td>
+                                <a class="button button_gray" href="/admin/chandler/groups/{$perm->group}?act=removePermission&model={$perm->model}&perm={$perm->permission}">
+                                    {_delete}
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {/if}
+{/block}

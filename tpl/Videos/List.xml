@@ -14,7 +14,7 @@
     <div class="page_block video_block_layout">
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
-            <div class="video_items_list scroll_container" style="padding-top: 15px;">
+            <div class="video_items_list scroll_container">
                 {foreach $data as $x}
                     {include "../components/video.xml", video => $x}
                 {/foreach}

@@ -1,6 +1,6 @@
-{* 
+{*
   Reusable UI menu component
-  
+
   @param items        Array of menu items, each containing:
                       - url: URL to navigate to
                       - title: Menu item title/text or translation key name
@@ -12,6 +12,7 @@
                       - additionalInfo: (optional) Additional info text/description
                       - isRich: (optional) Boolean indicating if this is a rich item with avatar and additional info
                       - isSeparator: (optional) Boolean indicating if this is a separator
+                      - isHeader: (optional) Boolean indicating if this is a section header
                       - extraItem: (optional) Object containing:
                         - url: URL for the extra item
                         - class: CSS class for the extra item
@@ -71,6 +72,10 @@
         {if !isset($item['condition']) || $item['condition']}
             {if isset($item['isSeparator']) && $item['isSeparator']}
                 <div class="ui_rmenu_sep"></div>
+            {elseif isset($item['isHeader']) && $item['isHeader']}
+                <div class="ui_rmenu_header">
+                    {if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}
+                </div>
             {else}
                 <div class="ui_rmenu_item_wrap">
                     <a class="ui_rmenu_item {$item['active'] ? 'ui_rmenu_item_sel' : ''} {$item['isRich'] ? 'ui_ownblock' : ''}" {if !$item['active']}href="{$item['url']}"{/if} id="{$item['id']}">

@@ -1,0 +1,62 @@
+{extends "@layout.xml"}
+
+{block title}
+    {_vouchers}
+{/block}
+
+{block headingWrap}
+    <a style="float: right;" class="button" href="/admin/vouchers/id0">
+        {_create}
+    </a>
+
+    <span>{_vouchers}</span>
+{/block}
+
+{block content}
+    <div class="page_padding">
+        <div class="page_table_wrapper">
+            <table class="page_table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>{_admin_voucher_serial}</th>
+                        <th>{_coins}</th>
+                        <th>{_admin_voucher_rating}</th>
+                        <th>{_usages_left}</th>
+                        <th>{_admin_voucher_status}</th>
+                        <th>{_admin_actions}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr n:foreach="$vouchers as $voucher">
+                        <td>{$voucher->getId()}</td>
+                        <td>{$voucher->getFormattedToken()}</td>
+                        <td>{$voucher->getCoins()}&#xa2;</td>
+                        <td>{$voucher->getRating()}</td>
+                        <td>{$voucher->getRemainingUsages() === INF ? "∞" : $voucher->getRemainingUsages()}</td>
+                        <td>
+                            {if $voucher->isExpired()}
+                                <span class="ui_tab_count" style="background-color: #e74c3c; color: white;">{_admin_voucher_status_closed}</span>
+                            {else}
+                                <span class="ui_tab_count" style="background-color: #27ae60; color: white;">{_admin_voucher_status_opened}</span>
+                            {/if}
+                        </td>
+                        <td>
+                            <a class="button" href="/admin/vouchers/id{$voucher->getId()}">
+                                {_edit}
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {if isset($count) && $count > 0}
+            {include "../components/paginator.xml", conf => [
+                'page' => $_GET['p'] ?? 1,
+                'count' => $count,
+                'perPage' => 20,
+                'atBottom' => true
+            ]}
+        {/if}
+    </div>
+{/block}

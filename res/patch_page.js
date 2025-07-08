@@ -839,7 +839,34 @@ window.uiSearch = {
 
 window.uiSearch.init();
 
+function initAdminTabs() {
+    const tabs = document.querySelectorAll('[data-tab]');
+    const tabContents = document.querySelectorAll('.admin-tab-content');
+
+    if (tabs.length === 0 || tabContents.length === 0) return;
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetTab = this.getAttribute('data-tab');
+
+            tabs.forEach(t => t.classList.remove('ui_tab_sel'));
+            this.classList.add('ui_tab_sel');
+
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+            });
+
+            const targetContent = document.getElementById('tab-' + targetTab);
+            if (targetContent) {
+                targetContent.style.display = '';
+            }
+        });
+    });
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
+    initAdminTabs();
     u(document).on('click', `.ovk-diag-body #upload_container #uploadMusicPopup`, async () => {
         const current_upload_page = '/player/upload'
         let end_redir = ''
@@ -1294,6 +1321,48 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
         }
     }
+
+    u(document).on('keyup', async (e) => {
+        if(e.keyCode == 27 && window.messagebox_stack.length > 0) {
+            const msg = window.messagebox_stack[window.messagebox_stack.length - 1]
+            if(!msg) {
+                return
+            }
+
+            if(msg.close_on_buttons) {
+                msg.close()
+                return
+            }
+
+            if(msg.warn_on_exit) {
+                const res = await msg.__showCloseConfirmationDialog()
+                if(res === true) {
+                    msg.close()
+                }
+            }
+        }
+    })
+
+    u(document).on('click', 'body.dimmed .dimmer', async (e) => {
+        if(u(e.target).hasClass('dimmer')) {
+            const msg = window.messagebox_stack[window.messagebox_stack.length - 1]
+            if(!msg) {
+                return
+            }
+
+            if(msg.close_on_buttons) {
+                msg.close()
+                return
+            }
+
+            if(msg.warn_on_exit) {
+                const res = await msg.__showCloseConfirmationDialog()
+                if(res === true) {
+                    msg.close()
+                }
+            }
+        }
+    })
 
     let tooltipTimeout = null;
 

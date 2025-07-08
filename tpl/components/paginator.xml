@@ -1,5 +1,6 @@
 {var $space = $conf->space ?? 3}
-{var $pageCount = ceil($conf->count / $conf->perPage)}
+{var $perPage = $conf->perPage > 0 ? $conf->perPage : 20}
+{var $pageCount = ceil($conf->count / $perPage)}
 
 <div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" n:attr="style => (!$conf->tidy ? 'margin-top: 15px;')">
     <div n:class="paginator, (($conf->atTop || $atTop) ?? false) ? paginator-at-top, ($conf->atBottom ?? false) ? paginator-at-bottom, ($conf->tidy ? 'tidy')">

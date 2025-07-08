@@ -1,0 +1,110 @@
+{extends "@layout.xml"}
+
+{block title}
+    {if $form->id === 0}
+        {_admin_newgift}
+    {else}
+        {_gift} "{$form->name}"
+    {/if}
+{/block}
+
+{block heading}
+    {include title}
+{/block}
+
+{block content}
+    <form method="POST" enctype="multipart/form-data">
+        <div class="settings_panel clear_fix">
+            <div class="settings_list_row">
+                <div class="settings_label">
+                    {_admin_image}
+                    <span n:if="$form->id === 0" style="color: red;">*</span>
+                </div>
+                <div class="settings_labeled_text">
+                    {if $form->id === 0}
+                        <input type="file" name="pic" accept="image/jpeg,image/png,image/gif,image/webp" required="required" />
+                    {else}
+                        <div class="avatar_block">
+                            <div class="avatar_block_inner">
+                                <img id="pic" src="{$form->pic}" style="object-fit: cover; width: 100px; height: 100px;" />
+                            </div>
+                        </div>
+                        <input style="display: none;" id="picInput" type="file" name="pic" accept="image/jpeg,image/png,image/gif,image/webp" />
+                        <div class="settings_help">
+                            <a id="picChange" href="javascript:false">{_admin_image_replace}</a>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">ID</div>
+                <div class="settings_labeled_text" dir="auto">{$form->id}</div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">{_admin_uses}</div>
+                <div class="settings_labeled_text">
+                    <span dir="auto">{$form->usages}</span>
+                    <div n:if="$form->usages > 0" class="settings_help">
+                        <a href="javascript:$('#usages').value(0);">{_admin_uses_reset}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">
+                    {_admin_name}
+                    <span style="color: red;">*</span>
+                </div>
+                <div class="settings_labeled_text">
+                    <input class="text long-field" type="text" id="name" name="name" value="{$form->name}" />
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">
+                    {_admin_price}
+                    <span style="color: red;">*</span>
+                </div>
+                <div class="settings_labeled_text">
+                    <input class="text long-field" type="number" id="price" name="price" min="0" value="{$form->price}" />
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">
+                    {_admin_limits}
+                    <span style="color: red;">*</span>
+                </div>
+                <div class="settings_labeled_text">
+                    <input class="text long-field" type="number" min="-1" id="limit" name="limit" value="{$form->limit}" />
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">{_admin_limits_reset}</div>
+                <div class="settings_labeled_text">
+                    <label><input n:attr="disabled => $form->id === 0, checked => $form->id === 0" class="toggle-large" type="checkbox" name="reset_limit" id="reset_limit" /> {_admin_limits_reset}</label>
+                </div>
+            </div>
+            <div class="settings_line"></div>
+            <div class="settings_list_row">
+                <div class="settings_label"></div>
+                <div class="settings_labeled_text">
+                    <input n:if="$form->id === 0" type="hidden" name="_cat" value="{$_GET['cat'] ?? 1}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input class="button" type="submit" value="{_save}">
+                </div>
+            </div>
+        </div>
+    </form>
+{/block}
+
+{block scripts}
+    <script>
+        const TRANS_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+        $("#picChange").click(_ => $("#picInput").click());
+        $("#picInput").bind("change", e => {
+            if(typeof e.target.files[0] === "undefined")
+                $("#pic").prop("src", URL.createObjectURL(TRANS_GIF));
+
+            $("#pic").prop("src", URL.createObjectURL(e.target.files[0]));
+        });
+    </script>
+{/block}

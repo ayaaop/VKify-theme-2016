@@ -5,42 +5,8 @@
 
 {block content}
     {include "Tabs.xml", mode => "templates"}
-
-    <style>
-        table, th, td {
-            border: 1px solid var(--border-color);
-            border-collapse: collapse;
-            border-spacing: 0;
-            font-family: -apple-system, system-ui, "Helvetica Neue", Roboto, sans-serif;
-        }
-
-        table {
-            width: 100%;
-        }
-
-        td, th {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90px;
-        }
-
-        tr:nth-child(odd) {
-            background-color: var(--module-background-color--secondary);
-        }
-
-        tr:hover, th:hover {
-            background-color: var(--button-background-color--light);
-        }
-
-        th {
-            text-transform: uppercase;
-            font-size: 0.846em;
-            color: var(--muted-text-color-2);
-        }
-    </style>
     <div class="page_block page_padding">
-        <table n:if="count($templates) > 0" cellspacing="0" cellpadding="7" width="100%">
+        <table n:if="count($templates) > 0" class="page_table" cellspacing="0" cellpadding="7" width="100%">
             <tr>
                 <th style="text-align: center;">ID</th>
                 <th>{_n_user}</th>

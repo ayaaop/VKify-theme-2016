@@ -21,7 +21,7 @@
 
 body {
     --layout-width: 960px;
-    --page-width: 795px;
+    --page-width:calc(var(--layout-width) - 165px);
     --header-height: 42px;
     --module-border-radius: 2px;
     --button-border-radius: 2px;
@@ -195,10 +195,6 @@ body {
     height: 19px;
     width: 32px;
     margin: 11px 10px 0 7px;
-}
-
-.page_header a:hover, a.button:hover, .mb_tab>a:hover, .tab a:hover, .profile_link:hover {
-    text-decoration: none;
 }
 
 .layout {
@@ -751,7 +747,7 @@ input:focus, textarea:focus {
     background-position: 0px -44px !important;
 }
 .audioEntry .buttons .report-icon.musicIcon {
-    background-position: 0 -129px!important;
+    background-position: 0 -129px !important;
     background-size: 29px;
 }
 .bigPlayer .additionalButtons .musicIcon, .audioEntry .buttons .musicIcon {
@@ -807,17 +803,17 @@ input:focus, textarea:focus {
 }
 
 .bigPlayer .trackPanel .track {
-    margin: 0;
+    margin: 4px 0 0;
     padding-bottom: 17px;
     transition: .2s;
 }
 .bigPlayer .trackPanel .track:has(.selectableTrack:hover) {
-    margin-top: -1px;
+    margin-top: 3px;
     padding-bottom: 16px;
 }
 .audioEmbed .track>.selectableTrack, .bigPlayer .selectableTrack {
     --slider-height: 2px;
-    margin-top: 4px;
+    margin-top: 0;
     border: 0;
     height: var(--slider-height);
     background: var(--audio-slider-color);
@@ -851,17 +847,28 @@ input:focus, textarea:focus {
 }
 .bigPlayer .trackPanel .track .selectableTrack>div, .bigPlayer .volumePanel .selectableTrack>div {
     width: 100%;
+    font-size: 0;
+    line-height: 0;
 }
 .bigPlayer .volumePanel {
-    padding: 35px 0 17px;
+    padding: 39px 0 17px;
     width: 50px;
     align-self: start;
     transition: .2s;
 }
 .bigPlayer .volumePanel:has(.selectableTrack:hover) {
-    padding: 34px 0 16px
+    padding: 38px 0 16px
 }
 
+.audioEntry .subTracks {
+    transition: .2s;
+    align-items: center;
+    margin-top: 0;
+}
+.audioEntry .subTracks:has(.selectableTrack:hover) {
+    margin-top: -1px;
+    padding-bottom: 4px
+}
 .audioEntry .playerButton .playIcon {
     width: 24px;
     height: 24px;
@@ -1816,6 +1823,12 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     width: unset !important;
 }
 
+.post-content .attachments:first-of-type {
+    margin-top: 0;
+}
+.post-content .wall_post_text+.attachments {
+    margin-top: 2px;
+}
 .post-content .attachments .attachment {
     width: 100%;
 }
@@ -2194,7 +2207,10 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     border: 0;
     text-align: center;
     color: var(--muted-text-color-2);
-    padding: 0;
+    padding: 0 15px;
+    min-height: 100px;
+}
+.post .content_page_error {
     min-height: 250px;
 }
 .content_page_error span>b {
@@ -2212,7 +2228,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     flex-wrap: wrap;
 }
 .video_block_layout {
-    padding: 0 15px 0;
+    padding: 15px 15px 0;
     position: relative;
     z-index: 1;
 }
@@ -2406,9 +2422,13 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     object-fit: cover;
 }
 
-.page_block:not(.modal) .video_block_layout iframe {
+.page_block .video_block_layout iframe {
     width: 765px !important;
     height: 430px !important;
+}
+.ovk-modal-video-window .page_block .video_block_layout iframe {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* discussion boards */

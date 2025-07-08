@@ -145,7 +145,6 @@
 	padding: 13px 20px 10px 15px;
 	background-color: var(--module-header-background-color);
 	white-space: nowrap;
-	border-bottom: 1px solid var(--border-color);
 }
 .pv_author_img img {
 	border-radius: 50%;
@@ -272,6 +271,12 @@
 	margin: auto;
 	top: 50%;
 	transform: translateY(-50%);
+}
+
+.ovk-modal-video-window .page_block {
+	max-height: 85vh;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .ovk-modal-video-window .video_block_layout {
