@@ -75,7 +75,7 @@
                 <vkifyloc name="loginPromoInfo"></vkifyloc>
             </div>
             <div class="login_app_devices">
-                <a class="login_app_device login_app_device_android">
+                <a href="https://github.com/openvk/mobile-android-legacy/releases/latest" rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_android">
                     <div class="login_app_device_screen_wrap">
                         <div class="login_app_device_screen"></div>
                     </div>
@@ -86,7 +86,7 @@
                         </button>
                     </div>
                 </a>
-                <a class="login_app_device login_app_device_wp">
+                <a rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_wp">
                     <div class="login_app_device_screen_wrap">
                         <div class="login_app_device_screen"></div>
                     </div>
@@ -97,7 +97,7 @@
                         </button>
                     </div>
                 </a>
-                <a class="login_app_device login_app_device_ios">
+                <a rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_ios">
                     <div class="login_app_device_screen_wrap">
                         <div class="login_app_device_screen"></div>
                     </div>

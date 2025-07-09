@@ -31,41 +31,47 @@
 						</a>
 					</div>
 					<div class="profile_actions clear_fix">
-						{var $subStatus = $club->getSubscriptionStatus($thisUser)}
-						<div class="profile_actions_split">
-							{var $actions = [
-								0 => ['act' => 'add', 'label' => tr('join_community')],
-								1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
-							]}
-							{if isset($actions[$subStatus ? 1 : 0])}
-								<form action="/setSub/club" method="post" class="profile_link_form fl_l">
-									<input type="hidden" name="act" value="{$actions[$subStatus ? 1 : 0]['act']}" />
-									<input type="hidden" name="id"  value="{$club->getId()}" />
-									<input type="hidden" name="hash" value="{$csrfToken}" />
-									<input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
-								</form>
-							{/if}
-							<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
-							<div id="profile_actions_tooltip">
-								<div class="tippy-menu">
-									{if $club->canBeModifiedBy($thisUser)}
-										<a href="/club{$club->getId()}/edit">{_edit_group}</a>
-										<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
-										<div class="separator"></div>
-									{/if}
-									{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-										<a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
-										<a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
-										<div class="separator"></div>
-									{/if}
-									<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
-										{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
-									</a>
-									{var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
-									<a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+						{ifset $thisUser}
+							{var $subStatus = $club->getSubscriptionStatus($thisUser)}
+							<div class="profile_actions_split">
+								{var $actions = [
+									0 => ['act' => 'add', 'label' => tr('join_community')],
+									1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
+								]}
+								{if isset($actions[$subStatus ? 1 : 0])}
+									<form action="/setSub/club" method="post" class="profile_link_form fl_l">
+										<input type="hidden" name="act" value="{$actions[$subStatus ? 1 : 0]['act']}" />
+										<input type="hidden" name="id"  value="{$club->getId()}" />
+										<input type="hidden" name="hash" value="{$csrfToken}" />
+										<input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
+									</form>
+								{/if}
+								<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
+								<div id="profile_actions_tooltip">
+									<div class="tippy-menu">
+										{if $club->canBeModifiedBy($thisUser)}
+											<a href="/club{$club->getId()}/edit">{_edit_group}</a>
+											<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
+											<div class="separator"></div>
+										{/if}
+										{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+											<a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
+											<a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
+											<div class="separator"></div>
+										{/if}
+										<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+											{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
+										</a>
+										{var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+										<a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+									</div>
 								</div>
 							</div>
-						</div>
+						{else}
+							<div class="guest_actions">
+								<vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+							</div>
+						{/ifset}
 					</div>
 				</div>
 				{var $followersCount = $club->getFollowersCount()}
@@ -123,7 +129,7 @@
 									</a>
 								</div>
 							</div>
-						{else}
+						{elseif isset($thisUser) && $thisUser->getId() == $club->getOwner()->getId()}
 							<a href="/albums{$club->getId() * -1}" class="page_module_upload">
 								<div class="page_upload_label page_photos_upload"></div>{_upload_photo}</a>
 						{/if}
@@ -153,7 +159,7 @@
 								</div>
 							</div>
 						{else}
-							<a href="/board{$club->getId()}" class="page_module_upload">
+							<a href="/board{$club->getId()}/create" class="page_module_upload">
 								<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
 						{/if}
 					</div>
@@ -200,7 +206,7 @@
 									</div>
 								</div>
 							</div>
-						{else}
+						{elseif $thisUser->getId() == $club->getOwner()->getId() || $club->isEveryoneCanUploadAudios()}
 							<a href="/audios-{$club->getId()}" class="page_module_upload">
 								<div class="page_upload_label page_audios_upload"></div>{_add_audio_to_club}</a>
 						{/if}
@@ -327,7 +333,7 @@
 							</div>
 						</div>
 					{else}
-						<a href="/board{$club->getId()}" class="page_module_upload">
+						<a href="/board{$club->getId()}/create" class="page_module_upload">
 							<div class="page_upload_label page_topics_upload"></div>Start a discussion</a>
 					{/if}
 				</div>

@@ -21,7 +21,7 @@
 
 body {
     --layout-width: 960px;
-    --page-width:calc(var(--layout-width) - 165px);
+    --page-width: calc(var(--layout-width) - 165px);
     --header-height: 42px;
     --module-border-radius: 2px;
     --button-border-radius: 2px;
@@ -190,7 +190,7 @@ body {
 }
 
 .home_button div {
-    background: url("/themepack/vkify16/3.3.0.5/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.0.6/resource/icons/head_icons.png") no-repeat;
     background-position: 0 -98px;
     height: 19px;
     width: 32px;
@@ -331,6 +331,26 @@ body.mac .narrow_column.fixed {
     border: 0
 }
 
+.cookies-popup {
+    height: unset;
+    background: linear-gradient(var(--module-background-color), var(--module-header-background-color));
+    box-shadow: 0 0 4px 0 rgba(0, 0, 0, .04), inset 0 1px 0 0 var(--border-color);
+    color: var(--muted-text-color-2)
+}
+.cookies-popup .contanier {
+    width: var(--layout-width);
+    padding: 10px;
+}
+.cookies-popup .contanier:before {
+    content: '';
+    width: 28px;
+    height: 28px;
+    background: url('data:image/svg+xml;charset=utf-8,%3Csvg%20width%3D%2228%22%20height%3D%2228%22%20viewBox%3D%220%200%2028%2028%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%3Ctitle%3Ecoooooooies%3C%2Ftitle%3E%3Cdefs%3E%3Cpath%20d%3D%22M20.512%2010.324A3.498%203.498%200%200%200%2024%2011.964V12c0%206.627-5.373%2012-12%2012S0%2018.627%200%2012%205.373%200%2012%200h.035a3.498%203.498%200%200%200%201.64%203.488%205%205%200%200%200%206.836%206.836z%22%20id%3D%22a%22%2F%3E%3Ccircle%20id%3D%22c%22%20cx%3D%222%22%20cy%3D%222%22%20r%3D%222%22%2F%3E%3Ccircle%20id%3D%22e%22%20cx%3D%221.5%22%20cy%3D%221.5%22%20r%3D%221.5%22%2F%3E%3Ccircle%20id%3D%22g%22%20cx%3D%221%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3Ccircle%20id%3D%22i%22%20cx%3D%221%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3Ccircle%20id%3D%22k%22%20cx%3D%221%22%20cy%3D%221%22%20r%3D%221%22%2F%3E%3Ccircle%20id%3D%22m%22%20cx%3D%221.5%22%20cy%3D%221.5%22%20r%3D%221.5%22%2F%3E%3C%2Fdefs%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cpath%20d%3D%22M0%200h28v28H0z%22%2F%3E%3Cg%20transform%3D%22translate(2%202)%22%3E%3Cmask%20id%3D%22b%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23a%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23D17715%22%20xlink%3Ahref%3D%22%23a%22%2F%3E%3Cpath%20d%3D%22M21.512%208.824A3.498%203.498%200%200%200%2025%2010.464v.036c0%206.627-5.373%2012-12%2012s-12-5.373-12-12%205.373-12%2012-12h.035a3.498%203.498%200%200%200%201.64%203.488%205%205%200%200%200%206.836%206.836z%22%20fill%3D%22%23F7B259%22%20mask%3D%22url(%23b)%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(7%2010)%22%3E%3Cmask%20id%3D%22d%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23c%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23482510%22%20xlink%3Ahref%3D%22%23c%22%2F%3E%3Ccircle%20fill%3D%22%236A3614%22%20mask%3D%22url(%23d)%22%20cx%3D%222.3%22%20cy%3D%221.5%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(16%2018)%22%3E%3Cmask%20id%3D%22f%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23e%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23482510%22%20xlink%3Ahref%3D%22%23e%22%2F%3E%3Ccircle%20fill%3D%22%236A3614%22%20mask%3D%22url(%23f)%22%20cx%3D%221.8%22%20cy%3D%221%22%20r%3D%221.5%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(10%2017)%22%3E%3Cmask%20id%3D%22h%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23g%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23482510%22%20xlink%3Ahref%3D%22%23g%22%2F%3E%3Ccircle%20fill%3D%22%236A3614%22%20mask%3D%22url(%23h)%22%20cx%3D%221.3%22%20cy%3D%22.5%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(19%207)%22%3E%3Cmask%20id%3D%22j%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23i%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23D17715%22%20xlink%3Ahref%3D%22%23i%22%2F%3E%3Ccircle%20fill%3D%22%23F7B259%22%20mask%3D%22url(%23j)%22%20cx%3D%221.2%22%20cy%3D%22.6%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(24%208)%22%3E%3Cmask%20id%3D%22l%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23k%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23D17715%22%20xlink%3Ahref%3D%22%23k%22%2F%3E%3Ccircle%20fill%3D%22%23F7B259%22%20mask%3D%22url(%23l)%22%20cx%3D%221.2%22%20cy%3D%22.6%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(19%201)%22%3E%3Cmask%20id%3D%22n%22%20fill%3D%22%23fff%22%3E%3Cuse%20xlink%3Ahref%3D%22%23m%22%2F%3E%3C%2Fmask%3E%3Cuse%20fill%3D%22%23D17715%22%20xlink%3Ahref%3D%22%23m%22%2F%3E%3Ccircle%20fill%3D%22%23F7B259%22%20mask%3D%22url(%23n)%22%20cx%3D%221.8%22%20cy%3D%221.1%22%20r%3D%221.5%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E') no-repeat;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 10px;
+}
+
 #auth .container_gray {
     margin-left: -10px;
     margin-bottom: -10px;
@@ -419,7 +439,7 @@ input:focus, textarea:focus {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -478,7 +498,7 @@ input:focus, textarea:focus {
     margin: 7px 0px;
 }
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -527,7 +547,7 @@ input:focus, textarea:focus {
 .top_audio_player .top_audio_player_btn>div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.3.0.5/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.3.0.6/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -579,6 +599,7 @@ input:focus, textarea:focus {
 [data-theme="musicpopup"] .tippy-content {
     overflow: hidden;
     padding: 0;
+    max-height: 500px;
 }
 .audio_content_wrap {
     display: flex;
@@ -599,18 +620,36 @@ input:focus, textarea:focus {
 .musfooter {
     padding: 15px 14px;
     margin-top: auto;
+    position: fixed;
+    bottom: 1px;
+    width: 549px;
+    background: var(--module-background-color);
 }
-.tippy-box[data-theme="musicpopup"] .wide_column_left {
-    display: flex;
-}
-.tippy-box[data-theme="musicpopup"] .wide_column_left .wide_column_wrap {
+.tippy-box[data-theme="musicpopup"] .wide_column_wrap {
+    height: 441px;
+    overflow: hidden auto;
+    position: relative;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
     margin: 0;
-    width: 100%;
+}
+.tippy-box[data-theme="musicpopup"] .wide_column_wrap::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
 }
 .tippy-box[data-theme="musicpopup"] .wide_column_left .wide_column {
     height: 100%;
     display: flex;
     flex-direction: column;
+    width: calc(100% - 230px);
+}
+.tippy-box[data-theme="musicpopup"] .wide_column_left .narrow_column_wrap {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    float: unset;
 }
 .musfooter #ajclosebtn {
     float: right;
@@ -621,6 +660,7 @@ input:focus, textarea:focus {
 }
 .tippy-box[data-theme="musicpopup"] .audiosSideContainer {
     width: unset;
+    padding-bottom: 50px;
 }
 .audiosDiv {
     margin: 0;
@@ -681,14 +721,14 @@ input:focus, textarea:focus {
     gap: 8px;
 }
 .musicIcon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/audio_player_controls.png) no-repeat;
     height: 10px;
     width: 12px;
 }
 .bigPlayer .playButtons .playButton {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/audio_player_controls.png) no-repeat, var(--accent-color);
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/audio_player_controls.png) no-repeat, var(--accent-color);
     background-position: left top;
     border-radius: 50%;
     margin: 15px 0;
@@ -729,13 +769,13 @@ input:focus, textarea:focus {
     gap: 6px
 }
 .audioEntry .buttons .musicIcon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/common.png) no-repeat;
     height: 13px !important;
     width: 13px !important;
     box-sizing: border-box;
 }
 .audioEntry .buttons .musicIcon.download-icon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/download_icon.png) no-repeat !important;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/download_icon.png) no-repeat !important;
 }
 .audioEntry .buttons .musicIcon.add-icon {
     background-position: 0px 1px !important;
@@ -873,7 +913,7 @@ input:focus, textarea:focus {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #577ca1 url(/themepack/vkify16/3.3.0.5/resource/icons/audio_playpause.png) no-repeat 8px 7px;
+    background: #577ca1 url(/themepack/vkify16/3.3.0.6/resource/icons/audio_playpause.png) no-repeat 8px 7px;
 }
 .audioEntry.nowPlaying .playIcon {
     background-position-y: -15px !important;
@@ -914,7 +954,7 @@ input:focus, textarea:focus {
     border-radius: 14px;
     -o-transition: background-color .05s, color .05s;
     transition: background-color .05s, color .05s;
-    background: var(--search-color) url(/themepack/vkify16/3.3.0.5/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.3.0.6/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -954,7 +994,7 @@ input:focus, textarea:focus {
 }
 
 .navigation .link:before {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/menu_icon.png) no-repeat 7px -441px;
     content: '';
     height: 25px;
     width: 35px;
@@ -982,7 +1022,7 @@ input:focus, textarea:focus {
     background-position: 7px -161px
 }
 .navigation .link[href="/settings"]::before {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/common.png);
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/common.png);
     background-position: 10px 175px;
     height: 20px;
 }
@@ -996,7 +1036,7 @@ input:focus, textarea:focus {
     background-position: 7px -105px;
 }
 .navigation .link[href="/donate"]::before {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .navigation .link[href="/docs"]:before {
@@ -1019,7 +1059,7 @@ input:focus, textarea:focus {
 .left_menu_nav_wrap #moreOptionsLink:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1289,7 +1329,7 @@ label:not(:has(a))+label:not(:has(a)) {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -1323,6 +1363,7 @@ label:not(:has(a))+label:not(:has(a)) {
     background-color: var(--module-background-color--secondary);
     width: 100%;
     height: 100%;
+    object-fit: cover;
 }
 .search_row .controls {
     margin: 0 0 0 10px;
@@ -1435,6 +1476,9 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     padding: 0 20px 10px;
     margin: 0;
 }
+.vertical-attachment:first-of-type {
+    margin-top: 0;
+}
 .vertical-attachment .audioEntry {
     max-height: 32px;
     min-height: unset;
@@ -1530,11 +1574,12 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     border-top: 1px solid var(--border-color);
     border-radius: 0 0 var(--module-border-radius) var(--module-border-radius);
 }
-.post-attach-menu__icon {
+.post-attach-menu__icon, .post-upload::before, .post-has-poll::before, .post-has-note::before, .attachment_note::before {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_icon.png) no-repeat;
-    opacity: .7
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_icon.png) no-repeat;
+    opacity: .7;
+    content: '';
 }
 .post-attach-menu a:hover .post-attach-menu__icon, .post_settings:hover, .post_settings[aria-expanded="true"] {
     opacity: 1;
@@ -1552,20 +1597,33 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .attach_document .post-attach-menu__icon {
     background-position: 0% -131px
 }
-.attach_note .post-attach-menu__icon {
+.attach_note .post-attach-menu__icon, .post-has-note::before, .attachment_note::before {
     background-position: 0% -241px
 }
 .attach_graffiti .post-attach-menu__icon {
     background-position: 0% -175px
 }
-.attach_poll .post-attach-menu__icon {
+.attach_poll .post-attach-menu__icon, .post-has-poll::before {
     background-position: 00% -197px
 }
 .attach_geo .post-attach-menu__icon {
     background-position: 0% -153px
 }
-.attach_source .post-attach-menu__icon {
+.attach_source .post-attach-menu__icon, .post-upload::before {
     background-position: 0% -327px
+}
+
+.post-upload, .post-has-poll, .post-has-note {
+    display: flex !important;
+    align-items: center;
+    color: var(--muted-text-color-2);
+    font-weight: 400;
+}
+.post-buttons .attachment_note {
+    padding: 0;
+}
+.attachment_note svg {
+    display: none;
 }
 
 .wall_note_type {
@@ -1784,7 +1842,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_like_icon, .post_share_icon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_icon.png) no-repeat 0 0;
     display: inline-block;
     width: 16px;
     height: 13px;
@@ -1887,7 +1945,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -1949,7 +2007,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     vertical-align: top;
 }
 .like_icon {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -1983,7 +2041,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     cursor: pointer;
     height: 13px;
@@ -2002,7 +2060,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     opacity: 1;
 }
 .reply_action.reply_report_action {
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/common.png) 0px -455px;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/common.png) 0px -455px;
     background-size: 24px;
 }
 .reply .reply_action.reply_report_action:hover {
@@ -2301,7 +2359,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.0.5/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.0.6/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -2388,7 +2446,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     width: 16px;
     height: 16px;
     background-repeat: no-repeat;
-    background-image: url(/themepack/vkify16/3.3.0.5/resource/icons/photo_edit_actions.png)
+    background-image: url(/themepack/vkify16/3.3.0.6/resource/icons/photo_edit_actions.png)
 }
 .video_thumb_actions .video_thumb_action_edit .icon {
     background-position: 0 -65px
@@ -2503,7 +2561,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .docListViewItem .doc_volume>div {
     height: 13px;
     width: 13px;
-    background: url('/themepack/vkify16/3.3.0.5/resource/icons/common.png');
+    background: url('/themepack/vkify16/3.3.0.6/resource/icons/common.png');
 }
 .docListViewItem .doc_volume>div, .docGalleryItem .doc_top_panel>div {
     opacity: .7;
@@ -2825,7 +2883,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
     height: 48px;
     width: 48px;
-    background: url(/themepack/vkify16/3.3.0.5/resource/icons/post_more.png) no-repeat center center;
+    background: url(/themepack/vkify16/3.3.0.6/resource/icons/post_more.png) no-repeat center center;
     cursor: pointer;
 }
 

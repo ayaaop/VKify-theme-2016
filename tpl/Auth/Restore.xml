@@ -9,37 +9,27 @@
 {/block}
 
 {block content}
-	<h4 style="margin-left: 100px; margin-right: 100px;">{_access_recovery}</h4>
-        <table cellspacing="10" cellpadding="0" border="0" align="center" width="70%">
-            <tbody>
-                <tr>
-                    <td>
-                    {_access_recovery_info}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="page_block">
+        <div class="settings_block_msg">
+            {_access_recovery_info}
+        </div>
 
-    <form method="POST" enctype="multipart/form-data">
-        <table cellspacing="7" cellpadding="0" width="46%" border="0" align="center">
-            <tbody>
-                <tr style="text-align: right;">
-                    <td>
-                        <span class="nobold">{_email}: </span>
-                    </td>
-                    <td>
-                        <input id="login" type="text" name="login" required />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-		<center>
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" value="{_reset_password}" class="button"/>
-		</center>
-    </form>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="settings_panel clear_fix group_settings settings_padding">
+                <div class="settings_list_row">
+                    <div class="settings_label">{_email}</div>
+                    <div class="settings_labeled_text">
+                        <input class="text long-field" id="login" type="text" name="login" required />
+                    </div>
+                </div>
+                <div class="settings_list_row">
+                    <div class="settings_label"></div>
+                    <div class="settings_labeled_text">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_reset_password}" class="button" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 {/block}

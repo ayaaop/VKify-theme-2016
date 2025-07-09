@@ -27,6 +27,7 @@ let locales = {
 		"users_posts": "Posts from user",
 		"profile_recommendations": "Show recommendations on filling out your profile",
 	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account.",
+		"guest_actions_group": "<a href='/register'>Register now</a> to join $1 and many other groups, or <a href='/'>log in</a> if you already have an account.",
 		"recommended_groups": "Recommended groups",
 		"show_less": "Show less",
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
@@ -61,6 +62,7 @@ let locales = {
 		"users_posts": "Записи от пользователя",
 		"profile_recommendations": "Показывать рекомендации по заполнению профиля",
 	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
+		"guest_actions_group": "<a href='/register'>Зарегистрируйтесь</a>, чтобы присоединиться к $1 и многим другим группам, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
 		"recommended_groups": "Рекомендуемые сообщества",
 		"show_less": "Показать меньше",
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
@@ -95,6 +97,7 @@ let locales = {
 		"users_posts": "Дописи користувача",
 		"profile_recommendations": "Показувати рекомендації щодо заповнення профілю",
 		"guest_actions": "<a href='/register'>Зареєструйтеся</a>, щоб залишатися на зв'язку з $1 та іншими, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
+		"guest_actions_group": "<a href='/register'>Зареєструйтеся</a>, щоб приєднатися до $1 та інших груп, або <a href='/'>увійдіть</a>, якщо у вас вже є обліковий запис.",
 		"recommended_groups": "Рекомендовані спільноти",
 		"deleted_attachment": "Цей допис містить видалене вкладення та не має тексту.",
 		"deleted_attachment_2": "Тому він не може бути відображений.",
@@ -105,7 +108,7 @@ let locales = {
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.3.0.5/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.3.0.6/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';

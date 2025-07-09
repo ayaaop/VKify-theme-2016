@@ -7,7 +7,15 @@
 {/block}
 
 {block content}
-	<div class="knowledgeBaseArticle">
-		{$content|noescape}
-	</div>
+	{if !isset($embedded)}
+		<div class="page_block page_padding">
+			<div class="knowledgeBaseArticle">
+				{$content|noescape}
+			</div>
+		</div>
+	{else}
+		<div class="knowledgeBaseArticle">
+			{$content|noescape}
+		</div>
+	{/if}
 {/block}

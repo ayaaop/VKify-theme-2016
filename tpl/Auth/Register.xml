@@ -14,6 +14,14 @@
 {/block}
 
 {block content}
+    <style>
+        h4 {
+            margin-top: 15px;
+        }
+        span.nobold + :is(input,select,div) {
+            margin-top: 5px;
+        }
+    </style>
     <div id="auth" class="page_block">
         {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] || $referer}
             {if !is_null($referer)}
@@ -63,7 +71,7 @@
                 {/if}
                 
                 <div style="margin-bottom: 10px; text-align: left;">
-                    <input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}
+                    <label><input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}</label>
                 </div>
                 
                 <div class="login_buttons_wrap">

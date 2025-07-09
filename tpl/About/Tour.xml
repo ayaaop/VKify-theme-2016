@@ -9,8 +9,6 @@
 
 {css "css/tour.css"}
 <div id="tour">
-
-    
     
     <div class="rightNav">
      <h1>{_tour_title}</h1>
@@ -55,7 +53,7 @@
      </div>
       
     
-    <div id="start" class="tabcontent">
+    <div id="start" class="tabcontent page_padding">
       <h2>{_tour_section_1_title_1|noescape}</h2>
      <ul class="listing">
      <li><span>{_tour_section_1_text_1|noescape}</span></li>
@@ -70,7 +68,7 @@
      <br>
     </div>
     
-    <div id="profile" class="tabcontent">
+    <div id="profile" class="tabcontent page_padding">
     <h2>{_tour_section_2_title_1|noescape}</h2>
      <ul class="listing">
       <li><span>{_tour_section_2_text_1_1|noescape}</span></li>
@@ -110,7 +108,7 @@
      <br>
     </div>
     
-    <div id="photos" class="tabcontent">
+    <div id="photos" class="tabcontent page_padding">
       <h2>{_tour_section_3_title_1|noescape}</h2>
      <ul class="listing">
      <li><span>{_tour_section_3_text_1|noescape}</span></li> 
@@ -125,7 +123,7 @@
      <br>       
     </div>
     
-    <div id="search" class="tabcontent">
+    <div id="search" class="tabcontent page_padding">
     <h2>{_tour_section_4_title_1|noescape}</h2>
         
         <ul class="listing">
@@ -150,7 +148,7 @@
      <br>       
     </div>
     
-    <div id="videos" class="tabcontent">
+    <div id="videos" class="tabcontent page_padding">
      <h2>{_tour_section_5_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -174,7 +172,7 @@
      <br>       
     </div>
     
-    <div id="audios" class="tabcontent">
+    <div id="audios" class="tabcontent page_padding">
     <h2>{_tour_section_6_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -204,7 +202,7 @@
      <br>       
     </div>
     
-    <div id="news" class="tabcontent">
+    <div id="news" class="tabcontent page_padding">
       <h2>{_tour_section_7_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -221,7 +219,7 @@
      <br>       
     </div>
     
-    <div id="news_global" class="tabcontent">
+    <div id="news_global" class="tabcontent page_padding">
         <h2>{_tour_section_8_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -245,7 +243,7 @@
      <br>       
     </div>
     
-    <div id="groups" class="tabcontent">
+    <div id="groups" class="tabcontent page_padding">
     <h2>{_tour_section_9_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -277,7 +275,7 @@
      <br>       
     </div>
     
-    <div id="events" class="tabcontent">
+    <div id="events" class="tabcontent page_padding">
       <h2>{_tour_section_10_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -289,7 +287,7 @@
      <br>       
     </div>
     
-    <div id="themes" class="tabcontent">
+    <div id="themes" class="tabcontent page_padding">
       <h2>{_tour_section_11_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -322,7 +320,7 @@
      <br>       
     </div>
     
-    <div id="customization" class="tabcontent">
+    <div id="customization" class="tabcontent page_padding">
       <h2>{_tour_section_12_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -427,7 +425,7 @@
      <br>       
     </div>
     
-    <div id="vouchers" class="tabcontent">
+    <div id="vouchers" class="tabcontent page_padding">
      <h2>{_tour_section_13_title_1|noescape}</h2>
         
      <ul class="listing">
@@ -459,7 +457,7 @@
      <br>       
     </div>
     
-    <div id="mobile" class="tabcontent">
+    <div id="mobile" class="tabcontent page_padding">
      <h2>{_tour_section_14_title_1|noescape}</h2>
         
      <ul class="listing">
