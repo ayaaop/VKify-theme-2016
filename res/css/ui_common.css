@@ -101,10 +101,10 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 input[type="checkbox"] {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/dev_check.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/dev_check.png) 0 0 no-repeat;
 }
 input[type="radio"] {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/dev_radio.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/dev_radio.png) 0 0 no-repeat;
     height: 14px;
     width: 14px;
 }
@@ -197,13 +197,13 @@ table * {
 
 /* checkmark */
 .page_verified {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/verify.png?1) no-repeat 0;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/verify.png?1) no-repeat 0;
     display: inline;
     margin-left: 6px;
     padding: 2px 16px 2px 0;
 }
 .post .page_verified {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/verify_small.png) no-repeat 0;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/verify_small.png) no-repeat 0;
     margin: 0 4px 0 0;
     padding: 0;
     height: 14px;
@@ -222,6 +222,11 @@ table * {
 }
 .page_padding {
     padding: 20px;
+}
+.page_block .page_block {
+    background: none;
+    box-shadow: none;
+    padding: 0!important;
 }
 
 /* buttons */
@@ -354,8 +359,12 @@ body.dimmed>.dimmer #absolute_territory {
     background-color: var(--accent-color);
     color: var(--accent-text-color)
 }
+.mb_tab#active a {
+    color: var(--accent-text-color)
+}
 .mb_tabs {
     padding: 15px;
+    border-bottom: 1px solid var(--border-color);
 }
 .mb_tab {
     margin-right: 5px;
@@ -384,7 +393,7 @@ body.dimmed>.dimmer #absolute_territory {
 .ovk-diag-head-close {
     float: right;
     padding: 21px 25px 21px 12px;
-    background: url(/themepack/vkify16/3.3.0.7/resource/cross.png) no-repeat 12px 21px;
+    background: url(/themepack/vkify16/3.3.0.8/resource/cross.png) no-repeat 12px 21px;
     width: 12px;
     height: 12px;
     opacity: 0.75;
@@ -631,7 +640,7 @@ a.ui_box_header_link {
     opacity: 1;
 }
 .ui_rmenu_extra_item .addIcon {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
     width: 13px;
     height: 13px;
 }
@@ -738,14 +747,14 @@ a.ui_crumb {
     font-size: 9px;
     position: relative;
     top: -2px;
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
     padding-left: 6px;
     margin: 23px 10px 21px 7px;
 }
 
 @media (-webkit-min-device-pixel-ratio:2), (min-resolution:192dpi) {
     .ui_crumb_sep {
-        background-image: url(/themepack/vkify16/3.3.0.7/resource/icons/breadcrumbs_2x.png);
+        background-image: url(/themepack/vkify16/3.3.0.8/resource/icons/breadcrumbs_2x.png);
         background-size: 12px 11px
     }
 }
@@ -787,7 +796,7 @@ input.ui_search_field, input.ui_search_field~.placeholder .ph_input {
     line-height: 18px;
 }
 input.ui_search_field {
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/search_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/search_icon.png) no-repeat;
     padding-left: 28px;
     border-left: 20px solid transparent;
     background-position: 0;
@@ -811,7 +820,7 @@ input.ui_search_field:focus::placeholder {
 .ui_search_reset {
     position: absolute;
     width: 38px;
-    background: url(/themepack/vkify16/3.3.0.7/resource/icons/cross.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.0.8/resource/icons/cross.png) no-repeat 50%;
     top: 0;
     bottom: 0;
     right: 6px;
@@ -853,7 +862,7 @@ input.ui_search_field:focus::placeholder {
     filter: none;
 }
 .ui_search_loading .ui_search_reset {
-    background-image: url(/themepack/vkify16/3.3.0.7/resource/icons/c_upload.gif);
+    background-image: url(/themepack/vkify16/3.3.0.8/resource/icons/c_upload.gif);
     transition: none;
     visibility: visible;
 }
@@ -977,6 +986,107 @@ select:focus {
     margin: 10px 13px 6px;
 }
 
+
+.tippy-box[data-theme="special vk"],
+.messenger-app--input---messagebox .tippy-box{
+  background: none !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+.tippy-box[data-theme="special vk"] * {
+  box-shadow: none !important;
+}
+.tippy-box[data-theme="special vk"] .like_tooltip_wrapper .like_tooltip_body,
+.tippy-box[data-theme="special vk"] .like_tooltip_wrapper .like_tooltip_head {
+  background: transparent !important;
+  border: none !important;
+}
+.tippy-box[data-theme="special vk"] .tippy-arrow {
+  color: rgba(0, 0, 0, 0.6) !important;
+  border: none;
+}
+.tippy-box[data-theme="special vk"] .tippy-content {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 4px !important;
+  min-width: 180px;
+  min-height: 55px;
+  text-align: center;
+}
+.tippy-box[data-theme="special vk"] .tippy-arrow::before {
+  border-top-color: transparent !important;
+}
+.tippy-box[data-theme="special vk"] .like_tooltip_head {
+  border-radius: 4px 4px 0 0 !important;
+  font-size: 11px !important;
+  color: white;
+  height: 15px;
+  font-weight: bold;
+}
+.tippy-box[data-theme="special vk"] .like_tooltip_body {
+  border-radius: 0 0 4px 4px !important;
+}
+.tippy-box[data-theme="special vk"] span,
+.post-menu .tippy-box a,
+.tippy-box[data-theme="special vk"] text {
+  font-size: 11px;
+  color: white;
+  font-weight: bold;
+  text-shadow: 0px 1px #000;
+}
+.tippy-box[data-theme="special vk"] .like_tooltip_head span,
+.tippy-box[data-theme="special vk"] .like_tooltip_wrapper .like_tooltip_head a {
+  height: 14px;
+  padding-top: 9px;
+}
+.tippy-box[data-theme="special vk"] * {
+  box-shadow: none !important;
+  color: #FFF !important;
+}
+.tippy-box[data-theme="special vk"] {
+  border: none !important;
+}
+.tippy-box[data-theme="special vk"] tr td img[src*="miniscule.gif"] {
+  width: 100px !important;
+}
+.tippy-box[data-animation='up_down'] {
+    transition: unset;
+}
+.tippy-box[data-animation='up_down'][data-state='hidden'] {
+    opacity: unset;
+    inset: unset;
+}
+.tippy-box[data-animation='up_down'][data-state='visible'] {
+    inset: unset;
+}
+
+@keyframes vkAppear {
+    from {opacity: 0;
+        transform: translateY(-10px);}
+    to {opacity: 1;
+        transform: translateY(0);}
+}
+@keyframes vkFadeout {
+    from {opacity: 1;}
+    to {opacity: 0;}
+}
+
+.tippy-box[data-animation='up_down'][data-state='hidden'],
+.tippy-box[data-animation='fade'][data-state='hidden']:not([data-theme*="musicpopup"]) {
+    animation: vkFadeout 0.2s ease-out forwards !important;
+}
+.tippy-box[data-animation='up_down'][data-state='visible'],
+.tippy-box[data-animation='fade'][data-state='visible']:not([data-theme*="musicpopup"]) {
+    animation: vkAppear 0.2s ease-out forwards !important;
+}
+
+/* только попробуйте сломать это */
+/* оно само сломалось ура */
+.tippy-box[data-theme="special vk"][data-animation~="fade"] tr td span[style*="color: #444;"]  {
+	font-size: 11px;
+	font-weight: normal;
+}
+
+
 /* tip_result */
 
 .tip_result_black_el {
@@ -1059,7 +1169,7 @@ select:focus {
     margin-top: 0;
 }
 .msg.msg_yellow {
-    background: var(--message-warning-background) url(/themepack/vkify16/3.3.0.7/resource/icons/msg_error.png) no-repeat 12px 12px;
+    background: var(--message-warning-background) url(/themepack/vkify16/3.3.0.8/resource/icons/msg_error.png) no-repeat 12px 12px;
     padding-left: 55px;
     border-color: var(--message-warning-border);
     min-height: 40px;

@@ -59,7 +59,7 @@
 				{/foreach}
                 </ul>
 			{else}
-				<center class="im_none">{_no_messages}</center>
+				{include "../components/content_error.xml", description => tr(no_messages)}
 			{/if}
         </div>
         <div style="margin-top: 3px;">
