@@ -100,8 +100,8 @@
 							</div>
 						</div>
 				</div>
-				<div class="page_block">
-					<div n:if="$club->isDisplayTopicsAboveWallEnabled()" class="module album_module">
+				<div n:ifcontent class="page_block">
+					<div n:if="$club->isDisplayTopicsAboveWallEnabled() && ($albumsCount > 0 || (isset($thisUser) && $thisUser->getId() == $club->getOwner()->getId()))" class="module album_module">
 						{if $albumsCount > 0}
 							<a href="/albums{$club->getId() * -1}" class="module_header">
 								<h3 class="header_top clear_fix">

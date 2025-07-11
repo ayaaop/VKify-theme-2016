@@ -161,6 +161,12 @@ input.big_text {
 }
 
 /* table */
+.page_table_wrapper {
+    overflow-x: auto;
+}
+.page_table_wrapper + .page_table_wrapper {
+    margin-top: 15px;
+}
 table * {
     vertical-align: middle;
 }
@@ -175,10 +181,7 @@ table * {
     width: 100%;
 }
 .page_table td, .page_table th {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 500px;
+    max-width: 400px;
 }
 .page_table tr:nth-child(odd) {
     background-color: var(--module-background-color--secondary);

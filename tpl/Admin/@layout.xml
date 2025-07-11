@@ -4,12 +4,15 @@
 
 {block wrap}
 <style>
-    .page_table_wrapper {
-        overflow-x: auto;
-    }
     .page_table_wrapper table {
         width: 100%;
         overflow-x: auto;
+    }
+    .page_table td, .page_table th {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 500px;
     }
     .page_table .avatar {
         margin-right: 5px;

@@ -1103,11 +1103,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     tippy(document.querySelector('#headerMusicLinkDiv'), {
         content: mushtml,
         allowHTML: true,
-        trigger: 'click', 
+        trigger: 'click',
         interactive: true,
-        placement: 'bottom',
+        placement: 'bottom-start',
         theme: 'musicpopup',
-        maxWidth: 795,
         arrow: false,
         getReferenceClientRect: () => {
             const searchBox = document.querySelector('.home_search');
@@ -1126,23 +1125,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
             const rect = searchBox.getBoundingClientRect();
             return {
-                width: 795,
+                width: rect.width,
                 height: rect.height,
                 top: rect.top,
                 bottom: rect.bottom,
                 left: rect.left,
-                right: rect.left + 795,
+                right: rect.right,
             };
         },
-        appendTo: document.body,
-        popperOptions: {
-            modifiers: [{
-                name: 'offset',
-                options: {
-                    offset: [0, 0],
-                }
-            }]
-        },
+        maxWidth: 'var(--page-width)',
+        appendTo: document.querySelector('#headerMusicLinkDiv'),
+        popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 0] } }] },
         onHidden() {
             window.musHtml = undefined;
             document.querySelector('.top_audio_player').classList.remove('audio_top_btn_active');

@@ -51,7 +51,7 @@
             </table>
         </div>
         {if isset($count) && $count > 0}
-            {include "../components/paginator.xml", conf => [
+            {include "paginator.xml", conf => [
                 'page' => $_GET['p'] ?? 1,
                 'count' => $count,
                 'perPage' => 20,
