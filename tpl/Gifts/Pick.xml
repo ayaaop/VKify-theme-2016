@@ -23,7 +23,7 @@
                     </div>
 
                     <div n:if="$gift->getUsagesLeft($thisUser) !== INF" class="gift_limit">
-                        {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
+                        <vkifyloc name="gifts_left" args="{$gift->getUsagesLeft($thisUser)}" />
                     </div>
                 </a>
             </div>

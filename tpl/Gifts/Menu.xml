@@ -33,6 +33,9 @@
                                             {tr('coins', $gift->getPrice())}
                                         {/if}
                                     </div>
+                                    <div n:if="$gift->getUsagesLeft($thisUser) !== INF" class="gift_limit">
+                                       <vkifyloc name="gifts_left" args="{$gift->getUsagesLeft($thisUser)}" />
+                                    </div>
                                 </a>
                             {/foreach}
                         </div>

@@ -32,7 +32,8 @@ let locales = {
 		"show_less": "Show less",
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
 		"deleted_attachment_2": "As such, it can't be displayed.",
-		"dark_mode": "Dark mode"
+		"dark_mode": "Dark mode",
+		"gifts_left": "$1 left"
 	},
 	'ru': {
 		"language": "Язык",
@@ -67,7 +68,8 @@ let locales = {
 		"show_less": "Показать меньше",
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
 		"deleted_attachment_2": "Поэтому она не может быть отображена.",
-		"dark_mode": "Тёмная тема"
+		"dark_mode": "Тёмная тема",
+		"gifts_left": "$1 осталось"
 	},
 	'uk': {
 		"language": "Мова",
@@ -101,7 +103,8 @@ let locales = {
 		"recommended_groups": "Рекомендовані спільноти",
 		"deleted_attachment": "Цей допис містить видалене вкладення та не має тексту.",
 		"deleted_attachment_2": "Тому він не може бути відображений.",
-		"dark_mode": "Темний режим"
+		"dark_mode": "Темний режим",
+		"gifts_left": "$1 осталось"
 	}
 }
 

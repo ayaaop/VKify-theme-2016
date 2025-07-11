@@ -1614,7 +1614,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     background-position: 0% -327px
 }
 
-.post-upload, .post-has-poll, .post-has-note,.post-has-geo.appended-geo {
+.post-upload, .post-has-poll, .post-has-note, .post-has-geo.appended-geo {
     align-items: center;
     color: var(--muted-text-color-2);
     font-weight: 400;
@@ -1629,7 +1629,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     display: none;
 }
 .post-source #remove_source_button {
-	float: right;
+    float: right;
 }
 
 .wall_note_type {
@@ -1649,7 +1649,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .sort_link_icon {
-	background: url("data:image/svg+xml;charset=utf-8,%3Csvg%20height%3D%224%22%20viewBox%3D%22944%201152%208%204%22%20width%3D%228%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22m945.2%201152.2c-.3-.2-.7-.2-.9.1s-.2.7.1.9l3.2%202.6c.2.2.6.2.8%200l3.2-2.6c.3-.2.3-.6.1-.9s-.6-.3-.9-.1l-2.8%202.3z%22%20fill%3D%22%2392a0b1%22%2F%3E%3C%2Fsvg%3E") no-repeat right 6px;
+    background: url("data:image/svg+xml;charset=utf-8,%3Csvg%20height%3D%224%22%20viewBox%3D%22944%201152%208%204%22%20width%3D%228%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22m945.2%201152.2c-.3-.2-.7-.2-.9.1s-.2.7.1.9l3.2%202.6c.2.2.6.2.8%200l3.2-2.6c.3-.2.3-.6.1-.9s-.6-.3-.9-.1l-2.8%202.3z%22%20fill%3D%22%2392a0b1%22%2F%3E%3C%2Fsvg%3E") no-repeat right 6px;
 }
 .sort_link_icon_desc {
     transform: rotate(180deg);
@@ -1661,7 +1661,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .expand_button {
-	margin: 20px 20px 5px!important;
+    margin: 20px 20px 5px !important;
 }
 
 /* upload photos */
@@ -1707,7 +1707,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .post-content {
     border: 0;
 }
-.post:not(.editing) > .post_edit, .reply:not(.editing) .post_edit {
+.post:not(.editing)>.post_edit, .reply:not(.editing) .post_edit {
     display: none;
 }
 .post .post_header {
@@ -1986,102 +1986,113 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 
 /* gifts */
 .gift {
-	padding-bottom: 15px;
-	border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
 }
 .gift .wall_text {
-	text-align: center;
+    text-align: center;
 }
 .gift_image {
-	border-radius: 10px;
-	background-color: var(--module-background-color--secondary);
-	margin: 0 0 9px;
-	width: 256px;
-	height: 256px;
-	display: inline-block;
+    border-radius: 10px;
+    background-color: var(--module-background-color--secondary);
+    margin: 0 0 9px;
+    width: 256px;
+    height: 256px;
+    display: inline-block;
 }
 .gift_image img {
-	border-radius: 10px;
-	width: 256px;
-	height: auto;
-	object-fit: contain;
-	display: inline-block;
+    border-radius: 10px;
+    width: 256px;
+    height: auto;
+    object-fit: contain;
+    display: inline-block;
 }
 .gift_description {
-	padding: 0 10px;
-	line-height: 19px;
-	margin-bottom: -4px;
-	overflow: hidden;
-	text-overflow: ellipsis;
+    padding: 0 10px;
+    line-height: 19px;
+    margin-bottom: -4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .gift_button {
-	margin-top: 12px;
+    margin-top: 12px;
     text-align: center;
 }
 .gifts_section_row {
-	padding: 20px 25px 15px;
-	border-bottom: 1px solid var(--border-color);
+    padding: 20px 25px 15px;
+    border-bottom: 1px solid var(--border-color);
 }
 .gifts_section_show_all {
-	display: flex;
-	text-decoration: none !important;
-	padding: 6px 0;
-	margin-top: -5px;
+    display: flex;
+    text-decoration: none !important;
+    padding: 6px 0;
+    margin-top: -5px;
 }
 h4.gifts_section_header {
-	border-bottom: 0;
-	margin: 0 0 8px;
-	font-size: 14px;
-	font-weight: 500;
-	-webkit-font-smoothing: subpixel-antialiased;
-	-moz-osx-font-smoothing: auto;
-	color: var(--muted-text-color-2);
+    border-bottom: 0;
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+    -webkit-font-smoothing: subpixel-antialiased;
+    -moz-osx-font-smoothing: auto;
+    color: var(--muted-text-color-2);
 }
 .gifts_section_description {
-	margin-bottom: 8px;
-	opacity: .7;
+    margin-bottom: 8px;
+    opacity: .7;
 }
 .gifts_section_scroll {
-	margin-inline: -10px;
-	overflow: hidden;
-	position: relative;
+    margin-inline: -10px;
+    overflow: hidden;
+    position: relative;
 }
 .gift_cell {
-	float: left;
-	padding: 10px;
-	position: relative;
+    float: left;
+    padding: 10px;
+    position: relative;
 }
 .gift_cell .gift_img {
-	border-radius: 8px;
-	transition: opacity .2s;
-	object-fit: contain;
+    border-radius: 8px;
+    transition: opacity .2s;
+    object-fit: contain;
 }
 .gift_cell:hover .gift_img {
-	opacity: .8;
+    opacity: .8;
 }
 .gift_price, .gift_free {
-	line-height: 19px;
-	font-size: 12.5px;
-	background: var(--module-background-color--secondary);
-	border-radius: 3px;
-	padding: 1px 4px 2px;
-	margin: 0 7px;
-	color: var(--link-color);
-	font-weight: 700;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	text-align: center;
-	z-index: 1;
+    line-height: 19px;
+    font-size: 12.5px;
+    background: var(--module-background-color--secondary);
+    border-radius: 3px;
+    padding: 1px 4px 2px;
+    margin: 0 7px;
+    color: var(--link-color);
+    font-weight: 700;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 1;
 }
 .gift_price {
-	opacity: 0;
+    opacity: 0;
 }
 .gift_cell:hover .gift_price {
-	opacity: 1;
+    opacity: 1;
+}
+.gift_limit {
+    left: 0;
+    top: 15px;
+    position: absolute;
+    padding: 3px 6px;
+    background: #e64646;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 5px;
+    line-height: 1;
 }
 
 /* replies */
@@ -2245,9 +2256,9 @@ h4.gifts_section_header {
 
 /* paginator */
 .paginator-container {
-	margin: 15px 0;
-	display: flex;
-	justify-content: end;
+    margin: 15px 0;
+    display: flex;
+    justify-content: end;
 }
 .paginator {
     padding: 5px 10px;
@@ -2682,53 +2693,53 @@ h4.gifts_section_header {
 
 /* polls */
 .poll {
-	border: 1px solid var(--border-color);
-	border-radius: 2px;
-	padding: 12px 15px 14px;
-	margin: 8px 0 12px;
-	background-color: var(--module-background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    padding: 12px 15px 14px;
+    margin: 8px 0 12px;
+    background-color: var(--module-background-color);
 }
 .poll-meta {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 .poll-meta br {
-	display: none;
+    display: none;
 }
 .poll-meta .nobold {
-	display: block;
-	font-style: normal;
-	float: right;
+    display: block;
+    font-style: normal;
+    float: right;
 }
 .poll-result-bar, .poll-result-bar-sub {
-	border-radius: 2px;
+    border-radius: 2px;
 }
 .poll-result-bar {
-	position: relative;
-	margin: 3px 0 0;
-	background-color: var(--button-background-color--light);
-	height: 13pt;
-	flex: 14;
+    position: relative;
+    margin: 3px 0 0;
+    background-color: var(--button-background-color--light);
+    height: 13pt;
+    flex: 14;
 }
 .poll-result-barspace:not(:last-child) {
-	margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 .poll-result-bar-sub {
-	height: 100%;
-	background-color: var(--audio-slider-color-2);
+    height: 100%;
+    background-color: var(--audio-slider-color-2);
 }
 span.poll-result-count {
-	color: var(--link-color-2);
-	user-select: none;
+    color: var(--link-color-2);
+    user-select: none;
 }
 .poll h4 {
-	color: var(--post-action-color);
+    color: var(--post-action-color);
 }
 a.poll-retract-vote, .poll h4, .poll-meta {
-	font-size: 12.5px;
-	line-height: 16px;
+    font-size: 12.5px;
+    line-height: 16px;
 }
 .poll-result a b {
-	font-weight: 400;
+    font-weight: 400;
 }
 
 /* docs */
@@ -2751,7 +2762,7 @@ a.poll-retract-vote, .poll h4, .poll-meta {
     background-position: 0px -276px;
 }
 .docListViewItem .doc_volume #add_icon {
-	background-position-x: -63px;
+    background-position-x: -63px;
 }
 .docListViewItem .doc_volume #add_icon:hover {
     background-position-y: 0px;
