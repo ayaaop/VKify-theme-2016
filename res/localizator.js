@@ -108,7 +108,7 @@ let locales = {
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.3.0.6/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.3.0.7/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';
