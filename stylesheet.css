@@ -1984,6 +1984,106 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     align-items: center;
 }
 
+/* gifts */
+.gift {
+	padding-bottom: 15px;
+	border-bottom: 1px solid var(--border-color);
+}
+.gift .wall_text {
+	text-align: center;
+}
+.gift_image {
+	border-radius: 10px;
+	background-color: var(--module-background-color--secondary);
+	margin: 0 0 9px;
+	width: 256px;
+	height: 256px;
+	display: inline-block;
+}
+.gift_image img {
+	border-radius: 10px;
+	width: 256px;
+	height: auto;
+	object-fit: contain;
+	display: inline-block;
+}
+.gift_description {
+	padding: 0 10px;
+	line-height: 19px;
+	margin-bottom: -4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.gift_button {
+	margin-top: 12px;
+    text-align: center;
+}
+.gifts_section_row {
+	padding: 20px 25px 15px;
+	border-bottom: 1px solid var(--border-color);
+}
+.gifts_section_show_all {
+	display: flex;
+	text-decoration: none !important;
+	padding: 6px 0;
+	margin-top: -5px;
+}
+h4.gifts_section_header {
+	border-bottom: 0;
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 500;
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: auto;
+	color: var(--muted-text-color-2);
+}
+.gifts_section_description {
+	margin-bottom: 8px;
+	opacity: .7;
+}
+.gifts_section_scroll {
+	margin-inline: -10px;
+	overflow: hidden;
+	position: relative;
+}
+.gift_cell {
+	float: left;
+	padding: 10px;
+	position: relative;
+}
+.gift_cell .gift_img {
+	border-radius: 8px;
+	transition: opacity .2s;
+	object-fit: contain;
+}
+.gift_cell:hover .gift_img {
+	opacity: .8;
+}
+.gift_price, .gift_free {
+	line-height: 19px;
+	font-size: 12.5px;
+	background: var(--module-background-color--secondary);
+	border-radius: 3px;
+	padding: 1px 4px 2px;
+	margin: 0 7px;
+	color: var(--link-color);
+	font-weight: 700;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	text-align: center;
+	z-index: 1;
+}
+.gift_price {
+	opacity: 0;
+}
+.gift_cell:hover .gift_price {
+	opacity: 1;
+}
+
 /* replies */
 .reply {
     padding: 0 20px;

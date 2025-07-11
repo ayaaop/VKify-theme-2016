@@ -1,28 +1,53 @@
-{extends "../@listView.xml"}
+{extends "../@layout.xml"}
 {block title}
     {_gift_select}
 {/block}
 
-{block header}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
-    {_collections}
-{/block}
+{block content}
+    <div class="page_block">
+        {include "../components/page_crumb_header.xml", crumbs: [
+            ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+            ['title' => tr("collections"), 'count' => $count]
+        ]}
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block link|strip|stripHtml}
-    /gifts?act=menu&user={$user->getId()}&pack={$x->getId()}
-{/block}
-
-{block preview}
-    <img src="{$x->getThumbnailURL()}" width="75" alt="{$x->getName(tr('__lang'))}" loading=lazy />
-{/block}
-
-{block name}
-    {$x->getName(tr("__lang"))}
-{/block}
-
-{block description}
-    {$x->getDescription(tr("__lang"))}
+        {if sizeof($data) > 0}
+            <div class="scroll_container">
+                <div class="gifts_section_row clear_fix scroll_node" n:foreach="$data as $x">
+                    <a href="/gifts?act=menu&user={$user->getId()}&pack={$x->getId()}" class="gifts_section_show_all fl_r">{_show_more}</a>
+                    <h4 class="gifts_section_header">
+                        {$x->getName(tr("__lang"))}
+                    </h4>
+                    <div class="gifts_section_description">
+                        {$x->getDescription(tr("__lang"))}
+                    </div>
+                    <div class="gifts_section_scroll">
+                        <div class="gift_section_wrap">
+                            {foreach array_slice(iterator_to_array($x->getGifts()), 0, 12) as $gift}
+                                <a href="/gifts?act=confirm&user={$user->getId()}&pack={$x->getId()}&elid={$gift->getId()}" class="gift_cell">
+                                    <img width="107.5" height="107.5" class="gift_img" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
+                                    <div class="{if $gift->isFree() || $gift->getPrice() <= 2}gift_free{else}gift_price{/if}">
+                                        {if $gift->isFree()}
+                                            {_free_gift}
+                                        {else}
+                                            {tr('coins', $gift->getPrice())}
+                                        {/if}
+                                    </div>
+                                </a>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {include "../components/paginator.xml", conf => (object) [
+                "page"     => $page,
+                "count"    => $count,
+                "amount"   => sizeof($data),
+                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                "atBottom" => true,
+            ]}
+        {else}
+            {include "../components/content_error.xml", description => tr("no_data_description")}
+        {/if}
+    </div>
 {/block}

@@ -1,42 +1,64 @@
-{extends "../@listView.xml"}
+{extends "../@layout.xml"}
 {block title}
     {tr("users_gifts", $user->getFirstName())}
 {/block}
 
-{block header}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-    {_gifts}
-{/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
-
-{block link|strip|stripHtml}
-    javascript:false
-{/block}
-
-{block preview}
-    <img src="{$x->gift->getImage(2)}" width="75" alt="{_gift}" loading=lazy />
-{/block}
-
-{block name}
-    {_gift}
-{/block}
-
-{block description}
-    <table class="ugc-table" n:if="$hideInfo ? (!$x->anon || $x->sender->getId() === $thisUser->getId()) : true">
-        <tbody>
-            <tr>
-                <td><span class="nobold">{_sender}: </span></td>
-                <td>
-                    <a href="{$x->sender->getURL()}">
-                        {$x->sender->getFullName()}
-                    </a>
-                </td>
-            </tr>
-            <tr n:if="!empty($x->caption)">
-                <td><span class="nobold">{_comment}: </span></td>
-                <td>{$x->caption}</td>
-            </tr>
-        </tbody>
-    </table>
+{block content}
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+        ['title' => tr("gifts"), 'count' => $count]
+    ]}
+    <div class="page_block scroll_container">
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        {if sizeof($data) > 0}
+            <div class="scroll_node" n:foreach="$data as $x">
+                <div class="post gift">
+                    <div class="post_header">
+                        <a class="post_image" href="{!$x->anon ? $x->sender->getURL() : 'javascript:false'}">
+                            {if !$x->anon}
+                                <img src="{str_contains($x->sender->getAvatarUrl('miniscule'), 'camera_200.png') 
+                                ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png' : $x->sender->getAvatarUrl('miniscule')}" width="50" class="post-avatar" />
+                            {else}
+                                <img src="/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png" width="50" class="post-avatar" />
+                            {/if}
+                        </a>
+                        <div class="post_header_info">
+                            <div class="post_author">
+                                <a class="author" href="{!$x->anon ? $x->sender->getURL() : 'javascript:false'}">
+                                    {$x->anon ? tr("track_unknown") : $x->sender->getCanonicalName()}
+                                </a>
+                            </div>
+                            {*<div class="post_date">
+                                <a href="#" class="post_link">
+                                    {$x->getPublicationTime()}
+                                </a>
+                            </div>*}
+                        </div>
+                    </div>
+                    <div class="post-content wall_text">
+                        <div class="gift_image">
+                            <img src="{$x->gift->getImage(2)}" alt="{_gift}" loading=lazy />
+                        </div>
+                        <div class="gift_description">
+                            {$x->caption}
+                        </div>
+                    </div>
+                    {if $user->getId() === $thisUser->getId() && !$x->anon}
+                        <div class="gift_button">
+                            <a href="/gifts?act=pick&user={$x->sender->getId()}" class="button ">{_send_gift}</a>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+            {include "../components/paginator.xml", conf => (object) [
+                "page"     => $page,
+                "count"    => $count,
+                "amount"   => sizeof($data),
+                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                "atBottom" => true,
+            ]}
+        {else}
+            {include "../components/content_error.xml", description => tr("no_data_description")}
+        {/if}
+    </div>
 {/block}
