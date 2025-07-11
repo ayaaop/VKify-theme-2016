@@ -15,7 +15,7 @@
 {/if}
 
 <div class="poll" data-id="{$id}">
-    <a n:if="$unlocked && $voted" href="javascript:pollRetractVote({$id})" class="poll-retract-vote">{_retract_vote}</a>
+    <span class="nobold meta">{$meta}</span>
     <h4>{$title}</h4>
     <div class="poll-results">
         <div n:foreach="$results->options as $option" class="poll-result">
@@ -51,6 +51,6 @@
 
     <div class="poll-meta">
         {tr("poll_voter_count", $votes)|noescape}<br/>
-        <span class="nobold">{$meta}</span>
+        <a n:if="$unlocked && $voted" href="javascript:pollRetractVote({$id})" class="poll-retract-vote">{_retract_vote}</a>
     </div>
 </div>

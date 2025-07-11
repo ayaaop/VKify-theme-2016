@@ -2705,7 +2705,7 @@ h4.gifts_section_header {
 .poll-meta br {
     display: none;
 }
-.poll-meta .nobold {
+.nobold.meta {
     display: block;
     font-style: normal;
     float: right;
@@ -2740,6 +2740,12 @@ a.poll-retract-vote, .poll h4, .poll-meta {
 }
 .poll-result a b {
     font-weight: 400;
+}
+.poll-options {
+    margin-bottom: 15px;
+}
+.poll-options .poll-option:not(:last-child) {
+    margin-bottom: 10px;
 }
 
 /* docs */
