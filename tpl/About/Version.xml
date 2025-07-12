@@ -11,18 +11,26 @@
         .page_padding h1 {
             margin: 0;
         }
+        .page_table .e {
+            font-weight: 600;
+        }
+        .page_table tr.h th {
+            text-align: center;
+        }
+        .page_table tr.h td {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.846em;
+            color: var(--muted-text-color-2);
+        }
     </style>
     <div class="page_block page_padding">
-        <div class="page_padding" style="text-align: center;">
-            <h1 class="p">OpenVK {=OPENVK_VERSION}</h1>
+        <div class="page_padding" style="text-align: center; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: center;">
+            <h1 class="p" style="margin: 0">OpenVK {=OPENVK_VERSION}</h1>
+            <hr style="width: 1px; height: 30px; margin: 0">
+            <h2 class="p" style="margin: 0">VKify16 ({$theme->getVersion()})</h2>
         </div>
         <div class="settings_panel clear_fix group_settings" style="margin: 0">
-            <div class="settings_list_row">
-                <div class="settings_label">OpenVK version</div>
-                <div class="settings_labeled_text">
-                    {=OPENVK_VERSION}
-                </div>
-            </div>
             <div class="settings_list_row">
                 <div class="settings_label">Chandler version</div>
                 <div class="settings_labeled_text">

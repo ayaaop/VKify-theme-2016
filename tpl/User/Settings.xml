@@ -484,9 +484,9 @@
                     <div class="page_block">
                         {include "../components/page_crumb_header.xml",
                             crumbs: [
-                                ['title' => tr("points"), 'href' => '/settings?act=finance']
-                            ],
-                            current: tr("vouchers")
+                                ['title' => tr("points"), 'href' => '/settings?act=finance'],
+                                ['title' => tr("vouchers")]
+                            ]
                         }
                         <div class="settings_block_msg">
                             {_voucher_explanation} {_voucher_explanation_ex}

@@ -1208,7 +1208,7 @@ label:not(:has(a)) {
     margin: 5px 0;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a)) {
-    display: flex!important;
+    display: flex !important;
     align-items: center;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {
@@ -2705,6 +2705,10 @@ h4.gifts_section_header {
     display: block;
     font-style: normal;
     float: right;
+    white-space: wrap;
+    max-width: 200px;
+    text-align: end;
+    margin-left: 10px;
 }
 .poll-result-bar, .poll-result-bar-sub {
     border-radius: 2px;

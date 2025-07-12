@@ -282,6 +282,7 @@
                                 <div id="moreOptionsContent">
                                     <div class="tippy-menu">
                                         <a href="/about">{_footer_about_instance|firstUpper}</a>
+                                        <a href="/about:openvk">{_admin_about_version} ({$theme->getVersion()})</a>
                                         <a href="/language" 
                                             onclick="changeLangPopup(); return false;">
                                             {var $currentLang = getLanguage()}
