@@ -626,7 +626,7 @@ input:focus, textarea:focus {
     background: var(--module-background-color);
     box-sizing: border-box;
 }
-.tippy-box[data-theme="musicpopup"] .wide_column_wrap {
+.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap,.narrow_column_wrap) {
     height: 441px;
     overflow: hidden auto;
     position: relative;
@@ -636,7 +636,7 @@ input:focus, textarea:focus {
     /* IE and Edge */
     margin: 0;
 }
-.tippy-box[data-theme="musicpopup"] .wide_column_wrap::-webkit-scrollbar {
+.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap,.narrow_column_wrap)::-webkit-scrollbar {
     display: none;
     /* Chrome, Safari and Opera */
 }
@@ -651,6 +651,9 @@ input:focus, textarea:focus {
     top: 60px;
     right: 0;
     float: unset;
+}
+.tippy-box[data-theme="musicpopup"] .wide_column_left .narrow_column {
+    height: 100%;
 }
 .musfooter #ajclosebtn {
     float: right;
