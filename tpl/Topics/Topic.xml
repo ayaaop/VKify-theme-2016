@@ -6,7 +6,7 @@
     ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
     ['href' => "/board{$club->getId()}", 'title' => tr("discussions")],
     ['title' => $topic->getTitle(), 'count' => $count]
-], extra => '<a class="button" href="/topic'.$club->getId().'_'.$topic->getVirtualId().'/edit">'.tr("edit_topic_action").'</a>'
+], extra => '<a n:if="$topic->canBeModifiedBy($thisUser)" class="button" href="/topic'.$club->getId().'_'.$topic->getVirtualId().'/edit">'.tr("edit_topic_action").'</a>'
 }
 <div class="page_block">
     <div class="page_block_sub_header bt_header">

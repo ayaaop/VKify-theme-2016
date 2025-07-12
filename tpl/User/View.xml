@@ -301,7 +301,7 @@
 								</h3>
 							</a>
 							<div class="module_body clear_fix">
-								<div class="line_cell clear_fix" n:foreach="array_slice(($clubs = iterator_to_array($user->getClubs(1))) && shuffle($clubs) ? $clubs : $clubs, 0, 5) as $club">
+								<div class="line_cell clear_fix" n:foreach="array_slice(iterator_to_array($user->getClubs(1)), 0, 5) as $club">
 									<div class="thumb">
 										<a href="club{$club->getId()}">
 											<img class="cell_img" width="40" height="40" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
@@ -314,7 +314,7 @@
 									<div class="desc_info">
 										<div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
 										<div class="group_desc">
-											<span>{$club->getDescription()}</span>
+											<span>{$club->getDescription()|truncate:50}</span>
 										</div>
 									</div>
 								</div>
@@ -332,7 +332,7 @@
 								</h3>
 							</a>
 							<div class="module_body clear_fix">
-								<div class="line_cell clear_fix" n:foreach="array_slice(($meetings = iterator_to_array($user->getMeetings(1))) && shuffle($meetings) ? $meetings : $meetings, 0, 5) as $meeting">
+								<div class="line_cell clear_fix" n:foreach="array_slice(iterator_to_array($user->getMeetings(1)), 0, 5) as $meeting">
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
 											<img class="cell_img" width="40" height="40" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
@@ -345,7 +345,7 @@
 									<div class="desc_info">
 										<div class="group_name"><a href="/event{$meeting->getId()}">{$meeting->getName()}</a></div>
 										<div class="group_desc">
-											<span>{$meeting->getDescription()}</span>
+												<span>{$meeting->getDescription()|truncate:50}</span>
 										</div>
 									</div>
 								</div>

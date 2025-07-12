@@ -3018,6 +3018,7 @@ ul.im-page--dcontent {
 .messenger-app {
     border-color: var(--border-color);
     border-radius: var(--module-border-radius);
+    width: 100%;
 }
 .messenger-app--header, .messenger-app-header--actions {
     display: flex;
@@ -3150,6 +3151,7 @@ ul.im-page--dcontent {
     margin-right: 15px;
 }
 .messenger-app--input---messagebox button {
+    background-color: transparent;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iNDkzIDIwIDI0IDI0Ij48ZGVzYz4gQ3JlYXRlZCB3aXRoIFNrZXRjaC48L2Rlc2M+PGcgZmlsbD0ibm9uZSI+PHJlY3QgeD0iNDkzIiB5PSIyMCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ii8+PHBhdGggZD0iTTQ5OS4zIDMzLjZDNDk4LjcgMzUuMiA0OTcuOCAzNy42IDQ5Ny41IDM4LjkgNDk3IDQxIDQ5Ni43IDQxLjUgNDk4LjUgNDAuNSA1MDAuMyAzOS41IDUwOSAzNC41IDUxMSAzMy40IDUxMy41IDMxLjkgNTEzLjUgMzIgNTEwLjggMzAuNSA1MDguOCAyOS4zIDUwMC4xIDI0LjQgNDk4LjUgMjMuNSA0OTYuOCAyMi41IDQ5NyAyMyA0OTcuNSAyNS4xIDQ5Ny44IDI2LjQgNDk4LjcgMjguOCA0OTkuMyAzMC4zTDUwNi44IDMyIDQ5OS4zIDMzLjZaIiBmaWxsPSIjODI4QTk5Ii8+PC9nPjwvc3ZnPg==');
     background-repeat: no-repeat;
     background-size: 24px 24px;

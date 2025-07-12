@@ -8,7 +8,7 @@
     {include "../components/page_crumb_header.xml", crumbs: [
         ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
         ['title' => tr("discussions"), 'count' => sizeof($topics)]
-    ], extra => '<a class="button" href="/board'.$club->getId().'/create">'.tr("create_topic").'</a>'
+    ], extra => '<a n:if="$club->isEveryoneCanCreateTopics() || $club->canBeModifiedBy($thisUser)" class="button" href="/board'.$club->getId().'/create">'.tr("create_topic").'</a>'
     }
     {include "../components/search_bar.xml",
         action => '/board'.$club->getId(),

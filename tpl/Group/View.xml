@@ -135,7 +135,7 @@
 						{/if}
 					</div>
 
-					<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics()) && !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
+					<div n:if="($club->isEveryoneCanCreateTopics()) || !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
 						{if $topicsCount > 0}
 							<a href="/board{$club->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -340,7 +340,7 @@
 						</div>
 					{else}
 						<a href="/board{$club->getId()}/create" class="page_module_upload">
-							<div class="page_upload_label page_topics_upload"></div>Start a discussion</a>
+							<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
 					{/if}
 				</div>
 				
