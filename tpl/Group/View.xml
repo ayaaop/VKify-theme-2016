@@ -299,7 +299,13 @@
 						<div class="group_info_block info">
 							<div class="group_info_rows">
 								<div n:if="$club->getDescriptionHtml()" class="group_info_row info">
-									<div class="line_value">{$club->getDescriptionHtml()|noescape}</div>
+									{if strlen($club->getDescriptionHtml()) > 300}
+										<span class="truncated_text">{$club->getDescriptionHtml()|truncate:300|noescape}</span> 
+										<span class="full_text hidden">{$club->getDescriptionHtml()|noescape}</span>
+										<a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+									{else}
+										{$club->getDescriptionHtml()|noescape}
+									{/if}
 								</div>
 								<div n:if="$club->getWebsite()" class="group_info_row site">
 									<div class="line_value"><a n:if="$club->getWebsite()" href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>

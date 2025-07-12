@@ -131,7 +131,7 @@
                         {var $randomId = rand(1, $totalClubs)}
                         {if !in_array($randomId, $randomIds)}
                             {var $randomClub = $clubsRepo->get($randomId)}
-                            {if $randomClub && !$randomClub->isHideFromGlobalFeedEnabled() && !$randomClub->isHidingFromGlobalFeedEnforced() && !$randomClub->isBanned()}
+                            {if $randomClub && !$randomClub->isHideFromGlobalFeedEnabled() && !$randomClub->isHidingFromGlobalFeedEnforced() && !$randomClub->isBanned() && $randomClub->getSubscriptionStatus($thisUser) == false}
                                 {var $randomIds[] = $randomId}
                                 {var $randomClubs[] = $randomClub}
                             {/if}

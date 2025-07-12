@@ -165,7 +165,7 @@
                                             {tr("participants", $dat->getFollowersCount())}
                                         </div>
                                         <div class="labeled" n:if="!empty($dat->getDescription())">
-                                            {$dat->getDescription()}
+                                            {$dat->getDescription()|truncate:70}
                                         </div>
                                     </div>
                                     <div class="action_links controls">
@@ -203,8 +203,8 @@
                                                 {$dat->getName()}
                                             </a>
                                         </div>
-                                        <div class="labeled">
-                                            {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                        <div n:if="!empty($dat->getDescription())" class="labeled">
+                                            {$dat->getDescription()|truncate:70}
                                         </div>
                                     </div>
                                 </div>
