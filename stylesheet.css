@@ -1208,7 +1208,7 @@ label:not(:has(a)) {
     margin: 5px 0;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a)) {
-    display: flex;
+    display: flex!important;
     align-items: center;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {

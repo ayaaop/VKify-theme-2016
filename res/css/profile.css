@@ -578,6 +578,18 @@ div.avatar_block:hover .avatar_variants {
     border: 0;
 }
 
+.page_status_popup {
+    border: 1px solid var(--border-color);
+    background-color: var(--module-header-background-color);
+    box-shadow: 0 1px 3px var(--border-color);
+    padding: 10px;
+    width: 510px;
+    margin: 15px 0px 0 -10px;
+}
+.page_status_popup .button {
+    height: unset !important;
+}
+
 .profile_warning_row {
     color: var(--black)
 }
