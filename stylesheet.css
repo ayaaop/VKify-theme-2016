@@ -190,7 +190,7 @@ body {
 }
 
 .home_button div {
-    background: url("/themepack/vkify16/3.3.0.9/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.1.0/resource/icons/head_icons.png") no-repeat;
     background-position: 0 -98px;
     height: 19px;
     width: 32px;
@@ -439,7 +439,7 @@ input:focus, textarea:focus {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -498,7 +498,7 @@ input:focus, textarea:focus {
     margin: 7px 0px;
 }
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -547,7 +547,7 @@ input:focus, textarea:focus {
 .top_audio_player .top_audio_player_btn>div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.3.0.9/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.3.1.0/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -725,14 +725,14 @@ input:focus, textarea:focus {
     gap: 8px;
 }
 .musicIcon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/audio_player_controls.png) no-repeat;
     height: 10px;
     width: 12px;
 }
 .bigPlayer .playButtons .playButton {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/audio_player_controls.png) no-repeat, var(--accent-color);
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/audio_player_controls.png) no-repeat, var(--accent-color);
     background-position: left top;
     border-radius: 50%;
     margin: 15px 0;
@@ -773,13 +773,13 @@ input:focus, textarea:focus {
     gap: 6px
 }
 .audioEntry .buttons .musicIcon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/common.png) no-repeat;
     height: 13px !important;
     width: 13px !important;
     box-sizing: border-box;
 }
 .audioEntry .buttons .musicIcon.download-icon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/download_icon.png) no-repeat !important;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/download_icon.png) no-repeat !important;
 }
 .audioEntry .buttons .musicIcon.add-icon {
     background-position: 0px 1px !important;
@@ -917,7 +917,7 @@ input:focus, textarea:focus {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #577ca1 url(/themepack/vkify16/3.3.0.9/resource/icons/audio_playpause.png) no-repeat 8px 7px;
+    background: #577ca1 url(/themepack/vkify16/3.3.1.0/resource/icons/audio_playpause.png) no-repeat 8px 7px;
 }
 .audioEntry.nowPlaying .playIcon {
     background-position-y: -15px !important;
@@ -958,7 +958,7 @@ input:focus, textarea:focus {
     border-radius: 14px;
     -o-transition: background-color .05s, color .05s;
     transition: background-color .05s, color .05s;
-    background: var(--search-color) url(/themepack/vkify16/3.3.0.9/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.3.1.0/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -998,7 +998,7 @@ input:focus, textarea:focus {
 }
 
 .navigation .link:before {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/menu_icon.png) no-repeat 7px -441px;
     content: '';
     height: 25px;
     width: 35px;
@@ -1026,7 +1026,7 @@ input:focus, textarea:focus {
     background-position: 7px -161px
 }
 .navigation .link[href="/settings"]::before {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/common.png);
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/common.png);
     background-position: 10px 175px;
     height: 20px;
 }
@@ -1040,7 +1040,7 @@ input:focus, textarea:focus {
     background-position: 7px -105px;
 }
 .navigation .link[href="/donate"]::before {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .navigation .link[href="/docs"]:before {
@@ -1063,7 +1063,7 @@ input:focus, textarea:focus {
 .left_menu_nav_wrap #moreOptionsLink:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1333,7 +1333,7 @@ label:not(:has(a))+label:not(:has(a)) {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -1581,7 +1581,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .post-attach-menu__icon, .post-upload::before, .post-has-poll::before, .post-has-note::before, .attachment_note::before {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_icon.png) no-repeat;
     opacity: .7;
     content: '';
 }
@@ -1853,7 +1853,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_like_icon, .post_share_icon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_icon.png) no-repeat 0 0;
     display: inline-block;
     width: 16px;
     height: 13px;
@@ -1956,7 +1956,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -2129,7 +2129,7 @@ h4.gifts_section_header {
     vertical-align: top;
 }
 .like_icon {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -2163,7 +2163,7 @@ h4.gifts_section_header {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     cursor: pointer;
     height: 13px;
@@ -2182,7 +2182,7 @@ h4.gifts_section_header {
     opacity: 1;
 }
 .reply_action.reply_report_action {
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/common.png) 0px -455px;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/common.png) 0px -455px;
     background-size: 24px;
 }
 .reply .reply_action.reply_report_action:hover {
@@ -2514,7 +2514,7 @@ h4.gifts_section_header {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.0.9/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.1.0/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -2601,7 +2601,7 @@ h4.gifts_section_header {
     width: 16px;
     height: 16px;
     background-repeat: no-repeat;
-    background-image: url(/themepack/vkify16/3.3.0.9/resource/icons/photo_edit_actions.png)
+    background-image: url(/themepack/vkify16/3.3.1.0/resource/icons/photo_edit_actions.png)
 }
 .video_thumb_actions .video_thumb_action_edit .icon {
     background-position: 0 -65px
@@ -2777,7 +2777,7 @@ a.poll-retract-vote, .poll h4, .poll-meta {
 .docListViewItem .doc_volume>div {
     height: 13px;
     width: 13px;
-    background: url('/themepack/vkify16/3.3.0.9/resource/icons/common.png');
+    background: url('/themepack/vkify16/3.3.1.0/resource/icons/common.png');
 }
 .docListViewItem .doc_volume>div, .docGalleryItem .doc_top_panel>div {
     opacity: .7;
@@ -3106,7 +3106,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
     height: 48px;
     width: 48px;
-    background: url(/themepack/vkify16/3.3.0.9/resource/icons/post_more.png) no-repeat center center;
+    background: url(/themepack/vkify16/3.3.1.0/resource/icons/post_more.png) no-repeat center center;
     cursor: pointer;
 }
 
