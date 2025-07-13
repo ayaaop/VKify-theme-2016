@@ -252,6 +252,49 @@
 	opacity: 1;
 }
 
+@keyframes slideRight {
+	from {
+		margin-right: 0;
+		opacity: 1;
+	}
+	to {
+		margin-right: -310px;
+		opacity: 0;
+	}
+}
+@keyframes fullWidth {
+	from {
+		width: calc(100% - 310px);
+	}
+	to {
+		width: 100%;
+	}
+}
+@keyframes fullHeight {
+	from {
+		min-height: 400px;
+	}
+	to {
+		min-height: 800px;
+	}
+}
+.private .pv_right {
+	animation: slideRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+}
+.private .pv_left {
+	animation: fullWidth 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+}
+.private .pv_wrapper {
+	animation: fullHeight 0.4s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+}
+.private .pv_photo {
+	display: flex;
+	height: 100%;
+}
+.private .pv_bottom_info {
+	display: none;
+}
+
 .tippy-box[data-theme="dark vk"] {
 	background: #333333;
 	border: 0;

@@ -46,9 +46,7 @@
                                 {else}
                                     <div class="labeled name">
                                         <a href="{include link, x => $dat}">
-                                            <b>
-                                                {include name, x => $dat}
-                                            </b>
+                                            {include name, x => $dat}
                                         </a>
                                     </div>
                                     {include description, x => $dat}

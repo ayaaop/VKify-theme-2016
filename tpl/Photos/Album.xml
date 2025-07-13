@@ -1,39 +1,61 @@
 {extends "../@layout.xml"}
+{var $canEdit = isset($thisUser) && $album->canBeModifiedBy($thisUser)}
 
 {block title}{_album} {$album->getName()}{/block}
 
 {block content}
     {if !is_null($thisUser) && $album->canBeModifiedBy($thisUser) && !$album->isCreatedBySystem()}
-        {var $extra = '<a class="button button_light" href="/album' . $album->getPrettyId() . '/edit">' . tr("edit_album") . '</a> <a class="button" href="/photos/upload?album=' . $album->getPrettyId() . '">' . tr('upload_photo') . '</a>'}
+        {var $extra = '<a class="button" href="/photos/upload?album=' . $album->getPrettyId() . '">' . tr('upload_photo') . '</a>'}
     {else}
         {var $extra = ''}
     {/if}
-    {include "../components/page_crumb_header.xml", crumbs => [
-        ['href' => $album->getOwner()->getURL(), 'title' => $album->getOwner()->getCanonicalName()],
-        ['href' => ($album->getOwner() instanceof openvk\Web\Models\Entities\Club ? "/albums" . ($album->getOwner()->getId() * -1) : "/albums" . $album->getOwner()->getId()), 'title' => tr("albums")],
-        ['title' => $album->getName(), 'count' => $album->getPhotosCount()],
-    ], extra => $extra}
-    <div class="page_block page_padding">
-        {if $album->getPhotosCount() > 0}
-            <div class="scroll_container album-flex">
-                {foreach $photos as $photo}
-                    {php if($photo->isDeleted()) continue; }
-                    <div class="album-photo">
-                        <a
-                        n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
-                        href="/album{$album->getPrettyId()}/remove_photo/{$photo->getId()}" class="album-photo--delete">
-                            &times;
-                        </a>
-                        
-                        <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
-                            <img class="album-photo--image" src="{$photo->getURLBySizeId('small')}" alt="{$photo->getDescription()}" loading="lazy" />
-                        </a>
-                    </div>
-                {/foreach}
+    <div class="page_block">
+        {include "../components/page_crumb_header.xml", crumbs => [
+            ['href' => $album->getOwner()->getURL(), 'title' => $album->getOwner()->getCanonicalName()],
+            ['href' => ($album->getOwner() instanceof openvk\Web\Models\Entities\Club ? "/albums" . ($album->getOwner()->getId() * -1) : "/albums" . $album->getOwner()->getId()), 'title' => tr("albums")],
+            ['title' => $album->getName(), 'count' => $album->getPhotosCount()]
+        ], extra => $extra}
+        <div class="photos_album_intro">
+            <h1>{$album->getName()}</h1>
+            <div class="photos_album_intro_desc" n:if="$album->getDescription()">
+                {if strlen($album->getDescription()) > 500}
+                    <span class="truncated_text">{$album->getDescription()|truncate:500|noescape}</span> 
+                    <span class="full_text hidden">{$album->getDescription()|noescape}</span>
+                    <a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+                {else}
+                    {$album->getDescription()|noescape}
+                {/if}
             </div>
-            {include "../components/paginator.xml", conf => $paginatorConf}
-        {else}
-            {include "../components/nothing.xml"}
-        {/if}
+            <div class="photos_album_intro_info">
+                <span class="photos_album_info">{tr("is_x_photos", $album->getPhotosCount())}</span>
+                {if $canEdit}
+                    <span class="divider"></span>
+                    <a href="/album{$album->getPrettyId()}/edit" class="photos_album_info">{_edit_album}</a>
+                {/if}
+            </div>
+        </div>
+        <div class="page_padding">
+            {if $album->getPhotosCount() > 0}
+                <div class="scroll_container album-flex">
+                    {foreach $photos as $photo}
+                        {php if($photo->isDeleted()) continue; }
+                        <div class="album-photo">
+                            <a
+                            n:if="$canEdit"
+                            href="/album{$album->getPrettyId()}/remove_photo/{$photo->getId()}" class="album-photo--delete">
+                                &times;
+                            </a>
+                            
+                            <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}" onclick="OpenMiniature(event, {$photo->getURLBySizeId('larger')}, {$album->getPrettyId()}, {$photo->getPrettyId()}, 'album')">
+                                <img class="album-photo--image" src="{$photo->getURLBySizeId('small')}" alt="{$photo->getDescription()}" loading="lazy" />
+                            </a>
+                        </div>
+                    {/foreach}
+                </div>
+                {include "../components/paginator.xml", conf => $paginatorConf}
+            {else}
+                {include "../components/nothing.xml"}
+            {/if}
+        </div>
     </div>
 {/block}

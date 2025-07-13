@@ -626,7 +626,7 @@ input:focus, textarea:focus {
     background: var(--module-background-color);
     box-sizing: border-box;
 }
-.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap,.narrow_column_wrap) {
+.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap, .narrow_column_wrap) {
     height: 441px;
     overflow: hidden auto;
     position: relative;
@@ -636,7 +636,7 @@ input:focus, textarea:focus {
     /* IE and Edge */
     margin: 0;
 }
-.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap,.narrow_column_wrap)::-webkit-scrollbar {
+.tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap, .narrow_column_wrap)::-webkit-scrollbar {
     display: none;
     /* Chrome, Safari and Opera */
 }
@@ -2205,6 +2205,25 @@ h4.gifts_section_header {
 }
 
 /* album photos */
+.photos_album_intro h1 {
+    text-align: center;
+}
+.photos_album_intro .photos_album_intro_desc {
+    color: var(--text-color);
+    font-size: 13px;
+    padding: 5px 20px;
+    line-height: 1.4em;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.photos_album_intro .photos_album_intro_info {
+    color: var(--muted-text-color);
+    font-size: 12.5px;
+    padding: 5px 0;
+    text-align: center;
+}
+
 .album-flex {
     column-count: 3;
     column-gap: 10px;

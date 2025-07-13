@@ -7,13 +7,10 @@
     body {
         --layout-width: 1075px;
     }
-    .page_body {
-        width: 910px
-    }
     </style>
     {do $crumbs = [
-        ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
-        ['href' => "/albums{$owner->getId()}", 'title' => tr("albums")]
+        ['href' => $photo->getAlbum()->getOwner()->getURL(), 'title' => $photo->getAlbum()->getOwner()->getCanonicalName()],
+        ['href' => "/albums{$photo->getAlbum()->getOwner()->getId()}", 'title' => tr("albums")]
     ]}
 
     {if $photo->getAlbum()}

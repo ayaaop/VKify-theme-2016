@@ -26,7 +26,7 @@
                         <div class="page_album_title">
                             <div class="page_album_size">{$x->getPhotosCount()}</div>
                             <div class="page_album_title_text">{$x->getName()}</div>
-                            <div class="page_album_description">{$x->getDescription()}</div>
+                            <div class="page_album_description">{$x->getDescription()|truncate:100|noescape}</div>
                         </div>
                     </a>
                 </div>

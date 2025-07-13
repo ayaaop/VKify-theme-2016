@@ -126,7 +126,7 @@
                 </div>
 
                 {* Handle case when post has no text and no attachments *}
-                {if !$post->getText(false) && (!$attachmentsLayout->tiles || sizeof($attachmentsLayout->tiles) == 0) && (!$attachmentsLayout->extras || sizeof($attachmentsLayout->extras) == 0)}
+                {if !$post->isDeactivationMessage() && !$post->getText(false) && (!$attachmentsLayout->tiles || sizeof($attachmentsLayout->tiles) == 0) && (!$attachmentsLayout->extras || sizeof($attachmentsLayout->extras) == 0)}
                     <div class="really_text wall_post_text deleted_content">
                         {include "../content_error.xml", title => '<vkifyloc name="deleted_attachment"></vkifyloc>', description => '<vkifyloc name="deleted_attachment_2"></vkifyloc>'}
                     </div>

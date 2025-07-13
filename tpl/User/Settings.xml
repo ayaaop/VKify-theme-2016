@@ -56,7 +56,7 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                {if $isMain && !$isVkify}
+                {if $isMain}
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "main"}
                         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
@@ -147,8 +147,7 @@
                                             </div>
                                         </div>
                                         <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
-                                        <input type="checkbox" name="deactivate_share" id="deactivate_share" checked>
-                                        <label for="deactivate_share">${tr("share_with_friends")}</label>
+                                        <label><input type="checkbox" name="deactivate_share" id="deactivate_share" checked> ${tr("share_with_friends")}</label>
                                         <input type="hidden" name="hash" value="${hash}" />
                                     </form>
                                 `, [tr("profile_deactivate_button"), tr("cancel")], [

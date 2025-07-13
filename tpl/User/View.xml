@@ -77,23 +77,23 @@
 									{if $user->getPrivacyPermission('messages.write', $thisUser)}
 										<div class="profile_msg_split">
 											<div class="cut_left">
-												<button class="button button_blue profile_btn_cut_left profile_action_btn button_wide" onclick="window.location.href='/im?sel={$user->getId()}'" rel="nofollow">
+												<a class="button button_blue profile_btn_cut_left profile_action_btn button_wide" href="/im?sel={$user->getId()}">
 													{_send_message}
-												</button>
+												</a>
 											</div>
 											<div class="cut_right">
-												<button class="button button_blue profile_btn_cut_right profile_action_btn" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+												<a class="button button_blue profile_btn_cut_right profile_action_btn" href="/gifts?act=pick&user={$user->getId()}">
 													<span class="profile_gift_icon"></span>
-												</button>
+												</a>
 											</div>
 										</div>
 									{else}
-										<button class="button button_blue profile_action_btn button_wide" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
+										<a class="button button_blue profile_action_btn button_wide" href="/gifts?act=pick&user={$user->getId()}">
 											<span class="profile_gift_icon"></span> {_gift}
-										</button>
+										</a>
 									{/if}
 								{else}
-									<a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
+									<a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}">
 										{_send_message}
 									</a>
 								{/if}
@@ -425,7 +425,7 @@
 												<vkifyloc name="external" />
 											</span>
 										{/if}
-											<span class="video_thumb_label_item">{$video->getLength()}</span>
+											<span class="video_thumb_label_item">{$video->getFormattedLength()}</span>
 										</div>
 										<div class="page_video_play_icon"></div>
 										<span class="page_video_thumb" style="background-image: url('{$video->getThumbnailURL()}');"></span>

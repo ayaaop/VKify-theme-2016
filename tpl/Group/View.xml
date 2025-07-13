@@ -1,5 +1,6 @@
 {extends "../@layout.xml"}
 {var $backdrops = $club->getBackDropPictureURLs()}
+{var $canEdit = $thisUser && $club->canBeModifiedBy($thisUser)}
 
 {block title}{$club->getName()}{/block} 
 
@@ -11,7 +12,7 @@
     			{var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
 				<div class="page_block photo_block">
 					<div class="avatar_block" data-club="{$club->getId()}">
-						{if $thisUser && $club->canBeModifiedBy($thisUser)}
+						{if $canEdit}
 							<a {if $avatarPhoto}style="display:none"{/if} class="add_image_text" id="add_image">{_add_image}</a>
 							<div {if !$avatarPhoto}style="display:none"{/if} class="avatar_controls">
 								<div class="avatarDelete hoverable"></div>
@@ -49,7 +50,7 @@
 								<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
 								<div id="profile_actions_tooltip">
 									<div class="tippy-menu">
-										{if $club->canBeModifiedBy($thisUser)}
+										{if $canEdit}
 											<a href="/club{$club->getId()}/edit">{_edit_group}</a>
 											<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
 											<div class="separator"></div>
@@ -101,7 +102,7 @@
 						</div>
 				</div>
 				<div n:ifcontent class="page_block">
-					<div n:if="$club->isDisplayTopicsAboveWallEnabled() && ($albumsCount > 0 || (isset($thisUser) && $thisUser->getId() == $club->getOwner()->getId()))" class="module album_module">
+					<div n:if="$club->isDisplayTopicsAboveWallEnabled() && ($albumsCount > 0 || $canEdit)" class="module album_module">
 						{if $albumsCount > 0}
 							<a href="/albums{$club->getId() * -1}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -129,7 +130,7 @@
 									</a>
 								</div>
 							</div>
-						{elseif isset($thisUser) && $thisUser->getId() == $club->getOwner()->getId()}
+						{elseif $canEdit}
 							<a href="/albums{$club->getId() * -1}" class="page_module_upload">
 								<div class="page_upload_label page_photos_upload"></div>{_upload_photo}</a>
 						{/if}
@@ -164,7 +165,7 @@
 						{/if}
 					</div>
 
-					<div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))" class="module">
+					<div n:if="($thisUser && $docsCount > 0 || $canEdit)" class="module">
 						{if $docsCount > 0}
 							<a href="/docs{$club->getRealId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -206,7 +207,7 @@
 									</div>
 								</div>
 							</div>
-						{elseif $thisUser->getId() == $club->getOwner()->getId() || $club->isEveryoneCanUploadAudios()}
+						{elseif $canEdit || $club->isEveryoneCanUploadAudios()}
 							<a href="/audios-{$club->getId()}" class="page_module_upload">
 								<div class="page_upload_label page_audios_upload"></div>{_add_audio_to_club}</a>
 						{/if}
@@ -295,26 +296,37 @@
 							<li class="ui_tab_default"><div class="ui_tab_plain" href="/club{$club->getId()}">{_information}</div></li>
 						</ul>
 					</h2>	
-					<div class="page_info_wrap info">
+					<div class="page_padding info">
 						<div class="group_info_block info">
 							<div class="group_info_rows">
-								<div n:if="$club->getDescriptionHtml()" class="group_info_row info">
-									{if strlen($club->getDescriptionHtml()) > 300}
-										<span class="truncated_text">{$club->getDescriptionHtml()|truncate:300|noescape}</span> 
-										<span class="full_text hidden">{$club->getDescriptionHtml()|noescape}</span>
-										<a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+								{var $descHtml = $club->getDescriptionHtml()}
+								<div class="group_info_row info">
+									{if $descHtml}
+										{if strlen($descHtml) > 300}
+											<span class="truncated_text">{$descHtml|truncate:300|noescape}</span> 
+											<span class="full_text hidden">{$descHtml|noescape}</span>
+											<a href="javascript:void(0)" class="expand_note" onclick="toggleLongText(this)">{_show_more}</a>
+										{else}
+											{$descHtml|noescape}
+										{/if}
+									{elseif $canEdit}
+										<a href="/club{$club->getId()}/edit">{_desc_none|firstUpper}</a>
 									{else}
-										{$club->getDescriptionHtml()|noescape}
+										<span class="nobold">{_desc_none|firstUpper}</span>
 									{/if}
 								</div>
-								<div n:if="$club->getWebsite()" class="group_info_row site">
-									<div class="line_value"><a n:if="$club->getWebsite()" href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>
+								<div n:if="$club->getWebsite() || $canEdit" class="group_info_row site">
+									{if $club->getWebsite()}
+										<div class="line_value"><a n:if="$club->getWebsite()" href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>
+									{elseif $canEdit}
+										<a href="/club{$club->getId()}/edit">{_admin_banned_link_not_specified}</a>
+									{/if}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))) && $club->isDisplayTopicsAboveWallEnabled()"
+				<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || $canEdit) && $club->isDisplayTopicsAboveWallEnabled()"
 				class="page_block module topics_module">
 					{if $topicsCount > 0}
 						<a href="/board{$club->getId()}" class="module_header">
@@ -361,7 +373,7 @@
 	{* чтобы папа Вова и дальше был доволен, жду в ближайшее время всех описанных и перечисленных тобою костылей. ну кроме последнего сценария..)) хотя... ;) *}
 	{* кстати насчет костыля в виде диалогов... в js отлично, а я еще люблю когда они как бы случайно совсем чуть-чуть отваливаются... *}
 	{* и раз уж ты такая плохая девочка, вот видео как раз для тебя: https://ovk.to/video8120_17 *}
-    <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)">
+    <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$canEdit">
         document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
     </script>
 </div>

@@ -763,6 +763,19 @@ div.avatar_block:hover .avatar_variants {
     color: var(--muted-text-color-2)
 }
 
+.profile_deleted {
+    color: var(--muted-text-color-2);
+    padding-top: 2px;
+    line-height: 18px
+}
+.profile_deleted_text {
+    text-align: center;
+    color: var(--muted-text-color-2);
+    padding: 50px 0 40px;
+    line-height: 165%
+}
+
+
 
 /* groups */
 .group_info_block.info {

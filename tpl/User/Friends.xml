@@ -37,7 +37,7 @@
 {block rtabs}
     {var $menuItems = [
         [
-            'url' => '/friends' . $thisUser->getId(),
+            'url' => '/friends' . $user->getId(),
             'title' => 'all_friends',
             'active' => $act === 'friends',
             'extraItem' => [
@@ -62,7 +62,8 @@
             ]
         ],
         [
-            'isSeparator' => true
+            'isSeparator' => true,
+            'condition' => isset($thisUser) && $thisUser->getId() == $user->getId()
         ],
         [
             'url' => '/invite',
@@ -71,7 +72,7 @@
             'condition' => isset($thisUser) && $thisUser->getId() == $user->getId()
         ]
     ]}
-    {include "../components/ui_rmenu.xml", items => $menuItems}
+    {include "../components/ui_rmenu.xml", items => $menuItems, ownblockData => $user}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

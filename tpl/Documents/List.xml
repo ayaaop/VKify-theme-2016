@@ -30,7 +30,7 @@
                     'count' => $tab['count'] > 1 ? $tab['count'] : null
                 ]}
             {/foreach}
-            {include "../components/ui_rmenu.xml", items => $tabMenuItems, additionalCssClass => 'docs_tabs', id => 'docs_tabs', ownblock => isset($group) ? 'club' : null}
+            {include "../components/ui_rmenu.xml", items => $tabMenuItems, additionalCssClass => 'docs_tabs', id => 'docs_tabs', ownblockData => isset($group) ? $group : null}
             <div n:if="$count > 3" class="page_block module_body">
                     <select name="docs_sort">
                         <option n:attr="selected => $order == 0" value="0">{_documents_sort_add}</option>

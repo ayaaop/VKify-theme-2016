@@ -1,30 +1,36 @@
 {extends "../@layout.xml"}
 {block title}{_edit_photo}{/block}
 
-{block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
-    » 
-    {_photo}
-{/block}
-
 {block content}
-    <form method="post" enctype="multipart/form-data">
-      <table cellspacing="6">
-        <tbody>
-          <tr>
-            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
-            <td>
-                <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$photo->getDescription()}</textarea>
-            </td>
-          </tr>
-          <tr>
-            <td width="120" valign="top"></td>
-            <td>
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button" name="submit" value="{_save}" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
+    {do $crumbs = [
+        ['href' => $photo->getAlbum()->getOwner()->getURL(), 'title' => $photo->getAlbum()->getOwner()->getCanonicalName()],
+        ['href' => "/albums{$photo->getAlbum()->getOwner()->getId()}", 'title' => tr("albums")]
+    ]}
+
+    {if $photo->getAlbum()}
+        {do $crumbs[] = [
+            'href' => "/album{$photo->getAlbum()->getPrettyId()}",
+            'title' => $photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()
+        ]}
+    {/if}
+
+    {do $crumbs[] = ['href' => "/photo{$photo->getPrettyId()}", 'title' => tr("photo")]}
+    {do $crumbs[] = ['title' => tr("edit_photo")]}
+    <div class="page_block">
+        {include "../components/page_crumb_header.xml", crumbs => $crumbs}
+      <form method="post" enctype="multipart/form-data">
+      <div class="settings_panel settings_padding edit_panel" style="width: 455px;margin-inline: auto;">
+        <div class="settings_list_row">
+            <div class="settings_label">{_description}</div>
+            <div class="settings_labeled_text">
+                <textarea name="desc">{$photo->getDescription()}</textarea>
+            </div>
+        </div>
+        <div class="settings_save_footer">
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" class="button" name="submit" value="{_save}" />
+        </div>
+      </div>
+      </form>
+    </div>
 {/block}

@@ -1,30 +1,58 @@
 {extends "../@layout.xml"}
 {block title}{$user->getCanonicalName()}{/block}
 
-{block header}
-    {$user->getCanonicalName()}
-{/block}
-
 {block content}
-    <div class="left_small_block">
-        <div>
-            <img src="{$user->getAvatarUrl('normal')}"
-                alt="{$user->getCanonicalName()}"
-                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-        </div>
-    </div>
-
-    <div class="right_big_block">
-        <div class="page_info">
-            <div class="accountInfo clearFix">
-                <div class="profileName">
-                    <h2>{$user->getFullName()}</h2>
-                    <div class="page_status" style="color: #AAA;">{_profile_deactivated_status}</div>
+    <div class="wide_column_right">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                <div class="page_block photo_block">
+                    <div class="avatar_block">
+                        <div class="avatar_block_inner">
+                            {if str_contains($user->getAvatarUrl('miniscule'), 'camera_200.png')}
+                                <img src="/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png"
+                                    alt="{$user->getCanonicalName()}"
+                                    style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                            {else}
+                                <img src="{$user->getAvatarUrl('normal')}"
+                                    alt="{$user->getCanonicalName()}"
+                                    style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="profile_actions clear_fix" n:if="isset($thisUser)" n:ifcontent>
+                        {var $subStatus = $user->getSubscriptionStatus($thisUser)}
+                        {var $actions = [
+                            2 => ['act' => 'rem', 'label' => tr('friends_reject')],
+                            3 => ['act' => 'rem', 'label' => tr('friends_delete')]
+                        ]}
+                        {if isset($actions[$subStatus])}
+                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
+                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                                <input type="hidden" name="id"  value="{$user->getId()}" />
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide button_gray" />
+                            </form>
+                        {/if}
+                    </div>
                 </div>
             </div>
-            <center style="color: #AAA;margin: 40px 0;font-size: 13px;">
-                {_profile_deactivated_info|noescape}
-            </center>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block page_info_wrap">
+                    <div class="accountInfo clearFix">
+                        <div class="page_top">
+                            <h2 class="page_name">{$user->getFullName()}
+                                <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a>
+                            </h2>
+                            <div class="page_status profile_deleted">{_profile_deactivated_status}</div>
+                        </div>
+                    </div>
+                    <div class="profile_deleted_text">
+                        {_profile_deactivated_info|noescape}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {/block}

@@ -31,22 +31,35 @@
                         - content: HTML content for the extra item
                         - condition: (optional) Condition to show this item
                         - onclick: (optional) onclick handler
-                      Note: If not provided, will be auto-generated based on $wallOwner. Will be auto-generated based on $user or $club if $ownblock is true
+                      Note: If not provided, will be auto-generated based on $wallOwner.
 *}
 <div class="page_block ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
-    {var $owner = isset($ownblock) && $ownblock ? (isset($club) ? $club : $user) : (isset($wallOwner) ? $wallOwner : $oObj)}
-    {if isset($owner)}
-        {if $owner instanceof \openvk\Web\Models\Entities\Club}
+    {if isset($ownblockData) && is_object($ownblockData)}
+        {if $ownblockData instanceof \openvk\Web\Models\Entities\Club}
             {var $ownblockData = [
-                'url' => "/club" . $owner->getId(),
-                'name' => $owner->getName(),
-                'img' => $owner->getAvatarURL()
+                'url' => "/club" . $ownblockData->getId(),
+                'name' => $ownblockData->getName(),
+                'img' => $ownblockData->getAvatarURL()
             ]}
         {else}
             {var $ownblockData = [
-                'url' => "/id" . $owner->getId(),
-                'name' => $owner->getFirstName() . " " . $owner->getLastName(),
-                'img' => $owner->getAvatarURL()
+                'url' => "/id" . $ownblockData->getId(),
+                'name' => $ownblockData->getFirstName() . " " . $ownblockData->getLastName(),
+                'img' => $ownblockData->getAvatarURL()
+            ]}
+        {/if}
+    {elseif isset($wallOwner)}
+        {if $wallOwner instanceof \openvk\Web\Models\Entities\Club}
+            {var $ownblockData = [
+                'url' => "/club" . $wallOwner->getId(),
+                'name' => $wallOwner->getName(),
+                'img' => $wallOwner->getAvatarURL()
+            ]}
+        {else}
+            {var $ownblockData = [
+                'url' => "/id" . $wallOwner->getId(),
+                'name' => $wallOwner->getFirstName() . " " . $wallOwner->getLastName(),
+                'img' => $wallOwner->getAvatarURL()
             ]}
         {/if}
     {/if}

@@ -59,7 +59,7 @@
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
-                {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => true}
+                {include "../components/ui_rmenu.xml", items => $menuItems, ownblockData => $user}
             </div>
         </div>
         <div class="wide_column_wrap">

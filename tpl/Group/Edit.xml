@@ -28,12 +28,7 @@
                             'active' => false
                         ]
                     ]}
-                    {var $ownblockData = [
-                        'url' => "/club" . $club->getId(),
-                        'name' => $club->getName(),
-                        'img' => $club->getAvatarURL()
-                    ]}
-                    {include "../components/ui_rmenu.xml", items => $menuItems, ownblock => "club"}
+                    {include "../components/ui_rmenu.xml", items => $menuItems, ownblockData => $club}
                 </div>
             </div>
             <div class="wide_column_wrap">

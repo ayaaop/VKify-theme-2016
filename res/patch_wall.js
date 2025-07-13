@@ -675,19 +675,54 @@ async function OpenVideo(video_arr = [], init_player = true) {
     const video_owner = video_arr[0];
     const video_id = video_arr[1];
     let video_api = null;
+    let isPrivacyRestricted = false;
 
-    try {
-        video_api = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1});
+    // First, check if the owner's profile is closed (but not if current user is the owner)
+    if (video_owner > 0) { // Only check for user profiles, not groups (negative IDs)
+        try {
+            const userInfo = await window.OVKAPI.call('users.get', {
+                'user_ids': video_owner,
+                'fields': 'is_closed'
+            });
 
-        if(!video_api.items || !video_api.items[0]) {
-            throw new Error('Not found');
+            // Check if profile is closed AND current user is not the owner
+            if (userInfo && userInfo[0] && userInfo[0].is_closed) {
+                // Get current user ID to check if they're the owner
+                const currentUser = window.openvk.current_id;
+                if (currentUser != video_owner) {
+                    isPrivacyRestricted = true;
+                }
+            }
+        } catch(e) {
+            // If we can't get user info, continue with normal flow
+            console.warn('Could not check user privacy status:', e);
         }
-    } catch(e) {
-        CMessageBox.toggleLoader();
-        fastError(e.message);
-        return;
     }
 
+    // If not privacy restricted by profile closure, try to get video data
+    if (!isPrivacyRestricted) {
+        try {
+            video_api = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1});
+
+            if(!video_api.items || !video_api.items[0]) {
+                throw new Error('Not found');
+            }
+        } catch(e) {
+            // Check if this is a privacy-related error
+            const errorMessage = e.message ? e.message.toLowerCase() : '';
+            if (errorMessage.includes('access') || errorMessage.includes('private') ||
+                errorMessage.includes('permission') || errorMessage.includes('forbidden') ||
+                errorMessage.includes('denied') || e.code === 15 || e.code === 18) {
+                isPrivacyRestricted = true;
+            } else {
+                CMessageBox.toggleLoader();
+                fastError(e.message);
+                return;
+            }
+        }
+    }
+
+    // Always get video object data - privacy only affects info, not the video itself
     const video_object = video_api.items[0];
     const pretty_id = `${video_object.owner_id}_${video_object.id}`;
     const author = find_author(video_object.owner_id, video_api.profiles, video_api.groups);
@@ -730,7 +765,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
         warn_on_exit: false,
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
-            <div class="ovk-modal-video-window">
+            <div class="ovk-modal-video-window${isPrivacyRestricted ? ' private' : ''}">
                 <div id="video_top_controls">
                     <div id="__modalPlayerClose" class="video_top_button video_top_close" role="button" tabindex="0" aria-label="Close">
                         <div class="video_close_icon"></div>
@@ -760,50 +795,51 @@ async function OpenVideo(video_arr = [], init_player = true) {
     }
 
     async function loadVideoInfo() {
-        try {
-            u('#video_info_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
+        // Show loading indicator
+        u('#video_info_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
 
-            const fetcher = await fetch(`/video${pretty_id}`);
-            const fetch_r = await fetcher.text();
-            const dom_parser = new DOMParser();
-            const results = u(dom_parser.parseFromString(fetch_r, 'text/html'));
-            const videoInfo = results.find('.video_info');
+        // Fetch video page - exactly like original implementation
+        const fetcher = await fetch(`/video${pretty_id}`);
+        const fetch_r = await fetcher.text();
+        const dom_parser = new DOMParser();
+        const results = u(dom_parser.parseFromString(fetch_r, 'text/html'));
 
-            if (videoInfo.length > 0) {
-                const viewButton = `<a href="/video${pretty_id}" class="video_view_button button button_light _view_wrap">
-                    <span class="video_view_link _link">${tr("view_video")}</span>
-                </a>`;
-                const moreActions = videoInfo.find('.video_info_more_actions');
-                if (moreActions.length > 0) {
-                    moreActions.before(viewButton);
-                } else {
-                    videoInfo.append(viewButton);
+        // Copy original pattern: if element exists, use content; if not, show minimal fallback
+        const videoInfo = results.find('.video_info');
+        if (videoInfo.length > 0) {
+            const viewButton = `<a href="/video${pretty_id}" class="video_view_button button button_light _view_wrap">
+                <span class="video_view_link _link">${tr("view_video")}</span>
+            </a>`;
+            const moreActions = videoInfo.find('.video_info_more_actions');
+            if (moreActions.length > 0) {
+                moreActions.before(viewButton);
+            } else {
+                videoInfo.append(viewButton);
+            }
+            msgbox.getNode().find('.video_info').html(videoInfo.html());
+            bsdnHydrate();
+
+            setTimeout(() => {
+                if (window.reinitializeTooltips) {
+                    window.reinitializeTooltips();
                 }
-                msgbox.getNode().find('.video_info').html(videoInfo.html());
-                bsdnHydrate();
-
-                setTimeout(() => {
-                    if (window.reinitializeTooltips) {
-                        window.reinitializeTooltips();
-                    }
-                }, 200);
-            }
-
-            const videoComments = results.find('.video_comments');
-            if (videoComments.length > 0) {
-                msgbox.getNode().find('#video_comments_section').html(videoComments.html());
-                msgbox.getNode().find('#video_comments_section').attr('style', '');
-                bsdnHydrate();
-
-                setTimeout(() => {
-                    if (window.reinitializeTooltips) {
-                        window.reinitializeTooltips();
-                    }
-                }, 200);
-            }
-        } catch (error) {
-            console.error('Error loading video info:', error);
+            }, 200);
+        } else {
+            // If video info element doesn't exist (due to privacy or other reasons), show minimal info
             msgbox.getNode().find('.video_info').html(`<div class="video_info_title">${escapeHtml(video_object.title)}</div>`);
+        }
+
+        const videoComments = results.find('.video_comments');
+        if (videoComments.length > 0) {
+            msgbox.getNode().find('#video_comments_section').html(videoComments.html());
+            msgbox.getNode().find('#video_comments_section').attr('style', '');
+            bsdnHydrate();
+
+            setTimeout(() => {
+                if (window.reinitializeTooltips) {
+                    window.reinitializeTooltips();
+                }
+            }, 200);
         }
     }
 
@@ -964,13 +1000,35 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     CMessageBox.toggleLoader();
 
+    let isPrivacyRestricted = false;
+
+    const photo_owner = photo_id ? photo_id.split('_')[0] : null;
+
+    if (photo_owner && photo_owner > 0) {
+        try {
+            const userInfo = await window.OVKAPI.call('users.get', {
+                'user_ids': photo_owner,
+                'fields': 'is_closed'
+            });
+
+            if (userInfo && userInfo[0] && userInfo[0].is_closed) {
+                const currentUser = window.openvk.current_id;
+                if (currentUser != photo_owner) {
+                    isPrivacyRestricted = true;
+                }
+            }
+        } catch(e) {
+            console.warn('Could not check user privacy status:', e);
+        }
+    }
+
     const msgbox = new CMessageBox({
         title: tr('photo'),
         close_on_buttons: false,
         warn_on_exit: false,
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
-            <div class="ovk-photo-view-window">
+            <div class="ovk-photo-view-window${isPrivacyRestricted ? ' private' : ''}">
                 <div id="photo_top_controls">
                     <div id="__modal_photo_close" class="photo_top_button photo_top_close" role="button" tabindex="0" aria-label="Close">
                         <div class="photo_close_icon"></div>
@@ -1012,7 +1070,8 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         post: post,
         photo_id: photo_id,
         pretty_id: pretty_id,
-        type: type
+        type: type,
+        isPrivacyRestricted: isPrivacyRestricted
     });
 
     msgbox.getNode().find('#__modal_photo_close').on('click', (e) => {
@@ -1221,50 +1280,35 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
 
     async function loadPhotoInfoForPhoto(photoId) {
-        try {
-            u('#pv_right_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
-            u('#pv_actions_loader').html(`<div class="pr pr_baw"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
+        // Show loading indicators
+        u('#pv_right_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
+        u('#pv_actions_loader').html(`<div class="pr pr_baw"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
 
-            const photo_url = `/photo${photoId}`;
-            const photo_page = await fetch(photo_url);
-            const photo_text = await photo_page.text();
-            const parser = new DOMParser();
-            const body = parser.parseFromString(photo_text, "text/html");
+        // Fetch photo page - exactly like original implementation
+        const photo_url = `/photo${photoId}`;
+        const photo_page = await fetch(photo_url);
+        const photo_text = await photo_page.text();
+        const parser = new DOMParser();
+        const body = parser.parseFromString(photo_text, "text/html");
 
-            const pvRight = body.querySelector('.pv_right');
-            if (pvRight) {
-                msgbox.getNode().find('.pv_right').html(pvRight.innerHTML);
+        // Copy original pattern: if element exists, use innerHTML; if not, use empty string
+        const pvRight = body.querySelector('.pv_right');
+        msgbox.getNode().find('.pv_right').html(pvRight ? pvRight.innerHTML : '');
+
+        const pvBottomActions = body.querySelector('.pv_bottom_actions');
+        msgbox.getNode().find('.pv_bottom_actions').html(pvBottomActions ? pvBottomActions.innerHTML : '');
+
+        const pvAlbumName = body.querySelector('.pv_album_name');
+        msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
+
+        // Initialize any dynamic elements that were loaded
+        msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
+
+        setTimeout(() => {
+            if (window.reinitializeTooltips) {
+                window.reinitializeTooltips();
             }
-
-            const pvBottomActions = body.querySelector('.pv_bottom_actions');
-            if (pvBottomActions) {
-                msgbox.getNode().find('.pv_bottom_actions').html(pvBottomActions.innerHTML);
-            }
-
-            const pvAlbumName = body.querySelector('.pv_album_name');
-            if (pvAlbumName) {
-                msgbox.getNode().find('.pv_album_name').html(pvAlbumName.innerHTML);
-            } else {
-                msgbox.getNode().find('.pv_album_name').html('');
-            }
-
-            msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
-
-            setTimeout(() => {
-                if (window.reinitializeTooltips) {
-                    window.reinitializeTooltips();
-                }
-            }, 200);
-
-        } catch (error) {
-            console.error('Error loading photo info:', error);
-            msgbox.getNode().find('.pv_right').html(`
-                <div class="pv_author_block">
-                    <div class="pv_author_name">Photo</div>
-                </div>
-            `);
-            msgbox.getNode().find('.pv_bottom_actions').html('');
-        }
+        }, 200);
     }
 
     async function loadPhotoInfo() {
