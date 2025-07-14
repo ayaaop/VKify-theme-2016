@@ -378,12 +378,6 @@ input:focus, textarea:focus {
     line-height: 160%;
 }
 
-.langSelect {
-    display: flex;
-    align-items: center;
-    padding: 6px 0;
-}
-
 .home_search {
     height: 100%;
     line-height: 16px;
@@ -2837,6 +2831,12 @@ a.poll-retract-vote, .poll h4, .poll-meta {
     display: flex;
     align-items: center;
     padding: 6px 0;
+}
+.langSelect:hover {
+    background-color: var(--button-background-color--light);
+}
+.ovk-diag-body>a[href^="/language"]:hover {
+    text-decoration: none;
 }
 
 /* dialogi */

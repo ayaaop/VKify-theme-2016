@@ -1,4 +1,5 @@
-<div class="page_block module_body">
+{include "../components/page_block_header.xml", title => $user->getCanonicalName(), translate => false}
+<div class="page_block page_padding">
     <center>
         <img src="/assets/packages/static/openvk/img/oof.apng" alt="Пользователь заблокирован." style="width: 20%;" />
         <p>
