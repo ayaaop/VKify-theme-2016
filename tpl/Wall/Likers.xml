@@ -4,15 +4,11 @@
     {_likers_list}
 {/block}
 
-{block header}
-    <a href='{$item->getPageURL()}'>{tr($type)}</a> »
-    {_likers_list}
-{/block}
-
-{block tabs}
-    <div class="tab" id="activetabs">
-        <a id="act_tab_a" href="#">{_liked_verb}</a>
-    </div>
+{block size}
+    {include "../components/page_crumb_header.xml", crumbs => [
+        ['href' => $item->getPageURL(), 'title' => tr("$type")],
+        ['title' => tr("liked_verb"), 'count' => $count]
+    ]}
 {/block}
 
 {block link|strip|stripHtml}
@@ -20,32 +16,25 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('tiny')}" width="75" loading=lazy />
+    <img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
+        /themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
+    {else}
+        {$x->getAvatarUrl('miniscule')}
+        {/if}" width="75" alt="{_photo}" loading=lazy />
 {/block}
 
 {block name}
     {$x->getCanonicalName()}
-    <img n:if="$x->isVerified()"
-        class="name-checkmark"
-        src="/assets/packages/static/openvk/img/checkmark.png"
-        />
+    <a href="/verify" n:if="$x->isVerified()"
+        class="page_verified">
+    </a>
 {/block}
 
 {block description}
-    <table>
-        <tbody>
-            <tr>
-                <td width="120" valign="top"><span class="nobold">{_pronouns}: </span></td>
-                <td>{$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))}</td>
-            </tr>
-            <tr>
-                <td width="120" valign="top"><span class="nobold">{_relationship}:</span></td>
-                <td>{$x->getLocalizedMaritalStatus()}</td>
-            </tr>
-            <tr>
-                <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
-                <td>{$x->getRegistrationTime()}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="labeled">
+        {$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))} {if !is_null($x->getCity())}<span class="divider"></span> {$x->getCity()}{/if}
+    </div>
+    <div class="labeled">
+        {_registration_date}: {$x->getRegistrationTime()}
+    </div>
 {/block}

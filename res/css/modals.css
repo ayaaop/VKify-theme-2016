@@ -636,7 +636,7 @@
 .choose_upload_area {
 	background-color: var(--module-background-color--secondary);
 	opacity: .7;
-	margin: -20px -20px 15px;
+	margin: -20px -25px 15px;
 	padding: 13px 25px 14px;
 	text-align: center;
 	color: var(--link-color);
