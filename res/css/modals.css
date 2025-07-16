@@ -657,6 +657,9 @@
 }
 
 /* videos */
+.ovk-diag-body .video_block_layout {
+	padding: 15px;
+}
 .videos_choose_search {
 	padding: 5px 25px
 }
