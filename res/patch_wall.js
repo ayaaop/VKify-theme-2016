@@ -54,20 +54,20 @@ u(document).on("click", "#editPost", async (e) => {
                         <input type="hidden" id="source" name="source" value="none" />
                         <div class="post-bottom-acts">
                             <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
-                                <a class="attach_photo" id="__photoAttachment">
+                                <a class="attach_photo" id="__vkifyPhotoAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a class="attach_video" id="__videoAttachment">
+                                <a class="attach_video" id="__vkifyVideoAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a class="attach_audio" id="__audioAttachment">
+                                <a class="attach_audio" id="__vkifyAudioAttachment">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a class="post-attach-menu__trigger" id="moreAttachTrigger">
                                     ${tr('show_more')}
                                 </a>
                                 <div class="tippy-menu" id="moreAttachTooltip2">
-                                        <a class="attach_document" id="__documentAttachment">
+                                        <a class="attach_document" id="__vkifyDocumentAttachment">
                                             <div class="post-attach-menu__icon"></div>
                                             ${tr('document')}
                                         </a>
@@ -1334,3 +1334,1734 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     CMessageBox.toggleLoader();
 }
+
+if (typeof window.random_int === 'undefined') {
+    window.random_int = function(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+}
+
+class BaseRequestManager {
+    constructor() {
+        this.currentRequestId = 0;
+    }
+
+    cancelOngoingRequests() {
+        this.currentRequestId++;
+    }
+
+    createCancellableRequest() {
+        this.cancelOngoingRequests();
+        return ++this.currentRequestId;
+    }
+
+    isRequestCancelled(requestId) {
+        return requestId !== this.currentRequestId;
+    }
+}
+
+class RequestManager extends BaseRequestManager {}
+
+function formatRelativeTime(timestamp) {
+    if (!timestamp) return '';
+
+    const now = Math.floor(Date.now() / 1000);
+    const diff = now - timestamp;
+
+    if (diff < 60) return tr('time_just_now');
+
+    if (diff < 3600) {
+        const mins = Math.floor(diff / 60);
+        if (mins === 5) {
+            return tr('time_exactly_five_minutes_ago');
+        }
+        return tr('time_minutes_ago', mins);
+    }
+
+    const videoDate = new Date(timestamp * 1000);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (videoDate.toDateString() === today.toDateString()) {
+        return tr('time_today');
+    }
+
+    if (videoDate.toDateString() === yesterday.toDateString()) {
+        return tr('time_yesterday');
+    }
+
+    const options = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+    };
+
+    try {
+        return videoDate.toLocaleDateString(document.documentElement.lang, options);
+    } catch (e) {
+        return videoDate.toLocaleDateString();
+    }
+}
+
+class BaseAttachmentManager {
+    constructor(messageBox, requestManager, form = null, attachmentType, constants = {}) {
+        this.messageBox = messageBox;
+        this.requestManager = requestManager;
+        this.form = form;
+        this.attachmentType = attachmentType;
+        this.selectedItems = new Set();
+        this.CONSTANTS = {
+            ...constants
+        };
+    }
+
+    isItemAttached(itemId) {
+        if (!this.form) return false;
+
+        const selector = this.attachmentType === 'photo'
+            ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
+            : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
+
+        return this.form.find(selector).length > 0;
+    }
+
+    detachItemIfAttached(itemId) {
+        if (!this.form) return;
+
+        const selector = this.attachmentType === 'photo'
+            ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
+            : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
+
+        const attachmentElement = this.form.find(selector);
+        if (attachmentElement.length > 0) {
+            attachmentElement.remove();
+        }
+    }
+
+    checkAttachmentLimit(newItemsCount = 1) {
+        const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
+
+        if (currentAttachments + newItemsCount > 10) {
+            NewNotification(
+                tr('error'),
+                tr('too_many_attachments'),
+                null,
+                () => {},
+                5000,
+                false
+            );
+            return false;
+        }
+        return true;
+    }
+
+    isAlreadyAttached(itemId) {
+        return this.isItemAttached(itemId);
+    }
+
+    toggleItemSelection(itemId, elementSelector, selectedClass = 'selected') {
+        const element = u(elementSelector);
+
+        if (this.selectedItems.has(itemId)) {
+            this.selectedItems.delete(itemId);
+            element.removeClass(selectedClass);
+
+            this.detachItemIfAttached(itemId);
+
+            return false;
+        } else {
+            this.selectedItems.add(itemId);
+            element.addClass(selectedClass);
+
+            return true;
+        }
+    }
+
+    syncSelectionState(itemId, isSelected) {
+        if (!isSelected && this.isItemAttached(itemId)) {
+            this.selectedItems.add(itemId);
+            return true;
+        }
+        return isSelected;
+    }
+
+    filterNewItems(itemIds) {
+        return itemIds.filter(itemId => !this.isAlreadyAttached(itemId));
+    }
+
+    clearSelection() {
+        this.selectedItems.clear();
+        this.updateChooseButton(0);
+    }
+
+    getSelectionCount() {
+        return this.selectedItems.size;
+    }
+
+    getSelectedItems() {
+        return Array.from(this.selectedItems);
+    }
+
+    setupDialogStyles() {
+        if (this.attachmentType === 'photo' || this.attachmentType === 'video') {
+            this.messageBox.getNode().attr('style', 'width: 640px;');
+            this.messageBox.getNode().find('.ovk-diag-body').attr('style', 'max-height: 640px; padding: 0px !important;');
+        }
+    }
+
+    showLoader(container) {
+        container.append(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
+    }
+
+    showLoaderInButton(button) {
+        const loaderHTML = `<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
+        const span = button.find('span');
+
+        if (span.length > 0) {
+            span.html(loaderHTML);
+        } else {
+            button.html(`<span>${loaderHTML}</span>`);
+        }
+
+        button.addClass('lagged');
+    }
+
+    hideLoader() {
+        u('.pr').remove();
+    }
+
+    hideGeneralLoader() {
+        u('.pr').each(function(node) {
+            const element = u(node);
+            if (!element.closest('.button').length) {
+                element.remove();
+            }
+        });
+    }
+
+    showError(container, message) {
+        this.hideLoader();
+        container.html(`<div class="information">${message}</div>`);
+    }
+
+    calculatePages(totalCount, itemsPerPage) {
+        return Math.ceil(Number(totalCount) / itemsPerPage);
+    }
+
+    createShowMoreButton(pagesCount, className) {
+        return `
+            <div class="${className} button button_gray button_wide" data-pagesCount="${pagesCount}">
+                <span>${tr('show_more')}</span>
+            </div>
+        `;
+    }
+
+    updateChooseButton(selectedCount) {
+    }
+
+
+}
+
+class AlbumManager {
+    constructor(photoManager, requestManager, club) {
+        this.photoManager = photoManager;
+        this.requestManager = requestManager;
+        this.club = club;
+        this.viewingUserPhotos = false;
+    }
+
+    async loadAlbums(page = 0, append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const albumsList = u('#albums_list');
+
+        if (!append) {
+            albumsList.html('');
+            this.photoManager.showLoader(albumsList);
+        }
+
+        try {
+            const ownerId = this.getOwnerId();
+            const albums = await window.OVKAPI.call('photos.getAlbums', {
+                'owner_id': ownerId,
+                'need_covers': 1,
+                'photo_sizes': 1,
+                'need_system': 1,
+                'count': this.photoManager.CONSTANTS.ALBUMS_PER_PAGE,
+                'offset': page * this.photoManager.CONSTANTS.ALBUMS_PER_PAGE
+            });
+
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+
+            this.photoManager.hideGeneralLoader();
+
+            if (albums.count === 0) {
+                this.photoManager.showError(albumsList, tr('albums_zero'));
+                return;
+            }
+
+            if (append) {
+                albumsList.find('.show_more_albums').remove();
+            }
+
+            this.renderAlbums(albums.items, append);
+            this.handleAlbumPagination(albums.count, page);
+
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading albums:', error);
+            this.photoManager.showError(albumsList, tr('error_loading_albums'));
+        }
+    }
+
+    renderAlbums(albums, append) {
+        const albumsList = u('#albums_list');
+        let albumsHTML = '';
+
+        albums.forEach(album => {
+            const coverImg = album.thumb_src ?
+                `<img src="${album.thumb_src}" class="page_album_thumb" loading="lazy" />` :
+                '';
+
+            albumsHTML += `
+                <div class="clear_fix clear page_album_row">
+                    <a href="javascript:void(0)" class="page_album_link photos_choose_album_row ${!album.thumb_src ? 'page_album_nocover' : ''}" data-album-id="${album.id}">
+                        <div class="page_album_thumb_wrap">
+                            ${coverImg}
+                        </div>
+                        <div class="page_album_title">
+                            <div class="page_album_size">${album.size}</div>
+                            <div class="page_album_title_text">${escapeHtml(album.title)}</div>
+                            <div class="page_album_description">${album.description ? escapeHtml(album.description).substring(0, 100) : ''}</div>
+                        </div>
+                    </a>
+                </div>
+            `;
+        });
+
+        if (append) {
+            albumsList.append(albumsHTML);
+        } else {
+            albumsList.html(albumsHTML);
+        }
+    }
+
+    handleAlbumPagination(totalCount, currentPage) {
+        const pagesCount = this.photoManager.calculatePages(totalCount, this.photoManager.CONSTANTS.ALBUMS_PER_PAGE);
+        const albumsList = u('#albums_list');
+
+        if (currentPage + 1 < pagesCount) {
+            const showMoreButton = this.photoManager.createShowMoreButton(pagesCount, 'show_more_albums');
+            albumsList.append(showMoreButton);
+        }
+    }
+
+    getOwnerId() {
+        return (this.club != 0 && !this.viewingUserPhotos) ? Math.abs(this.club) * -1 : window.openvk.current_id;
+    }
+
+    setViewingUserPhotos(viewing) {
+        this.viewingUserPhotos = viewing;
+    }
+}
+
+class PhotoManager extends BaseAttachmentManager {
+    constructor(messageBox, requestManager, club, form = null) {
+        super(messageBox, requestManager, form, 'photo', {
+            PHOTOS_PER_PAGE: 16,
+            ALBUMS_PER_PAGE: 2
+        });
+        this.club = club;
+        this.viewingUserPhotos = false;
+    }
+
+    get selectedPhotos() {
+        return this.selectedItems;
+    }
+
+    initialize(club) {
+        this.setupDialogStyles();
+        if (club != 0) {
+            this.addUserPhotosLink();
+        }
+    }
+
+    async loadPhotos(albumId, page = 0, append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const photosContainer = u('#photos_content .photos_choose_rows');
+        const moreContainer = u('#photos_content .photos_choose_more_container');
+
+        if (!append) {
+            photosContainer.html('');
+            moreContainer.html('');
+            this.showLoader(photosContainer);
+        }
+
+        try {
+            const ownerId = this.getOwnerId();
+            const params = {
+                'owner_id': ownerId,
+                'photo_sizes': 1,
+                'count': this.CONSTANTS.PHOTOS_PER_PAGE,
+                'offset': page * this.CONSTANTS.PHOTOS_PER_PAGE
+            };
+
+            if (albumId == 0 && this.club != 0 && !this.viewingUserPhotos) {
+                throw new Error('Clubs are not supported for getAll photos');
+            }
+
+            const method = albumId == 0 ? 'photos.getAll' : 'photos.get';
+            if (albumId != 0) {
+                params.album_id = albumId;
+            }
+
+            const photos = await window.OVKAPI.call(method, params);
+
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+
+            this.hideGeneralLoader();
+
+            if (photos.count === 0) {
+                this.showError(photosContainer, tr('is_x_photos_zero'));
+                return;
+            }
+
+            this.renderPhotos(photos.items, append);
+            this.handlePhotoPagination(photos.count, page, albumId);
+
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading photos:', error);
+            this.showError(photosContainer, tr('error_loading_photos'));
+        }
+    }
+
+    renderPhotos(photos, append) {
+        const photosContainer = u('#photos_content .photos_choose_rows');
+        let photosHTML = '';
+
+        photos.forEach(photo => {
+            const attachmentData = `${photo.owner_id}_${photo.id}`;
+            let isSelected = this.selectedPhotos.has(attachmentData);
+            isSelected = this.syncSelectionState(attachmentData, isSelected);
+
+            const selectedClass = isSelected ? 'selected' : '';
+            const thumbnailUrl = photo.sizes[2]?.url || photo.sizes[1]?.url || photo.sizes[0]?.url;
+            const previewUrl = photo.sizes[1]?.url || photo.sizes[0]?.url;
+
+            photosHTML += `
+                <a class="photos_choose_row fl_l ${selectedClass}" href="javascript:void(0)"
+                   data-photo-id="${attachmentData}" data-preview="${previewUrl}">
+                    <div class="photo_row_img" style="background-image: url('${thumbnailUrl}')"></div>
+                    <div class="photos_choose_row_bg"></div>
+                    <div class="media_check_btn_wrap">
+                        <div class="media_check_btn" data-testid="photos_choose_check_button"></div>
+                    </div>
+                </a>
+            `;
+        });
+
+        if (append) {
+            photosContainer.append(photosHTML);
+        } else {
+            photosContainer.html(photosHTML);
+        }
+
+        this.updateChooseButton(this.getSelectionCount());
+    }
+
+    handlePhotoPagination(totalCount, currentPage, albumId) {
+        const pagesCount = this.calculatePages(totalCount, this.CONSTANTS.PHOTOS_PER_PAGE);
+        const moreContainer = u('#photos_content .photos_choose_more_container');
+
+        if (currentPage + 1 < pagesCount) {
+            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_photos');
+            moreContainer.html(showMoreButton);
+            moreContainer.find('.show_more_photos').attr('data-album-id', albumId);
+        } else {
+            moreContainer.html('');
+        }
+    }
+
+    togglePhotoSelection(photoId) {
+        const isSelected = this.toggleItemSelection(photoId, `[data-photo-id="${photoId}"]`);
+        this.updateChooseButton(this.getSelectionCount());
+        return isSelected;
+    }
+
+    attachSelectedPhotos(form) {
+        const selectedPhotoIds = this.getSelectedItems();
+        const newPhotoIds = this.filterNewItems(selectedPhotoIds);
+
+        if (!this.checkAttachmentLimit(newPhotoIds.length)) {
+            return;
+        }
+
+        newPhotoIds.forEach(photoId => {
+            const photoElement = u(`[data-photo-id="${photoId}"]`);
+            const previewUrl = photoElement.attr('data-preview');
+
+            __appendToTextarea({
+                'type': 'photo',
+                'preview': previewUrl,
+                'id': photoId,
+                'fullsize_url': previewUrl
+            }, form);
+        });
+    }
+
+    attachSinglePhoto(photoId, form) {
+        if (this.isAlreadyAttached(photoId)) {
+            return;
+        }
+
+        if (!this.checkAttachmentLimit(1)) {
+            return;
+        }
+
+        const photoElement = u(`[data-photo-id="${photoId}"]`);
+        const previewUrl = photoElement.attr('data-preview');
+
+        __appendToTextarea({
+            'type': 'photo',
+            'preview': previewUrl,
+            'id': photoId,
+            'fullsize_url': previewUrl
+        }, form);
+    }
+
+    getOwnerId() {
+        return (this.club != 0 && !this.viewingUserPhotos) ? Math.abs(this.club) * -1 : window.openvk.current_id;
+    }
+
+    setViewingUserPhotos(viewing) {
+        this.viewingUserPhotos = viewing;
+    }
+
+    clearSelection() {
+        super.clearSelection();
+        u('.photos_choose_row').removeClass('selected');
+    }
+
+    addUserPhotosLink() {
+        const header = this.messageBox.getNode().find('.ovk-diag-head');
+        const userPhotosLink = `<span id="photos_choose_right_link"><span class="divider">|</span><a href="#" id="user_photos_link" class="tab_link"><vkifyloc name="choose_from_my_photos"></a></span>`;
+        header.append(userPhotosLink);
+    }
+
+    updateMessageBoxButtons(currentAlbum) {
+        const actionBar = this.messageBox.getNode().find('.ovk-diag-action');
+
+        if (currentAlbum === 0) {
+            actionBar.html('');
+        } else {
+            actionBar.html(`
+                <input type="button" class="button back-to-albums-btn" value="${tr('paginator_back')}">
+            `);
+        }
+    }
+
+    toggleUserClubLink(isViewingUserPhotos) {
+        const rightLinkContainer = u('#photos_choose_right_link');
+        if (isViewingUserPhotos) {
+            rightLinkContainer.html(`<span class="divider">|</span><a href="#" id="back_to_club_link" class="tab_link"><vkifyloc name="back_to_club_photos"></a>`);
+        } else {
+            rightLinkContainer.html(`<span class="divider">|</span><a href="#" id="user_photos_link" class="tab_link"><vkifyloc name="choose_from_my_photos"></a>`);
+        }
+        rightLinkContainer.attr('style', '');
+    }
+
+    showHideUserClubSwitcher(show) {
+        const switcher = u('#photos_choose_right_link');
+        switcher.attr('style', show ? '' : 'display: none;');
+    }
+
+    clearPhotosContent() {
+        u('#photos_content .photos_choose_rows').html('');
+        u('#photos_content .photos_choose_more_container').html('');
+    }
+
+    static createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <input type="file" multiple accept="image/*" id="__pickerQuickUpload" style="display:none">
+            <div class="choose_upload_area" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div id='attachment_insert' style='height: unset; padding: 0'>
+                <div id='albums_list' class='photos_choose_album_rows photos_container_albums'>
+                    <!-- Albums will be loaded here -->
+                </div>
+                <div id='photos_content'>
+                    <div class="photos_choose_rows clear_fix"></div>
+                    <div class="photos_choose_more_container"></div>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+}
+
+class PhotoAttachmentDialog {
+    constructor(form, club) {
+        this.form = form;
+        this.club = club;
+        this.currentAlbum = 0;
+        this.requestManager = new RequestManager();
+        this.messageBox = new CMessageBox({
+            title: tr('select_photo'),
+            body: PhotoManager.createDialogBody(),
+        });
+        this.photoManager = new PhotoManager(this.messageBox, this.requestManager, club, this.form);
+        this.photoManager.initialize(club);
+        this.albumManager = new AlbumManager(this.photoManager, this.requestManager, club);
+        this.photoManager.updateChooseButton = (selectedCount) => {
+            const chooseBtn = this.messageBox.getNode().find('#choose-photos-btn');
+            if (selectedCount > 0) {
+                const buttonText = `${tr('attach')} (${selectedCount})`;
+                if (chooseBtn.length === 0) {
+                    this.messageBox.getNode().find('.ovk-diag-action').prepend(`
+                        <input type="button" id="choose-photos-btn" class="button close-dialog-btn" value="${buttonText}">
+                    `);
+                } else {
+                    chooseBtn.attr('value', buttonText);
+                }
+            } else {
+                chooseBtn.remove();
+            }
+        };
+    }
+
+    async initialize() {
+        this.setupEventHandlers();
+        await this.loadInitialContent();
+    }
+
+    async loadInitialContent() {
+        if (this.club == 0) {
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: block');
+            await this.albumManager.loadAlbums(0, false);
+            await this.photoManager.loadPhotos(0, 0, false);
+        } else {
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: none');
+            await this.albumManager.loadAlbums(0, false);
+        }
+    }
+
+    setupEventHandlers() {
+        const node = this.messageBox.getNode();
+
+        node.on('click', '.photos_choose_album_row', async (e) => {
+            const albumId = Number(e.currentTarget.dataset.albumId);
+            this.currentAlbum = albumId;
+
+            u('#albums_list').attr('style', 'display: none');
+            u('#photos_content').attr('style', 'display: block');
+            this.photoManager.updateMessageBoxButtons(albumId);
+            this.photoManager.showHideUserClubSwitcher(false);
+
+            await this.photoManager.loadPhotos(albumId, 0, false);
+        });
+
+        node.on('click', '.back-to-albums-btn', async () => {
+            this.currentAlbum = 0;
+            this.photoManager.clearSelection();
+
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: block');
+            this.photoManager.updateMessageBoxButtons(0);
+            this.photoManager.showHideUserClubSwitcher(true);
+
+            if (this.club == 0 || this.albumManager.viewingUserPhotos) {
+                await this.photoManager.loadPhotos(0, 0, false);
+            } else {
+                u('#photos_content').attr('style', 'display: none');
+            }
+        });
+
+        node.on('click', '.media_check_btn_wrap', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const photoRow = u(e.target).closest('.photos_choose_row');
+            const photoId = photoRow.attr('data-photo-id');
+            this.photoManager.togglePhotoSelection(photoId);
+        });
+
+        node.on('click', '.photo_row_img', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const photoRow = u(e.target).closest('.photos_choose_row');
+            const photoId = photoRow.attr('data-photo-id');
+            this.photoManager.attachSinglePhoto(photoId, this.form);
+            this.messageBox.close();
+        });
+
+        node.on('click', '.show_more_albums', async (e) => {
+            const button = u(e.target).closest('.show_more_albums');
+            const currentAlbumsCount = u('#albums_list .page_album_row').length;
+            const nextPage = Math.floor(currentAlbumsCount / this.photoManager.CONSTANTS.ALBUMS_PER_PAGE);
+
+            this.photoManager.showLoaderInButton(button);
+            await this.albumManager.loadAlbums(nextPage, true);
+        });
+
+        node.on('click', '.show_more_photos', async (e) => {
+            const button = u(e.target).closest('.show_more_photos');
+            const albumId = Number(button.attr('data-album-id'));
+            const currentPage = Math.floor(u('#photos_content .photos_choose_row').length / this.photoManager.CONSTANTS.PHOTOS_PER_PAGE);
+
+            this.photoManager.showLoaderInButton(button);
+            await this.photoManager.loadPhotos(albumId, currentPage, true);
+        });
+
+        node.on('click', '#choose-photos-btn', () => {
+            this.photoManager.attachSelectedPhotos(this.form);
+            this.messageBox.close();
+        });
+
+        node.on('click', '#user_photos_link', async () => {
+            this.requestManager.cancelOngoingRequests();
+
+            this.albumManager.setViewingUserPhotos(true);
+            this.photoManager.setViewingUserPhotos(true);
+            this.currentAlbum = 0;
+
+            this.photoManager.toggleUserClubLink(true);
+            this.photoManager.updateMessageBoxButtons(0);
+
+            u('#albums_list').html('');
+            this.photoManager.clearPhotosContent();
+
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: block');
+
+            try {
+                await this.albumManager.loadAlbums(0, false);
+                await this.photoManager.loadPhotos(0, 0, false);
+            } catch (error) {
+                console.error('Error loading user photos:', error);
+                this.photoManager.showError(u('#photos_content'), 'Error loading user photos');
+            }
+        });
+
+        node.on('click', '#back_to_club_link', async () => {
+            this.requestManager.cancelOngoingRequests();
+            this.albumManager.setViewingUserPhotos(false);
+            this.photoManager.setViewingUserPhotos(false);
+            this.currentAlbum = 0;
+            this.photoManager.toggleUserClubLink(false);
+            this.photoManager.updateMessageBoxButtons(0);
+            u('#albums_list').html('');
+            this.photoManager.clearPhotosContent();
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: none');
+
+            try {
+                await this.albumManager.loadAlbums(0, false);
+            } catch (error) {
+                console.error('Error loading club albums:', error);
+                this.photoManager.showError(u('#albums_list'), 'Error loading club albums');
+            }
+        });
+
+        node.on('click', '.choose_upload_area', () => {
+            node.find('#__pickerQuickUpload').nodes[0]?.click();
+        });
+
+        node.on('change', '#__pickerQuickUpload', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                Array.from(e.target.files).forEach(file => {
+                    __uploadToTextarea(file, this.form);
+                });
+                this.messageBox.close();
+            }
+        });
+    }
+}
+
+class VideoManager extends BaseAttachmentManager {
+    constructor(messageBox, requestManager, form = null) {
+        super(messageBox, requestManager, form, 'video', {
+            VIDEOS_PER_PAGE: 10
+        });
+        this.currentQuery = '';
+    }
+
+    get selectedVideos() {
+        return this.selectedItems;
+    }
+
+    async loadVideos(page = 0, query = '', append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const videosContainer = u('.videosInsert');
+        const moreContainer = u('.videos_choose_more_container');
+
+        if (!append) {
+            videosContainer.html('');
+            moreContainer.html('');
+            this.showLoader(videosContainer);
+        } else {
+            moreContainer.find('.show_more_videos').remove();
+        }
+
+        try {
+            let videos;
+            if (query === '') {
+                videos = await window.OVKAPI.call('video.get', {
+                    'owner_id': window.openvk.current_id,
+                    'extended': 1,
+                    'count': this.CONSTANTS.VIDEOS_PER_PAGE,
+                    'offset': page * this.CONSTANTS.VIDEOS_PER_PAGE
+                });
+            } else {
+                videos = await window.OVKAPI.call('video.search', {
+                    'q': escapeHtml(query),
+                    'extended': 1,
+                    'count': this.CONSTANTS.VIDEOS_PER_PAGE,
+                    'offset': page * this.CONSTANTS.VIDEOS_PER_PAGE
+                });
+            }
+
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+
+            this.hideGeneralLoader();
+
+            if (videos.count === 0) {
+                this.showError(videosContainer, tr('no_videos'));
+                return;
+            }
+
+            this.renderVideos(videos.items, append, videos.profiles, videos.groups);
+            this.handleVideoPagination(videos.count, page, query);
+
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading videos:', error);
+            this.showError(videosContainer, tr('error_loading_videos'));
+        }
+    }
+
+    renderVideos(videos, append, profiles = [], groups = []) {
+        const videosContainer = u('.videosInsert');
+        let videosHTML = '';
+
+        videos.forEach(video => {
+            const videoId = `${video.owner_id}_${video.id}`;
+
+            let isSelected = this.selectedVideos.has(videoId);
+            isSelected = this.syncSelectionState(videoId, isSelected);
+
+            const selectedClass = isSelected ? 'selected' : '';
+            const thumbnailUrl = video.image && video.image[0] ? video.image[0].url : '';
+            const duration = fmtTime(video.duration);
+            const title = escapeHtml(video.title || '');
+            const videoUrl = `/video${video.owner_id}_${video.id}`;
+            const author = find_author(video.owner_id, profiles, groups);
+            const authorName = author ? (author.first_name ? `${author.first_name} ${author.last_name}` : author.name) : 'Unknown';
+            const authorUrl = author ? (video.owner_id > 0 ? `/${author.id}` : `/club${Math.abs(video.owner_id)}`) : '#';
+            const platform = video.platform || (video.type && video.type !== 0 && video.type !== 'video' ? 'External' : '');
+            const formattedDate = video.date ? formatRelativeTime(video.date) : '';
+
+            videosHTML += `
+                <div class="video_item ${selectedClass}" data-video-id="${videoId}" data-video-url="${video.player || videoUrl}">
+                    <a class="video_item__thumb_link" href="javascript:void(0)">
+                        <div class="video_item_thumb_wrap">
+                            <div class="video_item_thumb" style="background-image: url('${thumbnailUrl}')"></div>
+                            <div class="video_item_controls">
+                                <div class="video_thumb_label">
+                                    ${platform ? `<span class="video_thumb_label_item video_thumb_label_platform">${platform}</span>` : ''}
+                                    ${!platform && duration ? `<span class="video_thumb_label_item video_thumb_label_duration">${duration}</span>` : ''}
+                                </div>
+                                <div class="media_check_btn_wrap">
+                                    <div class="media_check_btn"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="video_item_info">
+                        <a class="video_item_title" href="javascript:void(0)" title="${title}">
+                            ${title}
+                        </a>
+                        <div class="video_item_author">
+                            <a class="mem_link" href="${authorUrl}" target="_blank">${authorName}</a>
+                        </div>
+                        <div class="video_item_add_info">
+                            <div>
+                                ${formattedDate ? `
+                                    <span class="video_item_date_info">
+                                        <span class="video_item_updated">${formattedDate}</span>
+                                    </span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (append) {
+            videosContainer.append(videosHTML);
+        } else {
+            videosContainer.html(videosHTML);
+        }
+
+        this.updateChooseButton(this.getSelectionCount());
+    }
+
+    handleVideoPagination(totalCount, currentPage, query) {
+        const pagesCount = this.calculatePages(totalCount, this.CONSTANTS.VIDEOS_PER_PAGE);
+        const moreContainer = u('.videos_choose_more_container');
+
+        if (currentPage + 1 < pagesCount) {
+            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_videos');
+            moreContainer.html(showMoreButton);
+            moreContainer.find('.show_more_videos').attr('data-query', query);
+        } else {
+            moreContainer.html('');
+        }
+    }
+
+    toggleVideoSelection(videoId) {
+        const isSelected = this.toggleItemSelection(videoId, `[data-video-id="${videoId}"]`);
+        this.updateChooseButton(this.getSelectionCount());
+        return isSelected;
+    }
+
+    attachSelectedVideos(form) {
+        const selectedVideoIds = this.getSelectedItems();
+        const newVideoIds = this.filterNewItems(selectedVideoIds);
+
+        if (!this.checkAttachmentLimit(newVideoIds.length)) {
+            return;
+        }
+
+        newVideoIds.forEach(videoId => {
+            const videoElement = u(`[data-video-id="${videoId}"]`);
+            const videoUrl = videoElement.attr('data-video-url');
+
+            __appendToTextarea({
+                'type': 'video',
+                'preview': videoUrl,
+                'id': videoId,
+                'fullsize_url': videoUrl
+            }, form);
+        });
+    }
+
+    attachSingleVideo(videoId, form) {
+        if (this.isAlreadyAttached(videoId)) {
+            return;
+        }
+
+        if (!this.checkAttachmentLimit(1)) {
+            return;
+        }
+
+        const videoElement = u(`[data-video-id="${videoId}"]`);
+        const videoUrl = videoElement.attr('data-video-url');
+
+        __appendToTextarea({
+            'type': 'video',
+            'preview': videoUrl,
+            'id': videoId,
+            'fullsize_url': videoUrl
+        }, form);
+    }
+
+    clearSelection() {
+        super.clearSelection();
+        u('.video_item').removeClass('selected');
+    }
+
+    initialize() {
+        this.setupDialogStyles();
+
+        if (window.uiSearch) {
+            window.uiSearch.init(this.messageBox.getNode().find('.ui_search').nodes[0]);
+        }
+    }
+
+    static createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <a href="/videos/upload" class="choose_upload_area" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </a>
+            <div class="videos_choose_search">
+                <div class="ui_search_new ui_search ui_search_field_empty">
+                    <div class="ui_search_input_block">
+                        <button class="ui_search_button_search">&nbsp;</button>
+                        <div class="ui_search_input_inner">
+                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
+                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_for_videos")}" id="video_query">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='attachment_insert' style='height: unset; padding: 0'>
+                <div class="videosInsert video_block_layout"></div>
+                <div class="videos_choose_more_container"></div>
+            </div>
+        </div>
+        `;
+    }
+}
+
+class VideoAttachmentDialog {
+    constructor(form) {
+        this.form = form;
+        this.requestManager = new BaseRequestManager();
+        this.messageBox = new CMessageBox({
+            title: tr('selecting_video'),
+            body: VideoManager.createDialogBody(),
+        });
+        this.videoManager = new VideoManager(this.messageBox, this.requestManager, this.form);
+        this.videoManager.initialize();
+        this.videoManager.updateChooseButton = (selectedCount) => {
+            const chooseBtn = this.messageBox.getNode().find('#choose-videos-btn');
+            if (selectedCount > 0) {
+                const buttonText = `${tr('attach')} (${selectedCount})`;
+                if (chooseBtn.length === 0) {
+                    this.messageBox.getNode().find('.ovk-diag-action').prepend(`
+                        <input type="button" id="choose-videos-btn" class="button close-dialog-btn" value="${buttonText}">
+                    `);
+                } else {
+                    chooseBtn.attr('value', buttonText);
+                }
+            } else {
+                chooseBtn.remove();
+            }
+        };
+    }
+
+    async initialize() {
+        this.setupEventHandlers();
+        await this.loadInitialContent();
+    }
+
+    async loadInitialContent() {
+        await this.videoManager.loadVideos(0, '', false);
+    }
+
+    setupEventHandlers() {
+        const node = this.messageBox.getNode();
+
+        node.on('click', '.media_check_btn_wrap', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const videoRow = u(e.target).closest('.video_item');
+            const videoId = videoRow.attr('data-video-id');
+            this.videoManager.toggleVideoSelection(videoId);
+        });
+
+        node.on('click', '.video_item__thumb_link', (e) => {
+            if (u(e.target).closest('.media_check_btn_wrap').length > 0) {
+                return;
+            }
+
+            e.preventDefault();
+            e.stopPropagation();
+            const videoRow = u(e.target).closest('.video_item');
+            const videoId = videoRow.attr('data-video-id');
+            this.videoManager.attachSingleVideo(videoId, this.form);
+            this.messageBox.close();
+        });
+
+        node.on('click', '.show_more_videos', async (e) => {
+            const button = u(e.target).closest('.show_more_videos');
+            const query = button.attr('data-query') || '';
+            const currentPage = Math.floor(u('.video_item').length / this.videoManager.CONSTANTS.VIDEOS_PER_PAGE);
+
+            this.videoManager.showLoaderInButton(button);
+            await this.videoManager.loadVideos(currentPage, query, true);
+        });
+
+        node.on('click', '#choose-videos-btn', () => {
+            this.videoManager.attachSelectedVideos(this.form);
+            this.messageBox.close();
+        });
+
+        node.on('input', '.ui_search_field', async (e) => {
+            const query = e.target.value.trim();
+            this.videoManager.currentQuery = query;
+
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(async () => {
+                await this.videoManager.loadVideos(0, query, false);
+            }, 500);
+        });
+
+        node.on('click', '.ui_search_button_search', (e) => {
+            e.preventDefault();
+            const input = node.find('.ui_search_field').nodes[0];
+            if (input) {
+                const query = input.value.trim();
+                this.videoManager.currentQuery = query;
+                this.videoManager.loadVideos(0, query, false);
+            }
+        });
+
+        node.on('change', '.ui_search_field', (e) => {
+            const query = e.target.value.trim();
+            this.videoManager.currentQuery = query;
+            this.videoManager.loadVideos(0, query, false);
+        });
+    }
+}
+
+class AudioManager extends BaseAttachmentManager {
+    constructor(messageBox, requestManager, form = null) {
+        super(messageBox, requestManager, form, 'audio', {
+            AUDIOS_PER_PAGE: 10
+        });
+        this.currentQuery = '';
+        this.searchType = 'by_name';
+    }
+
+    get selectedAudios() {
+        return this.selectedItems;
+    }
+
+    async loadAudios(page = 0, query = '', append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const audiosContainer = u('.audiosInsert');
+
+        if (!append) {
+            audiosContainer.html('');
+            this.showLoader(audiosContainer);
+        }
+
+        try {
+            let searcher = new playersSearcher("entity_audios", 0);
+
+            if (query !== '') {
+                searcher.context_type = "search_context";
+                searcher.query = query;
+                searcher.searchType = this.searchType;
+            }
+
+            return new Promise((resolve, reject) => {
+                searcher.successCallback = (response, thisc) => {
+                    if (this.requestManager.isRequestCancelled(requestId)) return;
+
+                    let domparser = new DOMParser();
+                    let result = domparser.parseFromString(response, "text/html");
+
+                    let pagesCount = result.querySelector("input[name='pagesCount']").value;
+                    let count = Number(result.querySelector("input[name='count']").value);
+
+                    if (count < 1) {
+                        this.showError(audiosContainer, thisc.context_type == "entity_audios" ? tr("no_audios_thisuser") : tr("no_results"));
+                        resolve({ count: 0, items: [] });
+                        return;
+                    }
+
+                    const audioElements = Array.from(result.querySelectorAll(".audioEmbed"));
+                    this.renderAudios(audioElements, append);
+                    this.handleAudioPagination(thisc.page, pagesCount);
+
+                    resolve({ count, items: audioElements, page: thisc.page, pagesCount });
+                };
+
+                searcher.errorCallback = () => {
+                    if (this.requestManager.isRequestCancelled(requestId)) return;
+                    this.showError(audiosContainer, 'Error when loading audios.');
+                    reject(new Error('Error loading audios'));
+                };
+
+                searcher.movePage(page + 1);
+            });
+
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading audios:', error);
+            this.showError(audiosContainer, tr('error_loading_audios'));
+        }
+    }
+
+    renderAudios(audioElements, append) {
+        const audiosContainer = u('.audiosInsert');
+        let audiosHTML = '';
+
+        audioElements.forEach(el => {
+            const audioId = el.dataset.prettyid;
+            let isSelected = this.selectedAudios.has(audioId);
+            if (this.form && !isSelected) {
+                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`).length > 0;
+                if (attachmentExists) {
+                    isSelected = true;
+                    this.selectedAudios.add(audioId);
+                }
+            }
+
+            const selectedClass = isSelected ? 'selected' : '';
+            const buttonText = isSelected ? tr("detach") : tr("attach");
+
+            audiosHTML += `
+                <div class='audio_attachment_header ${selectedClass}' style="display: flex;width: 100%;" data-audio-id="${audioId}">
+                    <div class='player_part'>${el.outerHTML}</div>
+                    <div class="attachAudio" data-attachmentdata="${audioId}">
+                        <span>${buttonText}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        if (append) {
+            audiosContainer.append(audiosHTML);
+        } else {
+            audiosContainer.html(audiosHTML);
+        }
+    }
+
+    handleAudioPagination(currentPage, pagesCount) {
+        const moreContainer = u('.audios_choose_more_container');
+
+        if (currentPage < pagesCount) {
+            moreContainer.html(`
+                <div id="show_more" data-pagesCount="${pagesCount}" data-page="${currentPage + 1}" class="showMore">
+                    <span>${tr("show_more_audios")}</span>
+                </div>
+            `);
+        } else {
+            moreContainer.html('');
+        }
+    }
+
+    toggleAudioSelection(audioId) {
+        const audioElement = u(`[data-audio-id="${audioId}"]`);
+
+        if (this.selectedAudios.has(audioId)) {
+            this.selectedAudios.delete(audioId);
+            audioElement.removeClass('selected');
+            audioElement.find('.attachAudio span').html(tr("attach"));
+
+            if (this.form) {
+                const attachmentElement = this.form.find(`.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`);
+                if (attachmentElement.length > 0) {
+                    attachmentElement.remove();
+                }
+            }
+        } else {
+            const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
+            if (currentAttachments >= 10) {
+                NewNotification(
+                    tr('error'),
+                    tr('too_many_attachments'),
+                    null,
+                    () => {},
+                    5000,
+                    false
+                );
+                return false;
+            }
+
+            this.selectedAudios.add(audioId);
+            audioElement.addClass('selected');
+            audioElement.find('.attachAudio span').html(tr("detach"));
+
+            const playerPart = audioElement.find('.player_part');
+            this.form.find('.post-vertical').append(`
+                <div class="vertical-attachment upload-item" data-type='audio' data-id="${audioId}">
+                    <div class='vertical-attachment-content'>
+                        ${playerPart.html()}
+                    </div>
+                    <div class='vertical-attachment-remove'>
+                        <div id='small_remove_button'></div>
+                    </div>
+                </div>
+            `);
+        }
+
+        return this.selectedAudios.has(audioId);
+    }
+
+    initialize() {
+        this.setupDialogStyles();
+    }
+
+    static createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <div class="choose_upload_area audio-upload-btn" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div class='audios_tab_content'>
+                <div class='audios_search_container clear_fix'>
+                    <div class='ui_search_new ui_search'>
+                        <div class='ui_search_input_block'>
+                            <button class="ui_search_button_search">&nbsp;</button>
+                            <div class="ui_search_input_inner">
+                                <div class='ui_search_reset'></div>
+                                <input type='text' class='ui_search_field' placeholder='${tr("header_search")}' />
+                            </div>
+                        </div>
+                    </div>
+                    <select name="perf" class="audio_search_type">
+                        <option value="by_name">${tr("by_name")}</option>
+                        <option value="by_performer">${tr("by_performer")}</option>
+                    </select>
+                </div>
+                <div class='audiosInsert'></div>
+                <div class='audios_choose_more_container'></div>
+            </div>
+        </div>
+        `;
+    }
+}
+
+class AudioAttachmentDialog {
+    constructor(form) {
+        this.form = form;
+        this.searchTimeout = null; // Debounce timeout for search functionality
+
+        // Initialize managers
+        this.requestManager = new BaseRequestManager();
+
+        // Create message box with audio-specific dialog body
+        this.messageBox = new CMessageBox({
+            title: tr('select_audio'),
+            body: AudioManager.createDialogBody(),
+        });
+
+        // Set custom dimensions
+        this.messageBox.getNode().attr('style', 'width: 560px');
+        this.messageBox.getNode().find('.ovk-diag-body').attr('style', 'padding: 0px!important; height: 850px');
+
+        // Create and initialize managers
+        this.audioManager = new AudioManager(this.messageBox, this.requestManager, this.form);
+        this.audioManager.initialize();
+
+
+    }
+
+    async loadInitialContent() {
+        try {
+            await this.audioManager.loadAudios(0, '', false);
+        } catch (error) {
+            console.error('Error loading initial audio content:', error);
+        }
+    }
+
+    setupEventHandlers() {
+        const node = this.messageBox.getNode();
+
+        node.on('click', '.audio-upload-btn', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            this.messageBox.close();
+
+            showAudioUploadPopup();
+        });
+
+        node.on('click', '.attachAudio', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const audioHeader = u(e.target).closest('.audio_attachment_header');
+            const audioId = audioHeader.attr('data-audio-id');
+            const wasAttached = this.audioManager.selectedAudios.has(audioId);
+
+            this.audioManager.toggleAudioSelection(audioId);
+
+            if (!wasAttached && !e.ctrlKey) {
+                this.messageBox.close();
+            }
+        });
+
+        node.on('click', '#show_more', async (e) => {
+            e.preventDefault();
+            const target = u(e.target).closest('#show_more');
+            target.addClass('lagged');
+
+            const page = Number(target.attr('data-page')) - 1;
+            await this.audioManager.loadAudios(page, this.audioManager.currentQuery, true);
+        });
+
+        node.on('input', '.ui_search_field', (e) => {
+            const query = e.target.value.trim();
+            this.audioManager.currentQuery = query;
+
+            this.requestManager.cancelOngoingRequests();
+
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+                this.audioManager.loadAudios(0, query, false);
+            }, 300);
+        });
+
+        node.on('change', '.audio_search_type', (e) => {
+            this.audioManager.searchType = e.target.value;
+            this.audioManager.loadAudios(0, this.audioManager.currentQuery, false);
+        });
+
+        node.on('click', '.ui_search_reset', () => {
+            node.find('.ui_search_field').nodes[0].value = '';
+            this.audioManager.currentQuery = '';
+            this.audioManager.loadAudios(0, '', false);
+        });
+    }
+
+    async initialize() {
+        this.setupEventHandlers();
+        await this.loadInitialContent();
+    }
+}
+
+class DocumentManager extends BaseAttachmentManager {
+    constructor(messageBox, requestManager, form = null, source = "user", sourceArg = 0) {
+        super(messageBox, requestManager, form, 'document', {
+            DOCS_PER_PAGE: 10
+        });
+        this.source = source;
+        this.sourceArg = sourceArg;
+        this.currentQuery = '';
+        this.searchTimeout = null;
+        this.isSearching = false;
+    }
+
+    get selectedDocuments() {
+        return this.selectedItems;
+    }
+
+    async loadDocuments(page = 0, query = '', append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const docsContainer = u('.docsInsert');
+
+        if (!append) {
+            docsContainer.html('');
+            this.showLoader(docsContainer);
+        }
+
+        try {
+            const fd = new FormData();
+            fd.append("context", query ? "search" : "list");
+            fd.append("hash", window.router.csrf);
+            if (query) {
+                fd.append("ctx_query", query);
+            }
+
+            let url = `/docs${this.source == "club" ? this.sourceArg : ""}?picker=1&p=${page + 1}`;
+
+            const req = await fetch(url, {
+                method: "POST",
+                body: fd
+            });
+
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+
+            const res = await req.text();
+            const dom = new DOMParser();
+            const pre = dom.parseFromString(res, "text/html");
+
+            const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value);
+            const count = Number(pre.querySelector("input[name='count']").value);
+
+            if (count < 1) {
+                this.showError(docsContainer, tr("no_documents"));
+                return { count: 0, items: [] };
+            }
+
+            const docElements = Array.from(pre.querySelectorAll("._content"));
+            this.renderDocuments(docElements, append);
+            this.handleDocumentPagination(page, pagesCount);
+
+            return { count, items: docElements, page, pagesCount };
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading documents:', error);
+            this.showError(docsContainer, tr('error_loading_documents'));
+        }
+    }
+
+    renderDocuments(docElements, append) {
+        const docsContainer = u('.docsInsert');
+        let docsHTML = '';
+
+        docElements.forEach(el => {
+            const docId = el.dataset.attachmentdata;
+
+            let isSelected = this.selectedDocuments.has(docId);
+            if (this.form && !isSelected) {
+                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="document"][data-id="${docId}"]`).length > 0;
+                if (attachmentExists) {
+                    isSelected = true;
+                    this.selectedDocuments.add(docId);
+                }
+            }
+
+            const selectedClass = isSelected ? 'selected' : '';
+            const buttonText = isSelected ? tr("detach") : tr("attach");
+
+            docsHTML += `
+                <div class='document_attachment_header ${selectedClass}' data-document-id="${docId}">
+                    <div class="attachDocument" data-attachmentdata="${docId}">
+                        <span>${buttonText}</span>
+                    </div>
+                    <div class='document_content'>${el.outerHTML}</div>
+                </div>
+            `;
+        });
+
+        if (append) {
+            docsContainer.append(docsHTML);
+        } else {
+            docsContainer.html(docsHTML);
+        }
+    }
+
+    handleDocumentPagination(currentPage, pagesCount) {
+        const moreContainer = u('.docs_choose_more_container');
+
+        if (currentPage < pagesCount - 1) {
+            moreContainer.html(`
+                <div id="show_more" data-pagesCount="${pagesCount}" data-page="${currentPage + 1}" class="showMore">
+                    <span>${tr("show_more")}</span>
+                </div>
+            `);
+        } else {
+            moreContainer.html('');
+        }
+    }
+
+    toggleDocumentSelection(docId) {
+        const docElement = u(`[data-document-id="${docId}"]`);
+
+        if (this.selectedDocuments.has(docId)) {
+            this.selectedDocuments.delete(docId);
+            docElement.removeClass('selected');
+            docElement.find('.attachDocument span').html(tr("attach"));
+
+            if (this.form) {
+                const attachmentElement = this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`);
+                if (attachmentElement.length > 0) {
+                    attachmentElement.remove();
+                }
+            }
+        } else {
+            const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
+            if (currentAttachments >= 10) {
+                NewNotification(
+                    tr('error'),
+                    tr('too_many_attachments'),
+                    null,
+                    () => {},
+                    5000,
+                    false
+                );
+                return false;
+            }
+
+            this.selectedDocuments.add(docId);
+            docElement.addClass('selected');
+            docElement.find('.attachDocument span').html(tr("detach"));
+
+            const docContent = docElement.find('.document_content ._content').nodes[0];
+            const dataset = docContent.dataset;
+            const _url = dataset.attachmentdata.split("_");
+
+            this.form.find('.post-vertical').append(`
+                <div class="vertical-attachment upload-item" draggable="true" data-type='doc' data-id="${dataset.attachmentdata}">
+                    <div class='vertical-attachment-content' draggable="false">
+                        <div class="docMainItem attachment_doc attachment_note">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                            <div class='attachment_note_content'>
+                                <span class="attachment_note_text">${tr("document")}</span>
+                                <span class="attachment_note_name"><a href="/doc${_url[0]}_${_url[1]}?key=${_url[2]}">${ovk_proc_strtr(escapeHtml(dataset.name), 50)}</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='vertical-attachment-remove'>
+                        <div id='small_remove_button'></div>
+                    </div>
+                </div>
+            `);
+        }
+
+        return this.selectedDocuments.has(docId);
+    }
+
+    async searchDocuments(query) {
+        if (this.isSearching) {
+            return;
+        }
+
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+
+        this.searchTimeout = setTimeout(async () => {
+            this.isSearching = true;
+            this.currentQuery = query;
+
+            try {
+                await this.loadDocuments(0, query, false);
+            } finally {
+                this.isSearching = false;
+            }
+        }, 300);
+    }
+
+    initialize() {
+        if (window.uiSearch) {
+            window.uiSearch.init(this.messageBox.getNode().find('.ui_search').nodes[0]);
+        }
+    }
+
+    static createDialogBody() {
+        return `
+        <div class="docs_choose_wrap">
+            <div class="choose_upload_area document-upload-btn" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div class="docs_choose_search">
+                <div class="ui_search_new ui_search ui_search_field_empty">
+                    <div class="ui_search_input_block">
+                        <button class="ui_search_button_search">&nbsp;</button>
+                        <div class="ui_search_input_inner">
+                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
+                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_by_documents")}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='_attachment_insert' class='clear_fix'>
+                <div class="docsInsert"></div>
+                <div class="docs_choose_more_container"></div>
+            </div>
+        </div>
+        `;
+    }
+}
+
+class DocumentAttachmentDialog {
+    constructor(form, source = "user", sourceArg = 0) {
+        this.form = form;
+        this.source = source;
+        this.sourceArg = sourceArg;
+        this.searchTimeout = null;
+
+        this.requestManager = new BaseRequestManager();
+
+        this.messageBox = new CMessageBox({
+            title: tr('select_doc'),
+            body: DocumentManager.createDialogBody(),
+            buttons: source != "user" ? [tr("go_to_my_documents"), tr("close")] : [tr("close")],
+            callbacks: source != "user" ? [
+                async () => {
+                    this.messageBox.close();
+                    const dialog = new DocumentAttachmentDialog(form, "user", 0);
+                    await dialog.initialize();
+                },
+                () => {
+                    this.messageBox.close();
+                }
+            ] : [
+                () => {
+                    this.messageBox.close();
+                }
+            ]
+        });
+
+        this.messageBox.getNode().attr('style', 'width: 636px;');
+
+        this.documentManager = new DocumentManager(this.messageBox, this.requestManager, this.form, source, sourceArg);
+        this.documentManager.initialize();
+    }
+
+    async loadInitialContent() {
+        try {
+            await this.documentManager.loadDocuments(0, '', false);
+        } catch (error) {
+            console.error('Error loading initial document content:', error);
+        }
+    }
+
+    setupEventHandlers() {
+        const node = this.messageBox.getNode();
+
+        node.on('click', '.document-upload-btn', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            this.messageBox.close();
+
+            showDocumentUploadDialog("search", this.sourceArg >= 0 ? NaN : Math.abs(this.sourceArg), () => {
+            });
+        });
+
+        node.on('click', '.attachDocument', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const docHeader = u(e.target).closest('.document_attachment_header');
+            const docId = docHeader.attr('data-document-id');
+            const wasAttached = this.documentManager.selectedDocuments.has(docId);
+            this.documentManager.toggleDocumentSelection(docId);
+            if (!wasAttached && !e.ctrlKey) {
+                this.messageBox.close();
+            }
+        });
+
+        node.on('click', '#show_more', async (e) => {
+            e.preventDefault();
+            const target = u(e.target).closest('#show_more');
+            target.addClass('lagged');
+
+            const page = Number(target.attr('data-page'));
+            await this.documentManager.loadDocuments(page, this.documentManager.currentQuery, true);
+            target.remove();
+        });
+
+        node.on('input', '.ui_search_field', (e) => {
+            const query = ovk_proc_strtr(e.target.value, 100);
+            this.documentManager.searchDocuments(query);
+        });
+
+        node.on('click', '.ui_search_button_search', (e) => {
+            e.preventDefault();
+            const input = node.find('.ui_search_field').nodes[0];
+            if (input) {
+                const query = ovk_proc_strtr(input.value, 100);
+                this.documentManager.searchDocuments(query);
+            }
+        });
+    }
+
+    async initialize() {
+        this.setupEventHandlers();
+        await this.loadInitialContent();
+    }
+}
+
+u(document).on("click", "#__vkifyPhotoAttachment", async (e) => {
+    const form = u(e.target).closest('form');
+    const club = Number(e.currentTarget.dataset.club ?? 0);
+
+    const dialog = new PhotoAttachmentDialog(form, club);
+    await dialog.initialize();
+});
+
+u(document).on('click', '#__vkifyVideoAttachment', async (e) => {
+    const form = u(e.target).closest('form');
+
+    const dialog = new VideoAttachmentDialog(form);
+    await dialog.initialize();
+});
+
+u(document).on('click', '#__vkifyAudioAttachment', async (e) => {
+    const form = u(e.target).closest('form');
+
+    const dialog = new AudioAttachmentDialog(form);
+    await dialog.initialize();
+});
+
+u(document).on('click', '#__vkifyDocumentAttachment', async (e) => {
+    const form = u(e.target).closest('form');
+
+    const dialog = new DocumentAttachmentDialog(form);
+    await dialog.initialize();
+});

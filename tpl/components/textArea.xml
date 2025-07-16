@@ -53,14 +53,14 @@
             <div class="post-bottom-acts">
                 <div class="post-attach-menu">
                     <div id="wallAttachmentMenu">
-                        <a id="__photoAttachment" class="attach_photo" data-tip="simple-black" data-align="bottom-center" data-title="{_photo}"
+                        <a id="__vkifyPhotoAttachment" class="attach_photo" data-tip="simple-black" data-align="bottom-center" data-title="{_photo}"
                            {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        <a id="__videoAttachment" class="attach_video" data-tip="simple-black" data-align="bottom-center" data-title="{_video}">
+                        <a id="__vkifyVideoAttachment" class="attach_video" data-tip="simple-black" data-align="bottom-center" data-title="{_video}">
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        <a id="__audioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-center" data-title="{_audio}">
+                        <a id="__vkifyAudioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-center" data-title="{_audio}">
                             <div class="post-attach-menu__icon"></div>
                         </a>
 
@@ -68,7 +68,7 @@
                             {_show_more}
                         </a>
                         <div class="tippy-menu" id="moreAttachTooltip">
-                            <a n:if="$docs ?? true" id="__documentAttachment" class="attach_document"
+                            <a n:if="$docs ?? true" id="__vkifyDocumentAttachment" class="attach_document"
                                {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
                                 <div class="post-attach-menu__icon"></div>
                                 {_document}

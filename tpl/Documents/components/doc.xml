@@ -8,8 +8,7 @@
         {if $preview}
             <img class="doc_icon" alt="document_preview" src="{$preview->getURLBySizeId('tiny')}">
         {else}
-            <div class="doc_icon no_image">
-                <span>{$doc->getFileExtension()}</span>
+            <div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}">
             </div>
         {/if}
     </a>

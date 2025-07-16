@@ -33,7 +33,9 @@ let locales = {
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
 		"deleted_attachment_2": "As such, it can't be displayed.",
 		"dark_mode": "Dark mode",
-		"gifts_left": "$1 left"
+		"gifts_left": "$1 left",
+		"choose_from_my_photos": "Choose from my photos",
+		"back_to_club_photos": "Back to Club Photos"
 	},
 	'ru': {
 		"language": "Язык",
@@ -69,7 +71,9 @@ let locales = {
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
 		"deleted_attachment_2": "Поэтому она не может быть отображена.",
 		"dark_mode": "Тёмная тема",
-		"gifts_left": "$1 осталось"
+		"gifts_left": "$1 осталось",
+		"choose_from_my_photos": "Выбрать из моих фотографий",
+		"back_to_club_photos": "Назад к фотографиям сообщества"
 	},
 	'uk': {
 		"language": "Мова",
@@ -104,14 +108,16 @@ let locales = {
 		"deleted_attachment": "Цей допис містить видалене вкладення та не має тексту.",
 		"deleted_attachment_2": "Тому він не може бути відображений.",
 		"dark_mode": "Темний режим",
-		"gifts_left": "$1 осталось"
+		"gifts_left": "$1 осталось",
+		"choose_from_my_photos": "Вибрати з моїх фотографій",
+		"back_to_club_photos": "Назад до фотографій спільноти"
 	}
 }
 
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.3.1.0/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.3.1.1/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';

@@ -439,8 +439,8 @@
         {script "js/scroll.js"}
         {script "js/player.js"}
         {script "js/al_wall.js"}
-        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/patch_wall.js"></script>
         {script "js/al_docs.js"}
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/patch_wall.js"></script>    
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}

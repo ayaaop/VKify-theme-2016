@@ -9,8 +9,10 @@
     }
     </style>
     {do $crumbs = [
-        ['href' => $photo->getAlbum()->getOwner()->getURL(), 'title' => $photo->getAlbum()->getOwner()->getCanonicalName()],
-        ['href' => "/albums{$photo->getAlbum()->getOwner()->getId()}", 'title' => tr("albums")]
+        ['href' => $photo->getAlbum() ? $photo->getAlbum()->getOwner()->getURL() : $photo->getOwner()->getURL(), 
+         'title' => $photo->getAlbum() ? $photo->getAlbum()->getOwner()->getCanonicalName() : $photo->getOwner()->getCanonicalName()],
+        ['href' => $photo->getAlbum() ? "/albums{$photo->getAlbum()->getOwner()->getId()}" : "/albums{$photo->getOwner()->getId()}", 
+         'title' => tr("albums")]
     ]}
 
     {if $photo->getAlbum()}

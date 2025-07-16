@@ -76,7 +76,7 @@
 					</div>
 				</div>
 				{var $followersCount = $club->getFollowersCount()}
-				<div n:if="$thisUser && $followersCount > 0" class="page_block module people_module">
+				<div n:if="$followersCount > 0" class="page_block module people_module">
 
 						<a href="/club{$club->getId()}/followers" class="module_header">
 							<h3 class="header_top clear_fix">
@@ -102,7 +102,7 @@
 						</div>
 				</div>
 				<div n:ifcontent class="page_block">
-					<div n:if="$club->isDisplayTopicsAboveWallEnabled() && ($albumsCount > 0 || $canEdit)" class="module album_module">
+					<div n:if="$club->isDisplayTopicsAboveWallEnabled() && $albumsCount > 0 || $canEdit" class="module album_module">
 						{if $albumsCount > 0}
 							<a href="/albums{$club->getId() * -1}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -136,7 +136,7 @@
 						{/if}
 					</div>
 
-					<div n:if="($club->isEveryoneCanCreateTopics()) || !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
+					<div n:if="($canEdit || $club->isEveryoneCanCreateTopics()) && !$club->isDisplayTopicsAboveWallEnabled()" class="module topics_module">
 						{if $topicsCount > 0}
 							<a href="/board{$club->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -159,13 +159,13 @@
 									</div>
 								</div>
 							</div>
-						{else}
+						{elseif $club->isEveryoneCanCreateTopics() || $canEdit}
 							<a href="/board{$club->getId()}/create" class="page_module_upload">
 								<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
 						{/if}
 					</div>
 
-					<div n:if="($thisUser && $docsCount > 0 || $canEdit)" class="module">
+					<div n:if="$docsCount > 0 || $canEdit" class="module">
 						{if $docsCount > 0}
 							<a href="/docs{$club->getRealId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -182,13 +182,13 @@
 									{include "../Documents/components/doc.xml", doc => $doc, hideButtons => true, noTags => true}
 								{/foreach}
 							</div>
-						{else}
+						{elseif $canEdit}
 							<a href="/docs{$club->getRealId()}" class="page_module_upload">
 								<div class="page_upload_label page_docs_upload"></div>{_document_uploading_in_general}</a>
 						{/if}
 					</div>
 
-					<div n:if="$thisUser" class="module">
+					<div n:if="$audiosCount > 0 || $canEdit || $club->isEveryoneCanUploadAudios()" class="module">
 						{if $audiosCount > 0}
 							<a href="/audios-{$club->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -350,7 +350,7 @@
 								</div>
 							</div>
 						</div>
-					{else}
+					{elseif $club->isEveryoneCanCreateTopics() || $canEdit}
 						<a href="/board{$club->getId()}/create" class="page_module_upload">
 							<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
 					{/if}

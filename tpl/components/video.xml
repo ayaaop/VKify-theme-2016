@@ -9,11 +9,11 @@
                     <div class="video_thumb_label">
                     {if $video->getType() != 0}
                         <span class="video_thumb_label_item">
-                            <vkifyloc name="external" />
+                            {$video->getType() == \openvk\Web\Models\Entities\Video::TYPE_EMBED ? 'YouTube' : ''}
                         </span>
-                        <div class="divider" n:if="$video->getFormattedLength() != ''"></div>
+                        <div class="divider" n:if="$video->getFormattedLength() != '00:00'"></div>
                     {/if}
-                        <span class="video_thumb_label_item">{$video->getFormattedLength()}</span>
+                        <span class="video_thumb_label_item" n:if="$video->getFormattedLength() != '00:00'">{$video->getFormattedLength()}</span>
                     </div>
                     <div class="video_thumb_play">
                     </div>

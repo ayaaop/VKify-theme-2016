@@ -124,8 +124,8 @@ body.dark-mode .tippy-menu a {
 	color: var(--text-color)
 }
 body.dark-mode .ovk-diag-head {
-	background: var(--module-header-background-color);
-	color: var(--text-color);
+	--accent-color-3: var(--module-header-background-color);
+	--accent-text-color: var(--text-color);
 	border-bottom: 1px solid var(--border-color);
 }
 body.dark-mode .button.button_gray {
