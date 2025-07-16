@@ -665,6 +665,10 @@
 	margin: 0;
 	width: 290px;
 }
+.ovk-diag-body .video_item .video_item_thumb {
+	width: 290px;
+	height: 161px;
+}
 
 /* photos */
 .photos_choose_row {
