@@ -726,12 +726,17 @@ input:focus, textarea:focus {
 .bigPlayer .playButtons .playButton {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.1.2/resource/icons/audio_player_controls.png) no-repeat, var(--accent-color);
-    background-position: left top;
+    background: var(--accent-color);
     border-radius: 50%;
     margin: 15px 0;
 }
-.bigPlayer .playButtons .playButton.pause {
+.bigPlayer .playButtons .playButton .playIcon {
+    width: 28px;
+    height: 28px;
+    background: url(/themepack/vkify16/3.3.1.2/resource/icons/audio_player_controls.png) no-repeat;
+    background-position: left top;
+}
+.bigPlayer .playButtons .playButton.pause .playIcon {
     background-position: 0px -56px;
 }
 .bigPlayer .playButtons .arrowsButtons {

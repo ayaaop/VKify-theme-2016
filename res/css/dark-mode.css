@@ -71,7 +71,7 @@ body.dark-mode {
 	--audio-background-color-3: #454546;
 	--audio-slider-color: #363637;
 	--audio-slider-color-2: #5a5a5b;
-	--audio-slider-progress-color: rgba(113, 170, 235, .25);
+	--audio-slider-progress-color: rgba(255, 255, 255, .25);
 	--audio-count-color: #363637;
 	--audio-count-text-color: #a5a5a5;
 
@@ -116,7 +116,7 @@ body.dark-mode #liked {
     filter: brightness(120%);
 }
 
-body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post-like-button,.button_light) i {
+body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post-like-button,.button_light) i,.bigPlayer .playButtons .playButton .playIcon {
 	filter: invert(1)!important
 }
 

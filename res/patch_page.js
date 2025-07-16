@@ -1022,7 +1022,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 <div class="bigPlayer ctx_place">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title="${tr('play_tip')}"></div>
+            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title="${tr('play_tip')}"><div class="playIcon"></div></div>
             <div class="arrowsButtons">
                 <div class="nextButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
                 <div class="backButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
@@ -1134,7 +1134,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             };
         },
         maxWidth: 'var(--page-width)',
-        appendTo: document.querySelector('#headerMusicLinkDiv'),
+        appendTo: document.body,
         popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 0] } }] },
         onHidden() {
             window.musHtml = undefined;

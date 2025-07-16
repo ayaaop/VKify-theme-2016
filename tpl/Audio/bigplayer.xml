@@ -1,7 +1,7 @@
 <div n:class="bigPlayer, ctx_place, $tidy ? tidy">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div class="playButton musicIcon" data-tip='simple-black' data-align="bottom-start" data-title="{_play_tip} [Space]"></div>
+            <div class="playButton musicIcon" data-tip='simple-black' data-align="bottom-start" data-title="{_play_tip} [Space]"><div class="playIcon"></div></div>
                 
             <div class="arrowsButtons">
                 <div class="nextButton musicIcon" data-tip='simple-black' data-align="bottom-start" data-title=""></div>
