@@ -1559,8 +1559,6 @@ class BaseAttachmentManager {
 
     updateChooseButton(selectedCount) {
     }
-
-
 }
 
 class AlbumManager {
