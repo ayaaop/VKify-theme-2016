@@ -2845,6 +2845,13 @@ a.poll-retract-vote, .poll h4, .poll-meta {
 .docListViewItem .doc_volume #add_icon:hover {
     background-position-y: 0px;
 }
+.docListViewItem .doc_volume #mark_icon {
+	background-position: left -15px;
+}
+.docListViewItem .doc_volume #report_icon {
+	background-position: left -125px;
+	background-size: 28px;
+}
 .docListViewItem .doc_volume #remove_icon {
     background-position: 1px -28px;
 }
