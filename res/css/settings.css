@@ -72,11 +72,6 @@
 }
 
 /* privacy */
-.settings_privacy {
-    margin: 0;
-    padding: 6px 20px 5px
-}
-
 .settings_privacy_row {
     border-bottom: solid var(--border-color);
     border-width: 1px 0;

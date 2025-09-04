@@ -161,6 +161,7 @@
                 id => 'audio_tabs'
             }
 
+            {var $friendsAudios = array_slice($friendsAudios, 0, 5)}
             {if $friendsAudios}
                 {var $friendsMenuItems = []}
                 {foreach $friendsAudios as $friend}
@@ -204,9 +205,9 @@
 
             <div class="page_block audiosDiv">
                 <div class="audiosContainer audiosSideContainer" n:if="$mode != 'playlists'">
-                    <div n:if="$audiosCount <= 0" style='height: 100%;'>
-                        {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
-                    </div>
+                    {if $audiosCount <= 0}
+                        {include "../components/content_error.xml", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
+                    {/if}
                     <div n:if="$audiosCount > 0" class="scroll_container">
                         <div class="scroll_node" n:foreach="$audios as $audio">
                             {include "player.xml", audio => $audio, club => $club}
@@ -225,15 +226,15 @@
                     </div>
                 </div>
                 
-                <div class="audiosPaddingContainer audiosSideContainer audiosPaddingContainer" n:if="$mode == 'playlists'">
+                {if $mode == 'playlists'}
                     <div n:if="$playlistsCount <= 0" style='height: 100%;'>
-                        {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
+                        {include "../components/content_error.xml", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
                     </div>
 
                     <div class="scroll_container playlistContainer" n:if="$playlistsCount > 0">
-                        <div class='scroll_node' n:foreach='$playlists as $playlist'>
+                        {foreach $playlists as $playlist}
                             {include 'playlistListView.xml', playlist => $playlist}
-                        </div>
+                        {/foreach}
                     </div>
 
                     <div>
@@ -246,7 +247,7 @@
                             "tidy"     => true,
                         ]}
                     </div>
-                </div>
+                {/if}
             </div>
         </div>
     </div>

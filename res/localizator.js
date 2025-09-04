@@ -35,7 +35,8 @@ let locales = {
 		"dark_mode": "Dark mode",
 		"gifts_left": "$1 left",
 		"choose_from_my_photos": "Choose from my photos",
-		"back_to_club_photos": "Back to Club Photos"
+		"back_to_club_photos": "Back to Club Photos",
+		"playlist_share_explain": "OpenVK currently does not support sharing playlists as attachments. Therefore, this action will just create a new post with a link to the playlist appended."
 	},
 	'ru': {
 		"language": "Язык",
@@ -73,7 +74,8 @@ let locales = {
 		"dark_mode": "Тёмная тема",
 		"gifts_left": "$1 осталось",
 		"choose_from_my_photos": "Выбрать из моих фотографий",
-		"back_to_club_photos": "Назад к фотографиям сообщества"
+		"back_to_club_photos": "Назад к фотографиям сообщества",
+		"playlist_share_explain": "OpenVK в настоящее время не поддерживает отправку плейлистов в качестве вложений. Поэтому это действие просто создаст новую запись с прикреплённой ссылкой на плейлист."
 	},
 	'uk': {
 		"language": "Мова",
@@ -110,7 +112,8 @@ let locales = {
 		"dark_mode": "Темний режим",
 		"gifts_left": "$1 осталось",
 		"choose_from_my_photos": "Вибрати з моїх фотографій",
-		"back_to_club_photos": "Назад до фотографій спільноти"
+		"back_to_club_photos": "Назад до фотографій спільноти",
+		"playlist_share_explain": "OpenVK наразі не підтримує надсилання плейлистів як вкладень. Тому ця дія просто створить новий допис із доданим посиланням на плейлист."
 	}
 }
 

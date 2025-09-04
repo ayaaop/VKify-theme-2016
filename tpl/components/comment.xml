@@ -55,8 +55,8 @@
                 {if isset($thisUser)}
                     {var $isLiked = $comment->hasLikeFrom($thisUser)}
                     <a class="post-like-button like_wrap {if $isLiked}my_like{/if}" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
-                        <i class="heart like_icon _icon" id="{if $isLiked}liked{/if}"></i>
-                        <span class="likeCnt reply_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                        <i class="heart like_icon" id="{if $isLiked}liked{/if}"></i>
+                        <span class="likeCnt reply_like_count">{if $likesCount > 0}{$likesCount}{/if}</span>
                     </a>
                 {/if}
                 <div class="reply_date">

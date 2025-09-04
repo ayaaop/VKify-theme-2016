@@ -28,7 +28,7 @@
                 'count' => $user->getClubCount(true)
             ]
         ]}
-        {var $createGroupButton = '<a class="button" href="/groups_create">' . tr('create_group') . '</a>'}
+        {var $createGroupButton = '<a class="button" href="/groups_create" onclick="if(typeof showCreateGroupModal === \'function\') { showCreateGroupModal(); return false; }">' . tr('create_group') . '</a>'}
         {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'groups_top_tabs', extra => $createGroupButton}
 
         {include "../components/search_bar.xml",
@@ -161,7 +161,7 @@
                         <a href="/search?section=groups" class="button button_gray button_wide">{_show_more}</a>
                     </div>
                 {else}
-                    {include "../components/content_error.xml" description => tr("groups_zero")}
+                    {include "../components/content_error.xml", icon => false, description => tr("groups_zero")}
                 {/if}
             </div>
         </div>

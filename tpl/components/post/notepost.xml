@@ -35,7 +35,7 @@
         <div class="post-content" id="{$note->getPrettyId()}">
             <div class="text wall_text" id="text{$note->getPrettyId()}">
                 <a class="wall_note_type" href="/note{$note->getPrettyId()}">{$note->getName()}</a>
-                <div n:ifcontent class="really_text wall_post_text note_text_preview">
+                <div n:ifcontent class="really_text wall_post_text note_text">
                     {$note->getText()|noescape}
                 </div>
             </div>
@@ -43,7 +43,6 @@
         <div class='post_edit'></div>
         <div class="post_full_like_wrap" n:if="$thisUser && !($forceNoLike ?? false)" n:ifcontent>
             <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
-            <a n:if="!($forceNoShareLink ?? false)" class="share_link_wrap" href="javascript:repost({$note->getId()}, 'note')">{_share}</a>
         </div>
         <div n:if="!($forceNoCommentsLink ?? false)" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
             <a n:if="$commentsCount > 3" href="/note{$note->getPrettyId()}" class="button button_wide button_gray expand_button">{_view_other_comments}</a>

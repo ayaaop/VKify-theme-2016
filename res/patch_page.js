@@ -10,7 +10,7 @@ function setTip(obj, text, interactive = false) {
         allowHTML: true,
         placement: 'top',
         theme: 'light vk',
-        animation: 'shift-away',
+        animation: 'fade',
         interactive: interactive
     });
 }
@@ -345,7 +345,7 @@ window.showAudioUploadPopup = function () {
 
 async function loadMoreAudio() {
     if (window.musHtml) {
-        window.musHtml.querySelector('.audiosContainer .loadMore').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==" />`;
+        window.musHtml.querySelector('.audiosContainer .loadMore').innerHTML = `<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
         await window.player.loadContext(Number(Math.max(...window.player.context["playedPages"])) + 1, true);
         window.player.dump();
         let parsedaud = parseAudio(true).scrollContainer;
@@ -359,7 +359,12 @@ async function loadMoreAudio() {
         });
         parsedaud = tmp.innerHTML;
         window.musHtml.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer .loadMore_node').outerHTML = parsedaud;
-        window.musHtml.querySelector('.loadMore').onclick = async function () { await loadMoreAudio(); }
+
+        const loadMoreButton = window.musHtml.querySelector('.loadMore');
+        if (loadMoreButton) {
+            loadMoreButton.onclick = async function () { await loadMoreAudio(); }
+        }
+
         u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
         u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying');
     }
@@ -381,7 +386,7 @@ function parseAudio(onlyscnodes = false) {
     cleanUpAudioList();
     const audioDump = localStorage.getItem('audio.lastDump');
     const nothingtemplate = `<div class="vkifytracksplaceholder" style="margin: auto;">
-                                <span style="color: #707070;">
+                                <span style="color: var(--muted-text-color);">
                                     ${tr('no_data_description')}
                                 </span>
                             </div>`
@@ -417,7 +422,7 @@ function parseAudio(onlyscnodes = false) {
                             <div class="mini_timer">
                                 <span class="nobold hideOnHover" data-unformatted="${track.length}">${formatTime(track.length)}</span>
                                 <div class="buttons">
-                                    <div class="report-icon musicIcon" data-id="6690"></div>
+                                    <div class="report-icon musicIcon" data-id="6690" onclick="tippy.hideAll()"></div>
                                     <div class="remove-icon musicIcon" data-id="${track.id}"></div>
                                     <div class="add-icon-group musicIcon hidden" data-id="${track.id}"></div>
                                 </div>
@@ -452,11 +457,18 @@ function parseAudio(onlyscnodes = false) {
                     scrollContainer.appendChild(scrollNode);
                 });
                 if (scrollContainer.innerHTML) {
-                    const loadmore = document.createElement('div');
-                    loadmore.classList.add('scroll_node');
-                    loadmore.classList.add('loadMore_node');
-                    loadmore.innerHTML = `<a class="loadMore">${window.vkifylang.loadmore}</a>`
-                    scrollContainer.appendChild(loadmore);
+                    const hasMorePages = window.player && window.player.context &&
+                        window.player.context.playedPages && window.player.context.pagesCount &&
+                        Math.max(...window.player.context.playedPages) < window.player.context.pagesCount;
+
+                    if (hasMorePages) {
+                        const loadmore = document.createElement('div');
+                        loadmore.classList.add('scroll_node');
+                        loadmore.classList.add('loadMore_node');
+                        loadmore.innerHTML = `<a class="loadMore">${window.vkifylang.loadmore}</a>`
+                        scrollContainer.appendChild(loadmore);
+                    }
+
                     if (onlyscnodes) {
                         return { 'scrollContainer': `${scrollContainer.innerHTML}`, 'nowPlayingUrl': adump.context.object.url };
                     } else {
@@ -724,22 +736,72 @@ $(document).ready(function () {
 });
 
 window.uiSearch = {
-    init: function() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.bindEvents();
+    customConfigs: new Map(),
+
+    init: function(element = null, config = {}) {
+        if (element) {
+            this.initializeElement(element, config);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                this.bindEvents();
+                this.initializeExistingFields();
+            });
+        }
+    },
+
+    initializeElement: function(element, config = {}) {
+        const searchContainer = element.closest ? element.closest('.ui_search') :
+                              (element.classList && element.classList.contains('ui_search') ? element : null);
+
+        if (!searchContainer) return;
+
+        const elementId = this.getElementId(searchContainer);
+        this.customConfigs.set(elementId, {
+            onInput: config.onInput || null,
+            onChange: config.onChange || null,
+            onReset: config.onReset || null,
+            onSubmit: config.onSubmit || null,
+            onButtonClick: config.onButtonClick || null,
+            timeout: config.timeout || 0,
+            processQuery: config.processQuery || null,
+            ...config
         });
+
+        const input = searchContainer.querySelector('.ui_search_field');
+        if (input && input.value && input.value.trim() !== '') {
+            searchContainer.classList.remove('ui_search_field_empty');
+            this.updateResetButton(searchContainer, input.value.trim());
+        }
+    },
+
+    getElementId: function(element) {
+        if (element.id) return element.id;
+        if (element.dataset && element.dataset.searchId) return element.dataset.searchId;
+
+        const input = element.querySelector('.ui_search_field');
+        const placeholder = input ? input.placeholder : '';
+        const position = Array.from(document.querySelectorAll('.ui_search')).indexOf(element);
+        return `ui_search_${position}_${placeholder.replace(/\s+/g, '_')}`;
     },
 
     bindEvents: function() {
         document.addEventListener('input', (e) => {
             if (e.target && e.target.classList && e.target.classList.contains('ui_search_field')) {
-                this.handleInputChange(e.target);
+                this.handleInputChange(e.target, e);
             }
         });
 
         document.addEventListener('click', (e) => {
             if (e.target && e.target.classList && e.target.classList.contains('ui_search_reset')) {
                 this.reset(e.target, false, e);
+            } else if (e.target && e.target.classList && e.target.classList.contains('ui_search_button_search')) {
+                this.handleButtonClick(e.target, e);
+            }
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.classList && e.target.classList.contains('ui_search_field')) {
+                this.handleChange(e.target, e);
             }
         });
 
@@ -762,11 +824,17 @@ window.uiSearch = {
         }, true);
     },
 
-    handleInputChange: function(input) {
+    getConfig: function(searchContainer) {
+        const elementId = this.getElementId(searchContainer);
+        return this.customConfigs.get(elementId) || {};
+    },
+
+    handleInputChange: function(input, event) {
         const searchContainer = input.closest('.ui_search');
         if (!searchContainer) return;
 
         const value = input.value.trim();
+        const config = this.getConfig(searchContainer);
 
         if (value === '') {
             searchContainer.classList.add('ui_search_field_empty');
@@ -775,6 +843,50 @@ window.uiSearch = {
         }
 
         this.updateResetButton(searchContainer, value);
+
+        if (config.onInput) {
+            const processedQuery = config.processQuery ? config.processQuery(value) : value;
+
+            if (config.timeout > 0) {
+                if (searchContainer._searchTimeout) {
+                    clearTimeout(searchContainer._searchTimeout);
+                }
+
+                searchContainer._searchTimeout = setTimeout(() => {
+                    config.onInput(processedQuery, input, event);
+                }, config.timeout);
+            } else {
+                config.onInput(processedQuery, input, event);
+            }
+        }
+    },
+
+    handleChange: function(input, event) {
+        const searchContainer = input.closest('.ui_search');
+        if (!searchContainer) return;
+
+        const config = this.getConfig(searchContainer);
+        if (config.onChange) {
+            const value = input.value.trim();
+            const processedQuery = config.processQuery ? config.processQuery(value) : value;
+            config.onChange(processedQuery, input, event);
+        }
+    },
+
+    handleButtonClick: function(button, event) {
+        const searchContainer = button.closest('.ui_search');
+        if (!searchContainer) return;
+
+        const config = this.getConfig(searchContainer);
+        if (config.onButtonClick) {
+            event.preventDefault();
+            const input = searchContainer.querySelector('.ui_search_field');
+            if (input) {
+                const value = input.value.trim();
+                const processedQuery = config.processQuery ? config.processQuery(value) : value;
+                config.onButtonClick(processedQuery, input, event);
+            }
+        }
     },
 
     handleFocus: function(input) {
@@ -816,10 +928,10 @@ window.uiSearch = {
         const input = searchContainer.querySelector('.ui_search_field');
         if (!input) return false;
 
+        const config = this.getConfig(searchContainer);
+
         input.value = '';
-
         searchContainer.classList.add('ui_search_field_empty');
-
         this.updateResetButton(searchContainer, '');
 
         if (!clearFocus) {
@@ -828,45 +940,113 @@ window.uiSearch = {
 
         input.dispatchEvent(new Event('input', { bubbles: true }));
 
+        if (config.onReset) {
+            config.onReset(input, event);
+        }
+
         return false;
     },
 
-    handleSubmit: function() {
+    handleSubmit: function(event) {
+        const searchContainer = event.target.closest('.ui_search');
+        if (!searchContainer) return true;
+
+        const config = this.getConfig(searchContainer);
+        if (config.onSubmit) {
+            const input = searchContainer.querySelector('.ui_search_field');
+            const result = config.onSubmit(input, event);
+            if (result === false) {
+                event.preventDefault();
+                return false;
+            }
+        }
         return true;
     },
+
+    initializeExistingFields: function() {
+        const searchInputs = document.querySelectorAll('.ui_search_field');
+        searchInputs.forEach(input => {
+            if (input.value && input.value.trim() !== '') {
+                const searchContainer = input.closest('.ui_search');
+                if (searchContainer) {
+                    searchContainer.classList.remove('ui_search_field_empty');
+                    this.updateResetButton(searchContainer, input.value.trim());
+                }
+            }
+        });
+    }
 
 };
 
 window.uiSearch.init();
 
-function initAdminTabs() {
-    const tabs = document.querySelectorAll('[data-tab]');
-    const tabContents = document.querySelectorAll('.admin-tab-content');
+window.initTabSlider = function() {
+    const tabContainers = document.querySelectorAll('.ui_tabs');
 
-    if (tabs.length === 0 || tabContents.length === 0) return;
+    tabContainers.forEach(container => {
+        const slider = container.querySelector('.ui_tabs_slider');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetTab = this.getAttribute('data-tab');
+        if (!slider) return;
 
-            tabs.forEach(t => t.classList.remove('ui_tab_sel'));
-            this.classList.add('ui_tab_sel');
-
-            tabContents.forEach(content => {
-                content.style.display = 'none';
-            });
-
-            const targetContent = document.getElementById('tab-' + targetTab);
-            if (targetContent) {
-                targetContent.style.display = '';
+        function initSliderPosition() {
+            const activeTab = container.querySelector('.ui_tab_sel');
+            if (activeTab) {
+                moveSliderTo(activeTab);
             }
+        }
+
+        function moveSliderTo(tabAnchor) {
+            if (!tabAnchor || !slider) return;
+
+            tabAnchor.offsetHeight;
+
+            const { offsetLeft, offsetWidth } = tabAnchor;
+            slider.style.transform = `translateX(${offsetLeft}px)`;
+            slider.style.width = `${offsetWidth}px`;
+        }
+
+        container.addEventListener('click', function(e) {
+            const clickedTab = e.target.closest('.ui_tab');
+            if (!clickedTab || clickedTab.classList.contains('ui_tab_sel')) return;
+
+            e.preventDefault();
+
+            container.classList.add('ui_tabs_sliding');
+
+            const currentActive = container.querySelector('.ui_tab_sel');
+            if (currentActive) {
+                currentActive.classList.remove('ui_tab_sel');
+            }
+
+            moveSliderTo(clickedTab);
+
+            setTimeout(() => {
+                clickedTab.classList.add('ui_tab_sel');
+
+                container.classList.remove('ui_tabs_sliding');
+
+                const href = clickedTab.getAttribute('href');
+                if (href) {
+                    const fullUrl = new URL(href, window.location.href).href;
+
+                    if (window.router && window.router.route) {
+                        window.router.route(fullUrl);
+                    } else {
+                        window.location.href = fullUrl;
+                    }
+                }
+            }, 200);
         });
+
+        initSliderPosition();
+
+        window.addEventListener('resize', initSliderPosition);
     });
-}
+};
+
+document.addEventListener('DOMContentLoaded', window.initTabSlider);
 
 window.addEventListener('DOMContentLoaded', async () => {
-    initAdminTabs();
     u(document).on('click', `.ovk-diag-body #upload_container #uploadMusicPopup`, async () => {
         const current_upload_page = '/player/upload'
         let end_redir = ''
@@ -1085,15 +1265,19 @@ window.addEventListener('DOMContentLoaded', async () => {
     <div class="narrow_column_wrap">
         <div class="narrow_column">
             <div class="ui_rmenu ui_rmenu_pr audio_tabs">
-                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios${window.openvk.current_id}">${tr('my_music')}</a>
-                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/player/upload">${tr('upload_audio')}</a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios${window.openvk.current_id}">
+                    <span>${tr('my_music')}</span>
+                    <span class="ui_rmenu_extra_item addAudioSmall" onclick="tippy.hideAll(); showAudioUploadPopup(); return false;" data-href="/player/upload"><div class="addIcon"></div></span>
+                </a>
+                <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios/uploaded">${tr('my_audios_small_uploaded')}</a>
                 <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios" id="ki">${tr('audio_new')}</a>
                 <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
                 <div class="ui_rmenu_sep"></div>
                 <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/playlists${window.openvk.current_id}" id="ki">${tr('my_playlists')}</a>
                 <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios/newPlaylist">${tr('new_playlist')}</a>
+                <div class="ui_rmenu_sep"></div>
             </div>
-            <div class="ui_rmenu ui_rmenu_pr friends_audio_list">
+            <div class="friends_audio_list">
             ${friendshtml}
             </div>
         </div>
@@ -1154,7 +1338,11 @@ window.addEventListener('DOMContentLoaded', async () => {
                 playingNowLnk = parsedAudio.nowPlayingUrl.replace(/^\//, '');
                 if (instance.popper.querySelector('.loadMore')) {
                     instance.popper.querySelector('.musfooter .playingNow').innerHTML = `<img src="data:image/gif;base64,R0lGODlhIAAIAKECAEVojoSctMHN2QAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFCgADACwAAAAAIAAIAAACFZyPqcvtD6KMr445LcRUN9554kiSBQAh+QQFCgADACwCAAIAEgAEAAACD4xvM8DNiJRz8Mj5ari4AAAh+QQFCgADACwCAAIAHAAEAAACGJRvM8HNCqKMCCnn4JT1XPwMG9cJH6iNBQAh+QQFCgADACwMAAIAEgAEAAACD5RvM8HNiJRz8Mj5qri4AAAh+QQFCgADACwWAAIACAAEAAACBZSPqYsFACH5BAUUAAMALAAAAAAgAAgAAAIOnI+py+0Po5y02ouzPgUAOw==">`;
-                    instance.popper.querySelector('.loadMore').onclick = async function () { await loadMoreAudio(); };
+                    const loadMoreBtn = instance.popper.querySelector('.loadMore');
+                    loadMoreBtn.onclick = async function (e) { 
+                        e.preventDefault();
+                        await loadMoreAudio(); 
+                    };
                 }
             }
             u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
@@ -1291,14 +1479,14 @@ window.addEventListener('DOMContentLoaded', async () => {
         return u(
             `<div class="ovk-diag-cont ovk-msg-all" data-id="${this.id}">
       <div class="ovk-diag">
-         <div class="ovk-diag-head">${this.title}<div class="ovk-diag-head-close" onclick="CMessageBox?.prototype.__close2()"></div></div>
+         <div class="ovk-diag-head">${this.title}<div class="ovk-diag-head-close" onclick="window.__vkifyCloseDialog()"></div></div>
          <div class="ovk-diag-body">${this.body}</div>
          <div class="ovk-diag-action"></div>
       </div>
  </div>`)
     };
 
-    CMessageBox.prototype.__close2 = async function () {
+    window.__vkifyCloseDialog = async function () {
         const msg = window.messagebox_stack[window.messagebox_stack.length - 1]
         if (!msg) {
             return
@@ -1307,126 +1495,118 @@ window.addEventListener('DOMContentLoaded', async () => {
             msg.close()
             return
         }
-        if (msg.warn_on_exit) {
-            const res = await msg.__showCloseConfirmationDialog()
-            if (res === true) {
-                msg.close()
+
+        let shouldWarn = msg.warn_on_exit;
+
+        if (msg.attachmentDialog) {
+            const selectionCount = msg.attachmentDialog.getSelectionCount();
+            shouldWarn = selectionCount >= 1;
+        }
+
+        if (shouldWarn) {
+            if (typeof msg.__showCloseConfirmationDialog === 'function') {
+                const res = await msg.__showCloseConfirmationDialog()
+                if (res === true) {
+                    msg.close()
+                }
+            } else {
+                if (confirm(tr('exit_confirmation'))) {
+                    msg.close();
+                }
             }
+        } else {
+            msg.close()
         }
     }
 
     u(document).on('keyup', async (e) => {
         if(e.keyCode == 27 && window.messagebox_stack.length > 0) {
-            const msg = window.messagebox_stack[window.messagebox_stack.length - 1]
-            if(!msg) {
-                return
-            }
-
-            if(msg.close_on_buttons) {
-                msg.close()
-                return
-            }
-
-            if(msg.warn_on_exit) {
-                const res = await msg.__showCloseConfirmationDialog()
-                if(res === true) {
-                    msg.close()
-                }
-            }
+            await window.__vkifyCloseDialog();
         }
     })
 
     u(document).on('click', 'body.dimmed .dimmer', async (e) => {
         if(u(e.target).hasClass('dimmer')) {
-            const msg = window.messagebox_stack[window.messagebox_stack.length - 1]
-            if(!msg) {
-                return
-            }
-
-            if(msg.close_on_buttons) {
-                msg.close()
-                return
-            }
-
-            if(msg.warn_on_exit) {
-                const res = await msg.__showCloseConfirmationDialog()
-                if(res === true) {
-                    msg.close()
-                }
-            }
+            await window.__vkifyCloseDialog();
         }
     })
 
-    let tooltipTimeout = null;
+    function initializeSimpleTooltips() {
+        const elements = document.querySelectorAll('[data-tip="simple-black"]');
+        elements.forEach(element => {
+            if (element._tippy || element.hasAttribute('aria-describedby')) {
+                return;
+            }
 
-    function getTooltipPosition(offset, align) {
-        const scrollX = window.scrollX
-        const scrollY = window.scrollY
+            const title = element.getAttribute('data-title');
+            const align = element.getAttribute('data-align') || 'top';
 
-        switch(align) {
-            case 'top-start':
-                return `left:${offset.left+scrollX}px;top:${offset.top-30+scrollY}px`
-            case 'top-end':
-                return `left:${offset.right+scrollX}px;top:${offset.top-30+scrollY}px;`
-            case 'top-center':
-                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.top-30+scrollY}px;`
-            case 'bottom-start':
-                return `left:${offset.left+scrollX}px;top:${offset.bottom+5+scrollY}px;`
-            case 'bottom-end':
-                return `left:${offset.right+scrollX}px;top:${offset.bottom+5+scrollY}px;`
-            case 'bottom-center':
-                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.bottom+5+scrollY}px;`
-            default:
-                return `left:${offset.left+(offset.width/2)+scrollX}px;top:${offset.top-30+scrollY}px;`
-        }
+            if (!title || title.trim() === '' || title.startsWith('{_')) {
+                return;
+            }
+
+            let placement = 'top';
+            switch(align) {
+                case 'top-start':
+                    placement = 'top-start';
+                    break;
+                case 'top-end':
+                    placement = 'top-end';
+                    break;
+                case 'top-center':
+                    placement = 'top';
+                    break;
+                case 'bottom-start':
+                    placement = 'bottom-start';
+                    break;
+                case 'bottom-end':
+                    placement = 'bottom-end';
+                    break;
+                case 'bottom-center':
+                    placement = 'bottom';
+                    break;
+                default:
+                    placement = 'top';
+            }
+
+            tippy(element, {
+                content: escapeHtml(title),
+                theme: 'special vk small',
+                placement: placement,
+                animation: 'fade',
+                duration: [100, 100],
+                delay: [50, 0],
+                offset: [0, 8],
+                appendTo: 'parent'
+            });
+        });
     }
 
-    u(document).on('mouseover mousemove mouseout', `[data-tip='simple-black']`, (e) => {
-        if(e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
-            return
+    initializeSimpleTooltips();
+
+    const observer = new MutationObserver((mutations) => {
+        let shouldReinit = false;
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'childList') {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        if (node.hasAttribute && node.hasAttribute('data-tip') ||
+                            node.querySelector && node.querySelector('[data-tip="simple-black"]')) {
+                            shouldReinit = true;
+                        }
+                    }
+                });
+            }
+        });
+        if (shouldReinit) {
+            initializeSimpleTooltips();
         }
+    });
 
-        if (e.type === 'mouseout') {
-            clearTimeout(tooltipTimeout);
-            $('.tip_result_black_el').removeClass('shown');
-            setTimeout(() => {u('.tip_result_black_el').remove();}, 50)
-            return;
-        }
-
-        clearTimeout(tooltipTimeout);
-        u('.tip_result_black_el').remove();
-
-        let tooltipElement = e.target;
-        while (tooltipElement && !tooltipElement.hasAttribute('data-tip')) {
-            tooltipElement = tooltipElement.parentElement;
-        }
-
-        if (!tooltipElement) {
-            return;
-        }
-
-        const target = u(tooltipElement);
-        const title  = target.attr('data-title')
-        const align  = target.attr('data-align') || 'top-center'
-
-        if(!title || title.trim() === '' || title.startsWith('{_')) {
-            return
-        }
-
-        tooltipTimeout = setTimeout(() => {
-            const offset = target.nodes[0].getBoundingClientRect()
-            const tooltipStyle = getTooltipPosition(offset, align)
-
-            u('body').nodes[0].insertAdjacentHTML('afterbegin', `
-                <div class='tip_result_black_el' style='${tooltipStyle}'>
-                    <div class='tip_result_black' data-align='${align}'>
-                        ${escapeHtml(title)}
-                    </div>
-                </div>
-                `)
-            setTimeout(() => {$('.tip_result_black_el').addClass('shown');}, 0)
-        }, 50)
-    })
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 
     window.router.route = async function (params = {}) {
         if (typeof params == 'string') {
@@ -1470,6 +1650,18 @@ window.addEventListener('DOMContentLoaded', async () => {
         })
         const next_page_text = await next_page_request.text()
         const parsed_content = parser.parseFromString(next_page_text, 'text/html')
+
+        if (next_page_request.status >= 400) {
+            const errorTitle = parsed_content.querySelector('title')?.textContent?.trim() || tr('error');
+            const errorMessage = parsed_content.querySelector('main p')?.textContent?.trim() || next_page_request.statusText || 'An error occurred while loading the page.';
+
+            history.replaceState({ 'from_router': 1 }, '', old_url);
+
+            MessageBox(errorTitle, errorMessage, [tr("ok")], [() => {}]);
+            window.favloader.stop();
+            return;
+        }
+
         if (next_page_request.redirected) {
             history.replaceState({ 'from_router': 1 }, '', next_page_request.url)
         }
@@ -1890,7 +2082,7 @@ window.reportsManager = {
         this.isLoading = true;
         const listView = u('.page_block.list_view');
         if (listView.length) {
-            listView.html('<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>');
+            listView.html('<div class="content_page_error pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>');
         }
     },
 
@@ -1929,7 +2121,6 @@ window.reportsManager = {
         const data = await response.json();
         this.renderReports(data.reports || []);
         
-        // Update reports counter
         const counterElement = u('.page_block_header_count');
         if (counterElement.length) {
             counterElement.text(data.reports.length);
@@ -1947,7 +2138,7 @@ window.reportsManager = {
         if (reports.length === 0) {
             listView.html(`
                 <div class="content_page_error">
-                        Нет данных для отображения
+                    ${tr('no_data_description')}
                 </div>
             `);
             return;
@@ -2053,3 +2244,316 @@ window.addEventListener('beforeunload', () => {
     }
 });
 
+window.initAlbumPhotosLoader = function() {
+    const photosSection = document.getElementById('photos-section');
+    if (!photosSection) return;
+
+    if (photosSection.dataset.initialized === 'true') {
+        console.log('Photo loader already initialized, skipping');
+        return;
+    }
+
+    photosSection.dataset.initialized = 'true';
+
+    const ownerId = parseInt(document.querySelector('[data-owner-id]')?.dataset.ownerId);
+    if (!ownerId) return;
+
+    const photosPerLoad = 20;
+    let photosLoaded = 0;
+    let totalPhotos = 0;
+
+    function waitForAPI() {
+        return new Promise((resolve) => {
+            if (window.OVKAPI && window.OVKAPI.call) {
+                resolve();
+            } else {
+                setTimeout(() => waitForAPI().then(resolve), 100);
+            }
+        });
+    }
+
+    async function loadPhotos(offset = 0) {
+        try {
+            console.log('Loading photos with offset:', offset);
+
+            let photos;
+            try {
+                await waitForAPI();
+                photos = await window.OVKAPI.call('photos.getAll', {
+                    'owner_id': ownerId,
+                    'photo_sizes': 1,
+                    'count': photosPerLoad,
+                    'offset': offset
+                });
+            } catch (apiError) {
+                console.log('OVKAPI failed:', apiError);
+                return;
+            }
+
+            if (offset === 0) {
+                totalPhotos = photos.count;
+                document.getElementById('photos-loading').style.display = 'none';
+
+                if (totalPhotos === 0) {
+                    return;
+                }
+
+                const photosContainer = document.getElementById('photos-container');
+                photosContainer.innerHTML = '';
+                photosLoaded = 0;
+
+                document.getElementById('photos-section').style.display = 'block';
+
+                const headerCount = document.querySelector('#photos-section .page_block_header_count');
+                if (headerCount) {
+                    headerCount.textContent = totalPhotos;
+                    headerCount.style.display = 'inline';
+                }
+            }
+
+            if (photos.items && photos.items.length > 0) {
+                const newPhotosByYear = {};
+                photos.items.forEach(photo => {
+                    const year = new Date(photo.date * 1000).getFullYear();
+                    if (!newPhotosByYear[year]) {
+                        newPhotosByYear[year] = [];
+                    }
+                    newPhotosByYear[year].push({
+                        id: photo.owner_id + '_' + photo.id,
+                        url_small: photo.src_big || photo.src,
+                        url_large: photo.src_xbig || photo.src_big || photo.src,
+                        description: photo.text || '',
+                        date: photo.date
+                    });
+                });
+
+                const photosContainer = document.getElementById('photos-container');
+                Object.keys(newPhotosByYear).forEach(year => {
+                    let yearContainer = document.getElementById(`photos-year-${year}`);
+
+                    if (!yearContainer) {
+                        const yearPeriodDiv = document.createElement('div');
+                        yearPeriodDiv.className = 'photo_period page_padding';
+                        yearPeriodDiv.setAttribute('data-year', year);
+
+                        const delimiter = document.createElement('div');
+                        delimiter.className = `photos_period_delimiter photos_period_delimiter_${year}`;
+                        delimiter.setAttribute('data-year', year);
+                        delimiter.textContent = year;
+
+                        yearContainer = document.createElement('div');
+                        yearContainer.className = 'scroll_container album-flex';
+                        yearContainer.id = `photos-year-${year}`;
+
+                        yearPeriodDiv.appendChild(delimiter);
+                        yearPeriodDiv.appendChild(yearContainer);
+
+                        const existingPeriods = Array.from(photosContainer.querySelectorAll('.photo_period'));
+                        let inserted = false;
+                        for (let i = 0; i < existingPeriods.length; i++) {
+                            const existingYear = parseInt(existingPeriods[i].getAttribute('data-year'));
+                            if (year > existingYear) {
+                                photosContainer.insertBefore(yearPeriodDiv, existingPeriods[i]);
+                                inserted = true;
+                                break;
+                            }
+                        }
+                        if (!inserted) {
+                            photosContainer.appendChild(yearPeriodDiv);
+                        }
+                    }
+
+                    newPhotosByYear[year].forEach(photo => {
+                        const photoDiv = document.createElement('div');
+                        photoDiv.className = 'album-photo scroll_node';
+                        photoDiv.setAttribute('data-photo-id', photo.id);
+
+                        const link = document.createElement('a');
+                        link.href = `/photo${photo.id}`;
+                        link.setAttribute('onclick', `OpenMiniature(event, '${photo.url_large}', null, '${photo.id}', null)`);
+
+                        const img = document.createElement('img');
+                        img.className = 'album-photo--image';
+                        img.src = photo.url_small;
+                        img.alt = photo.description || '';
+                        img.loading = 'lazy';
+
+                        link.appendChild(img);
+                        photoDiv.appendChild(link);
+                        yearContainer.appendChild(photoDiv);
+                    });
+                });
+
+                photosLoaded += photos.items.length;
+
+                const showMoreContainer = document.getElementById('photos-show-more-container');
+                if (photosLoaded < totalPhotos) {
+                    showMoreContainer.style.display = 'block';
+                } else {
+                    showMoreContainer.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error loading photos:', error);
+            document.getElementById('photos-loading').innerHTML = 'Error loading photos: ' + error.message;
+            document.getElementById('photos-section').style.display = 'block';
+        }
+    }
+
+    (async function() {
+        try {
+            await Promise.race([
+                loadPhotos(0),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
+            ]);
+        } catch (error) {
+            console.error('Failed to load initial photos:', error);
+            document.getElementById('photos-loading').innerHTML = 'Unable to load photos. Please refresh the page.';
+            document.getElementById('photos-section').style.display = 'block';
+        }
+    })();
+
+    const showMoreBtn = document.getElementById('photos-show-more-btn');
+    if (showMoreBtn) {
+        showMoreBtn.addEventListener('click', async function() {
+            const originalHTML = showMoreBtn.innerHTML;
+            showMoreBtn.innerHTML = '<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>';
+            showMoreBtn.disabled = true;
+
+            try {
+                await loadPhotos(photosLoaded);
+            } catch (error) {
+                console.error('Error loading more photos:', error);
+            }
+
+            showMoreBtn.innerHTML = originalHTML;
+            showMoreBtn.disabled = false;
+        });
+    }
+};
+
+function showCreateGroupModal() {
+    const modalBody = `
+        <div class="settings_panel" style="width: 100%; margin: 0;">
+            <div class="settings_list_row">
+                <div class="settings_label">${tr('name')}</div>
+                <div class="settings_labeled_text">
+                    <input type="text" name="group_name" id="group_name_input" value="" style="width: 100%;" />
+                </div>
+            </div>
+            <div class="settings_list_row">
+                <div class="settings_label">${tr('description')}</div>
+                <div class="settings_labeled_text">
+                    <textarea name="group_about" id="group_about_input" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
+                </div>
+            </div>
+        </div>
+    `;
+
+    const modal = new CMessageBox({
+        title: tr('create_group'),
+        body: modalBody,
+        buttons: [tr('create'), tr('cancel')],
+        callbacks: [
+            () => {
+                createGroup();
+            },
+            () => {
+                modal.close();
+            }
+        ],
+        close_on_buttons: false,
+        warn_on_exit: false
+    });
+
+    setTimeout(() => {
+        const nameInput = document.getElementById('group_name_input');
+        if (nameInput) {
+            nameInput.focus();
+        }
+    }, 100);
+
+    return modal;
+}
+
+async function createGroup() {
+    const nameInput = document.getElementById('group_name_input');
+    const aboutInput = document.getElementById('group_about_input');
+
+    if (!nameInput || !aboutInput) {
+        console.error('Group form inputs not found');
+        return;
+    }
+
+    const groupName = nameInput.value.trim();
+    const groupAbout = aboutInput.value.trim();
+
+    if (!groupName || groupName.length === 0) {
+        NewNotification(tr('error'), tr('error_no_group_name'), null);
+        nameInput.focus();
+        return;
+    }
+
+    CMessageBox.toggleLoader();
+
+    nameInput.disabled = true;
+    aboutInput.disabled = true;
+
+    const csrfToken = window.router.csrf;
+
+    if (!csrfToken) {
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        aboutInput.disabled = false;
+        NewNotification(tr('error'), 'CSRF token not found. Please refresh the page and try again.', null);
+        nameInput.focus();
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', groupName);
+    formData.append('about', groupAbout);
+    formData.append('hash', csrfToken);
+
+    try {
+        const response = await fetch('/groups_create', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        });
+
+        if (response.url && response.url.includes('/club')) {
+            CMessageBox.toggleLoader();
+            const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
+            if (currentModal) {
+                currentModal.close();
+            }
+            window.router.route(response.url);
+            return;
+        }
+
+    } catch (error) {
+        console.error('Error creating group:', error);
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        aboutInput.disabled = false;
+
+        NewNotification(tr('error'), errorMessage, null);
+        nameInput.focus();
+    }
+}
+
+u(document).on('keydown', '#group_name_input, #group_about_input', (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+        if (e.target.id === 'group_name_input') {
+            e.preventDefault();
+            const aboutInput = document.getElementById('group_about_input');
+            if (aboutInput) {
+                aboutInput.focus();
+            }
+        } else if (e.target.id === 'group_about_input') {
+            e.preventDefault();
+            createGroup();
+        }
+    }
+});

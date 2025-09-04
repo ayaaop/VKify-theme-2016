@@ -227,6 +227,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.hideSearchFastTips) {
             window.hideSearchFastTips();
         }
+
+        if (window.initTabSlider) {
+            setTimeout(window.initTabSlider, 150);
+        }
+
+        if (window.location.pathname.includes('/albums') && window.initAlbumPhotosLoader && !document.getElementById('photos-section')?.dataset.initialized) {
+            setTimeout(window.initAlbumPhotosLoader, 100);
+        }
     }
 
     function patchFunction(obj, methodName, callback) {
@@ -285,6 +293,14 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(processVkifyLocTags, 0);
             if (window.addSuggestedTabToWall) {
                 setTimeout(window.addSuggestedTabToWall, 200);
+            }
+
+            if (window.initTabSlider) {
+                window.initTabSlider();
+            }
+
+            if (window.location.pathname.includes('/albums') && window.initAlbumPhotosLoader && !document.getElementById('photos-section')?.dataset.initialized) {
+                setTimeout(window.initAlbumPhotosLoader, 200);
             }
         });
     });

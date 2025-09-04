@@ -418,7 +418,7 @@
 							</a>
 							<div class="module_body clear_fix">
 								<div class="video_row" n:foreach="$videos as $video">
-									<a class="video fl_l" href="/video{$video->getPrettyId()}">
+									<a id="videoOpen" data-id="{$video->getPrettyId()}" class="video fl_l" href="/video{$video->getPrettyId()}">
 										<div class="video_thumb_label">
 										{if $video->getType() != 0}
 											<span class="video_thumb_label_item">

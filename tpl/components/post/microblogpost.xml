@@ -159,15 +159,15 @@
                 {if !($forceNoLike ?? false)}
                     {var $liked = $post->hasLikeFrom($thisUser)}
                     <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post_like _like_wrap {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
-                        <i class="heart post_like_icon _icon" id="{if $liked}liked{/if}"></i>
-                        <span class="post_like_link _link">{tr('mobile_like')}</span>
-                        <span class="likeCnt post_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                        <i class="heart post_like_icon" id="{if $liked}liked{/if}"></i>
+                        <span class="post_like_link">{tr('mobile_like')}</span>
+                        <span class="likeCnt post_like_count">{if $likesCount > 0}{$likesCount}{/if}</span>
                     </a>
                 {/if}
-                <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_share _share_wrap" href="javascript:repost('{$post->getPrettyId()}', 'post')">
-                    <i class="repost-icon post_share_icon _icon"></i>
-                    <span class="post_share_link _link">{tr('share')}</span>
-                    <span class="likeCnt post_share_count _count" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
+                <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button post_share" href="javascript:repost('{$post->getPrettyId()}', 'post')">
+                    <i class="repost-icon post_share_icon"></i>
+                    <span class="post_share_link">{tr('share')}</span>
+                    <span class="likeCnt post_share_count" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
                 </a>
             </div>
             <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>

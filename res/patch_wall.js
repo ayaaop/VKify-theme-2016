@@ -66,7 +66,7 @@ u(document).on("click", "#editPost", async (e) => {
                                 <a class="post-attach-menu__trigger" id="moreAttachTrigger">
                                     ${tr('show_more')}
                                 </a>
-                                <div class="tippy-menu" id="moreAttachTooltip2">
+                                <div class="tippy-menu" id="moreAttachTooltip">
                                         <a class="attach_document" id="__vkifyDocumentAttachment">
                                             <div class="post-attach-menu__icon"></div>
                                             ${tr('document')}
@@ -147,7 +147,7 @@ u(document).on("click", "#editPost", async (e) => {
                 }, edit_place)
             }
         })
-
+        window.reinitializeTooltips(edit_place.nodes[0])
         target.removeClass('lagged')
 
         edit_place.find('.edit_menu #__edit_save').on('click', async (ev) => {
@@ -205,15 +205,6 @@ u(document).on("click", "#editPost", async (e) => {
 
         edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
             post.removeClass('editing')
-        })
-
-        tippy(edit_place.find('#moreAttachTrigger').nodes[0], {
-            content: edit_place.find('#moreAttachTooltip2').nodes[0],
-            allowHTML: true,
-            interactive: true,
-            trigger: 'mouseenter',
-            placement: 'bottom',
-            theme: 'light vk'
         })
     }
 
@@ -451,31 +442,32 @@ u(document).on("click", "#write input[type='submit']", function(e) {
 });
 
 window.initTextareaInteraction = function() {
-    document.addEventListener('focus', function(e) {
-        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
-            const submitPostBox = e.target.closest('.model_content_textarea');
-            if (submitPostBox) {
-                submitPostBox.classList.add('shown');
-            }
+    const showComposer = (target) => {
+        if (target.tagName === 'TEXTAREA' || target.classList?.contains('submit_post_field')) {
+            target.closest('.model_content_textarea')?.classList.add('shown');
         }
-    }, true);
+    };
 
-    document.addEventListener('input', function(e) {
-        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
-            const submitPostBox = e.target.closest('.model_content_textarea');
-            if (submitPostBox) {
-                submitPostBox.classList.add('shown');
-            }
-        }
+    ['focus', 'input', 'click'].forEach(event => {
+        document.addEventListener(event, e => showComposer(e.target), event === 'focus');
     });
 
-    document.addEventListener('click', function(e) {
-        if (e.target && (e.target.tagName === 'TEXTAREA' || (e.target.classList && e.target.classList.contains('submit_post_field')))) {
-            const submitPostBox = e.target.closest('.model_content_textarea');
-            if (submitPostBox) {
-                submitPostBox.classList.add('shown');
+    // Show composer for existing attachments
+    const checkAttachments = () => {
+        document.querySelectorAll('.model_content_textarea').forEach(box => {
+            const horizontal = box.querySelector('.post-horizontal');
+            const vertical = box.querySelector('.post-vertical');
+            if ((horizontal?.children.length || vertical?.children.length)) {
+                box.classList.add('shown');
             }
-        }
+        });
+    };
+
+    // Initial check and observe for dynamic content
+    checkAttachments();
+    new MutationObserver(checkAttachments).observe(document.body, {
+        childList: true,
+        subtree: true
     });
 };
 
@@ -551,12 +543,12 @@ if (window.router && window.router.addEventListener) {
 window.onWallAsGroupClick = function(el) {
     const forceSignOpt = document.querySelector("#forceSignOpt");
     if (forceSignOpt) {
-        forceSignOpt.style.display = el.checked ? "block" : "none";
+        forceSignOpt.style.setProperty('display', el.checked ? 'flex' : 'none', 'important');
     }
 
     const anonOpt = document.querySelector("#octoberAnonOpt");
     if (anonOpt) {
-        anonOpt.style.display = el.checked ? "none" : "block";
+        anonOpt.style.setProperty('display', el.checked ? 'none' : 'flex', 'important');
     }
 
     if (window.handleWallAsGroupClick) {
@@ -671,35 +663,32 @@ u(document).on('click', '.attach_graffiti', (e) => {
 });
 
 async function OpenVideo(video_arr = [], init_player = true) {
+    if (u('#ajloader').hasClass('shown')) {
+        return;
+    }
     CMessageBox.toggleLoader();
     const video_owner = video_arr[0];
     const video_id = video_arr[1];
     let video_api = null;
     let isPrivacyRestricted = false;
 
-    // First, check if the owner's profile is closed (but not if current user is the owner)
-    if (video_owner > 0) { // Only check for user profiles, not groups (negative IDs)
+    if (video_owner > 0) {
         try {
             const userInfo = await window.OVKAPI.call('users.get', {
                 'user_ids': video_owner,
                 'fields': 'is_closed'
             });
-
-            // Check if profile is closed AND current user is not the owner
             if (userInfo && userInfo[0] && userInfo[0].is_closed) {
-                // Get current user ID to check if they're the owner
                 const currentUser = window.openvk.current_id;
                 if (currentUser != video_owner) {
                     isPrivacyRestricted = true;
                 }
             }
         } catch(e) {
-            // If we can't get user info, continue with normal flow
             console.warn('Could not check user privacy status:', e);
         }
     }
 
-    // If not privacy restricted by profile closure, try to get video data
     if (!isPrivacyRestricted) {
         try {
             video_api = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1});
@@ -708,7 +697,6 @@ async function OpenVideo(video_arr = [], init_player = true) {
                 throw new Error('Not found');
             }
         } catch(e) {
-            // Check if this is a privacy-related error
             const errorMessage = e.message ? e.message.toLowerCase() : '';
             if (errorMessage.includes('access') || errorMessage.includes('private') ||
                 errorMessage.includes('permission') || errorMessage.includes('forbidden') ||
@@ -722,7 +710,6 @@ async function OpenVideo(video_arr = [], init_player = true) {
         }
     }
 
-    // Always get video object data - privacy only affects info, not the video itself
     const video_object = video_api.items[0];
     const pretty_id = `${video_object.owner_id}_${video_object.id}`;
     const author = find_author(video_object.owner_id, video_api.profiles, video_api.groups);
@@ -766,12 +753,14 @@ async function OpenVideo(video_arr = [], init_player = true) {
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
             <div class="ovk-modal-video-window${isPrivacyRestricted ? ' private' : ''}">
-                <div id="video_top_controls">
-                    <div id="__modalPlayerClose" class="video_top_button video_top_close" role="button" tabindex="0" aria-label="Close">
-                        <div class="video_close_icon"></div>
-                    </div>
-                    <div id="__modalPlayerMinimize" class="video_top_button video_top_minimize">
-                        <div class="video_minimize_icon"></div>
+                <div id="video_top_controls_wrapper">
+                    <div id="video_top_controls">
+                        <div id="__modalPlayerClose" class="video_top_button video_top_close" role="button" tabindex="0" aria-label="Close">
+                            <div class="video_close_icon"></div>
+                        </div>
+                        <div id="__modalPlayerMinimize" class="video_top_button video_top_minimize">
+                            <div class="video_minimize_icon"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="page_block">
@@ -808,7 +797,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
         const videoInfo = results.find('.video_info');
         if (videoInfo.length > 0) {
             const viewButton = `<a href="/video${pretty_id}" class="video_view_button button button_light _view_wrap">
-                <span class="video_view_link _link">${tr("view_video")}</span>
+                <span class="video_view_link">${tr("view_video")}</span>
             </a>`;
             const moreActions = videoInfo.find('.video_info_more_actions');
             if (moreActions.length > 0) {
@@ -887,13 +876,41 @@ async function OpenVideo(video_arr = [], init_player = true) {
             miniplayer.find('.miniplayer-body').nodes[0].appendChild(videoContent);
         }
 
-        miniplayer.attr('style', 'position: fixed; left: 20px; bottom: 20px; z-index: 9999; width: 320px;');
+        const savedSettings = JSON.parse(localStorage.getItem('miniplayerSettings') || '{}');
+        const defaultSettings = {
+            width: 320,
+            height: 180,
+            left: 20,
+            bottom: 20
+        };
+        const settings = { ...defaultSettings, ...savedSettings };
+
+        miniplayer.attr('style', `position: fixed; left: ${settings.left}px; bottom: ${settings.bottom}px; z-index: 9999; width: ${settings.width}px; height: ${settings.height}px;`);
 
         miniplayer.find('#__miniplayer_return').on('click', (e) => {
             e.preventDefault();
 
             const videoContent = miniplayer.find('.miniplayer-body > *').nodes[0];
             if (videoContent) {
+                videoContent.style.width = '';
+                videoContent.style.height = '';
+                videoContent.style.position = '';
+                videoContent.style.left = '';
+                videoContent.style.top = '';
+
+                const iframe = videoContent.querySelector('iframe');
+                const video = videoContent.querySelector('video');
+
+                if (iframe) {
+                    iframe.style.width = '';
+                    iframe.style.height = '';
+                }
+
+                if (video) {
+                    video.style.width = '';
+                    video.style.height = '';
+                }
+
                 msgbox.getNode().find('.page_block').nodes[0].insertBefore(videoContent, msgbox.getNode().find('.video_info').nodes[0]);
             }
 
@@ -907,11 +924,26 @@ async function OpenVideo(video_arr = [], init_player = true) {
             u('.miniplayer').remove();
         });
 
+        function saveMiniplayerSettings() {
+            const miniplayerNode = miniplayer.nodes[0];
+            const rect = miniplayerNode.getBoundingClientRect();
+            const settings = {
+                width: miniplayerNode.offsetWidth,
+                height: miniplayerNode.offsetHeight,
+                left: rect.left,
+                bottom: window.innerHeight - rect.bottom
+            };
+            localStorage.setItem('miniplayerSettings', JSON.stringify(settings));
+        }
+
         $(miniplayer.nodes[0]).draggable({
             cursor: 'grabbing',
             containment: 'window',
             handle: '.miniplayer-head',
-            cancel: '.miniplayer-head-buttons'
+            cancel: '.miniplayer-head-buttons',
+            stop: function() {
+                saveMiniplayerSettings();
+            }
         });
 
         function adjustVideoPlayerSize() {
@@ -923,7 +955,6 @@ async function OpenVideo(video_arr = [], init_player = true) {
                 const bodyHeight = miniplayerBody.offsetHeight;
                 const aspectRatio = 16 / 9;
 
-                // Calculate dimensions that fit within the container while maintaining aspect ratio
                 let newWidth = bodyWidth;
                 let newHeight = bodyWidth / aspectRatio;
 
@@ -932,18 +963,15 @@ async function OpenVideo(video_arr = [], init_player = true) {
                     newWidth = bodyHeight * aspectRatio;
                 }
 
-                // Apply the calculated dimensions to the video block
                 videoBlockLayout.style.width = newWidth + 'px';
                 videoBlockLayout.style.height = newHeight + 'px';
                 videoBlockLayout.style.position = 'absolute';
 
-                // Center the video if it's smaller than the container
                 const leftOffset = (bodyWidth - newWidth) / 2;
                 const topOffset = (bodyHeight - newHeight) / 2;
                 videoBlockLayout.style.left = leftOffset + 'px';
                 videoBlockLayout.style.top = topOffset + 'px';
 
-                // Also adjust any iframe or video elements inside
                 const iframe = videoBlockLayout.querySelector('iframe');
                 const video = videoBlockLayout.querySelector('video');
 
@@ -966,17 +994,17 @@ async function OpenVideo(video_arr = [], init_player = true) {
             minWidth: 200,
             resize: function() {
                 adjustVideoPlayerSize();
+            },
+            stop: function() {
+                saveMiniplayerSettings();
             }
         });
 
-        // Initial size adjustment
         setTimeout(adjustVideoPlayerSize, 100);
 
-        // Adjust on window resize
         const resizeHandler = () => adjustVideoPlayerSize();
         window.addEventListener('resize', resizeHandler);
 
-        // Clean up resize handler when miniplayer is removed
         const originalRemove = miniplayer.remove;
         miniplayer.remove = function() {
             window.removeEventListener('resize', resizeHandler);
@@ -984,9 +1012,8 @@ async function OpenVideo(video_arr = [], init_player = true) {
         };
     });
 
-
     msgbox.getNode().find('.ovk-photo-view-dimmer').on('click', (e) => {
-        if (u(e.target).hasClass('ovk-photo-view-dimmer') || u(e.target).hasClass('dimmer')) {
+        if (u(e.target).hasClass('ovk-photo-view-dimmer')) {
             msgbox.close();
         }
     });
@@ -997,6 +1024,10 @@ async function OpenVideo(video_arr = [], init_player = true) {
 async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     e.preventDefault();
     e.stopPropagation();
+
+    if (u('#ajloader').hasClass('shown')) {
+        return;
+    }
 
     CMessageBox.toggleLoader();
 
@@ -1318,7 +1349,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
             console.error('No photo ID available for loading photo info');
             msgbox.getNode().find('.pv_right').html(`
                 <div class="pv_author_block">
-                    <div class="pv_author_name">Photo</div>
+                    <div class="pv_author_name">${tr('error')}</div>
                 </div>
             `);
         }
@@ -1327,7 +1358,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     loadPhotoInfo();
 
     msgbox.getNode().find('.ovk-photo-view-dimmer').on('click', (e) => {
-        if (u(e.target).hasClass('ovk-photo-view-dimmer') || u(e.target).hasClass('dimmer')) {
+        if (u(e.target).hasClass('ovk-photo-view-dimmer')) {
             msgbox.close();
         }
     });
@@ -1419,7 +1450,7 @@ class BaseAttachmentManager {
     isItemAttached(itemId) {
         if (!this.form) return false;
 
-        const selector = this.attachmentType === 'photo'
+        const selector = (this.attachmentType === 'photo' || this.attachmentType === 'video')
             ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
             : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
 
@@ -1429,7 +1460,7 @@ class BaseAttachmentManager {
     detachItemIfAttached(itemId) {
         if (!this.form) return;
 
-        const selector = this.attachmentType === 'photo'
+        const selector = (this.attachmentType === 'photo' || this.attachmentType === 'video')
             ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
             : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
 
@@ -1515,7 +1546,7 @@ class BaseAttachmentManager {
     }
 
     showLoaderInButton(button) {
-        const loaderHTML = `<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
+        const loaderHTML = `<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
         const span = button.find('span');
 
         if (span.length > 0) {
@@ -1549,12 +1580,47 @@ class BaseAttachmentManager {
         return Math.ceil(Number(totalCount) / itemsPerPage);
     }
 
-    createShowMoreButton(pagesCount, className) {
+    createShowMoreButton(pagesCount, className, extraData = {}) {
+        const dataAttributes = Object.entries(extraData)
+            .map(([key, value]) => `data-${key}="${value}"`)
+            .join(' ');
+
         return `
-            <div class="${className} button button_gray button_wide" data-pagesCount="${pagesCount}">
+            <div class="${className} button button_gray button_wide" data-pagesCount="${pagesCount}" ${dataAttributes}>
                 <span>${tr('show_more')}</span>
             </div>
         `;
+    }
+
+    handlePagination(totalCount, currentPage, moreContainerSelector, buttonClass, extraData = {}) {
+        const pagesCount = this.calculatePages(totalCount, this.getItemsPerPage());
+        const moreContainer = u(moreContainerSelector);
+
+        if (currentPage + 1 < pagesCount) {
+            const showMoreButton = this.createShowMoreButton(pagesCount, buttonClass, extraData);
+            moreContainer.html(showMoreButton);
+            return true;
+        } else {
+            moreContainer.html('');
+            return false;
+        }
+    }
+
+    getItemsPerPage() {
+        return window.openvk?.default_per_page || 10;
+    }
+
+    setupShowMoreHandler(node, buttonClass, loadFunction) {
+        node.on('click', `.${buttonClass}`, async (e) => {
+            const button = u(e.target).closest(`.${buttonClass}`);
+            this.showLoaderInButton(button);
+            await loadFunction(button);
+        });
+    }
+
+    removeShowMoreButton(moreContainerSelector, buttonClass) {
+        const moreContainer = u(moreContainerSelector);
+        moreContainer.find(`.${buttonClass}`).remove();
     }
 
     updateChooseButton(selectedCount) {
@@ -1599,7 +1665,7 @@ class AlbumManager {
             }
 
             if (append) {
-                albumsList.find('.show_more_albums').remove();
+                this.photoManager.removeShowMoreButton('#albums_list', 'show_more_albums');
             }
 
             this.renderAlbums(albums.items, append);
@@ -1675,6 +1741,10 @@ class PhotoManager extends BaseAttachmentManager {
 
     get selectedPhotos() {
         return this.selectedItems;
+    }
+
+    getItemsPerPage() {
+        return this.CONSTANTS.PHOTOS_PER_PAGE;
     }
 
     initialize(club) {
@@ -1769,16 +1839,8 @@ class PhotoManager extends BaseAttachmentManager {
     }
 
     handlePhotoPagination(totalCount, currentPage, albumId) {
-        const pagesCount = this.calculatePages(totalCount, this.CONSTANTS.PHOTOS_PER_PAGE);
-        const moreContainer = u('#photos_content .photos_choose_more_container');
-
-        if (currentPage + 1 < pagesCount) {
-            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_photos');
-            moreContainer.html(showMoreButton);
-            moreContainer.find('.show_more_photos').attr('data-album-id', albumId);
-        } else {
-            moreContainer.html('');
-        }
+        const extraData = { 'album-id': albumId };
+        this.handlePagination(totalCount, currentPage, '#photos_content .photos_choose_more_container', 'show_more_photos', extraData);
     }
 
     togglePhotoSelection(photoId) {
@@ -1879,25 +1941,7 @@ class PhotoManager extends BaseAttachmentManager {
         u('#photos_content .photos_choose_more_container').html('');
     }
 
-    static createDialogBody() {
-        return `
-        <div class='attachment_selector no_hack'>
-            <input type="file" multiple accept="image/*" id="__pickerQuickUpload" style="display:none">
-            <div class="choose_upload_area" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </div>
-            <div id='attachment_insert' style='height: unset; padding: 0'>
-                <div id='albums_list' class='photos_choose_album_rows photos_container_albums'>
-                    <!-- Albums will be loaded here -->
-                </div>
-                <div id='photos_content'>
-                    <div class="photos_choose_rows clear_fix"></div>
-                    <div class="photos_choose_more_container"></div>
-                </div>
-            </div>
-        </div>
-        `;
-    }
+
 }
 
 class PhotoAttachmentDialog {
@@ -1908,8 +1952,12 @@ class PhotoAttachmentDialog {
         this.requestManager = new RequestManager();
         this.messageBox = new CMessageBox({
             title: tr('select_photo'),
-            body: PhotoManager.createDialogBody(),
+            body: this.createDialogBody(),
+            close_on_buttons: false,
         });
+
+        this.messageBox.attachmentDialog = this;
+
         this.photoManager = new PhotoManager(this.messageBox, this.requestManager, club, this.form);
         this.photoManager.initialize(club);
         this.albumManager = new AlbumManager(this.photoManager, this.requestManager, club);
@@ -1928,6 +1976,10 @@ class PhotoAttachmentDialog {
                 chooseBtn.remove();
             }
         };
+    }
+
+    getSelectionCount() {
+        return this.photoManager.getSelectionCount();
     }
 
     async initialize() {
@@ -1996,21 +2048,15 @@ class PhotoAttachmentDialog {
             this.messageBox.close();
         });
 
-        node.on('click', '.show_more_albums', async (e) => {
-            const button = u(e.target).closest('.show_more_albums');
+        this.photoManager.setupShowMoreHandler(node, 'show_more_albums', async (button) => {
             const currentAlbumsCount = u('#albums_list .page_album_row').length;
             const nextPage = Math.floor(currentAlbumsCount / this.photoManager.CONSTANTS.ALBUMS_PER_PAGE);
-
-            this.photoManager.showLoaderInButton(button);
             await this.albumManager.loadAlbums(nextPage, true);
         });
 
-        node.on('click', '.show_more_photos', async (e) => {
-            const button = u(e.target).closest('.show_more_photos');
+        this.photoManager.setupShowMoreHandler(node, 'show_more_photos', async (button) => {
             const albumId = Number(button.attr('data-album-id'));
             const currentPage = Math.floor(u('#photos_content .photos_choose_row').length / this.photoManager.CONSTANTS.PHOTOS_PER_PAGE);
-
-            this.photoManager.showLoaderInButton(button);
             await this.photoManager.loadPhotos(albumId, currentPage, true);
         });
 
@@ -2077,18 +2123,42 @@ class PhotoAttachmentDialog {
             }
         });
     }
+
+    createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <input type="file" multiple accept="image/*" id="__pickerQuickUpload" style="display:none">
+            <div class="choose_upload_area" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div id='attachment_insert' style='height: unset; padding: 0'>
+                <div id='albums_list' class='photos_choose_album_rows photos_container_albums'>
+                    <!-- Albums will be loaded here -->
+                </div>
+                <div id='photos_content'>
+                    <div class="photos_choose_rows clear_fix"></div>
+                    <div class="photos_choose_more_container"></div>
+                </div>
+            </div>
+        </div>
+        `;
+    }
 }
 
 class VideoManager extends BaseAttachmentManager {
     constructor(messageBox, requestManager, form = null) {
         super(messageBox, requestManager, form, 'video', {
-            VIDEOS_PER_PAGE: 10
+            VIDEOS_PER_PAGE: window.openvk?.default_per_page || 10
         });
         this.currentQuery = '';
     }
 
     get selectedVideos() {
         return this.selectedItems;
+    }
+
+    getItemsPerPage() {
+        return this.CONSTANTS.VIDEOS_PER_PAGE;
     }
 
     async loadVideos(page = 0, query = '', append = false) {
@@ -2101,7 +2171,7 @@ class VideoManager extends BaseAttachmentManager {
             moreContainer.html('');
             this.showLoader(videosContainer);
         } else {
-            moreContainer.find('.show_more_videos').remove();
+            this.removeShowMoreButton('.videos_choose_more_container', 'show_more_videos');
         }
 
         try {
@@ -2163,7 +2233,7 @@ class VideoManager extends BaseAttachmentManager {
             const formattedDate = video.date ? formatRelativeTime(video.date) : '';
 
             videosHTML += `
-                <div class="video_item ${selectedClass}" data-video-id="${videoId}" data-video-url="${video.player || videoUrl}">
+                <div class="video_item ${selectedClass}" data-video-id="${videoId}" data-video-url="${video.player || videoUrl}" data-video-preview="${thumbnailUrl}">
                     <a class="video_item__thumb_link" href="javascript:void(0)">
                         <div class="video_item_thumb_wrap">
                             <div class="video_item_thumb" style="background-image: url('${thumbnailUrl}')"></div>
@@ -2209,16 +2279,8 @@ class VideoManager extends BaseAttachmentManager {
     }
 
     handleVideoPagination(totalCount, currentPage, query) {
-        const pagesCount = this.calculatePages(totalCount, this.CONSTANTS.VIDEOS_PER_PAGE);
-        const moreContainer = u('.videos_choose_more_container');
-
-        if (currentPage + 1 < pagesCount) {
-            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_videos');
-            moreContainer.html(showMoreButton);
-            moreContainer.find('.show_more_videos').attr('data-query', query);
-        } else {
-            moreContainer.html('');
-        }
+        const extraData = { 'query': query };
+        this.handlePagination(totalCount, currentPage, '.videos_choose_more_container', 'show_more_videos', extraData);
     }
 
     toggleVideoSelection(videoId) {
@@ -2238,10 +2300,11 @@ class VideoManager extends BaseAttachmentManager {
         newVideoIds.forEach(videoId => {
             const videoElement = u(`[data-video-id="${videoId}"]`);
             const videoUrl = videoElement.attr('data-video-url');
+            const previewUrl = videoElement.attr('data-video-preview');
 
             __appendToTextarea({
                 'type': 'video',
-                'preview': videoUrl,
+                'preview': previewUrl || videoUrl,
                 'id': videoId,
                 'fullsize_url': videoUrl
             }, form);
@@ -2259,10 +2322,11 @@ class VideoManager extends BaseAttachmentManager {
 
         const videoElement = u(`[data-video-id="${videoId}"]`);
         const videoUrl = videoElement.attr('data-video-url');
+        const previewUrl = videoElement.attr('data-video-preview');
 
         __appendToTextarea({
             'type': 'video',
-            'preview': videoUrl,
+            'preview': previewUrl || videoUrl,
             'id': videoId,
             'fullsize_url': videoUrl
         }, form);
@@ -2275,36 +2339,9 @@ class VideoManager extends BaseAttachmentManager {
 
     initialize() {
         this.setupDialogStyles();
-
-        if (window.uiSearch) {
-            window.uiSearch.init(this.messageBox.getNode().find('.ui_search').nodes[0]);
-        }
     }
 
-    static createDialogBody() {
-        return `
-        <div class='attachment_selector no_hack'>
-            <a href="/videos/upload" class="choose_upload_area" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </a>
-            <div class="videos_choose_search">
-                <div class="ui_search_new ui_search ui_search_field_empty">
-                    <div class="ui_search_input_block">
-                        <button class="ui_search_button_search">&nbsp;</button>
-                        <div class="ui_search_input_inner">
-                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
-                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_for_videos")}" id="video_query">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id='attachment_insert' style='height: unset; padding: 0'>
-                <div class="videosInsert video_block_layout"></div>
-                <div class="videos_choose_more_container"></div>
-            </div>
-        </div>
-        `;
-    }
+
 }
 
 class VideoAttachmentDialog {
@@ -2313,8 +2350,12 @@ class VideoAttachmentDialog {
         this.requestManager = new BaseRequestManager();
         this.messageBox = new CMessageBox({
             title: tr('selecting_video'),
-            body: VideoManager.createDialogBody(),
+            body: this.createDialogBody(),
+            close_on_buttons: false,
         });
+
+        this.messageBox.attachmentDialog = this;
+
         this.videoManager = new VideoManager(this.messageBox, this.requestManager, this.form);
         this.videoManager.initialize();
         this.videoManager.updateChooseButton = (selectedCount) => {
@@ -2334,9 +2375,34 @@ class VideoAttachmentDialog {
         };
     }
 
+    getSelectionCount() {
+        return this.videoManager.getSelectionCount();
+    }
+
     async initialize() {
         this.setupEventHandlers();
         await this.loadInitialContent();
+
+        if (window.uiSearch) {
+            const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
+            if (searchElement) {
+                window.uiSearch.init(searchElement, {
+                    onInput: async (query) => {
+                        this.videoManager.currentQuery = query;
+                        await this.videoManager.loadVideos(0, query, false);
+                    },
+                    onChange: async (query) => {
+                        this.videoManager.currentQuery = query;
+                        await this.videoManager.loadVideos(0, query, false);
+                    },
+                    onButtonClick: async (query) => {
+                        this.videoManager.currentQuery = query;
+                        await this.videoManager.loadVideos(0, query, false);
+                    },
+                    timeout: 500
+                });
+            }
+        }
     }
 
     async loadInitialContent() {
@@ -2367,12 +2433,9 @@ class VideoAttachmentDialog {
             this.messageBox.close();
         });
 
-        node.on('click', '.show_more_videos', async (e) => {
-            const button = u(e.target).closest('.show_more_videos');
+        this.videoManager.setupShowMoreHandler(node, 'show_more_videos', async (button) => {
             const query = button.attr('data-query') || '';
             const currentPage = Math.floor(u('.video_item').length / this.videoManager.CONSTANTS.VIDEOS_PER_PAGE);
-
-            this.videoManager.showLoaderInButton(button);
             await this.videoManager.loadVideos(currentPage, query, true);
         });
 
@@ -2381,45 +2444,51 @@ class VideoAttachmentDialog {
             this.messageBox.close();
         });
 
-        node.on('input', '.ui_search_field', async (e) => {
-            const query = e.target.value.trim();
-            this.videoManager.currentQuery = query;
 
-            clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(async () => {
-                await this.videoManager.loadVideos(0, query, false);
-            }, 500);
-        });
+    }
 
-        node.on('click', '.ui_search_button_search', (e) => {
-            e.preventDefault();
-            const input = node.find('.ui_search_field').nodes[0];
-            if (input) {
-                const query = input.value.trim();
-                this.videoManager.currentQuery = query;
-                this.videoManager.loadVideos(0, query, false);
-            }
-        });
-
-        node.on('change', '.ui_search_field', (e) => {
-            const query = e.target.value.trim();
-            this.videoManager.currentQuery = query;
-            this.videoManager.loadVideos(0, query, false);
-        });
+    createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <a href="/videos/upload" class="choose_upload_area" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </a>
+            <div class="videos_choose_search">
+                <div class="ui_search_new ui_search ui_search_field_empty">
+                    <div class="ui_search_input_block">
+                        <button class="ui_search_button_search">&nbsp;</button>
+                        <div class="ui_search_input_inner">
+                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
+                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_for_videos")}" id="video_query">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='attachment_insert' style='height: unset; padding: 0'>
+                <div class="videosInsert video_block_layout"></div>
+                <div class="videos_choose_more_container"></div>
+            </div>
+        </div>
+        `;
     }
 }
 
 class AudioManager extends BaseAttachmentManager {
-    constructor(messageBox, requestManager, form = null) {
+    constructor(messageBox, requestManager, form = null, type = 'form') {
         super(messageBox, requestManager, form, 'audio', {
-            AUDIOS_PER_PAGE: 10
+            AUDIOS_PER_PAGE: window.openvk?.default_per_page || 10
         });
         this.currentQuery = '';
         this.searchType = 'by_name';
+        this.type = type;
     }
 
     get selectedAudios() {
         return this.selectedItems;
+    }
+
+    getItemsPerPage() {
+        return this.CONSTANTS.AUDIOS_PER_PAGE;
     }
 
     async loadAudios(page = 0, query = '', append = false) {
@@ -2484,10 +2553,14 @@ class AudioManager extends BaseAttachmentManager {
         let audiosHTML = '';
 
         audioElements.forEach(el => {
-            const audioId = el.dataset.prettyid;
+            // Use realid for playlists, prettyid for forms
+            const audioId = this.type === 'playlist' ? el.dataset.realid : el.dataset.prettyid;
             let isSelected = this.selectedAudios.has(audioId);
             if (this.form && !isSelected) {
-                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`).length > 0;
+                const selector = this.type === 'playlist'
+                    ? `.PE_audios .vertical-attachment[data-id="${audioId}"]`
+                    : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
+                const attachmentExists = this.form.find(selector).length > 0;
                 if (attachmentExists) {
                     isSelected = true;
                     this.selectedAudios.add(audioId);
@@ -2518,11 +2591,9 @@ class AudioManager extends BaseAttachmentManager {
         const moreContainer = u('.audios_choose_more_container');
 
         if (currentPage < pagesCount) {
-            moreContainer.html(`
-                <div id="show_more" data-pagesCount="${pagesCount}" data-page="${currentPage + 1}" class="showMore">
-                    <span>${tr("show_more_audios")}</span>
-                </div>
-            `);
+            const extraData = { 'page': currentPage + 1 };
+            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_audios', extraData);
+            moreContainer.html(showMoreButton);
         } else {
             moreContainer.html('');
         }
@@ -2537,13 +2608,19 @@ class AudioManager extends BaseAttachmentManager {
             audioElement.find('.attachAudio span').html(tr("attach"));
 
             if (this.form) {
-                const attachmentElement = this.form.find(`.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`);
+                const selector = this.type === 'playlist'
+                    ? `.PE_audios .vertical-attachment[data-id="${audioId}"]`
+                    : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
+                const attachmentElement = this.form.find(selector);
                 if (attachmentElement.length > 0) {
                     attachmentElement.remove();
                 }
             }
         } else {
-            const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
+            const attachmentSelector = this.type === 'playlist'
+                ? '.PE_audios .vertical-attachment'
+                : '.post-horizontal > a, .post-vertical > .vertical-attachment';
+            const currentAttachments = this.form.find(attachmentSelector).length;
             if (currentAttachments >= 10) {
                 NewNotification(
                     tr('error'),
@@ -2561,8 +2638,9 @@ class AudioManager extends BaseAttachmentManager {
             audioElement.find('.attachAudio span').html(tr("detach"));
 
             const playerPart = audioElement.find('.player_part');
-            this.form.find('.post-vertical').append(`
-                <div class="vertical-attachment upload-item" data-type='audio' data-id="${audioId}">
+            const targetContainer = this.type === 'playlist' ? '.PE_audios' : '.post-vertical';
+            this.form.find(targetContainer).append(`
+                <div class="vertical-attachment upload-item" ${this.type === 'form' ? 'data-type="audio"' : ''} data-id="${audioId}">
                     <div class='vertical-attachment-content'>
                         ${playerPart.html()}
                     </div>
@@ -2580,39 +2658,20 @@ class AudioManager extends BaseAttachmentManager {
         this.setupDialogStyles();
     }
 
-    static createDialogBody() {
-        return `
-        <div class='attachment_selector no_hack'>
-            <div class="choose_upload_area audio-upload-btn" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </div>
-            <div class='audios_tab_content'>
-                <div class='audios_search_container clear_fix'>
-                    <div class='ui_search_new ui_search'>
-                        <div class='ui_search_input_block'>
-                            <button class="ui_search_button_search">&nbsp;</button>
-                            <div class="ui_search_input_inner">
-                                <div class='ui_search_reset'></div>
-                                <input type='text' class='ui_search_field' placeholder='${tr("header_search")}' />
-                            </div>
-                        </div>
-                    </div>
-                    <select name="perf" class="audio_search_type">
-                        <option value="by_name">${tr("by_name")}</option>
-                        <option value="by_performer">${tr("by_performer")}</option>
-                    </select>
-                </div>
-                <div class='audiosInsert'></div>
-                <div class='audios_choose_more_container'></div>
-            </div>
-        </div>
-        `;
-    }
+
 }
 
 class AudioAttachmentDialog {
-    constructor(form) {
-        this.form = form;
+    constructor(formOrType, form = null) {
+        // Handle both old (form) and new (type, form) parameter patterns
+        if (typeof formOrType === 'string') {
+            this.type = formOrType;
+            this.form = form;
+        } else {
+            this.type = 'form';
+            this.form = formOrType;
+        }
+
         this.searchTimeout = null; // Debounce timeout for search functionality
 
         // Initialize managers
@@ -2621,7 +2680,7 @@ class AudioAttachmentDialog {
         // Create message box with audio-specific dialog body
         this.messageBox = new CMessageBox({
             title: tr('select_audio'),
-            body: AudioManager.createDialogBody(),
+            body: this.createDialogBody(),
         });
 
         // Set custom dimensions
@@ -2629,7 +2688,7 @@ class AudioAttachmentDialog {
         this.messageBox.getNode().find('.ovk-diag-body').attr('style', 'padding: 0px!important; height: 850px');
 
         // Create and initialize managers
-        this.audioManager = new AudioManager(this.messageBox, this.requestManager, this.form);
+        this.audioManager = new AudioManager(this.messageBox, this.requestManager, this.form, this.type);
         this.audioManager.initialize();
 
 
@@ -2670,49 +2729,74 @@ class AudioAttachmentDialog {
             }
         });
 
-        node.on('click', '#show_more', async (e) => {
-            e.preventDefault();
-            const target = u(e.target).closest('#show_more');
-            target.addClass('lagged');
-
-            const page = Number(target.attr('data-page')) - 1;
+        this.audioManager.setupShowMoreHandler(node, 'show_more_audios', async (button) => {
+            const page = Number(button.attr('data-page')) - 1;
             await this.audioManager.loadAudios(page, this.audioManager.currentQuery, true);
-        });
-
-        node.on('input', '.ui_search_field', (e) => {
-            const query = e.target.value.trim();
-            this.audioManager.currentQuery = query;
-
-            this.requestManager.cancelOngoingRequests();
-
-            clearTimeout(this.searchTimeout);
-            this.searchTimeout = setTimeout(() => {
-                this.audioManager.loadAudios(0, query, false);
-            }, 300);
         });
 
         node.on('change', '.audio_search_type', (e) => {
             this.audioManager.searchType = e.target.value;
             this.audioManager.loadAudios(0, this.audioManager.currentQuery, false);
         });
-
-        node.on('click', '.ui_search_reset', () => {
-            node.find('.ui_search_field').nodes[0].value = '';
-            this.audioManager.currentQuery = '';
-            this.audioManager.loadAudios(0, '', false);
-        });
     }
 
     async initialize() {
         this.setupEventHandlers();
         await this.loadInitialContent();
+
+        if (window.uiSearch) {
+            const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
+            if (searchElement) {
+                window.uiSearch.init(searchElement, {
+                    onInput: (query) => {
+                        this.audioManager.currentQuery = query;
+                        this.requestManager.cancelOngoingRequests();
+                        this.audioManager.loadAudios(0, query, false);
+                    },
+                    onReset: () => {
+                        this.audioManager.currentQuery = '';
+                        this.audioManager.loadAudios(0, '', false);
+                    },
+                    timeout: 300
+                });
+            }
+        }
+    }
+
+    createDialogBody() {
+        return `
+        <div class='attachment_selector no_hack'>
+            <div class="choose_upload_area audio-upload-btn" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div class='audios_tab_content'>
+                <div class='audios_search_container clear_fix'>
+                    <div class='ui_search_new ui_search ui_search_field_empty'>
+                        <div class='ui_search_input_block'>
+                            <button class="ui_search_button_search">&nbsp;</button>
+                            <div class="ui_search_input_inner">
+                                <div class='ui_search_reset' style="visibility: hidden; opacity: 0;"></div>
+                                <input type='text' class='ui_search_field' placeholder='${tr("header_search")}' />
+                            </div>
+                        </div>
+                    </div>
+                    <select name="perf" class="audio_search_type">
+                        <option value="by_name">${tr("by_name")}</option>
+                        <option value="by_performer">${tr("by_performer")}</option>
+                    </select>
+                </div>
+                <div class='audiosInsert'></div>
+                <div class='audios_choose_more_container'></div>
+            </div>
+        </div>
+        `;
     }
 }
 
 class DocumentManager extends BaseAttachmentManager {
     constructor(messageBox, requestManager, form = null, source = "user", sourceArg = 0) {
         super(messageBox, requestManager, form, 'document', {
-            DOCS_PER_PAGE: 10
+            DOCS_PER_PAGE: window.openvk?.default_per_page || 10
         });
         this.source = source;
         this.sourceArg = sourceArg;
@@ -2725,12 +2809,18 @@ class DocumentManager extends BaseAttachmentManager {
         return this.selectedItems;
     }
 
+    getItemsPerPage() {
+        return this.CONSTANTS.DOCS_PER_PAGE;
+    }
+
     async loadDocuments(page = 0, query = '', append = false) {
         const requestId = this.requestManager.createCancellableRequest();
         const docsContainer = u('.docsInsert');
+        const moreContainer = u('.docs_choose_more_container');
 
         if (!append) {
             docsContainer.html('');
+            moreContainer.html('');
             this.showLoader(docsContainer);
         }
 
@@ -2760,12 +2850,14 @@ class DocumentManager extends BaseAttachmentManager {
 
             if (count < 1) {
                 this.showError(docsContainer, tr("no_documents"));
+                const moreContainer = u('.docs_choose_more_container');
+                moreContainer.html('');
                 return { count: 0, items: [] };
             }
 
             const docElements = Array.from(pre.querySelectorAll("._content"));
             this.renderDocuments(docElements, append);
-            this.handleDocumentPagination(page, pagesCount);
+            this.handleDocumentPagination(page, pagesCount, query, docElements.length);
 
             return { count, items: docElements, page, pagesCount };
         } catch (error) {
@@ -2784,7 +2876,7 @@ class DocumentManager extends BaseAttachmentManager {
 
             let isSelected = this.selectedDocuments.has(docId);
             if (this.form && !isSelected) {
-                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="document"][data-id="${docId}"]`).length > 0;
+                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`).length > 0;
                 if (attachmentExists) {
                     isSelected = true;
                     this.selectedDocuments.add(docId);
@@ -2811,17 +2903,26 @@ class DocumentManager extends BaseAttachmentManager {
         }
     }
 
-    handleDocumentPagination(currentPage, pagesCount) {
+    handleDocumentPagination(currentPage, pagesCount, query = '', documentsLoaded = 0) {
         const moreContainer = u('.docs_choose_more_container');
 
-        if (currentPage < pagesCount - 1) {
-            moreContainer.html(`
-                <div id="show_more" data-pagesCount="${pagesCount}" data-page="${currentPage + 1}" class="showMore">
-                    <span>${tr("show_more")}</span>
-                </div>
-            `);
+        if (query && query.trim() !== '') {
+            const totalDocumentsDisplayed = u('.docsInsert .document_attachment_header').length;
+            if (totalDocumentsDisplayed > 10 && currentPage < pagesCount - 1) {
+                const extraData = { 'page': currentPage + 1 };
+                const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_docs', extraData);
+                moreContainer.html(showMoreButton);
+            } else {
+                moreContainer.html('');
+            }
         } else {
-            moreContainer.html('');
+            if (currentPage < pagesCount - 1) {
+                const extraData = { 'page': currentPage + 1 };
+                const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_docs', extraData);
+                moreContainer.html(showMoreButton);
+            } else {
+                moreContainer.html('');
+            }
         }
     }
 
@@ -2905,34 +3006,23 @@ class DocumentManager extends BaseAttachmentManager {
 
     initialize() {
         if (window.uiSearch) {
-            window.uiSearch.init(this.messageBox.getNode().find('.ui_search').nodes[0]);
+            const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
+            if (searchElement) {
+                window.uiSearch.init(searchElement, {
+                    onInput: (query) => {
+                        this.searchDocuments(query);
+                    },
+                    onButtonClick: (query) => {
+                        this.searchDocuments(query);
+                    },
+                    processQuery: (value) => ovk_proc_strtr(value, 100),
+                    timeout: 300
+                });
+            }
         }
     }
 
-    static createDialogBody() {
-        return `
-        <div class="docs_choose_wrap">
-            <div class="choose_upload_area document-upload-btn" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </div>
-            <div class="docs_choose_search">
-                <div class="ui_search_new ui_search ui_search_field_empty">
-                    <div class="ui_search_input_block">
-                        <button class="ui_search_button_search">&nbsp;</button>
-                        <div class="ui_search_input_inner">
-                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
-                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_by_documents")}">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id='_attachment_insert' class='clear_fix'>
-                <div class="docsInsert"></div>
-                <div class="docs_choose_more_container"></div>
-            </div>
-        </div>
-        `;
-    }
+
 }
 
 class DocumentAttachmentDialog {
@@ -2946,7 +3036,7 @@ class DocumentAttachmentDialog {
 
         this.messageBox = new CMessageBox({
             title: tr('select_doc'),
-            body: DocumentManager.createDialogBody(),
+            body: this.createDialogBody(),
             buttons: source != "user" ? [tr("go_to_my_documents"), tr("close")] : [tr("close")],
             callbacks: source != "user" ? [
                 async () => {
@@ -3004,34 +3094,43 @@ class DocumentAttachmentDialog {
             }
         });
 
-        node.on('click', '#show_more', async (e) => {
-            e.preventDefault();
-            const target = u(e.target).closest('#show_more');
-            target.addClass('lagged');
-
-            const page = Number(target.attr('data-page'));
+        this.documentManager.setupShowMoreHandler(node, 'show_more_docs', async (button) => {
+            const page = Number(button.attr('data-page'));
             await this.documentManager.loadDocuments(page, this.documentManager.currentQuery, true);
-            target.remove();
+            button.remove();
         });
 
-        node.on('input', '.ui_search_field', (e) => {
-            const query = ovk_proc_strtr(e.target.value, 100);
-            this.documentManager.searchDocuments(query);
-        });
 
-        node.on('click', '.ui_search_button_search', (e) => {
-            e.preventDefault();
-            const input = node.find('.ui_search_field').nodes[0];
-            if (input) {
-                const query = ovk_proc_strtr(input.value, 100);
-                this.documentManager.searchDocuments(query);
-            }
-        });
     }
 
     async initialize() {
         this.setupEventHandlers();
         await this.loadInitialContent();
+    }
+
+    createDialogBody() {
+        return `
+        <div class="docs_choose_wrap">
+            <div class="choose_upload_area document-upload-btn" role="button" tabindex="0">
+                <span class="choose_upload_area_label">${tr("upload_button")}</span>
+            </div>
+            <div class="docs_choose_search">
+                <div class="ui_search_new ui_search ui_search_field_empty">
+                    <div class="ui_search_input_block">
+                        <button class="ui_search_button_search">&nbsp;</button>
+                        <div class="ui_search_input_inner">
+                            <div class="ui_search_reset" style="visibility: hidden; opacity: 0;"></div>
+                            <input type="search" maxlength="100" name="q" class="ui_search_field" placeholder="${tr("search_by_documents")}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id='_attachment_insert' class='clear_fix'>
+                <div class="docsInsert"></div>
+                <div class="docs_choose_more_container"></div>
+            </div>
+        </div>
+        `;
     }
 }
 
@@ -3057,9 +3156,143 @@ u(document).on('click', '#__vkifyAudioAttachment', async (e) => {
     await dialog.initialize();
 });
 
+u(document).on('click', '#_vkifyPlaylistAppendTracks', async () => {
+    const dialog = new AudioAttachmentDialog('playlist', u('.PE_wrapper'));
+    await dialog.initialize();
+})
+
 u(document).on('click', '#__vkifyDocumentAttachment', async (e) => {
     const form = u(e.target).closest('form');
 
     const dialog = new DocumentAttachmentDialog(form);
     await dialog.initialize();
 });
+
+async function shareAudioPlaylist(event, owner_id, playlist_id) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const msg = new CMessageBox({
+        title: tr('share'),
+        unique_name: 'repost_playlist_modal',
+        body: `
+            <div class="messagebox-content-header">
+                <vkifyloc name="playlist_share_explain"></vkifyloc>
+            </div>
+            <div class='display_flex_column' style='margin-top: 10px;'>
+                <b>${tr('auditory')}</b>
+
+                <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
+                    <label>
+                        <input type="radio" name="repost_type" value="wall" checked>
+                        ${tr("in_wall")}
+                    </label>
+
+                    <label>
+                        <input type="radio" name="repost_type" value="group">
+                        ${tr("in_group")}
+                    </label>
+
+                    <select name="selected_repost_club" style='display:none;'></select>
+                </div>
+
+                <b>${tr('your_comment')}</b>
+
+                <div style="padding-left: 1px;">
+                    <input type='hidden' id='repost_attachments'>
+                    <textarea id='repostMsgInput' placeholder='...'></textarea>
+
+                    <div id="repost_signs" class='display_flex_column' style='display:none !important;'>
+                        <label><input type='checkbox' name="asGroup" onchange="const signedLabel = document.getElementById('signed_label'); signedLabel.style.setProperty('display', this.checked ? 'flex' : 'none', 'important'); if (!this.checked) signedLabel.querySelector('input').checked = false;">${tr('post_as_group')}</label>
+                        <label id="signed_label" style='display:none !important;'><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    </div>
+                </div>
+            </div>
+        `,
+        buttons: [tr('send'), tr('cancel')],
+        callbacks: [
+            async () => {
+                const message = u('#repostMsgInput').nodes[0].value;
+                const type = u(`input[name='repost_type']:checked`).nodes[0].value;
+                let club_id = 0;
+                try {
+                    club_id = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value);
+                } catch(e) {}
+
+                const as_group = u(`input[name='asGroup']`).nodes[0].checked;
+                const signed = u(`input[name='signed']`).nodes[0].checked;
+                const attachments = u(`#repost_attachments`).nodes[0].value;
+
+                const playlistUrl = `${window.location.origin}/playlist${owner_id}_${playlist_id}`;
+                const postText = message ? `${message}\n\n${playlistUrl}` : playlistUrl;
+
+                const params = {
+                    message: postText,
+                    owner_id: type == 'group' && club_id != 0 ? -club_id : window.openvk.current_id
+                };
+
+                if(as_group) {
+                    params['from_group'] = 1;
+                }
+
+                if(signed) {
+                    params['signed'] = 1;
+                }
+
+                if(attachments && attachments.trim() !== '') {
+                    params['attachments'] = attachments;
+                }
+
+                console.log('Sending params:', params);
+
+                try {
+                    const res = await window.OVKAPI.call('wall.post', params);
+                    const postUrl = `/wall${params.owner_id}_${res.post_id}`;
+                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(postUrl)});
+                } catch(e) {
+                    console.error(e);
+                    fastError(e.message);
+                }
+            },
+            Function.noop
+        ]
+    });
+
+    const modal = msg.getNode();
+
+    modal.on('change', 'input[name="repost_type"]', async function() {
+        const clubSelect = modal.find('select[name="selected_repost_club"]');
+        const repostSigns = modal.find('#repost_signs');
+
+        if (this.value === 'group') {
+            clubSelect.nodes[0].style.display = 'block';
+            repostSigns.nodes[0].style.setProperty('display', 'block', 'important');
+
+            if (clubSelect.nodes[0].children.length === 0) {
+                try {
+                    const clubs = await window.OVKAPI.call('groups.get', {
+                        'user_id': window.openvk.current_id,
+                        'extended': 1,
+                        'filter': 'admin'
+                    });
+
+                    clubs.items.forEach(club => {
+                        const option = document.createElement('option');
+                        option.value = club.id;
+                        option.textContent = club.name;
+                        clubSelect.nodes[0].appendChild(option);
+                    });
+                } catch(e) {
+                    console.error('Failed to load clubs:', e);
+                }
+            }
+        } else {
+            clubSelect.nodes[0].style.display = 'none';
+            repostSigns.nodes[0].style.setProperty('display', 'none', 'important');
+            const signedLabel = modal.find('#signed_label');
+            if (signedLabel.nodes[0]) {
+                signedLabel.nodes[0].style.setProperty('display', 'none', 'important');
+            }
+        }
+    });
+}

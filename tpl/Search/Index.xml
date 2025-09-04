@@ -63,7 +63,7 @@
         <div class="wide_column_wrap">
             <div class="wide_column">
                 {if $section == 'audios' && $count > 1}
-                    <div class="page_block">
+                    <div style="margin-bottom: 15px">
                         {include "../Audio/bigplayer.xml", tidy => true}
                     </div>
                     <script>
@@ -93,7 +93,7 @@
                     input_maxlength => '59',
                     autocomplete => 'off'
                 }
-                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
+                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='scroll_node search_row' n:foreach="$data as $dat">
@@ -287,7 +287,7 @@
                             {/if}
                         {else}
                             <div style="padding-top: 20px;">
-                                {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
+                                {include "../components/content_error.xml", icon => false, description => tr("no_results_by_this_query")}
                             </div>
                         {/if}
                     </div>

@@ -2,14 +2,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const commonConfig = {
         allowHTML: true,
         interactive: true,
-        animation: 'shift-toward-subtle',
+        interactiveBorder: 8,
+        animation: 'up_down',
         duration: [100, 100],
+        offset: [0, 8],
         theme: 'light vk',
         placement: 'bottom',
         appendTo: 'parent'
     };
-
-
 
     window.postActionTooltipConfig = {
         content: (reference) => {
@@ -36,12 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (element._tippyMenuElement) {
                 delete element._tippyMenuElement;
             }
-        });
-
-        // Restore hidden menus
-        const hiddenMenus = container.querySelectorAll('.tippy-menu[style*="display: none"]');
-        hiddenMenus.forEach(menu => {
-            menu.style.display = '';
         });
     };
 
@@ -98,7 +92,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         safeSetupTooltip('#moreOptionsLink', 'moreOptionsContent', {
             trigger: 'mouseenter focus',
-            arrow: true,
+            placement: 'bottom-start',
+            appendTo: document.body,
             maxWidth: 300
         });
 
@@ -117,9 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!hasTippy(element)) {
                 const menu = element.closest('.post_actions')?.querySelector('.tippy-menu');
                 if (menu) {
-                    // Clone the menu instead of removing it to prevent content loss
+                    // Clone the menu and remove the original
                     const menuClone = menu.cloneNode(true);
-                    menu.style.display = 'none'; // Hide original instead of removing
+                    menu.remove(); // Remove original menu from DOM
                     element._tippyMenuElement = menuClone;
                 } else {
                     // Create empty menu if none found

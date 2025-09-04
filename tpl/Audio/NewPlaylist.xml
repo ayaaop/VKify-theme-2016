@@ -4,23 +4,16 @@
     {_new_playlist}
 {/block}
 
-{block header}
-    {if !$_GET["gid"]}
-        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
-        »
-        <a href="/playlists{$thisUser->getId()}">{_playlists}</a>
-    {else}
-        <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
-        »
-        <a href="/playlists-{$club->getId()}">{_playlists}</a>
-    {/if}
-    »
-    {_new_playlist}
-{/block}
+{var $playlistsHref = !$_GET["gid"] ? "/playlists" . $thisUser->getId() : "/playlists-" . $club->getId()}
 
 {block content}
-    <div class='PE_wrapper'>
-        <div class='PE_playlistEditPage'>
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => (!$_GET["gid"] ? $thisUser : $club)->getURL(), 'title' => (!$_GET["gid"] ? $thisUser : $club)->getCanonicalName()],
+        ['href' => $playlistsHref, 'title' => tr("playlists")],
+        ['title' => tr("new_playlist")]
+    ]}
+    <div class='page_block page_padding PE_wrapper'>
+        <div class='playlistBlock PE_playlistEditPage'>
             <div class="playlistCover" onclick="document.querySelector(`input[name='cover']`).click()">
                 <a>
                     <input type='file' name='cover' style='display:none;' accept=".jpg,.png">
@@ -39,7 +32,7 @@
                     <input type='checkbox' name='is_unlisted' value='1'>
                     {_playlist_hide_from_search}
                 </label>
-                <a id='_playlistAppendTracks'>{_add_audio_verb}</a>
+                <a id='_vkifyPlaylistAppendTracks'>{_add_audio_verb}</a>
             </div>
         </div>
         <div class='PE_audios generic_audio_list'></div>

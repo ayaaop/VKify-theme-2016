@@ -1,5 +1,15 @@
+{* 
+ * Content error component
+ * 
+ * Displays an error message with an optional icon, title and description
+ * 
+ * @param bool|string $icon     - Path to icon image or false to hide icon
+ * @param string      $title    - Error title text (optional)
+ * @param string      $description - Error description text
+ *}
 <div class='content_page_error'>
-    <span>
+    <img n:if="$icon !== false" class="icon" src="/themepack/vkify16/{$theme->getVersion()}/resource/icons/{ifset $icon}{$icon}{else}no_posts.png{/ifset}" alt="{$title}" loading="lazy"/>
+    <span class="text">
         <b n:if="!empty($title)">{$title|noescape}</b>
         <div class="description">
             {$description|noescape}

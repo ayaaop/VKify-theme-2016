@@ -28,20 +28,6 @@
         <div class="narrow_column_wrap">
             <div class="narrow_column">
                 {include "../components/ui_rmenu.xml", items => $menuItems}
-                <div class="page_block module_body">
-                    <div class="postFeedPageSelect">
-                        <p style="margin-bottom: 10px;">{_posts_per_page}:</p>
-                        <select id="pageSelect">
-                            <option value="1">1</option>
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="50">50</option>
-                        </select>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -52,9 +38,13 @@
                 </div>
                 
                 <div class='scroll_container'>
-                    {foreach $posts as $post}
-                        {include "../components/post.xml", post => $post, commentSection => true}
-                    {/foreach}
+                    {if sizeof($posts) > 0}
+                        {foreach $posts as $post}
+                            {include "../components/post.xml", post => $post, commentSection => true}
+                        {/foreach}
+                    {else}
+                        {include "../components/content_error.xml", description => tr("no_posts_abstract")}
+                    {/if}
                 </div>
 
                 <div class="postFeedBottom">

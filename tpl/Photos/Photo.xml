@@ -74,13 +74,13 @@
                     {var $liked = $photo->hasLikeFrom($thisUser)}
                     {var $likesCount = $photo->getLikesCount()}
                     <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button post_like _like_wrap {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
-                        <i class="heart post_like_icon _icon" id="{if $liked}liked{/if}"></i>
-                        <span class="post_like_link _link">{tr('mobile_like')}</span>
-                        <span class="likeCnt post_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                        <i class="heart post_like_icon" id="{if $liked}liked{/if}"></i>
+                        <span class="post_like_link">{tr('mobile_like')}</span>
+                        <span class="likeCnt post_like_count">{if $likesCount > 0}{$likesCount}{/if}</span>
                     </a>
-                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post_share-button post_share _share_wrap">
-                        <i class="repost-icon post_share_icon _icon"></i>
-                        <span class="post_share_link _link">{tr('share')}</span>
+                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post_share-button post_share">
+                        <i class="repost-icon post_share_icon"></i>
+                        <span class="post_share_link">{tr('share')}</span>
                     </a>
                 </div>
             </div>

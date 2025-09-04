@@ -32,32 +32,32 @@
                     {var $liked = $video->hasLikeFrom($thisUser)}
                     {var $likesCount = $video->getLikesCount()}
                     <a href="/video{$video->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="video_like_button button video_like_wrap" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$video->getPrettyId()}" data-type='video'>
-                        <i class="heart video_like_icon _icon" id="{if $liked}liked{/if}"></i>
-                        <span class="video_like_link _link">{tr('mobile_like')}</span>
-                        <span class="likeCnt video_like_count _count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                        <i class="heart video_like_icon" id="{if $liked}liked{/if}"></i>
+                        <span class="video_like_link">{tr('mobile_like')}</span>
+                        <span class="likeCnt video_like_count">{if $likesCount > 0}{$likesCount}{/if}</span>
                     </a>
-                    <a onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="video_share_button button button_light _share_wrap">
-                        <i class="repost-icon video_share_icon _icon"></i>
-                        <span class="video_share_link _link">{tr('share')}</span>
+                    <a onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="video_share_button button button_light">
+                        <i class="repost-icon video_share_icon"></i>
+                        <span class="video_share_link">{tr('share')}</span>
                     </a>
-                    <a href="/video{$video->getPrettyId()}/edit" class="video_edit_button button button_light _edit_wrap">
-                        <i class="edit-icon video_edit_icon _icon"></i>
-                        <span class="video_edit_link _link">{tr('edit')}</span>
+                    <a href="/video{$video->getPrettyId()}/edit" class="video_edit_button button button_light">
+                        <i class="edit-icon video_edit_icon"></i>
+                        <span class="video_edit_link">{tr('edit')}</span>
                     </a>
                     <span class="video_info_more_actions">
                         <div class="button button_light _more_wrap">{_show_more}</div>
                         <div id="videoMoreActionsTooltip" class="tippy-menu">
                             <a n:if="$thisUser->getId() === $video->getOwner()->getId()" href="/video{$video->getPrettyId()}/remove">
-                                <i class="delete-icon video_delete_icon _icon"></i>
-                                <span class="video_delete_link _link">{tr('delete')}</span>
+                                <i class="delete-icon video_delete_icon"></i>
+                                <span class="video_delete_link">{tr('delete')}</span>
                             </a>
                             <a n:if="$canReport" href="javascript:reportVideo({$video->getId()})">
-                                <i class="report-icon video_report_icon _icon"></i>
-                                <span class="video_report_link _link">{tr('report')}</span>
+                                <i class="report-icon video_report_icon"></i>
+                                <span class="video_report_link">{tr('report')}</span>
                             </a>
                             <a n:if="$video->getType() == 0" href="{$video->getURL()}" download="">
-                                <i class="download-icon video_download_icon _icon"></i>
-                                <span class="video_download_link _link">{tr('download_video')}</span>
+                                <i class="download-icon video_download_icon"></i>
+                                <span class="video_download_link">{tr('download_video')}</span>
                             </a>
                         </div>
                     </span>

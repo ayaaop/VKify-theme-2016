@@ -64,7 +64,7 @@
                         {ifset customErrorMessage}
                             {include customErrorMessage}
                         {else}
-                            {include "components/content_error.xml", description => tr("no_data_description")}
+                            {include "components/content_error.xml", icon => false, description => tr("no_data_description")}
                         {/ifset}
                     {/if}
                 </div>

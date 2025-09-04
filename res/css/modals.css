@@ -1,4 +1,7 @@
 /* Photo modal */
+.ovk-photo-view-dimmer {
+	pointer-events: none;
+}
 .ovk-photo-view-window {
 	min-width: 910px;
 	max-width: 70vw;
@@ -7,6 +10,7 @@
 	top: 50%;
 	transform: translateY(-50%);
 	width: fit-content;
+	pointer-events: all;
 }
 #photo_top_controls {
 	position: absolute;
@@ -201,6 +205,9 @@
 	flex: 1;
 	overflow: auto;
 }
+.pv_comments .content_page_error {
+	padding-block: 0;
+}
 .pv_comments .reply {
 	padding: 0 10px;
 }
@@ -311,15 +318,9 @@
 .ovk-modal-video-window {
 	width: var(--page-width);
 	position: relative;
-	margin: auto;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.ovk-modal-video-window .page_block {
-	max-height: 85vh;
-	overflow-y: auto;
-	overflow-x: hidden;
+	margin: 72px auto 85px;
+	top: 0;
+	pointer-events: all;
 }
 
 .ovk-modal-video-window .video_block_layout {
@@ -327,11 +328,14 @@
 	overflow: hidden;
 	padding: 20px 20px 0;
 }
-
-#video_top_controls {
+#video_top_controls_wrapper {
 	position: absolute;
-	z-index: 100;
 	right: -64px;
+	z-index: 100;
+	height: 100%;
+}
+#video_top_controls {
+	position: sticky;
 	top: 0;
 }
 .video_top_button {
@@ -528,57 +532,8 @@
 	transition: all 200ms ease
 }
 
-@keyframes pr_bt_anim {
-	0% {
-		opacity: 0.2
-	}
-	30% {
-		opacity: 1
-	}
-	to {
-		opacity: 0.2
-	}
-}
-.pr {
-	line-height: 0;
-	transition: opacity 350ms linear;
-	text-align: center;
-}
-.pr_bt {
-	display: inline-block;
-	vertical-align: top;
-	width: 4px;
-	height: 4px;
-	background-color: #45688e;
-	border-radius: 50%;
-	margin-right: 2px;
-	opacity: 0.2;
-	animation-duration: 750ms;
-	animation-name: pr_bt_anim;
-	animation-iteration-count: infinite;
-}
-.pr_medium .pr_bt {
-	width: 7px;
-	height: 7px;
-	margin-right: 4px
-}
-.pr_big .pr_bt {
-	width: 8px;
-	height: 8px;
-	border-radius: 4px;
-	margin-right: 4px
-}
-.pr_bt:nth-child(1) {
-	animation-delay: 0ms;
-}
-.pr_bt:nth-child(2) {
-	animation-delay: 180ms;
-}
-.pr_bt:nth-child(3) {
-	animation-delay: 360ms;
-}
-.pr_baw .pr_bt {
-	background-color: #fff;
+.video_comments .content_page_error {
+	border-top: 1px solid var(--border-color);
 }
 
 .miniplayer {
@@ -777,7 +732,7 @@
 	padding: 0;
 	overflow-y: auto;
 }
-.audio_attachment_header .player_part {
+.audio_attachment_header .player_part,.notes_titles {
 	flex: 1;
 }
 .attachAudio {

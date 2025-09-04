@@ -1,20 +1,30 @@
-<a href="/playlist{$playlist->getPrettyId()}" class='playlistListView'>
-    <div class="playlistCover">
-        <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
-    </div>
-
-    <div class="playlistInfo">
-        <div class="playlistInfoTopPart">
-            <span class="playlistName noOverflow">
-                {$playlist->getName()}
-            </span>
-            <span n:if='!empty($playlist->getDescription())' class="playlistDesc noOverflow">
-                {$playlist->getDescription()}
-            </span>
+<div class="audio_pl_item scroll_node" id="audio_pl_{$playlist->getPrettyId()}" data-id="{$playlist->getPrettyId()}" data-raw-id="{$playlist->getPrettyId()}">
+    <a href="/playlist{$playlist->getPrettyId()}" class="audio_pl__cover">
+        <img n:if="!str_contains($playlist->getCoverURL('normal'), 'song.jpg')" src="{$playlist->getCoverURL('normal')}" alt="{$playlist->getName()}" loading="lazy" />
+        <div class="audio_pl__actions_wrap">
+            <div class="audio_pl__actions_btns">
+                <div class="audio_pl__actions_btn audio_pl__actions_edit" onclick="window.location.href='/playlist{$playlist->getPrettyId()|noescape}/edit'; return false;" n:if="$playlist->canBeModifiedBy($thisUser)"></div>
+                <div class="audio_pl__actions_btn audio_pl__actions_remove" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$playlist->canBeModifiedBy($thisUser) && $playlist->isBookmarkedBy($thisUser)"></div>
+                <div class="audio_pl__actions_btn audio_pl__actions_add" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$playlist->canBeModifiedBy($thisUser) && !$playlist->isBookmarkedBy($thisUser)"></div>
+                <div class="audio_pl__actions_btn audio_pl__actions_play"></div>
+                <div class="audio_pl__actions_btn audio_pl__actions_share" onclick="shareAudioPlaylist(event, {$playlist->getOwner()->getId()}, {$playlist->getId()}, ''); return cancelEvent(event)"></div>
+            </div>
+            <div class="audio_pl__cover_stats">
+                <div class="audio_pl__stats_count _audio_pl__stats_count">{$playlist->size()}</div>
+                <div class="audio_pl__stats_listens">{$playlist->getListens()}</div>
+            </div>
         </div>
-
-        <span class="playlistMeta">
-            {$playlist->getMetaDescription()|noescape}
-        </span>
+    </a>
+    <div class="audio_pl__info">
+        <div class="audio_pl__title">
+        <a class="audio_item__title" href="/playlist{$playlist->getPrettyId()}" title="{$playlist->getName()}">
+        {$playlist->getName()}
+        </a>
+        </div>
+        <div class="audio_pl__subtitle">
+            <a href="/audios{$playlist->getOwner()->getId()}" class="audio_pl_snippet__artist_link">
+            {$playlist->getOwner()->getCanonicalName()}
+            </a>
+        </div>
     </div>
-</a>
+</div>

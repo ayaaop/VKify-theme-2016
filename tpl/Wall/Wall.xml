@@ -30,7 +30,7 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                <div n:if="$canPost && $type == 'all'" class="page_block">
+                <div n:if="$canPost" class="page_block">
                     {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
                 </div>
                 
@@ -41,8 +41,8 @@
                         {/foreach}
                         {include "../components/paginator.xml", conf => $paginatorConf}
                     {else}
-                        <div class="page_block module_body" style="border-top: 0px;">
-                            {_no_posts_abstract}
+                        <div class="page_block">
+                            {include "../components/content_error.xml", description => tr("no_posts_abstract")}
                         </div>
                     {/if}
                 </div>

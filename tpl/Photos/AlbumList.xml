@@ -36,4 +36,12 @@
             {include "../components/content_error.xml", description => tr("albums_zero")}
         {/if}
     </div>
+    <div id="photos-section" class="page_block photos_section" data-owner-id="{$owner->getId()}" style="display: none;">
+        {include "../components/page_block_header.xml", title => all_photos}
+        <div id="photos-loading">{_loading_photos}</div>
+        <div id="photos-container" class="photos_container"></div>
+        <div id="photos-show-more-container" style="display: none; text-align: center; padding: 20px;">
+            <button id="photos-show-more-btn" class="button button_gray button_wide">{tr('show_more')}</button>
+        </div>
+    </div>
 {/block}

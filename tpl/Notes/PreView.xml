@@ -63,7 +63,7 @@
                     <div class="post-content">
                         <div class="text wall_text" id="text">
                             <div class="wall_note_type">{$title}</div>
-                            <div n:ifcontent class="really_text wall_post_text note_text_preview">{$html|noescape}</div>
+                            <div n:ifcontent class="really_text wall_post_text note_text">{$html|noescape}</div>
                         </div>
                     </div>
                 </div>

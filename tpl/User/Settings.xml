@@ -57,11 +57,10 @@
         <div class="wide_column_wrap">
             <div class="wide_column">
                 {if $isMain}
-                    <div class="page_block">
-                        {include "../components/page_block_header.xml", title => "main"}
-                        <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
-                            <div class="page_block_sub_header">{_your_email_address}</div>
-                            <div class="settings_panel clear_fix">
+                    {include "../components/page_block_header.xml", title => "your_email_address"}
+                    <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
+                        <div class="page_block">
+                            <div class="settings_panel settings_padding clear_fix">
                                 <div class="settings_list_row">
                                     <div class="settings_label">{_current_email_address}</div>
                                     <div class="settings_labeled_text" dir="auto">{$user->getEmail()}</div>
@@ -91,9 +90,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <br/>
-                            <div class="page_block_sub_header">{_your_page_address}</div>
-                            <div class="settings_panel clear_fix">
+                        </div>
+                        <div class="page_block">
+                            {include "../components/page_block_header.xml", title => "your_page_address"}
+                            <div class="settings_panel settings_padding clear_fix">
                                 <div class="settings_list_row">
                                     <div class="settings_label">{_page_id}</div>
                                     <div class="settings_labeled_text" dir="auto">{$user->getId()}</div>
@@ -112,12 +112,11 @@
                                     </div>
                                 </div>
                             </div>
-                        </form>
-
-                        <br/>
-                        <div class="settings_block_footer">
-                            {_you_can_also} <a onClick="showVkifyProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
+                            <div class="settings_block_footer">
+                                {_you_can_also} <a onClick="showVkifyProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
+                            </div>
                         </div>
+                    </form>
                         <script n:syntax="off">
                             function showVkifyProfileDeactivateDialog(hash) {
                                 MessageBox(tr("profile_deactivate"), `
@@ -165,10 +164,9 @@
                     </div>
                 {elseif $isSecurity}
                     <div class="page_block">
-                        {include "../components/page_block_header.xml", title => "security"}
+                        {include "../components/page_block_header.xml", title => "change_password"}
                         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
-                            <div class="page_block_sub_header">{_change_password}</div>
-                            <div class="settings_panel clear_fix">
+                            <div class="settings_panel settings_padding clear_fix">
                                 <div class="settings_list_row">
                                     <div class="settings_label">{_old_password}</div>
                                     <div class="settings_labeled_text">
@@ -201,7 +199,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <br/>
                         </form>
                     </div>
                     <div class="page_block">
@@ -278,7 +275,7 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "privacy"}
                         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel clear_fix settings_privacy">
+                            <div class="settings_panel clear_fix settings_padding">
                                 <div class="settings_list_row settings_privacy_row">
                                     <div class="settings_label">{_privacy_setting_access_page}</div>
                                     <div class="settings_labeled_text">
@@ -431,17 +428,11 @@
                                 <div class="settings_labeled_text">
                                     <b>{$thisUser->getCoins()} {_points_count}</b><br />
                                     <br />
-                                    <div>
-                                    {if OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']}
-                                    <input onclick="showCoinsTopUpTroughTon()" class="button" type="submit" style="margin-right: 10px;" value="{_transfer_trough_ton}" />
-                                    <a href="?act=finance.top-up">
-                                        <input class="button" type="submit" value="{_have_voucher}?" />
-                                    </a>
-                                    {else}
-                                    <a href="?act=finance.top-up">
-                                        <input class="button" type="submit" value="{_have_voucher}?" />
+                                    <div class="buttons_row">
+                                        <input n:if="OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']" onclick="showCoinsTopUpTroughTon()" class="button" type="submit" value="{_transfer_trough_ton}" />
+                                        <a href="?act=finance.top-up">
+                                            <input class="button" type="submit" value="{_have_voucher}?" />
                                         </a>
-                                        {/if}
                                     </div>
                                 </div>
                             </div>
