@@ -3612,6 +3612,7 @@ hr {
     width: 200px;
     height: 200px;
     border-radius: 6px;
+    object-fit: cover;
 }
 .playlistCover .playlistCount {
     margin-top: 8px;
