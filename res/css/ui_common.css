@@ -101,10 +101,10 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 input[type="checkbox"] {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/dev_check.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/dev_check.png) 0 0 no-repeat;
 }
 input[type="radio"] {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/dev_radio.png) 0 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/dev_radio.png) 0 0 no-repeat;
     height: 14px;
     width: 14px;
 }
@@ -197,7 +197,7 @@ table * {
 
 /* checkmark */
 .page_verified {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/verify.png?1) no-repeat 0;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/verify.png?1) no-repeat 0;
     vertical-align: middle;
     margin-left: 4px;
     padding: 0;
@@ -207,7 +207,7 @@ table * {
     width: 16px;
 }
 .post .page_verified {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/verify_small.png) no-repeat 0;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/verify_small.png) no-repeat 0;
     margin: -3px 2px 0 0;
     padding: 0;
     height: 14px;
@@ -482,7 +482,7 @@ body.dimmed>.dimmer #absolute_territory {
 .ovk-diag-head-close {
     float: right;
     padding: 21px 25px 21px 12px;
-    background: url(/themepack/vkify16/3.3.1.5/resource/cross.png) no-repeat 12px 21px;
+    background: url(/themepack/vkify16/3.3.1.6/resource/cross.png) no-repeat 12px 21px;
     width: 12px;
     height: 12px;
     opacity: 0.75;
@@ -750,7 +750,7 @@ a.ui_box_header_link {
     opacity: 1;
 }
 .ui_rmenu_extra_item .addIcon {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/ui_rmenu_icons.png) no-repeat 0 0;
     width: 13px;
     height: 13px;
 }
@@ -857,14 +857,14 @@ a.ui_crumb {
     font-size: 9px;
     position: relative;
     top: -2px;
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
     padding-left: 6px;
     margin: 23px 10px 21px 7px;
 }
 
 @media (-webkit-min-device-pixel-ratio:2), (min-resolution:192dpi) {
     .ui_crumb_sep {
-        background-image: url(/themepack/vkify16/3.3.1.5/resource/icons/breadcrumbs_2x.png);
+        background-image: url(/themepack/vkify16/3.3.1.6/resource/icons/breadcrumbs_2x.png);
         background-size: 12px 11px
     }
 }
@@ -906,7 +906,7 @@ input.ui_search_field, input.ui_search_field~.placeholder .ph_input {
     line-height: 18px;
 }
 input.ui_search_field {
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/search_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/search_icon.png) no-repeat;
     padding-left: 28px;
     border-left: 20px solid transparent;
     background-position: 0;
@@ -930,7 +930,7 @@ input.ui_search_field:focus::placeholder {
 .ui_search_reset {
     position: absolute;
     width: 38px;
-    background: url(/themepack/vkify16/3.3.1.5/resource/icons/cross.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.1.6/resource/icons/cross.png) no-repeat 50%;
     top: 0;
     bottom: 0;
     right: 6px;
@@ -972,7 +972,7 @@ input.ui_search_field:focus::placeholder {
     filter: none;
 }
 .ui_search_loading .ui_search_reset {
-    background-image: url(/themepack/vkify16/3.3.1.5/resource/icons/c_upload.gif);
+    background-image: url(/themepack/vkify16/3.3.1.6/resource/icons/c_upload.gif);
     transition: none;
     visibility: visible;
 }
@@ -1000,7 +1000,7 @@ input.ui_search_field:focus::placeholder {
 }
 .ui_search_new .ui_search_progress {
     display: none !important;
-    background-image: url(/themepack/vkify16/3.3.1.5/resource/icons/c_upload.gif);
+    background-image: url(/themepack/vkify16/3.3.1.6/resource/icons/c_upload.gif);
     width: 16px;
     height: 16px;
     pointer-events: none;
@@ -1418,7 +1418,7 @@ select:focus {
     margin-top: 0;
 }
 .msg.msg_yellow {
-    background: var(--message-warning-background) url(/themepack/vkify16/3.3.1.5/resource/icons/msg_error.png) no-repeat 12px 12px;
+    background: var(--message-warning-background) url(/themepack/vkify16/3.3.1.6/resource/icons/msg_error.png) no-repeat 12px 12px;
     padding-left: 55px;
     border-color: var(--message-warning-border);
     min-height: 40px;
