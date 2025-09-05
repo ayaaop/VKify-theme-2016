@@ -426,7 +426,9 @@
                 </div>
             </div>
             <div id="ajloader" class="loader">
-                <div class="pr pr_baw pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>
+                <div class="pr pr_baw pr_medium">
+                    <div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div>
+                </div>
             </div>
 
         {include "components/cookies.xml"}

@@ -161,18 +161,21 @@
                 id => 'audio_tabs'
             }
 
-            {var $friendsAudios = array_slice($friendsAudios, 0, 5)}
             {if $friendsAudios}
                 {var $friendsMenuItems = []}
+                {var $count = 0}
                 {foreach $friendsAudios as $friend}
-                    {var $friendsMenuItems[] = [
-                        'url' => "/audios" . $friend->getRealId(),
-                        'title' => $friend->getCanonicalName(),
-                        'translate' => false,
-                        'avatar' => $friend->getAvatarURL(),
-                        'additionalInfo' => $audioStatus ? $audioStatus->getName() : tr("audios_count", $friend->getAudiosCollectionSize()),
-                        'isRich' => true
-                    ]}
+                    {if $count < 5}
+                        {var $friendsMenuItems[] = [
+                            'url' => "/audios" . $friend->getRealId(),
+                            'title' => $friend->getCanonicalName(),
+                            'translate' => false,
+                            'avatar' => $friend->getAvatarURL(),
+                            'additionalInfo' => $audioStatus ? $audioStatus->getName() : tr("audios_count", $friend->getAudiosCollectionSize()),
+                            'isRich' => true
+                        ]}
+                        {var $count = $count + 1}
+                    {/if}
                 {/foreach}
                 {include "../components/ui_rmenu.xml", 
                     items => $friendsMenuItems,
