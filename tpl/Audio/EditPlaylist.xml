@@ -28,7 +28,7 @@
                 <div class="moreInfo">
                     <textarea placeholder="{_description}" name="description" maxlength="2045">{$playlist->getDescription()}</textarea>
                 </div>
-                <label>
+                <label class="checkbox">
                     <input type='checkbox' name='is_unlisted' value='1' n:attr='checked => $playlist->isUnlisted()'>
                     {_playlist_hide_from_search}
                 </label>

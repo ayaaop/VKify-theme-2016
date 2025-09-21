@@ -18,7 +18,7 @@
             <br/><br/>
             <input type="submit" value="{_send}" class="button" style="float: right" />
 
-            <label>
+            <label class="checkbox">
                 <input type="checkbox" name="anonymous"> {_as_anonymous}
             </label>
             

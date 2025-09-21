@@ -54,13 +54,13 @@ u(document).on("click", "#editPost", async (e) => {
                         <input type="hidden" id="source" name="source" value="none" />
                         <div class="post-bottom-acts">
                             <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
-                                <a class="attach_photo" id="__vkifyPhotoAttachment">
+                                <a class="attach_photo" id="__vkifyPhotoAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('photo')}">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a class="attach_video" id="__vkifyVideoAttachment">
+                                <a class="attach_video" id="__vkifyVideoAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('video')}">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
-                                <a class="attach_audio" id="__vkifyAudioAttachment">
+                                <a class="attach_audio" id="__vkifyAudioAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('audio')}">
                                     <div class="post-attach-menu__icon"></div>
                                 </a>
                                 <a class="post-attach-menu__trigger" id="moreAttachTrigger">
@@ -3203,7 +3203,7 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                     <textarea id='repostMsgInput' placeholder='...'></textarea>
 
                     <div id="repost_signs" class='display_flex_column' style='display:none !important;'>
-                        <label><input type='checkbox' name="asGroup" onchange="const signedLabel = document.getElementById('signed_label'); signedLabel.style.setProperty('display', this.checked ? 'flex' : 'none', 'important'); if (!this.checked) signedLabel.querySelector('input').checked = false;">${tr('post_as_group')}</label>
+                        <label class="checkbox"><input type='checkbox' name="asGroup" onchange="const signedLabel = document.getElementById('signed_label'); signedLabel.style.setProperty('display', this.checked ? 'flex' : 'none', 'important'); if (!this.checked) signedLabel.querySelector('input').checked = false;">${tr('post_as_group')}</label>
                         <label id="signed_label" style='display:none !important;'><input type='checkbox' name="signed">${tr('add_signature')}</label>
                     </div>
                 </div>

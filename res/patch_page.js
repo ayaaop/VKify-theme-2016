@@ -25,32 +25,6 @@ Object.defineProperty(window.player, 'ajCreate', {
     configurable: false
 });
 
-window.changeLangPopup = function () {
-    window.langPopup = new CMessageBox({
-        title: tr('select_language'),
-        body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-<div class="langSelect"><img src="/themepack/vkify16/3.3.1.6/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
-</a>
-<a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.6/resource/lang_flags/uk.png"><b>Україньска</b></div>
-</a>
-<a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.6/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
-</a>
-<a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.6/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
-</a>
-<a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.6/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
-</a>
-<a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
-   <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
-</a>`,
-        buttons: [tr('close')],
-        callbacks: [() => { langPopup.close() }]
-    });
-}
-
 window.allLangsPopup = function () {
     const container = document.createElement("div");
     let ul;
@@ -70,6 +44,32 @@ window.allLangsPopup = function () {
     window.langPopup = new CMessageBox({
         title: tr('select_language'),
         body: container.innerHTML,
+        buttons: [tr('close')],
+        callbacks: [() => { langPopup.close() }]
+    });
+}
+
+window.changeLangPopup = function () {
+    window.langPopup = new CMessageBox({
+        title: tr('select_language'),
+        body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
+<div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
+</a>
+<a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.8/resource/lang_flags/uk.png"><b>Україньска</b></div>
+</a>
+<a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
+</a>
+<a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
+</a>
+<a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.8/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
+</a>
+<a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
+   <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
+</a>`,
         buttons: [tr('close')],
         callbacks: [() => { langPopup.close() }]
     });
@@ -292,7 +292,7 @@ window.showAudioUploadPopup = function () {
 							<td width="120" valign="top"></td>
 							<td>
 								<label style='display:block'><input type="checkbox" name="explicit">\${tr('audios_explicit')}</label>
-								<label><input type="checkbox" name="unlisted">\${tr('audios_unlisted')}</label>
+								<label class="checkbox"><input type="checkbox" name="unlisted">\${tr('audios_unlisted')}</label>
 							</td>
 						</tr>
 					</tbody>
@@ -501,8 +501,8 @@ function parseAudio(onlyscnodes = false) {
 }
 
 const vkfavicon = {
-    "fav": "/themepack/vkify16/3.3.1.6/resource/favicon_vk.ico",
-	"fav_chat": "/themepack/vkify16/3.3.1.6/resource/fav_chat.ico",
+    "fav": "/themepack/vkify16/3.3.1.8/resource/favicon_vk.ico",
+	"fav_chat": "/themepack/vkify16/3.3.1.8/resource/fav_chat.ico",
     "playiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAvkQAAL/4AADBsAAAw2wAAMUoAADG6AAAyKgAAMpsAADMNAAAzfwAAM/EAADRlAAA02AAANU0AADXCAAA2Nw==",
     "pauseiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
 }
@@ -520,8 +520,8 @@ window.initVKGraffiti = function (event) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.6/stylesheet/styles.css">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.6/resource/vkgraffiti/graffiti.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.8/stylesheet/styles.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.8/resource/vkgraffiti/graffiti.css">
 </head>
 <body style="background: none">
     <div style="margin: 10px"><a onclick="Graffiti.flushHistory();">${window.vkifylang ? window.vkifylang.graffitiflushhistory : 'Clear'}</a> | <a onclick="Graffiti.backHistory();">${window.vkifylang ? window.vkifylang.graffitibackhistory : 'Undo'}</a></div>
@@ -540,7 +540,7 @@ window.initVKGraffiti = function (event) {
     <div id="graffiti_cpwrap" style="display:none; top:-210px;">
         <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
     </div>
-    <script src="${window.location.origin}/themepack/vkify16/3.3.1.6/resource/vkgraffiti/graffiti.js"></script>
+    <script src="${window.location.origin}/themepack/vkify16/3.3.1.8/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
@@ -1938,7 +1938,7 @@ function switchProfileInfo() {
 const today = new Date();
 if (today.getDate() === 1 && today.getMonth() === 3) {
     const doge = document.createElement('script');
-    doge.setAttribute('src', '/themepack/vkify16/3.3.1.6/resource/doge.js');
+    doge.setAttribute('src', '/themepack/vkify16/3.3.1.8/resource/doge.js');
     document.head.appendChild(doge);
     u(document).on('click', '.post-like-button', function () {
         if (u(this).find('#liked').length) { Doge.show(); }
@@ -1983,7 +1983,7 @@ window.toggleDarkMode = function(enabled) {
             const link = document.createElement('link');
             link.id = 'dark-mode-css';
             link.rel = 'stylesheet';
-            link.href = '/themepack/vkify16/3.3.1.6/resource/css/dark-mode.css';
+            link.href = '/themepack/vkify16/3.3.1.8/resource/css/dark-mode.css';
             document.head.appendChild(link);
         }
     } else {
@@ -2435,15 +2435,15 @@ window.initAlbumPhotosLoader = function() {
 function showCreateGroupModal() {
     const modalBody = `
         <div class="settings_panel" style="width: 100%; margin: 0;">
-            <div class="settings_list_row">
-                <div class="settings_label">${tr('name')}</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">${tr('name')}</div>
+                <div class="form_data">
                     <input type="text" name="group_name" id="group_name_input" value="" style="width: 100%;" />
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">${tr('description')}</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">${tr('description')}</div>
+                <div class="form_data">
                     <textarea name="group_about" id="group_about_input" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
                 </div>
             </div>

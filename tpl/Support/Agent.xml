@@ -55,26 +55,26 @@
                 </div>
                 {if $isEdit}
                     <form method="post" action="/support/agent{$agent_id}/edit">
-                        <div class="settings_panel edit_panel" style="padding-top: 0;">
-                            <div class="settings_line" style="margin-top: 0;"></div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_helpdesk_showing_name}</div>
-                                <div class="settings_labeled_text">
+                        <div class="form_group settings_padding" style="padding-top: 0;">
+                            <div class="form_separator" style="margin-top: 0;"></div>
+                            <div class="form_field">
+                                <div class="form_label">{_helpdesk_showing_name}</div>
+                                <div class="form_data">
                                     <input name="name" type="text" value="{$agent->getCanonicalName()}" placeholder="{_helpdesk_agent} #777" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_helpdesk_show_number}?</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_helpdesk_show_number}?</div>
+                                <div class="form_data">
                                     <select name="number">
                                         <option value="1" n:attr="selected => $agent->isShowNumber() === 1 ? true : false">{_yes}</option>
                                         <option value="0" n:attr="selected => $agent->isShowNumber() === 0 ? true : false">{_no}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_avatar}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_avatar}</div>
+                                <div class="form_data">
                                     <input name="avatar" type="text" value="{$agent->getAvatarURL()}" placeholder="{_helpdesk_avatar_url}" />
                                 </div>
                             </div>
@@ -93,25 +93,25 @@
     {include "../components/page_block_header.xml", title => "create"}
     <div class="page_block page_padding">
         <form method="post" action="/support/agent{$agent_id}/edit">
-            <div class="settings_panel edit_panel" style="padding: 0;">
-                <div class="settings_list_row">
-                    <div class="settings_label">{_helpdesk_showing_name}</div>
-                    <div class="settings_labeled_text">
+            <div class="form_group settings_padding" style="padding: 0;">
+                <div class="form_field">
+                    <div class="form_label">{_helpdesk_showing_name}</div>
+                    <div class="form_data">
                         <input name="name" type="text" placeholder="{_helpdesk_agent} #777" />
                         </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_helpdesk_show_number}?</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_helpdesk_show_number}?</div>
+                    <div class="form_data">
                         <select name="number">
                             <option value="1">{_yes}</option>
                             <option value="0">{_no}</option>
                         </select>
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_avatar}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_avatar}</div>
+                    <div class="form_data">
                         <input name="avatar" type="text" placeholder="{_helpdesk_avatar_url}" />
                     </div>
                 </div>

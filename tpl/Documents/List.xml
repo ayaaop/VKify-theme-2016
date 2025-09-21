@@ -30,6 +30,27 @@
                     'count' => $tab['count'] > 1 ? $tab['count'] : null
                 ]}
             {/foreach}
+            {if !$is_gallery && sizeof($tags) > 0}
+                {var $tabMenuItems[] = [
+                    'isSeparator' => true
+                ]}
+                {var $tabMenuItems[] = [
+                    'url' => '/search?section=docs',
+                    'title' => 'documents_all',
+                    'translate' => true,
+                    'active' => false,
+                    'count' => null
+                ]}
+                {foreach $tags as $tag}
+                    {var $tabMenuItems[] = [
+                        'url' => '/search?section=docs&tags=' . urlencode($tag),
+                        'title' => $tag,
+                        'translate' => false,
+                        'active' => false,
+                        'count' => null
+                    ]}
+                {/foreach}
+            {/if}
             {include "../components/ui_rmenu.xml", items => $tabMenuItems, additionalCssClass => 'docs_tabs', id => 'docs_tabs', ownblockData => isset($group) ? $group : null}
             <div n:if="$count > 3" class="page_block module_body">
                     <select name="docs_sort">
@@ -48,10 +69,10 @@
                 {/if}
             {/capture}
             {include "../components/page_block_header.xml", title => "documents", extra => $uploadBtnExtra}
-            <div class="page_block page_padding">
+            <div class="page_block list_view">
             <div n:class="docs_page_content, $is_gallery ? docs_page_gallery">
-                <div n:attr="id => !$is_gallery && sizeof($tags) > 0 ? search_page">
-                    <div n:class="container_white, scroll_container, !$is_gallery && sizeof($tags) > 0 ? page_wrap_content_main">
+                <div>
+                    <div n:class="container_white, scroll_container">
                         {if $count > 0}
                             {foreach $docs as $doc}
                                 {if $is_gallery}
@@ -65,14 +86,6 @@
                         {/if}
                     </div>
 
-                    <div n:if="!$is_gallery && sizeof($tags) > 0" class='page_wrap_content_options verticalGrayTabsWrapper'>
-                        <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
-                            <a id="used">{_documents_all}</a>
-                            {foreach $tags as $tag}
-                                <a href="/search?section=docs&tags={urlencode($tag)}">{$tag}</a>
-                            {/foreach}
-                        </div>
-                    </div>
                 </div>
                 {include "../components/paginator.xml", conf => $paginatorConf}
             </div>

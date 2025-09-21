@@ -9,15 +9,15 @@
 <div class="page_block page_padding">
     <form method="POST" enctype="multipart/form-data">
         <div class="settings_panel" style="width: 455px;margin-inline: auto;">
-            <div class="settings_list_row">
-                <div class="settings_label">{_name}</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">{_name}</div>
+                <div class="form_data">
                     <input type="text" name="name" value="" />
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">{_description}</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">{_description}</div>
+                <div class="form_data">
                     <textarea type="text" name="about"></textarea>
                 </div>
             </div>

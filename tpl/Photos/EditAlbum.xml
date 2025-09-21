@@ -10,16 +10,16 @@
     ]}
     <div class="page_block">
       <form method="post" enctype="multipart/form-data">
-      <div class="settings_panel settings_padding edit_panel" style="width: 455px;margin-inline: auto;">
-          <div class="settings_list_row">
-              <div class="settings_label">{_name}</div>
-              <div class="settings_labeled_text">
+      <div class="form_group settings_padding" style="width: 455px;margin-inline: auto;">
+          <div class="form_field">
+              <div class="form_label">{_name}</div>
+              <div class="form_data">
                   <input type="text" name="name" value="{$album->getName()}" />
               </div>
           </div>
-          <div class="settings_list_row">
-              <div class="settings_label">{_description}</div>
-              <div class="settings_labeled_text">
+          <div class="form_field">
+              <div class="form_label">{_description}</div>
+              <div class="form_data">
                   <textarea name="desc">{$album->getDescription()}</textarea>
               </div>
           </div>
@@ -29,7 +29,7 @@
           </div>
       </div>
       </form>
-      <div class="settings_block_footer">
+      <div class="page_block_footer">
           {_you_can_also} <a href="/album{$album->getOwner() instanceof openvk\Web\Models\Entities\Club ? '-' : ''}{$album->getOwner()->getId()}_{$album->getId()}/delete?hash={rawurlencode($csrfToken)}">{_delete_album}</a>.
       </div>
     </div>

@@ -3,8 +3,8 @@
 
 {block content}
     {do $crumbs = [
-        ['href' => $photo->getAlbum()->getOwner()->getURL(), 'title' => $photo->getAlbum()->getOwner()->getCanonicalName()],
-        ['href' => "/albums{$photo->getAlbum()->getOwner()->getId()}", 'title' => tr("albums")]
+        ['href' => $photo->getOwner()->getURL(), 'title' => $photo->getOwner()->getCanonicalName()],
+        ['href' => "/albums{$photo->getOwner()->getId()}", 'title' => tr("albums")]
     ]}
 
     {if $photo->getAlbum()}
@@ -19,10 +19,10 @@
     <div class="page_block">
         {include "../components/page_crumb_header.xml", crumbs => $crumbs}
       <form method="post" enctype="multipart/form-data">
-      <div class="settings_panel settings_padding edit_panel" style="width: 455px;margin-inline: auto;">
-        <div class="settings_list_row">
-            <div class="settings_label">{_description}</div>
-            <div class="settings_labeled_text">
+      <div class="form_group settings_padding" style="width: 455px;margin-inline: auto;">
+        <div class="form_field">
+            <div class="form_label">{_description}</div>
+            <div class="form_data">
                 <textarea name="desc">{$photo->getDescription()}</textarea>
             </div>
         </div>

@@ -3,7 +3,7 @@
 {var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
-<div n:class="docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
+<div n:class="search_row, docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
     <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}">
         {if $preview}
             <img class="doc_icon" alt="document_preview" src="{$preview->getURLBySizeId('tiny')}">

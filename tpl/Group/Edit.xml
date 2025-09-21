@@ -36,44 +36,44 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "main_information"}
                         <form method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel settings_padding clear_fix group_settings    ">
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_name}</div>
-                                    <div class="settings_labeled_text">
+                            <div class="form_group settings_padding clear_fix label_end    ">
+                                <div class="form_field">
+                                    <div class="form_label">{_name}</div>
+                                    <div class="form_data">
                                         <input type="text" name="name" value="{$club->getName()}" />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_description}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_description}</div>
+                                    <div class="form_data">
                                         <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_page_address}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_page_address}</div>
+                                    <div class="form_data">
                                         <input type="text" name="shortcode" value="{$club->getShortcode()}" />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_website}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_website}</div>
+                                    <div class="form_data">
                                         <input type="text" name="website" value="{$club->getWebsite()}" />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_avatar}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_avatar}</div>
+                                    <div class="form_data">
                                         <label class="button">{_browse}
                                             <input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=ava.files[0].name" />
                                         </label>
-                                        <div id="filename" style="margin-top: 10px;"></div>
+                                        <div id="filename"></div>
                                     </div>
                                 </div>
-                                <div class="settings_line"></div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_wall}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_separator"></div>
+                                <div class="form_field">
+                                    <div class="form_label">{_wall}</div>
+                                    <div class="form_data">
                                         <select name="wall">
                                             <option value="1" n:attr="selected => $club->getWallType() == 1">{_group_allow_post_for_everyone}</option>
                                             <option value="2" n:attr="selected => $club->getWallType() == 2">{_group_limited_post}</option>
@@ -85,10 +85,10 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="settings_line"></div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_discussions}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_separator"></div>
+                                <div class="form_field">
+                                    <div class="form_label">{_discussions}</div>
+                                    <div class="form_data">
                                         <label class="checkbox">
                                             <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" />
                                             {_everyone_can_create_topics}
@@ -99,10 +99,10 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="settings_line"></div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_group_administrators_list}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_separator"></div>
+                                <div class="form_field">
+                                    <div class="form_label">{_group_administrators_list}</div>
+                                    <div class="form_data">
                                         {var $areAllAdminsHidden = $club->getManagersCount(true) == 0}
                                         <label class="checkbox">
                                             <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" />
@@ -118,11 +118,11 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="settings_line"></div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_audios}</div>
-                                    <div class="settings_labeled_text">
-                                        <label>
+                                <div class="form_separator"></div>
+                                <div class="form_field">
+                                    <div class="form_label">{_audios}</div>
+                                    <div class="form_data">
+                                        <label class="checkbox">
                                             <input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" />
                                             {_everyone_can_upload_audios}
                                         </label>

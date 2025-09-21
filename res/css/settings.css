@@ -1,40 +1,51 @@
-.settings_panel {
+.form_group {
     margin: 0 20px;
 }
 
-.settings_list_row:not(:last-child) {
+.form_field {
+    margin-left: auto;
+    margin-right: auto;
+    width: 465px;
+    min-height: 27px;
+    display: flex;
+}
+.wide_column_wrap .form_field {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+}
+
+.form_field:not(:last-child) {
     margin-bottom: 10px;
 }
 
-.settings_label {
+.form_label {
     color: var(--muted-text-color-2);
     width: 145px;
-    padding: 6px 10px 6px 0;
-    float: left;
-    line-height: 16px;
+    padding: 0;
+    line-height: 27px;
 }
 
-.settings_labeled_text {
-    padding-top: 6px;
-    margin: 0 0 8px 155px;
+.form_data {
+    margin: 0 0 0 15px;
+    flex: 1;
+    line-height: 27px;
 }
-.settings_list_row:last-child .settings_labeled_text {
+.form_field:last-child .form_data {
     margin-bottom: 0;
 }
 
-.settings_list_row .settings_label,
-.settings_list_row .settings_labeled_text {
-    padding-top: 2px;
-    line-height: 16px;
+.form_field .form_label {
+    display: inline;
 }
 
-.settings_line {
+.form_separator {
 	margin: 12px 0 15px;
 	background: var(--border-color);
 	height: 1px;
 }
 
-.settings_line.settings_line_no_padding {
+.form_separator.no_padding {
     margin: 0;
 }
 
@@ -44,7 +55,7 @@
     line-height: 150%;
 }
 
-.settings_block_footer {
+.page_block_footer {
     border-top: 1px solid var(--border-color);
     background: var(--module-header-background-color);
     line-height: 140%;
@@ -54,28 +65,29 @@
     text-align: center;
 }
 
-.settings_list_row input:not([type="submit"], [type="checkbox"], [type="radio"]),.settings_list_row:not(.settings_privacy_row) select,.settings_list_row textarea {
+.form_field input:not([type="submit"], [type="checkbox"], [type="radio"]),.form_field:not(.settings_privacy_row) select,.form_field textarea {
     width: 300px;
 }
 
-.settings_list_row select + label {
-    margin-top: 10px;
-}
-.settings_list_row label {
-    margin-bottom: 10px;
+.form_field label.checkbox {
     display: flex;
     width: fit-content;
+    margin-bottom: 0;
 }
 
-.settings_list_row label.checkbox {
+.form_field label.checkbox {
     display: block;
 }
 
+.form_field #filename:not(:empty) {
+    margin-top: 10px;
+}
+
 /* privacy */
-.settings_privacy_row {
+.form_field.settings_privacy_row {
     border-bottom: solid var(--border-color);
     border-width: 1px 0;
-    padding: 11px 0 14px;
+    padding: 14px 0 15px;
     margin: -1px 0 0;
 }
 
@@ -92,11 +104,11 @@
     border-color: transparent
 }
 
-.settings_privacy_row.settings_privacy_row_oneline .settings_label {
+.settings_privacy_row.settings_privacy_row_oneline .form_label {
     padding: 11px 10px 0 0
 }
 
-[dir=rtl] .settings_privacy_row.settings_privacy_row_oneline .settings_label {
+[dir=rtl] .settings_privacy_row.settings_privacy_row_oneline .form_label {
     padding: 11px 0 0 10px
 }
 
@@ -104,17 +116,9 @@
     border-bottom-width: 0
 }
 
-.settings_privacy_row .settings_labeled_text {
-    margin-left: 255px;
-}
-
-.settings_privacy_row .settings_label {
+.settings_privacy_row .form_label {
     width: 245px;
     text-align: left;
-    line-height: 18px
-}
-.settings_list_row:has(select, input:not([type="submit"])) .settings_label {
-    padding: 7px 10px 0 0;
 }
 
 .settings_row_button_wrap {
@@ -127,9 +131,8 @@
     margin-top: 20px;
 }
 
-.settings_panel .accent-box {
-    margin-top: 0;
-    margin-inline: 0;
+.form_field .accent-box {
+    margin: 0 auto;
 }
 
 /* payments */
@@ -152,22 +155,8 @@
 }
 
 /* edit page */
-.edit_panel {
-    padding-block: 20px;
-}
-.edit_panel .settings_label,.group_settings .settings_label {
+.label_end .form_label {
     text-align:end;
-}
-.group_settings .settings_label {
-	width: 165px;
-	padding: 6px 12px 7px 0;
-}
-.group_settings .settings_labeled_text {
-	margin: 0 0 8px 177px;
-	padding-top: 7px;
-}
-.group_settings .settings_labeled_text:has(textarea,input[type="text"],select) {
-    padding-top: 2px;
 }
 
 /* followers */

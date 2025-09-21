@@ -15,16 +15,16 @@
         </div>
 
         <form method="POST" enctype="multipart/form-data">
-            <div class="settings_panel clear_fix group_settings settings_padding">
-                <div class="settings_list_row">
-                    <div class="settings_label">{_email}</div>
-                    <div class="settings_labeled_text">
+            <div class="form_group clear_fix label_end settings_padding">
+                <div class="form_field">
+                    <div class="form_label">{_email}</div>
+                    <div class="form_data">
                         <input class="text long-field" id="login" type="text" name="login" required />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label"></div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label"></div>
+                    <div class="form_data">
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_reset_password}" class="button" />
                     </div>

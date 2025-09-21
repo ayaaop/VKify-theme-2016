@@ -93,7 +93,8 @@
                     input_maxlength => '59',
                     autocomplete => 'off'
                 }
-                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv'>
+                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv,
+                    $section == "audios_playlists" && $count > 0 ? playlistContainer'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='scroll_node search_row' n:foreach="$data as $dat">
@@ -261,21 +262,21 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'audios_playlists'}
-                                <div class='scroll_node search_content' n:foreach="$data as $dat">
+                                {foreach $data as $dat}
                                     {include "../Audio/playlistListView.xml", playlist => $dat}
-                                </div>
+                                {/foreach}
 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
                                     function __scrollHook(page) {
-                                        highlightText({$query}, '.page_search', [".playlistName", ".playlistDesc"])
+                                        highlightText({$query}, '.page_search', [".audio_item__title"])
                                     }
 
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'docs'}
-                                <div class='scroll_node search_content' n:foreach="$data as $dat">
-                                    {include "../Documents/components/doc.xml", doc => $dat, copyImportance => true}
-                                </div>
+                                {foreach $data as $dat}
+                                    {include "../Documents/components/doc.xml", doc => $dat, copyImportance => true, scroll_ocntext => true}
+                                {/foreach}
 
                                 <script n:if="$count > 0 && !empty($query)">
                                     function __scrollHook(page) {
@@ -389,7 +390,7 @@
             {_s_main}
         </div>
         <div class="search_option_content">
-            <label>
+            <label class="checkbox">
                 <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="real_search_form">{_s_only_youtube}
             </label>
         </div>
@@ -411,10 +412,10 @@
             {_s_main}
         </div>
         <div class="search_option_content">
-            <label>
+            <label class="checkbox">
                 <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="real_search_form">{_s_only_performers}
             </label>
-            <label>
+            <label class="checkbox">
                 <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="real_search_form">{_s_with_lyrics}
             </label>
             <label>

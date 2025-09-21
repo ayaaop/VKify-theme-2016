@@ -19,16 +19,16 @@
 
 <div class="page_block">
     <form method="post" enctype="multipart/form-data">
-    <div class="settings_panel settings_padding group_settings" style="width: 455px;margin-inline: auto;">
-        <div class="settings_list_row">
-            <div class="settings_label">{_name}</div>
-            <div class="settings_labeled_text">
+    <div class="form_group settings_padding label_end" style="width: 455px;margin-inline: auto;">
+        <div class="form_field">
+            <div class="form_label">{_name}</div>
+            <div class="form_data">
                 <input type="text" name="name" />
             </div>
         </div>
-        <div class="settings_list_row">
-            <div class="settings_label">{_description}</div>
-            <div class="settings_labeled_text">
+        <div class="form_field">
+            <div class="form_label">{_description}</div>
+            <div class="form_data">
                 <textarea name="desc"></textarea>
             </div>
         </div>

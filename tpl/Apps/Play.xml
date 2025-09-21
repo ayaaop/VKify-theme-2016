@@ -32,7 +32,7 @@
                     {$news->getText()|noescape}
                 </div>
             </div>
-            <div class="settings_block_footer">
+            <div class="page_block_footer">
                 {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
             </div>
     </div>

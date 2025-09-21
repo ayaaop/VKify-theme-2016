@@ -9,31 +9,31 @@
         ['title' => tr("upload_video")]
     ]}
     <form method="post" enctype="multipart/form-data">
-      <div class="settings_panel settings_padding" style="width: 455px;margin-inline: auto;">
-        <div class="settings_list_row">
-            <div class="settings_label">{_name}</div>
-            <div class="settings_labeled_text">
+      <div class="form_group settings_padding" style="width: 455px;margin-inline: auto;">
+        <div class="form_field">
+            <div class="form_label">{_name}</div>
+            <div class="form_data">
                 <input type="text" name="name" />
             </div>
         </div>
-        <div class="settings_list_row">
-            <div class="settings_label">{_description}</div>
-            <div class="settings_labeled_text">
+        <div class="form_field">
+            <div class="form_label">{_description}</div>
+            <div class="form_data">
                 <textarea name="desc"></textarea>
             </div>
         </div>
-        <div class="settings_list_row">
-            <div class="settings_label">{_video}</div>
-            <div class="settings_labeled_text">
+        <div class="form_field">
+            <div class="form_label">{_video}</div>
+            <div class="form_data">
                 <label class="button" style="">{_browse}
                     <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" accept="video/*" />
                 </label>
                 <div id="filename" style="margin-top: 10px;"></div>
             </div>
         </div>
-        <div class="settings_list_row">
-            <div class="settings_label">{_video_link_to_yt}</div>
-            <div class="settings_labeled_text">
+        <div class="form_field">
+            <div class="form_label">{_video_link_to_yt}</div>
+            <div class="form_data">
                 <input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" />
             </div>
         </div>

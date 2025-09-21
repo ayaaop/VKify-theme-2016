@@ -100,20 +100,20 @@
                 
                         <div class="post-opts tippy-menu" id="postOptsTooltip">
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
-                                <label>
+                                <label class="checkbox">
                                     <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
                                     {_post_as_group}
                                 </label>
-                                <label id="forceSignOpt" style="display: none;">
+                                <label class="checkbox" id="forceSignOpt" style="display: none;">
                                     <input type="checkbox" name="force_sign" /> {_add_signature}
                                 </label>
                             {/if}
                 
-                            <label n:if="$anonEnabled" id="octoberAnonOpt">
+                            <label class="checkbox" n:if="$anonEnabled" id="octoberAnonOpt">
                                 <input type="checkbox" name="anon" onchange="window.onWallAnonClick(this)" /> {_as_anonymous}
                             </label>
                 
-                            <label>
+                            <label class="checkbox">
                                 <input type="checkbox" name="nsfw" /> {_contains_nsfw}
                             </label>
                             {if $hasSource}
@@ -131,7 +131,7 @@
                         </div>
 
                         <div class="post-opts" id="postOptsTooltip">
-                            <label>
+                            <label class="checkbox">
                                 <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
                                 {_comment_as_group}
                             </label>

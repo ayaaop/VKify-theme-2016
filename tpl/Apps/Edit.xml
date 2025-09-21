@@ -34,41 +34,41 @@
     {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="side_link" href="/app' . $id  . '">' . $name . '</a>'}
     <div class="page_block">
         <form method="POST" enctype="multipart/form-data">
-            <div class="settings_panel settings_padding group_settings game_edit">
-                <div class="settings_list_row">
-                    <div class="settings_label">{_name}</div>
-                    <div class="settings_labeled_text">
+            <div class="form_group settings_padding label_end game_edit">
+                <div class="form_field">
+                    <div class="form_label">{_name}</div>
+                    <div class="form_data">
                         <input type="text" name="name" value="{$name ?? ''}" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_description}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_description}</div>
+                    <div class="form_data">
                         <input type="text" name="desc" value="{$desc ?? ''}" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_avatar}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_avatar}</div>
+                    <div class="form_data">
                         <input type="file" name="ava" accept="image/*" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_app_news}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_app_news}</div>
+                    <div class="form_data">
                         <input type="text" name="note" placeholder="{ovk_scheme(true) . $_SERVER['HTTP_HOST']}/note{$thisUser->getId()}_10" value="{$note ?? ''}" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">URL</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">URL</div>
+                    <div class="form_data">
                         <input type="text" name="url" value="{$url ?? ''}" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_app_state}</div>
-                    <div class="settings_labeled_text">
-                        <label><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> {_app_enabled}</label>
+                <div class="form_field">
+                    <div class="form_label">{_app_state}</div>
+                    <div class="form_data">
+                        <label class="checkbox"><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> {_app_enabled}</label>
                     </div>
                 </div>
                 <div class="settings_save_footer">
@@ -81,8 +81,8 @@
 
     <div class="page_block">
         {include "../components/page_block_header.xml", title => "additional_information"}
-        <div class="settings_panel settings_padding">
-            <div class="settings_list_row">
+        <div class="form_group settings_padding">
+            <div class="form_field">
                 <ul style="color: unset;">
                     {if $create}
                         <li>{_app_creation_hint_url}</li>

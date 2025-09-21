@@ -48,7 +48,7 @@
                     {/if}
                     
                     <div style="margin-bottom: 10px; text-align: left;">
-                        <label><input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}</label>
+                        <label class="checkbox"><input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}</label>
                     </div>
                     
                     <div class="login_buttons_wrap">

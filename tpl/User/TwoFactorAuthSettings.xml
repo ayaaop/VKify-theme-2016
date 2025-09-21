@@ -18,36 +18,28 @@
             <p>{tr("two_factor_authentication_settings_3", $secret)|noescape}</p>
             <p>{_two_factor_authentication_settings_4}</p>
             <form method="POST">
-                <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span>{_code}: </span>
-                            </td>
-                            <td>
-                                <input type="text" name="code" required />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span>{_password}: </span>
-                            </td>
-                            <td>
-                                <input type="password" name="password" required />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                
-                            </td>
-                            <td>
-                                <input type="hidden" name="secret" value="{$secret}" />
-                                <input type="hidden" name="hash" value="{$csrfToken}" />
-                                <input type="submit" value="{_enable}" class="button" />
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="form_group label_end clear_fix settings_padding">
+                    <div class="form_field">
+                        <div class="form_label">{_code}: </div>
+                        <div class="form_data">
+                            <input type="text" name="code" required />
+                        </div>
+                    </div>
+                    <div class="form_field">
+                        <div class="form_label">{_password}: </div>
+                        <div class="form_data">
+                            <input type="password" name="password" required />
+                        </div>
+                    </div>
+                    <div class="form_field">
+                        <div class="form_label">&nbsp;</div>
+                        <div class="form_data">
+                            <input type="hidden" name="secret" value="{$secret}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_enable}" class="button" />
+                        </div>
+                    </div>
+                </div>
             </form>
         </div>
     </div>

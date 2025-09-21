@@ -68,48 +68,48 @@
                 <div class="page_block">
                     {include "../components/page_block_header.xml", title => "main_information"}
                     <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
-                        <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_name}</div>
-                                <div class="settings_labeled_text">
+                        <div class="form_group settings_padding label_end">
+                            <div class="form_field">
+                                <div class="form_label">{_name}</div>
+                                <div class="form_data">
                                     <input type="text" name="first_name" value="{$user->getFirstName(true)}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_surname}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_surname}</div>
+                                <div class="form_data">
                                     <input type="text" name="last_name" value="{$user->getLastName(true)}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_nickname}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_nickname}</div>
+                                <div class="form_data">
                                     <input type="text" name="pseudo" value="{$user->getPseudo()}" />
                                 </div>
                             </div>
                             {if OPENVK_ROOT_CONF['openvk']['credentials']['smsc']['enable']}
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_phone}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_phone}</div>
+                                <div class="form_data">
                                     <input type="phone" name="phone" value="{$user->getPhone()}" />
                                 </div>
                             </div>
                             {/if}
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_status}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_status}</div>
+                                <div class="form_data">
                                     <input type="text" name="status" value="{$user->getStatus()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_hometown}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_hometown}</div>
+                                <div class="form_data">
                                     <input type="text" name="hometown" value="{$user->getHometown()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_relationship}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_relationship}</div>
+                                <div class="form_data">
                                     <select name="marialstatus" onChange="toggleMaritalStatus(this)">
                                         <option n:foreach="range(0, 8) as $i" n:attr="selected => ($user->getMaritalStatus() == $i)" value="{$i}">
                                             {if $user->isFemale()}
@@ -126,17 +126,17 @@
                                     </select>
                                 </div>
                             </div>
-                            <div id="maritalstatus-user" class="settings_list_row"
+                            <div id="maritalstatus-user" class="form_field"
                                 n:attr="style => $user->getMaritalStatusUser() || ($user->getMaritalStatus() && !in_array($user->getMaritalStatus(), [0, 1, 8])) ? '' : 'display: none;'">
-                                <div class="settings_label"></div>
-                                <div class="settings_labeled_text">
+                                <div class="form_label"></div>
+                                <div class="form_data">
                                     <input type="text" placeholder="{_page_address}" name="maritalstatus-user"
                                         n:attr="value => $user->getMaritalStatusUser() ? $user->getMaritalStatusUser()->getId() : ''" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_politViews}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_politViews}</div>
+                                <div class="form_data">
                                     <select name="politViews">
                                         <option n:foreach="range(0, 9) as $i" n:attr="selected => ($user->getPoliticalViews() == $i)" value="{$i}">
                                             {tr("politViews_" . $i)}
@@ -144,9 +144,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_pronouns}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_pronouns}</div>
+                                <div class="form_data">
                                     <select name="pronouns">
                                         <option value="0" {if $user->getPronouns() == 0}selected{/if}>{_male}</option>
                                         <option value="1" {if $user->getPronouns() == 1}selected{/if}>{_female}</option>
@@ -154,9 +154,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_birth_date}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_birth_date}</div>
+                                <div class="form_data">
                                     <input max={date('Y-m-d')} name="birthday" value={is_null($user->getBirthday()) ? NULL : $user->getBirthday()->format('%Y-%m-%d')} type="date" style="margin-bottom: 7px;" />
                                     <select name="birthday_privacy">
                                         <option value="0" {if $user->getBirthdayPrivacy() == 0}selected{/if}>{_show_my_birthday}</option>
@@ -164,10 +164,10 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label"></div>
-                                <div class="settings_labeled_text">
-                                    <label><input type="checkbox" name="broadcast_music" n:attr="checked => $user->isBroadcastEnabled()">{_broadcast_audio}</label>
+                            <div class="form_field">
+                                <div class="form_label"></div>
+                                <div class="form_data">
+                                    <label class="checkbox"><input type="checkbox" name="broadcast_music" n:attr="checked => $user->isBroadcastEnabled()">{_broadcast_audio}</label>
                                 </div>
                             </div>
                             <div class="settings_save_footer">
@@ -182,34 +182,34 @@
                 <div class="page_block">
                     {include "../components/page_block_header.xml", title => "contact_information"}
                     <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
-                        <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_email}</div>
-                                <div class="settings_labeled_text">
+                        <div class="form_group settings_padding label_end">
+                            <div class="form_field">
+                                <div class="form_label">{_email}</div>
+                                <div class="form_data">
                                     <input type="email" name="email_contact" value="{$user->getContactEmail()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_telegram}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_telegram}</div>
+                                <div class="form_data">
                                     <input type="text" name="telegram" value="{$user->getTelegram()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_personal_website}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_personal_website}</div>
+                                <div class="form_data">
                                     <input type="text" name="website" value="{$user->getWebsite()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_city}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_city}</div>
+                                <div class="form_data">
                                     <input type="text" name="city" value="{$user->getCity()}" />
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_address}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_address}</div>
+                                <div class="form_data">
                                     <input type="text" name="address" value="{$user->getPhysicalAddress()}" />
                                 </div>
                             </div>
@@ -224,52 +224,52 @@
                 <div class="page_block">
                     {include "../components/page_block_header.xml", title => "personal_information"}
                     <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
-                        <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_interests}</div>
-                                <div class="settings_labeled_text">
+                        <div class="form_group settings_padding label_end">
+                            <div class="form_field">
+                                <div class="form_label">{_interests}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="interests">{$user->getInterests()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_music}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_music}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_music">{$user->getFavoriteMusic()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_films}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_films}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_films">{$user->getFavoriteFilms()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_shows}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_shows}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_shows">{$user->getFavoriteShows()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_books}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_books}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_books">{$user->getFavoriteBooks()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_quotes}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_quotes}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_quote">{$user->getFavoriteQuote()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_favorite_games}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_favorite_games}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="fav_games">{$user->getFavoriteGames()}</textarea>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_information_about}</div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label">{_information_about}</div>
+                                <div class="form_data">
                                     <textarea type="text" name="about">{$user->getDescription()}</textarea>
                                 </div>
                             </div>
@@ -285,10 +285,10 @@
                 <div class="page_block">
                     {include "../components/page_block_header.xml", title => "profile_picture"}
                     <form action="/al_avatars" method="POST" enctype="multipart/form-data">
-                        <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_picture}</div>
-                                <div class="settings_labeled_text">
+                        <div class="form_group settings_padding label_end">
+                            <div class="form_field">
+                                <div class="form_label">{_picture}</div>
+                                <div class="form_data">
                                     <label class="button" style="">{_browse}
                                         <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" />
                                     </label>
@@ -312,16 +312,16 @@
                             <p>{_backdrop_about_adding}</p>
                         </div>
                         <form method="POST" enctype="multipart/form-data">
-                    <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label"><vkifyloc name="left_edge"></vkifyloc></div>
-                                <div class="settings_labeled_text">
+                    <div class="form_group settings_padding label_end">
+                            <div class="form_field">
+                                <div class="form_label"><vkifyloc name="left_edge"></vkifyloc></div>
+                                <div class="form_data">
                                     <label class="button" style="">{_browse}<input type="file" accept="image/*" name="backdrop1" style="display: none;"></label>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label"><vkifyloc name="right_edge"></vkifyloc></div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label"><vkifyloc name="right_edge"></vkifyloc></div>
+                                <div class="form_data">
                                     <label class="button" style="">{_browse}<input type="file" accept="image/*" name="backdrop2" style="display: none;"></label>
                                 </div>
                             </div>
@@ -339,7 +339,7 @@
             {elseif $isAdditional}
                 <div class="page_block">
                     {include "../components/page_block_header.xml", title => "additional_information"}
-                    <div class="settings_panel edit_panel settings_padding">
+                    <div class="form_group settings_padding label_end">
                         {var $f_iterator = 0}
                         <div>{tr("additional_fields_description", ovkGetQuirk("users.max-fields"))}</div>
                         <form id="additional_fields_form" method="POST" enctype="multipart/form-data">

@@ -88,7 +88,8 @@ document.addEventListener('DOMContentLoaded', function () {
             theme: 'dark vk'
         });
         safeSetupTooltip('#profile_more_btn', 'profile_actions_tooltip', {
-            placement: 'bottom-end'
+            placement: 'bottom-end',
+            trigger: 'click'
         });
         safeSetupTooltip('#moreOptionsLink', 'moreOptionsContent', {
             trigger: 'mouseenter focus',

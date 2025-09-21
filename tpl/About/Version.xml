@@ -30,40 +30,40 @@
             <hr style="width: 1px; height: 30px; margin: 0">
             <h2 class="p" style="margin: 0">VKify16 ({$theme->getVersion()})</h2>
         </div>
-        <div class="settings_panel clear_fix group_settings" style="margin: 0">
-            <div class="settings_list_row">
-                <div class="settings_label">Chandler version</div>
-                <div class="settings_labeled_text">
+        <div class="form_group clear_fix label_end" style="margin: 0">
+            <div class="form_field">
+                <div class="form_label">Chandler version</div>
+                <div class="form_data">
                     {=CHANDLER_VER}
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">Configuration file path</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">Configuration file path</div>
+                <div class="form_data">
                     {realpath(OPENVK_ROOT)}
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">Loaded configuration file</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">Loaded configuration file</div>
+                <div class="form_data">
                     {realpath(OPENVK_ROOT)}/openvk.yml
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">PHP version</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">PHP version</div>
+                <div class="form_data">
                     {phpversion()}
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">Chandler version</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">Chandler version</div>
+                <div class="form_data">
                     libchandler {=CHANDLER_VER} by Celestora<br>
                     This program makes use of the Chandler open-source web application server
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
+            <div class="form_separator"></div>
+            <div class="form_field">
                 <div class="page_padding" style="text-align: center;">
                     <h1 class="p">Configuration</h1>
                 </div>
@@ -229,8 +229,8 @@
                     </table>
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
+            <div class="form_separator"></div>
+            <div class="form_field">
                 <div class="page_padding" style="text-align: center;">
                     <h1 class="p">Extensions</h1>
                 </div>
@@ -249,21 +249,21 @@
                     </table>
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
-                <div class="settings_label">Themepack driver version</div>
-                <div class="settings_labeled_text">
+            <div class="form_separator"></div>
+            <div class="form_field">
+                <div class="form_label">Themepack driver version</div>
+                <div class="form_data">
                     0 (Jesting Jill)
                 </div>
             </div>
-            <div class="settings_list_row">
-                <div class="settings_label">Extension driver version</div>
-                <div class="settings_labeled_text">
+            <div class="form_field">
+                <div class="form_label">Extension driver version</div>
+                <div class="form_data">
                     N/A
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
+            <div class="form_separator"></div>
+            <div class="form_field">
                 <div class="page_padding" style="text-align: center;">
                     <h1 class="p">Themepacks</h1>
                 </div>
@@ -315,8 +315,8 @@
                     </table>
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
+            <div class="form_separator"></div>
+            <div class="form_field">
                 <div class="page_padding" style="text-align: center;">
                     <h1 class="p">OpenVK Credits</h1>
                 </div>
@@ -437,10 +437,10 @@
                     </table>
                 </div>
             </div>
-            <div class="settings_line"></div>
-            <div class="settings_list_row">
-                <div class="settings_label">OpenVK License</div>
-                <div class="settings_labeled_text">
+            <div class="form_separator"></div>
+            <div class="form_field">
+                <div class="form_label">OpenVK License</div>
+                <div class="form_data">
                     This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
                     License (version 2.1) as published by the Free Software Foundation.<br/>
                     This program is distributed in the hope that it will be useful,

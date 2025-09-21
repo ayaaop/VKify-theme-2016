@@ -9,16 +9,16 @@
     ]}
     <div class="page_block">
         <form method="POST" enctype="multipart/form-data">
-            <div class="settings_panel group_settings settings_padding" style="width: 455px;margin-inline: auto;">
-                <div class="settings_list_row">
-                    <div class="settings_label">{_title}</div>
-                    <div class="settings_labeled_text">
+            <div class="form_group label_end settings_padding" style="width: 455px;margin-inline: auto;">
+                <div class="form_field">
+                    <div class="form_label">{_title}</div>
+                    <div class="form_data">
                         <input type="text" name="title" style="width: 100%;" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_text}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_text}</div>
+                    <div class="form_data">
                         <textarea id="wall-post-input1" name="text" style="width: 100%; resize: none;"></textarea>
                         <div n:if="$club->canBeModifiedBy($thisUser)" class="post-opts">
                             <label>

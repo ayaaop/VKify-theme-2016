@@ -95,6 +95,7 @@
                             "amount"   => sizeof($audios),
                             "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
                             "atBottom" => true,
+                            'tidy'     => true
                         ]}
                     {/if}
                 </div>

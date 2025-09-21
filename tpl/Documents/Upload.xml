@@ -40,7 +40,7 @@
                 <tr>
                     <td></td>
                     <td>
-                        <label>
+                        <label class="checkbox">
                             <input type="checkbox" name="owner_hidden">
                             Owner is hidden
                         </label>

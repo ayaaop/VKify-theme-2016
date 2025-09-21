@@ -183,7 +183,7 @@
                                 <td width="120" valign="top"></td>
                                 <td>
                                     <label style='display:block'><input type="checkbox" name="explicit">${tr('audios_explicit')}</label>
-                                    <label><input type="checkbox" name="unlisted">${tr('audios_unlisted')}</label>
+                                    <label class="checkbox"><input type="checkbox" name="unlisted">${tr('audios_unlisted')}</label>
                                 </td>
                             </tr>
                         </tbody>

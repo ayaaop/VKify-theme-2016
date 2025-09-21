@@ -43,16 +43,16 @@
                             <p>{_backdrop_about_adding}</p>
                         </div>
                         <form method="POST" enctype="multipart/form-data">
-                    <div class="settings_panel edit_panel">
-                            <div class="settings_list_row">
-                                <div class="settings_label"><vkifyloc name="left_edge"></vkifyloc></div>
-                                <div class="settings_labeled_text">
+                    <div class="form_group settings_padding">
+                            <div class="form_field">
+                                <div class="form_label"><vkifyloc name="left_edge"></vkifyloc></div>
+                                <div class="form_data">
                                     <label class="button" style="">{_browse}<input type="file" accept="image/*" name="backdrop1" style="display: none;"></label>
                                 </div>
                             </div>
-                            <div class="settings_list_row">
-                                <div class="settings_label"><vkifyloc name="right_edge"></vkifyloc></div>
-                                <div class="settings_labeled_text">
+                            <div class="form_field">
+                                <div class="form_label"><vkifyloc name="right_edge"></vkifyloc></div>
+                                <div class="form_data">
                                     <label class="button" style="">{_browse}<input type="file" accept="image/*" name="backdrop2" style="display: none;"></label>
                                 </div>
                             </div>

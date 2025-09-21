@@ -60,32 +60,32 @@
                     {include "../components/page_block_header.xml", title => "your_email_address"}
                     <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
                         <div class="page_block">
-                            <div class="settings_panel settings_padding clear_fix">
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_current_email_address}</div>
-                                    <div class="settings_labeled_text" dir="auto">{$user->getEmail()}</div>
+                            <div class="form_group settings_padding clear_fix">
+                                <div class="form_field">
+                                    <div class="form_label">{_current_email_address}</div>
+                                    <div class="form_data" dir="auto">{$user->getEmail()}</div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_new_email_address}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_new_email_address}</div>
+                                    <div class="form_data">
                                         <input type="email" name="new_email"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_password}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_password}</div>
+                                    <div class="form_data">
                                         <input type="password" name="email_change_pass"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row" n:if="$user->is2faEnabled()">
-                                    <div class="settings_label">{_"2fa_code"}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field" n:if="$user->is2faEnabled()">
+                                    <div class="form_label">{_"2fa_code"}</div>
+                                    <div class="form_data">
                                         <input type="text" name="email_change_code"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label"></div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label"></div>
+                                    <div class="form_data">
                                         <input type="submit" value="{_save_email_address}" class="button" />
                                     </div>
                                 </div>
@@ -93,26 +93,26 @@
                         </div>
                         <div class="page_block">
                             {include "../components/page_block_header.xml", title => "your_page_address"}
-                            <div class="settings_panel settings_padding clear_fix">
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_page_id}</div>
-                                    <div class="settings_labeled_text" dir="auto">{$user->getId()}</div>
+                            <div class="form_group settings_padding clear_fix">
+                                <div class="form_field">
+                                    <div class="form_label">{_page_id}</div>
+                                    <div class="form_data" dir="auto">{$user->getId()}</div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_page_address}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_page_address}</div>
+                                    <div class="form_data">
                                         <input type="text" name="sc" value="{$user->getShortCode()}"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label"></div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label"></div>
+                                    <div class="form_data">
                                         <input type="hidden" name="hash" value="{$csrfToken}" />
                                         <input type="submit" value="{_save}" class="button" />
                                     </div>
                                 </div>
                             </div>
-                            <div class="settings_block_footer">
+                            <div class="page_block_footer">
                                 {_you_can_also} <a onClick="showVkifyProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
                             </div>
                         </div>
@@ -126,27 +126,27 @@
                                     <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 20px">
                                         <strong>${tr("profile_deactivate_reason_header")}</strong>
                                         <div class="delete_reason_list">
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"> ${tr("profile_deactivate_reason_1")}</label>
                                             </div>
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"> ${tr("profile_deactivate_reason_2")}</label>
                                             </div>
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"> ${tr("profile_deactivate_reason_3")}</label>
                                             </div>
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"> ${tr("profile_deactivate_reason_4")}</label>
                                             </div>
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"> ${tr("profile_deactivate_reason_5")}</label>
                                             </div>
-                                            <div class="settings_list_row">
+                                            <div class="form_field">
                                                 <label><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""> ${tr("profile_deactivate_reason_6")}</label>
                                             </div>
                                         </div>
                                         <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
-                                        <label><input type="checkbox" name="deactivate_share" id="deactivate_share" checked> ${tr("share_with_friends")}</label>
+                                        <label class="checkbox"><input type="checkbox" name="deactivate_share" id="deactivate_share" checked> ${tr("share_with_friends")}</label>
                                         <input type="hidden" name="hash" value="${hash}" />
                                     </form>
                                 `, [tr("profile_deactivate_button"), tr("cancel")], [
@@ -166,34 +166,34 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "change_password"}
                         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel settings_padding clear_fix">
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_old_password}</div>
-                                    <div class="settings_labeled_text">
+                            <div class="form_group settings_padding clear_fix">
+                                <div class="form_field">
+                                    <div class="form_label">{_old_password}</div>
+                                    <div class="form_data">
                                         <input type="password" name="old_pass"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_new_password}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_new_password}</div>
+                                    <div class="form_data">
                                         <input type="password" name="new_pass"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_repeat_password}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_repeat_password}</div>
+                                    <div class="form_data">
                                         <input type="password" name="repeat_pass"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row" n:if="$user->is2faEnabled()">
-                                    <div class="settings_label">{_"2fa_code"}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field" n:if="$user->is2faEnabled()">
+                                    <div class="form_label">{_"2fa_code"}</div>
+                                    <div class="form_data">
                                         <input type="text" name="password_change_code"  />
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label"></div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label"></div>
+                                    <div class="form_data">
                                         <input type="hidden" name="hash" value="{$csrfToken}" />
                                         <input type="submit" value="{_change_password}" class="button" />
                                     </div>
@@ -203,9 +203,9 @@
                     </div>
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "two_factor_authentication"}
-                        <div class="settings_panel clear_fix settings_padding">
+                        <div class="form_group clear_fix settings_padding">
                             {if $user->is2faEnabled()}
-                            <div class="settings_list_row">
+                            <div class="form_field">
                                 <div class="accent-box">
                                     {_two_factor_authentication_enabled}
                                 </div>
@@ -244,7 +244,7 @@
                                 }
                             </script>
                             {else}
-                            <div class="settings_list_row">
+                            <div class="form_field">
                                 <div class="accent-box">
                                     {_two_factor_authentication_disabled}
                                 </div>
@@ -257,8 +257,8 @@
                     </div>
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "ui_settings_sessions"}
-                        <div class="settings_panel clear_fix settings_padding">
-                            <div class="settings_list_row">
+                        <div class="form_group clear_fix settings_padding">
+                            <div class="form_field">
                                 <div class="accent-box">
                                     {tr("end_all_sessions_description", OPENVK_ROOT_CONF['openvk']['appearance']['name'])}
                                 </div>
@@ -275,19 +275,19 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "privacy"}
                         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel clear_fix settings_padding">
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_access_page}</div>
-                                    <div class="settings_labeled_text">
+                            <div class="form_group clear_fix settings_padding">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_access_page}</div>
+                                    <div class="form_data">
                                         <select name="page.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('page.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('page.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_read_info}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_read_info}</div>
+                                    <div class="form_data">
                                         <select name="page.info.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('page.info.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('page.info.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -296,9 +296,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_groups}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_groups}</div>
+                                    <div class="form_data">
                                         <select name="groups.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('groups.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('groups.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -307,9 +307,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_photos}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_photos}</div>
+                                    <div class="form_data">
                                         <select name="photos.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('photos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('photos.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -318,9 +318,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_videos}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_videos}</div>
+                                    <div class="form_data">
                                         <select name="videos.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('videos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('videos.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -329,9 +329,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_view_audio}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_view_audio}</div>
+                                    <div class="form_data">
                                         <select name="audios.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('audios.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('audios.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -340,9 +340,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_notes}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_notes}</div>
+                                    <div class="form_data">
                                         <select name="notes.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('notes.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('notes.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -351,9 +351,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_friends}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_friends}</div>
+                                    <div class="form_data">
                                         <select name="friends.read" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('friends.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('friends.read') == 2}selected{/if}>{_privacy_value_users}</option>
@@ -362,18 +362,18 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_add_to_friends}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_add_to_friends}</div>
+                                    <div class="form_data">
                                         <select name="friends.add" style="<!-- -->">
                                             <option value="3" {if $user->getPrivacySetting('friends.add') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="0" {if $user->getPrivacySetting('friends.add') == 0}selected{/if}>{_privacy_value_nobody}</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_write_wall}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_write_wall}</div>
+                                    <div class="form_data">
                                         <select name="wall.write" style="<!-- -->">
                                             <option value="2" {if $user->getPrivacySetting('wall.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="1" {if $user->getPrivacySetting('wall.write') == 1}selected{/if}>{_privacy_value_friends}</option>
@@ -381,9 +381,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_write_messages}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_write_messages}</div>
+                                    <div class="form_data">
                                         <select name="messages.write", style="<!-- -->">
                                             <option value="2" {if $user->getPrivacySetting('messages.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
@@ -391,18 +391,18 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']" class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_privacy_setting_see_likes}</div>
-                                    <div class="settings_labeled_text">
+                                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']" class="form_field settings_privacy_row">
+                                    <div class="form_label">{_privacy_setting_see_likes}</div>
+                                    <div class="form_data">
                                         <select name="likes.read", style="<!-- -->">
                                             <option value="2" {if $user->getPrivacySetting('likes.read') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="0" {if $user->getPrivacySetting('likes.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row settings_privacy_row">
-                                    <div class="settings_label">{_profile_type}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field settings_privacy_row">
+                                    <div class="form_label">{_profile_type}</div>
+                                    <div class="form_data">
                                         <select name="profile_type", style="<!-- -->">
                                             <option value="0" {if $user->getProfileType() == 0}selected{/if}>{_profile_type_open}</option>
                                             <option value="1" {if $user->getProfileType() == 1}selected{/if}>{_profile_type_closed}</option>
@@ -422,12 +422,16 @@
                         <div class="settings_block_msg">
                                 {presenter "openvk!Support->knowledgeBaseArticle", "points"}
                         </div>
-                        <div class="settings_panel clear_fix settings_padding">
-                            <div class="settings_list_row">
-                                <div class="settings_label">{_on_your_account|firstUpper}:</div>
-                                <div class="settings_labeled_text">
-                                    <b>{$thisUser->getCoins()} {_points_count}</b><br />
-                                    <br />
+                        <div class="form_group clear_fix settings_padding">
+                            <div class="form_field">
+                                <div class="form_label">{_on_your_account|firstUpper}:</div>
+                                <div class="form_data">
+                                    <b>{$thisUser->getCoins()} {_points_count}</b>
+                                </div>
+                            </div>
+                            <div class="form_field">
+                                <div class="form_label">&nbsp;</div>
+                                <div class="form_data">
                                     <div class="buttons_row">
                                         <input n:if="OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']" onclick="showCoinsTopUpTroughTon()" class="button" type="submit" value="{_transfer_trough_ton}" />
                                         <a href="?act=finance.top-up">
@@ -466,7 +470,7 @@
                                 ]);
                             }
                         </script>
-                        <div class="settings_block_footer">
+                        <div class="page_block_footer">
                             {tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken))|noescape}
                         </div>
                     </div>
@@ -481,7 +485,7 @@
                         <div class="settings_block_msg">
                             {_voucher_explanation} {_voucher_explanation_ex}
                         </div>
-                        <div class="settings_panel clear_fix settings_padding">
+                        <div class="form_group clear_fix settings_padding">
                         <form class="voucher_form" name="vouncher_form" action="/settings?act=finance.top-up" method="POST" enctype="multipart/form-data">
                             <div class="settings_voucher_input">
                                 <input type="text" name="key0" class="vouncher_input" size="6" maxlength="6" placeholder="123456" required="required" oninput="autoTab(this, document.vouncher_form.key1, undefined)" style="display: inline-block; width: 50px; text-align: center;" /> -
@@ -500,20 +504,10 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "interface"}
                         <form action="/settings?act=interface" method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel clear_fix settings_padding">
-                                <!--<div class="settings_list_row">
-                                    <div class="settings_label">{_avatars_style}</div>
-                                    <div class="settings_labeled_text">
-                                        <select name="style_avatar">
-                                            <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_arbitrary_avatars} ({_default})</option>
-                                            <option value="1" {if $user->getStyleAvatar() == 1}selected{/if}>{_cut}</option>
-                                            <option value="2" {if $user->getStyleAvatar() == 2}selected{/if}>{_round_avatars}</option>
-                                        </select>
-                                    </div>
-                                </div>-->
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_style}</div>
-                                    <div class="settings_labeled_text">
+                            <div class="form_group clear_fix settings_padding">
+                                <div class="form_field">
+                                    <div class="form_label">{_style}</div>
+                                    <div class="form_data">
                                         <select name="style">
                                             <option value="ovk" {if $user->getStyle() == 'ovk'}selected{/if}>OpenVK ({_default})</option>
                                             <option n:foreach="$themes as $id => $theme"
@@ -524,10 +518,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="theme_mode" value="1"> <vkifyloc name="dark_mode"></vkifyloc></label>
+                                <div class="form_field">
+                                    <div class="form_label">&nbsp;</div>
+                                    <div class="form_data" dir="auto">
+                                        <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"> <vkifyloc name="dark_mode"></vkifyloc></label>
+                                        <label class="checkbox"><input type="checkbox" name="theme_for_session" value="1"> {_apply_style_for_this_device}</label>
                                     </div>
                                 <script>
                                     function initDarkModeToggle() {
@@ -556,9 +551,9 @@
                                     }
                                 </script>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_ui_settings_nsfw_content}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_ui_settings_nsfw_content}</div>
+                                    <div class="form_data">
                                         <select name="nsfw">
                                             <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>{_ui_settings_nsfw_content_dont_show}</option>
                                             <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>{_ui_settings_nsfw_content_blur}</option>
@@ -566,100 +561,67 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!--<div class="settings_list_row">
-                                    <div class="settings_label">{_ui_settings_view_of_posts}</div>
-                                    <div class="settings_labeled_text">
-                                        <select name="microblog" disabled>
-                                            <option value="1" selected>{_ui_settings_view_of_posts_microblog}</option>
-                                        </select>
-                                        <p><vkifyloc name="oldposts_disabled_desc"></vkifyloc></p>
-                                    </div>
-                                </div>-->
-                                <div class="settings_list_row">
-                                    <div class="settings_label">{_ui_settings_main_page}</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label">{_ui_settings_main_page}</div>
+                                    <div class="form_data">
                                         <select name="main_page">
                                             <option value="0" {if !$user->getMainPage()}selected{/if}>{_my_page}</option>
                                             <option value="1" {if $user->getMainPage()}selected{/if}>{_my_feed}</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="theme_for_session" value="1"> {_apply_style_for_this_device}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label>
+                                <div class="form_field">
+                                    <div class="form_label">&nbsp;</div>
+                                    <div class="form_data" dir="auto">
+                                        <label class="checkbox">
                                             <input class="hidden" type="hidden" name="rating" value="0">
                                             <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()"> <vkifyloc name="profile_recommendations"/>
                                         </label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="vkgraffiti" value="0"> <vkifyloc name="graffitiswitch"></vkifyloc></label>
+                                        <label class="checkbox"><input type="checkbox" name="vkgraffiti" value="0"> <vkifyloc name="graffitiswitch"></vkifyloc></label>
+                                        <label class="checkbox"><input type="checkbox" name="newhat" value="0"> <vkifyloc name="ovkhat"></vkifyloc></label>
                                     </div>
                                 <script>
                                     document.querySelector('input[name="vkgraffiti"]').checked = localStorage.getItem('vkify.graffitiType') === '1';
                                     document.querySelector('input[name="vkgraffiti"]').onchange = () => localStorage.setItem('vkify.graffitiType', document.querySelector('input[name="vkgraffiti"]').checked ? '1' : '0');
-                                </script>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="newhat" value="0"> <vkifyloc name="ovkhat"></vkifyloc></label>
-                                    </div>
-                                <script>
                                     document.querySelector('input[name="newhat"]').checked = document.cookie.includes('newhat=realno_novaya_shapochka');
                                     document.querySelector('input[name="newhat"]').onchange = () => {
                                         document.cookie = `newhat=${ document.querySelector('input[name="newhat"]').checked ? 'realno_novaya_shapochka' : '' }; path=/; max-age=31536000`;
                                     };
                                 </script>
                                 </div>
-                                <div class="settings_list_row" id="_js_settings">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field" id="_js_settings">
+                                    <div class="form_label">&nbsp;</div>
+                                    <div class="form_data">
                                         <a href="javascript:openVkifyJsSettings()">{_ui_settings_window}</a>
                                     </div>
                                 </div>
                                 <script n:syntax="off">
                                     function openVkifyJsSettings() {
+                                        if (u("#_js_settings .js_settings_container").length > 0) {
+                                            u("#_js_settings .js_settings_container").remove()
+                                            return;
+                                        }
+                                    
                                         const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
                                         const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0)
-
-                                        u("#_js_settings .js_settings_container").remove()
-                                        u("#_js_settings").append(`
-                                            <div class="js_settings_container">
-                                                <div class="settings_list_row">
-                                                    <div class="settings_label"></div>
-                                                    <div class="settings_labeled_text">
-                                                        <label>
-                                                            <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
-                                                            ${tr('ajax_routing')}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="settings_list_row">
-                                                    <div class="settings_label"></div>
-                                                    <div class="settings_labeled_text">
-                                                        <label>
-                                                        <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
-                                                            ${tr('auto_scroll')}
-                                                        </label>
-                                                    </div>
-                                                </div>
+                                    
+                                        u("#_js_settings .form_data").append(`
+                                            <div class="js_settings_container" style="margin: 10px 0">
+                                                <label class="checkbox">
+                                                    <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
+                                                    ${tr('ajax_routing')}
+                                                </label>
+                                                <label class="checkbox">
+                                                <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
+                                                    ${tr('auto_scroll')}
+                                                </label>
                                             </div>
                                         `)
                                     }
                                 </script>
-                                <div class="settings_list_row">
-                                    <div class="settings_label"></div>
-                                    <div class="settings_labeled_text">
+                                <div class="form_field">
+                                    <div class="form_label"></div>
+                                    <div class="form_data">
                                         <input type="hidden" name="hash" value="{$csrfToken}" />
                                         <input type="submit" value="{_save}" class="button" />
                                     </div>
@@ -670,77 +632,22 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "ui_settings_sidebar"}
                         <form action="/settings?act=lMenu" method="POST" enctype="multipart/form-data">
-                            <div class="settings_panel clear_fix settings_padding">
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_bildoj" n:attr="checked => $user->getLeftMenuItemStatus('photos')"> {_my_photos}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_filmetoj" n:attr="checked => $user->getLeftMenuItemStatus('videos')"> {_my_videos}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_muziko" n:attr="checked => $user->getLeftMenuItemStatus('audios')"> {_my_audios}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_mesagoj" n:attr="checked => $user->getLeftMenuItemStatus('messages')"> {_my_messages}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_notatoj" n:attr="checked => $user->getLeftMenuItemStatus('notes')"> {_my_notes}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_grupoj" n:attr="checked => $user->getLeftMenuItemStatus('groups')"> {_my_groups}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_novajoj" n:attr="checked => $user->getLeftMenuItemStatus('news')"> {_my_feed}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_aplikoj" n:attr="checked => $user->getLeftMenuItemStatus('apps')"> {_my_apps}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_doxc" n:attr="checked => $user->getLeftMenuItemStatus('docs')"> {_my_documents}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_feva" n:attr="checked => $user->getLeftMenuItemStatus('fave')"> {_bookmarks_tab}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row" n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_ligiloj" n:attr="checked => $user->getLeftMenuItemStatus('links')"> {_additional_links}</label>
-                                    </div>
-                                </div>
-                                <div class="settings_list_row" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']">
-                                    <div class="settings_label">&nbsp;</div>
-                                    <div class="settings_labeled_text" dir="auto">
-                                        <label><input type="checkbox" name="menu_standardo" n:attr="checked => $user->getLeftMenuItemStatus('poster')"> {_ad_poster}</label>
+                            <div class="form_group clear_fix settings_padding">
+                                <div class="form_field">
+                                    <div class="form_label">&nbsp;</div>
+                                    <div class="form_data" dir="auto">
+                                        <label class="checkbox"><input type="checkbox" name="menu_bildoj" n:attr="checked => $user->getLeftMenuItemStatus('photos')"> {_my_photos}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_filmetoj" n:attr="checked => $user->getLeftMenuItemStatus('videos')"> {_my_videos}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_muziko" n:attr="checked => $user->getLeftMenuItemStatus('audios')"> {_my_audios}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_mesagoj" n:attr="checked => $user->getLeftMenuItemStatus('messages')"> {_my_messages}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_notatoj" n:attr="checked => $user->getLeftMenuItemStatus('notes')"> {_my_notes}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_grupoj" n:attr="checked => $user->getLeftMenuItemStatus('groups')"> {_my_groups}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_novajoj" n:attr="checked => $user->getLeftMenuItemStatus('news')"> {_my_feed}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_aplikoj" n:attr="checked => $user->getLeftMenuItemStatus('apps')"> {_my_apps}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_doxc" n:attr="checked => $user->getLeftMenuItemStatus('docs')"> {_my_documents}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_feva" n:attr="checked => $user->getLeftMenuItemStatus('fave')"> {_bookmarks_tab}</label>
+                                        <label n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0" class="checkbox"><input type="checkbox" name="menu_ligiloj" n:attr="checked => $user->getLeftMenuItemStatus('links')"> {_additional_links}</label>
+                                        <label n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']" class="checkbox"><input type="checkbox" name="menu_standardo" n:attr="checked => $user->getLeftMenuItemStatus('poster')"> {_ad_poster}</label>
                                     </div>
                                 </div>
                                 <div class="settings_save_footer">
@@ -778,3 +685,4 @@
         </div>
     </div>
 {/block}
+

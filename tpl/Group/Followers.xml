@@ -1,4 +1,4 @@
-{extends "../@layout.xml"}
+{extends "../@listView.xml"}
 {var $Manager = openvk\Web\Models\Entities\Manager::class}
 {var $iterator = $onlyShowManagers ? $managers : $followers}
 {var $count    = $paginatorConf->count}
@@ -7,117 +7,108 @@
 
 {block title}{_followers} {$club->getCanonicalName()}{/block}
 
+{block tabs}
+    {capture $extraContent}
+        <a n:if="!$onlyShowManagers" class="button" href="/club{$club->getId()}/followers?onlyAdmins=1">{_all_followers}</a>
+        <a n:if="$onlyShowManagers" class="button" href="/club{$club->getId()}/followers">{_only_administrators}</a>
+    {/capture}
+    {include "../components/page_block_header.xml", title => "followers", extra => $extraContent}
+{/block}
 
+{* BEGIN ELEMENTS DESCRIPTION *}
 
-{block content}
-    <div class="wide_column_left">
-        <div class="wide_column_left">
-            <div class="narrow_column_wrap">
-                <div class="narrow_column">
-                    {var $menuItems = [
-                        [
-                            'url' => "/club{$club->getId()}/edit",
-                            'title' => 'main',
-                            'active' => false,
-                            'condition' => $club->canBeModifiedBy($thisUser)
-                        ],
-                        [
-                            'url' => "/club{$club->getId()}/backdrop",
-                            'title' => 'backdrop_short',
-                            'active' => false,
-                            'condition' => $club->canBeModifiedBy($thisUser)
-                        ],
-                        [
-                            'url' => "/club{$club->getId()}/followers",
-                            'title' => 'followers',
-                            'active' => true,
-                            'condition' => $club->canBeModifiedBy($thisUser)
-                        ],
-                        [
-                            'url' => "/club{$club->getId()}/stats",
-                            'title' => 'statistics',
-                            'active' => false,
-                            'condition' => $club->canBeModifiedBy($thisUser)
-                        ]
-                    ]}
-                    {include "../components/ui_rmenu.xml", items => $menuItems, ownblockData => $club}
-                </div>
-            </div>
-            <div class="wide_column_wrap">
-                <div class="wide_column">
-                    <div class="page_block">
-                        {capture $extraContent}
-                            <a n:if="!$onlyShowManagers" href="/club{$club->getId()}/followers?onlyAdmins=1">{_all_followers}</a>
-                            <a n:if="$onlyShowManagers" href="/club{$club->getId()}/followers">{_only_administrators}</a>
-                        {/capture}
-                        {include "../components/page_block_header.xml", title => "followers", extra => $extraContent}
-                        <div class="settings_panel clear_fix">
-                            <div id="group_u_rows_members" class="group_u_rows">
-                                <div n:foreach="$iterator as $x" id="group_u_members{$x instanceof $Manager ? $x->getUserId() : $x->getId()}" class="group_l_row clear_fix">
-                                    {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
-                                    {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
-                                    {var $userLink = "/id" . ($x instanceof $Manager ? $x->getUserId() : $x->getId())}
-                                    
-                                    <div class="group_u_bigph_wrap">
-                                        <a class="group_u_photo" href="{$userLink}">
-                                            <img class="group_u_photo_img" src="{$x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL('miniscule')}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" />
-                                        </a>
-                                    </div>
-                                    
-                                    <div class="group_u_actions" n:if="$club->canBeModifiedBy($thisUser ?? NULL)">
-                                        <a class="group_u_action" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
-                                            {if $manager}{_devote}{else}{_promote_to_admin}{/if}
-                                        </a>
-                                    </div>
-                                    
-                                    <div class="group_u_info">
-                                        <div class="group_u_name">
-                                            <a class="group_u_title" href="{$userLink}">
-                                                {$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}
-                                            </a>
-                                        </div>
-                                        
-                                        <div class="group_u_desc">
-                                            {($club->getOwner()->getId() == $user->getId() ? !$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser) : !is_null($manager)) ? tr("administrator") : tr("follower")}
-                                            {if $manager && !empty($manager->getComment()) || $club->getOwner()->getId() === $user->getId() && !empty($club->getOwnerComment()) && (!$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser))}
-                                                - {if $club->getOwner()->getId() === $user->getId()}{$club->getOwnerComment()}{else}{$manager->getComment()}{/if}
-                                            {/if}
-                                        </div>
-                                        
-                                        <div class="group_u_info_row" n:if="$club->canBeModifiedBy($thisUser ?? NULL)">
-                                            {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
-                                                <a onclick="changeOwner({$club->getId()}, {$user->getId()}, '{$user->getCanonicalName()}')">{_promote_to_owner}</a>
-                                            {/if}
-                                            
-                                            {if $manager}
-                                                <a onclick="setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
-                                            {/if}
-                                            
-                                            <a n:if="$club->getOwner()->getId() === $user->getId()" onclick="setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
-                                            
-                                            {if $manager}
-                                                <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
-                                                    {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
-                                                </a>
-                                            {/if}
-                                            
-                                            {if $club->getOwner()->getId() == $user->getId()}
-                                                <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
-                                                    {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
-                                                </a>
-                                            {/if}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {if $count == 0}
-                                {include "../components/nothing.xml"}
-                            {/if}
-                            {include "../components/paginator.xml", conf => $paginatorConf}
-                        </div>
-                    </div>
+{block rtabs}
+    {var $menuItems = [
+        [
+            'url' => "/club{$club->getId()}/edit",
+            'title' => 'main',
+            'active' => false,
+            'condition' => $club->canBeModifiedBy($thisUser)
+        ],
+        [
+            'url' => "/club{$club->getId()}/backdrop",
+            'title' => 'backdrop_short',
+            'active' => false,
+            'condition' => $club->canBeModifiedBy($thisUser)
+        ],
+        [
+            'url' => "/club{$club->getId()}/followers",
+            'title' => 'followers',
+            'active' => true,
+            'condition' => $club->canBeModifiedBy($thisUser)
+        ],
+        [
+            'url' => "/club{$club->getId()}/stats",
+            'title' => 'statistics',
+            'active' => false,
+            'condition' => $club->canBeModifiedBy($thisUser)
+        ]
+    ]}
+    {include "../components/ui_rmenu.xml", items => $menuItems, ownblockData => $club}
+{/block}
+
+{block link|strip|stripHtml}
+    /id{$x instanceof $Manager ? $x->getUserId() : $x->getId()}
+{/block}
+
+{block preview}
+    <img src="{$x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL('miniscule')}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" width=75 />
+{/block}
+
+{block name}
+    <div class="labeled name">{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}</div>
+{/block}
+
+{block description}
+    {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
+    <div class="labeled">{($club->getOwner()->getId() == $user->getId() ? !$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser) : !is_null($manager)) ? tr("administrator") : tr("follower")}</div>
+    <div class="labeled">
+        {if $manager && !empty($manager->getComment()) || $club->getOwner()->getId() === $user->getId() && !empty($club->getOwnerComment()) && (!$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser))}
+            {if $club->getOwner()->getId() === $user->getId()}{$club->getOwnerComment()}{else}{$manager->getComment()}{/if}
+        {/if}
+    </div>
+    <div class="labeled">                     
+        {if $manager}
+            <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
+                {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+            </a>
+        {/if}
+        
+        {if $club->getOwner()->getId() == $user->getId()}
+            <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
+                {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+            </a>
+        {/if}
+    </div>
+{/block}
+
+{block actions}
+    {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
+    {if $club->canBeModifiedBy($thisUser ?? NULL)}
+        <div class="profile_actions_split">
+            <a class="button profile_link_form" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
+                {if $manager}
+                    {_devote}
+                {else}
+                    {_promote_to_admin}
+                {/if}
+            </a>
+            <button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
+            <div id="profile_actions_tooltip">
+                <div class="tippy-menu">
+                    {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
+                        <a href="javascript:changeOwner({$club->getId()}, {$user->getId()}, '{$user->getCanonicalName()}')">
+                            {_promote_to_owner}
+                        </a>
+                    {/if}
+                    {if $manager}
+                        <a onclick="setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
+                    {/if}
+                    <a n:if="$club->getOwner()->getId() === $user->getId()" onclick="setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
                 </div>
             </div>
         </div>
-    </div>
+    {/if}
 {/block}

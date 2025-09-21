@@ -9,20 +9,20 @@
     ]}
     <div class="page_block">
         <form method="POST" enctype="multipart/form-data">
-            <div class="settings_panel group_settings settings_padding" style="width: 455px;margin-inline: auto;">
-                <div class="settings_list_row">
-                    <div class="settings_label">{_title}</div>
-                    <div class="settings_labeled_text">
+            <div class="form_group label_end settings_padding" style="width: 455px;margin-inline: auto;">
+                <div class="form_field">
+                    <div class="form_label">{_title}</div>
+                    <div class="form_data">
                         <input type="text" name="title" style="width: 100%;" value="{$topic->getTitle()}" />
                     </div>
                 </div>
-                <div class="settings_list_row">
-                    <div class="settings_label">{_topic_settings}</div>
-                    <div class="settings_labeled_text">
+                <div class="form_field">
+                    <div class="form_label">{_topic_settings}</div>
+                    <div class="form_data">
                         {if $topic->getClub()->canBeModifiedBy($thisUser)}
-                            <label><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
+                            <label class="checkbox"><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
                         {/if}
-                        <label><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
+                        <label class="checkbox"><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
                     </div>
                 </div>
                 <div class="settings_save_footer">

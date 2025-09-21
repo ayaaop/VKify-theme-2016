@@ -93,7 +93,7 @@
 
 .page_album_title {
     font-size: 12.5px;
-    background: url(/themepack/vkify16/3.3.1.6/resource/album_top_shadow.png);
+    background: url(/themepack/vkify16/3.3.1.8/resource/album_top_shadow.png);
     color: var(--white);
     position: absolute;
     bottom: 0;
@@ -134,7 +134,7 @@
 }
 
 .page_album_nocover {
-    background: var(--album-background-color) url(/themepack/vkify16/3.3.1.6/resource/camera_big.png) no-repeat 50% 45%;
+    background: var(--album-background-color) url(/themepack/vkify16/3.3.1.8/resource/camera_big.png) no-repeat 50% 45%;
     width: 279px;
     height: 185px
 }
@@ -222,7 +222,7 @@
     left: 0;
     right: 0;
     background: var(--black);
-    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.1.6/resource/video_play_small.png) 19px 13px no-repeat;
+    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.1.8/resource/video_play_small.png) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -449,7 +449,7 @@
     margin: 0;
 }
 .audioStatus::before {
-    background-image: url('/themepack/vkify16/3.3.1.6/resource/icons/video_actions.png');
+    background-image: url('/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png');
     width: 13px;
     height: 13px;
     background-position: 0px -44px;
@@ -552,8 +552,8 @@ div.avatar_block:hover .avatar_variants {
     right: 0;
 }
 
-.avatar_block_inner {
-    position: relative;
+.avatar_block {
+    margin-bottom: 10px;
 }
 
 .avatar_controls .avatar_variants {
@@ -568,7 +568,7 @@ div.avatar_block:hover .avatar_variants {
     width: 100%;
 }
 
-.profile_actions, .profile_actions .button+.button, .profile_actions_split {
+.profile_actions .button+.button {
     margin-top: 10px;
 }
 
@@ -603,7 +603,7 @@ div.avatar_block:hover .avatar_variants {
     width: 21px;
     height: 21px;
     margin: 10px;
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/add_info_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/add_info_icons.png) no-repeat 0 0
 }
 
 .profile_warning_img.bday {
@@ -651,7 +651,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
     width: 9px;
     height: 9px;
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/attach_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/attach_icons.png) no-repeat 0 0
 }
 
 .profile_warning_label {
@@ -702,13 +702,13 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/gift_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/gift_icon.png) no-repeat;
     background-position: left 2px;
     padding-right: 21px;
 }
 
 .profile_more_btn {
-    background-image: url(/themepack/vkify16/3.3.1.6/resource/icons/more_icon.png);
+    background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/more_icon.png);
     background-repeat: no-repeat;
     background-position: 100% 13px;
     width: 36px;
@@ -716,9 +716,19 @@ div.avatar_block:hover .avatar_variants {
     border-right: 9px solid transparent;
 }
 
-.profile_actions_split form {
-    width: 157px;
+.profile_actions_split {
+    display: flex;
+    justify-content: end;
+}
+
+.profile_actions_split .profile_link_form {
+    flex: 1;
+    margin-right: 5px;
     display: inline-block;
+}
+
+.search_row .profile_actions_split .profile_link_form {
+    flex: 0;
 }
 
 .content_title_expanded+.page_info, .page_info+div:has(.profile_info) {
@@ -787,7 +797,7 @@ div.avatar_block:hover .avatar_variants {
     display: block;
     position: absolute;
     content: '';
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/group_info_cons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_info_cons.png) no-repeat 0 0;
     height: 15px;
     width: 15px;
     margin: 2px 0 0 -24px;
@@ -797,7 +807,7 @@ div.avatar_block:hover .avatar_variants {
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
     .group_info_row:before {
-        background-image: url(/themepack/vkify16/3.3.1.6/resource/icons/group_info_cons_2x.png);
+        background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/group_info_cons_2x.png);
         background-size: 15px 149px
     }
 }
@@ -825,7 +835,7 @@ div.avatar_block:hover .avatar_variants {
     left: 0;
     width: 12px;
     height: 12px;
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/topic_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/topic_icon.png) no-repeat 0 0;
 }
 .wide_column .topics_module .module_body {
     padding: 1px 20px 5px;
@@ -882,7 +892,7 @@ div.avatar_block:hover .avatar_variants {
     text-overflow: ellipsis;
 }
 .page_upload_label {
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/group_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_icons.png) no-repeat;
     position: absolute;
     display: block;
     width: 17px;
@@ -895,7 +905,7 @@ div.avatar_block:hover .avatar_variants {
     padding: 17px 13px 17px 47px
 }
 .wide_column .page_upload_label {
-    background: url(/themepack/vkify16/3.3.1.6/resource/icons/group_icons_big.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_icons_big.png) no-repeat;
     width: 25px;
     height: 27px;
     margin-left: -37px;
