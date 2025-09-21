@@ -22,8 +22,8 @@
 .form_label {
     color: var(--muted-text-color-2);
     width: 145px;
-    padding: 0;
-    line-height: 27px;
+    padding: 3px 0 0;
+    line-height: 18px;
 }
 
 .form_data {
@@ -201,4 +201,18 @@
 .game_edit {
     width: fit-content;
     margin: 0 auto;
+}
+
+/* vertical */
+.form_group.vertical .form_field,.form_field.vertical {
+    flex-direction: column;
+    width: 100%;
+}
+.vertical .form_label {
+    width: 100%;
+    padding: 0 0 6px;
+}
+.vertical .form_data {
+    line-height: 18px;
+    margin-left: 0;
 }

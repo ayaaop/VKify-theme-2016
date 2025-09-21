@@ -30,7 +30,7 @@
             <hr style="width: 1px; height: 30px; margin: 0">
             <h2 class="p" style="margin: 0">VKify16 ({$theme->getVersion()})</h2>
         </div>
-        <div class="form_group clear_fix label_end" style="margin: 0">
+        <div class="form_group vertical clear_fix" style="margin: 0">
             <div class="form_field">
                 <div class="form_label">Chandler version</div>
                 <div class="form_data">
