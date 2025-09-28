@@ -10,9 +10,9 @@
     {include "../components/page_crumb_header.xml", crumbs: [
         ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
         ['title' => tr("albums"), 'count' => $count]
-    ], extra => '<a n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()" class="button" href="' . $createUrl . '">' . tr('create_album') . '</a>'}
+    ], extra => '<a n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()" class="button" href="#" onclick="if (typeof showCreateAlbumModal === \'function\') { showCreateAlbumModal(\'' . $createUrl . '\'); return false; }">' . tr('create_album') . '</a>'}
 
-    <div class="page_block page_padding">
+    <div n:ifcontent class="page_block page_padding">
         <div n:ifcontent class="photo_items_list">
             {foreach $iterator as $x}
                 <div class="clear_fix clear page_album_row">
@@ -36,7 +36,7 @@
             {include "../components/content_error.xml", description => tr("albums_zero")}
         {/if}
     </div>
-    <div id="photos-section" class="page_block photos_section" data-owner-id="{$owner->getId()}" style="display: none;">
+    <div n:if="!$isClub" id="photos-section" class="page_block photos_section" data-owner-id="{$owner->getId()}" style="display: none;">
         {include "../components/page_block_header.xml", title => all_photos}
         <div id="photos-loading">{_loading_photos}</div>
         <div id="photos-container" class="photos_container"></div>

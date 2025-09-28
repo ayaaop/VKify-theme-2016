@@ -30,7 +30,7 @@
                 <span class="photos_album_info">{tr("is_x_photos", $album->getPhotosCount())}</span>
                 {if $canEdit}
                     <span class="divider"></span>
-                    <a href="/album{$album->getPrettyId()}/edit" class="photos_album_info">{_edit_album}</a>
+                    <a href="/album{$album->getPrettyId()}/edit" onclick="showEditAlbumModal(event, '/album{$album->getPrettyId()}/edit')" class="photos_album_info">{_edit_album}</a>
                 {/if}
             </div>
         </div>

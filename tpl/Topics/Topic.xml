@@ -12,5 +12,6 @@
     <div class="page_block_sub_header bt_header">
         {$topic->getTitle()}
     </div>
+</div>
     {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), showTitle => false, parent => $topic}
 {/block}

@@ -267,14 +267,35 @@
 	width: 100%;
 	transition: .2s;
 }
-.pv_bottom_info:has(.pv_album_name:empty, .pv_counter:empty) {
+.private .pv_bottom_info {
 	min-height: 0;
 	padding: 0;
 	transition: .2s;
 }
-.pv_photo:has(+ .pv_bottom_info :is(.pv_album_name:empty, .pv_counter:empty)) {
+.private .pv_photo {
 	height: 100%;
 	transition: .2s;
+}
+
+.pv_right .model_content_textarea textarea {
+	margin-left: 40px;
+	padding: 16px 15px 16px 12px
+}
+.pv_right .post_field_user_link {
+	left: 15px;
+}
+.pv_right .model_content_textarea:not(.shown) #wallAttachmentMenu {
+	padding: 15px 11px;
+}
+.pv_right .model_content_textarea.shown .post-bottom-acts {
+	padding: 15px;
+}
+.pv_wrapper #wallAttachmentMenu>a {
+	max-width: 70px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+	white-space: nowrap
 }
 
 @keyframes slideRight {
@@ -774,7 +795,7 @@
 .docs_choose_search {
 	margin: 0 -5px 8px;
 }
-.docsInsert > .document_attachment_header {
+.docsInsert>.document_attachment_header {
 	margin: 0 -25px;
 	padding: 0 20px 15px;
 }

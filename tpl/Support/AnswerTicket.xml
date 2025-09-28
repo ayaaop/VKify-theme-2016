@@ -1,28 +1,26 @@
 {extends "../@layout.xml"}
 {block title}{_menu_help}{/block}
 
-{block header}
-    {$ticket->getName()}
-{/block}
-
 {block content}
-    <div class="post-author">
-        <a href="#" style="font-size: 13px;"><b>{$ticket->getName()}</b></a><br />
-        {_author}:
-            <a href="/id{$ticket->getUser()->getId()}">
-                {$ticket->getUser()->getFullName()}</a>
-                | {$ticket->getUser()->getRegistrationIP()}
-                | {_status}: {$ticket->getStatus()}.
-                | <b n:if="$ticket->getUser()->isBanned()" style="color: red; cursor: pointer;" onclick="$('#ban-reason').toggle();">Блокировка</b>
-            <div id="ban-reason" style="display: none; padding: 8px;">
-                <h4 style="padding: 8px;">Причина блокировки</h4>
-                <div style="padding: 8px;">Так пользователь видит экран с информацией о блокировке:</div>
-                <div style="padding: 16px; border: 1px solid #C4C4C4; margin: 8px;">
-                    {var $ban = $ticket->getUser()->getBanReason("banned")}
-                    <center>
-                        <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
-                    </center>
-                    <p>
+    {include "../components/page_crumb_header.xml", crumbs: [
+        ['href' => "/support/tickets", 'title' => tr("support_tickets")],
+        ['title' => $ticket->getName()]
+    ]}
+    <div class="page_block tickets_content">
+        <div class="tickets_header_container">
+            <div class="tickets_header clear_fix">
+                <div class="tickets_header_body">
+                    <div class="tickets_header_title">{$ticket->getName()}</div>
+                    <div class="tickets_header_info">{$ticket->getStatus()} {if $ticket->getUser()->isBanned()}<span class="divider"></span> <strong><a onclick="$('#ban-reason').toggle();">{_admin_banned}</a></strong>{/if}</div>
+                </div>
+                <div class="tickets_header_links">
+                    <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
+                </div>
+            </div>
+            <div id="ban-reason" class="page_padding" style="display: none">
+                <div class="msg msg_yellow">
+                    <strong>{_admin_banreason}</strong>. Так пользователь видит экран с информацией о блокировке：
+                    <div class="wall_post_text">
                         {if is_string($ban)}
                             {tr("banned_1", htmlentities($ticket->getUser()->getCanonicalName()))|noescape}<br/>
                             {tr("banned_2", htmlentities($ban))|noescape}
@@ -41,67 +39,73 @@
                         {else}
                             {tr("banned_until_time", $ticket->getUser()->getUnbanTime())|noescape}
                         {/if}
-                    </p>
+                    </div>
                 </div>
             </div>
-    </div>
-    <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;">
-        {$ticket->getText()|noescape}
-        <br /><br />
-    </div>
-    <div style="padding-top: 5px;">
-        {$ticket->getTime()}&nbsp;|&nbsp;
-        <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
-    </div>
-    <br />
-    <div>
-        <form action="/al_comments/create/support/reply/{$id}" method="post" style="margin: 0;">
-            <textarea name="text" id="answer_text" style="width: 100%; resize: vertical;"></textarea>
-            <br />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <br />
-            <div style="float: left;">
-                <input type="submit" value="{_write}" class="button" />
-                <select name="status" style="width: unset;">
-                    <option value="1">{_support_status_1}</option>
-                    <option value="2">{_support_status_2}</option>
-                    <option value="0">{_support_status_0}</option>
-                </select>
-            </div>
-            <div n:if="!is_null($fastAnswers)" style="float: right;">
-                <a class="button" href="javascript:showSupportFastAnswerDialog(fastAnswers)">{_fast_answers}</a>
-            </div>
-            <br />
-        </form>
-    </div>
-    <br />
-    <p n:if="!$comments">{_no_comments}</p>
-    {var $printedSupportGreeting = false}
-    <table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
-        <tbody>
-            <tr>
-                {if $comment->getUType() === 0}
-                    <td width="54" valign="top">
-                        <img src="{$comment->getUser()->getAvatarUrl('miniscule')}" width="50" />
-                    </td>
-                {else}
-                    <td width="54" valign="top">
-                        <img
-                            src="{$comment->getAvatar()}"
-                            style="max-width: 50px; filter: hue-rotate({$comment->getColorRotation()}deg);" />
-                    </td>
-                {/if}
-                <td width="645" valign="top">
-                    {if $comment->getUType() === 0}
-                        <div class="post-author">
-                        <a href="{$comment->getUser()->getURL()}"><b>
-                        {$comment->getUser()->getFullName()}
-                        </b></a> {($comment->getUser()->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}<br />
-                        <a href="#" class="date">{$comment->getTime()}</a>
+        </div>
+        <div class="post reply" id="_ticket{$id}">
+            <div class="reply_wrap">
+                <a class="reply_image" href="/id{$ticket->getUser()->getId()}">
+                    <img src="{if str_contains($ticket->getUser()->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$ticket->getUser()->getAvatarUrl('miniscule')}{/if}"
+                         width="30"
+                         class="reply_img" />
+                </a>
+                <div class="reply_content">
+                    <div class="reply_author">
+                        <a class="author" href="/id{$ticket->getUser()->getId()}">
+                            {$ticket->getUser()->getCanonicalName()}
+                        </a>
+                        {if $ticket->getUser()->isVerified()}
+                            <a class="page_verified" href="/verify"></a>
+                        {/if}
+                        <span class="divider"></span> <span class="nobold">{$ticket->getUser()->getRegistrationIP()}</span>
+                    </div>
+                    <div class="post-content" id="ticket{$id}">
+                        <div class="text reply_text">
+                            <div class="really_text">
+                                {$ticket->getText()|noescape}
+                            </div>
                         </div>
-                    {elseif ($comment->getUType() === 1)}
-                        <div class="post-author">
-                            <a n:attr="href => $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0) ? '/support/agent' . $comment->getUser()->getId() : ''"><b>{$comment->getAuthorName()}</b></a>
+                    </div>
+                    <div class='post_edit'></div>
+                    <div class="reply_footer clear_fix">
+                        <div class="reply_date">
+                            <a href="#ticket{$id}" class="reply_link">
+                                {$ticket->getTime()}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p n:if="!$comments">{_no_comments}</p>
+        {var $printedSupportGreeting = false}
+        <div n:foreach="$comments as $comment" class="post reply" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}">
+            <div class="reply_wrap">
+                <a class="reply_image" href="{if $comment->getUType() === 0}{$comment->getUser()->getURL()}{/if}">
+                    <img src="{if $comment->getUType() === 0}{if str_contains($comment->getUser()->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$comment->getUser()->getAvatarUrl('miniscule')}{/if}{else}{$comment->getAvatar()}{/if}"
+                        width="30"
+                        class="reply_img"
+                        style="{if $comment->getUType() === 1}filter: hue-rotate({$comment->getColorRotation()}deg);{/if}" />
+                </a>
+                <div class="reply_content">
+                    <div class="fl_r reply_actions_wrap">
+                        <div class="reply_actions" n:if="isset($thisUser)">
+                            <a class="reply_action reply_delete_action" href="/support/comment/{$comment->getId()}/delete?hash={rawurlencode($csrfToken)}" data-tip="simple-black" data-tiptitle="{_delete}"></a>
+                        </div>
+                    </div>
+                    <div class="reply_author">
+                        {if $comment->getUType() === 0}
+                            <a class="author" href="{$comment->getUser()->getURL()}">
+                                {$comment->getUser()->getCanonicalName()}
+                            </a>
+                            {if $comment->getUser()->isVerified()}
+                                <a class="page_verified" href="/verify"></a>
+                            {/if}
+                        {else}
+                            <a n:attr="href => $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0) ? '/support/agent' . $comment->getUser()->getId() : ''" class="author">
+                                <b>{$comment->getAuthorName()}</b>
+                            </a>
                             {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                                 <a href="{$comment->getUser()->getURL()}">
                                     <span class="nobold">
@@ -114,54 +118,77 @@
                                     </span>
                                 </a>
                             {/if}
-                            {_post_writes_m}<br />
-                            <a href="#" class="date">{$comment->getTime()}</a>
-                        </div>
-                    {/if}
+                        {/if}
+                    </div>
                     <div class="post-content" id="{$comment->getId()}">
-                        <div class="text" id="text{$comment->getId()}">
-                            {if $comment->getUType() === 1 && !$printedSupportGreeting}
-                                {var $printedSupportGreeting = true}
-                                {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
-                                <br />
-                                <br />
+                        <div class="text reply_text" id="text{$comment->getId()}">
+                            <div class="really_text">
+                                {if $comment->getUType() === 1 && !$printedSupportGreeting}
+                                    {var $printedSupportGreeting = true}
+                                    {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
+                                    <br />
+                                    <br />
 
-                                {$comment->getText()|noescape}
-                                <br />
-                                <br />
+                                    {$comment->getText()|noescape}
+                                    <br />
+                                    <br />
 
-                                {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
-                            {else}
-                                {$comment->getText()|noescape}
-                            {/if}
+                                    {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
+                                {else}
+                                    {$comment->getText()|noescape}
+                                {/if}
+                            </div>
                         </div>
-
-                        <div class="post-menu">
-                            <a href="/support/comment/{$comment->getId()}/delete?hash={urlencode($csrfToken)}">{_delete}</a>
+                    </div>
+                    <div class='post_edit'></div>
+                    <div class="reply_footer clear_fix">
+                        <div class="reply_date">
+                            <a href="#_comment{$comment->getId()}" class="reply_link">
+                                {$comment->getTime()}
+                            </a>
                         </div>
-                        
                         {if $comment->getUType() === 1 && !is_null($comment->isLikedByUser())}
-                            <div class="post-menu">
-                                <strong>
+                            <div class="post-menu fl_r">
+                                <span>
                                     {if $comment->isLikedByUser()}
                                         {_support_good_answer_agent}
                                     {else}
                                         {_support_bad_answer_agent}
                                     {/if}
-                                </strong>
+                                </span>
                             </div>
                         {/if}
                     </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <script>
-        const fastAnswers = [
-            {foreach $fastAnswers as $answer}
-                {$answer},
-            {/foreach}
-        ];
-    </script>
+                </div>
+            </div>
+        </div>
+        <div id="standaloneCommentBox" class="model_content_textarea shown clear_fix">
+            <form action="/al_comments/create/support/reply/{$id}" method="post" style="margin: 0;">
+                <textarea name="text" id="answer_text" placeholder="{_reply}"></textarea>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <div class="post-buttons">
+                    <div class="post-bottom-acts">
+                        <div n:if="!is_null($fastAnswers)" class="post-attach-menu">
+                            <a href="javascript:showSupportFastAnswerDialog(fastAnswers)">{_fast_answers}</a>
+                        </div>
+                        <div class="post-bottom-buttons">
+                            <select name="status" style="width: unset;">
+                                <option value="1">{_support_status_1}</option>
+                                <option value="2">{_support_status_2}</option>
+                                <option value="0">{_support_status_0}</option>
+                            </select>
+                            <input class="button" type="submit" value="{_write}" class="button" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script>
+            const fastAnswers = [
+                {foreach $fastAnswers as $answer}
+                    {$answer},
+                {/foreach}
+            ];
+        </script>
+    </div>
 {/block}

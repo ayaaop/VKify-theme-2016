@@ -28,13 +28,13 @@
     ]
 ]}
     <div class="wide_column_left">
-        <div class="wide_column_left">
-            <div class="narrow_column_wrap">
-                <div class="narrow_column">
-                    {include "../components/ui_rmenu.xml", items => $menuItems}
-                </div>
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $menuItems}
             </div>
-            <div class="wide_column_wrap">
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
                 {include "../components/post.xml", post => $post, forceNoCommentsLink => TRUE}
                 {include "../components/comments.xml",
                 comments => $comments,

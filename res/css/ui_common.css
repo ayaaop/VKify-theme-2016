@@ -81,11 +81,11 @@ b {
 a, .post-source a, .audioEntry .performer a {
     color: var(--link-color)
 }
-a:hover {
+a:not([class]):hover,.post_header_info a:hover,a.ui_crumb:hover,.post a:hover {
     text-decoration: underline;
 }
-.page_header a:hover, a.button:hover, .mb_tab>a:hover, .tab a:hover, .profile_link:hover, .left_menu_nav_wrap a:hover, #wallAttachmentMenu>a:hover,.avatar_controls a:hover {
-    text-decoration: none;
+.page_header a:hover, a.button:hover, .mb_tab>a:hover, .tab a:hover, .profile_link:hover, #wallAttachmentMenu>a:hover,.avatar_controls a:hover {
+    text-decoration: none!important;
 }
 
 /* Checkboxes and radio buttons */
@@ -200,7 +200,7 @@ table * {
 .page_verified {
     background: url(/themepack/vkify16/3.3.1.8/resource/icons/verify.png?1) no-repeat 0;
     vertical-align: middle;
-    margin-left: 4px;
+    margin-left: 2px;
     padding: 0;
     margin-top: -2px;
     display: inline-block;
@@ -432,11 +432,11 @@ body.dimmed>.dimmer #absolute_territory {
     line-height: 19px;
 }
 
-.ovk-diag-body .settings_label {
-    width: 100px;
+.ovk-diag-body .form_field {
+    width: 100%;
 }
-.ovk-diag-body .form_data {
-    margin: 0 0 8px 110px;
+.ovk-diag-body .form_label {
+    width: 100px;
 }
 
 .messagebox-content-header, .mb_tabs {
@@ -703,6 +703,9 @@ a.ui_box_header_link {
 .ui_rmenu_sep {
     border-top: 1px solid var(--border-color);
     margin: 6px 15px;
+}
+.ui_rmenu_sep:last-child {
+    display: none;
 }
 .ui_ownblock {
     display: block;
@@ -1239,12 +1242,12 @@ select:focus {
 }
 
 .tippy-menu a:hover {
-    text-decoration: none;
+    text-decoration: none!important;
     background-color: var(--button-background-color);
 }
 
 .tippy-menu label {
-    padding: 0 13px;
+    padding-inline: 13px;
 }
 .tippy-menu label+.separator {
     margin: 10px 13px 6px;

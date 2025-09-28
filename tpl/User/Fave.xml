@@ -40,7 +40,7 @@
         <div class="wide_column_wrap">
             <div class="wide_column">
                 {include "../components/page_block_header.xml", title => "bookmarks_tab"}
-                    <div n:class="scroll_container, ($section == 'photos' ? 'album-flex page_block page_padding' : ''), ($section == 'videos' ? 'page_block video_block_layout video_items_list' : '')">
+                    <div n:class="scroll_container, ($section == 'photos' && $count > 0 ? 'album-flex page_block page_padding' : ''), ($section == 'videos' && $count > 0 ? 'page_block video_block_layout video_items_list' : '')">
                         {if $count > 0}
                             {foreach $data as $dat}
                                 {if $dat->isDeleted()}
@@ -70,7 +70,7 @@
                                 {/if}
                             {/foreach}
                         {else}
-                            {include "../components/content_error.xml", description => tr("faves_".$section."_empty_tip")}
+                            {include "../components/content_error.xml", icon => false, description => tr("faves_".$section."_empty_tip")}
                         {/if}
                     </div>
 

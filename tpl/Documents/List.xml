@@ -64,8 +64,8 @@
     <div class="wide_column_wrap">
         <div class="wide_column">
             {capture $uploadBtnExtra}
-                {if !isset($group) && $canUpload}
-                    <input id='upload_entry_point' class='button' type='button' value='{_upload_button}'>
+                {if $canUpload}
+                    <input id='upload_entry_point' class='button' type='button' value='{_upload_button}' {if isset($group)}data-gid='{$group->getId()}'{/if}>
                 {/if}
             {/capture}
             {include "../components/page_block_header.xml", title => "documents", extra => $uploadBtnExtra}
@@ -82,7 +82,7 @@
                                 {/if}
                             {/foreach}
                         {else}
-                            {include "../components/error.xml", description => tr("there_is_no_documents_alright")}
+                            {include "../components/content_error.xml", description => tr("there_is_no_documents_alright")}
                         {/if}
                     </div>
 

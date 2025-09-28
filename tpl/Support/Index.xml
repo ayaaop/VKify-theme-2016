@@ -44,19 +44,31 @@
                     {else}
                         <div class="new">
                             <form action="/support" method="post" style="margin:0;">
-                                <center>
-                                    <input type="text" name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
-                                    <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
-                                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                                    <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />
-                                </center>
+                                <div class="form_group tickets_create_form">
+                                    <div class="form_field">
+                                        <div class="form_data">
+                                            <input type="text" name="name" style="resize: vertical;" placeholder="{_support_new_title}" />
+                                        </div>
+                                    </div>
+                                    <div class="form_field">
+                                        <div class="form_data">
+                                            <textarea name="text" style="resize: vertical;" placeholder="{_support_new_content}"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form_field">
+                                        <div class="form_data">
+                                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                                            <input type="submit" value="{_write}" class="button fl_r" />
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     {/if}
                 </div>
             {/if}
     {/if}
-    <div n:ifcontent class="page_block page_padding">
+    <div n:ifcontent n:class="page_block, $isList ? 'list_view tickets_list' : page_padding">
     {if $isMain}
         <div n:foreach="$faq as $section" class="faq">
             <div id="faqhead">{$section[0]}</div>
@@ -65,41 +77,35 @@
     {/if}
 
     {if $isList}
-        <table n:foreach="$tickets as $ticket" border="0" style="font-size: 11px; width: 610px;" class="post">
-            <tbody>
-                <tr>
-                    <td width="54" valign="top">
-                        <center>
-                            <img src="/assets/packages/static/openvk/img/note_icon.png" alt="{_support_ticket}" style="margin-top: 17px;" />
-                        </center>
-                    </td>
-                    <td width="345" valign="top">
-                        <div class="post-author">
-                            <a href="/support/view/{$ticket->getId()}">
-                                <b>{$ticket->getName()}</b>
-                            </a>
-                        </div>
-                        <div class="post-content" style="padding: 4px; font-size: 11px;">
-                            {_status}: {$ticket->getStatus()}
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        {foreach $tickets as $ticket}
+            <div class="search_row type{$ticket->getType()}">
+                <div class="info fl_l">
+                    <div class="labeled name">
+                        <a href="/support/view/{$ticket->getId()}">
+                            <b>
+                                {$ticket->getName()}
+                            </b>
+                        </a>
+                    </div>
+                    <div class="labeled">
+                        {$ticket->getStatus()}
+                    </div>
+                </div>
+            </div>
+        {/foreach}
 
         {if $count < 1}
             {include "../components/nothing.xml"}
         {/if}
 
-        <div style="padding: 8px;">
             {include "../components/paginator.xml", conf => (object) [
                 "page"     => $page,
                 "count"    => $count,
                 "amount"   => sizeof($tickets),
                 "perPage"  => OPENVK_DEFAULT_PER_PAGE,
                 "atBottom" => true,
+                "tidy"     => true
             ]}
-        </div>
     {/if}
     </div>
 {/block}

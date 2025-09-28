@@ -170,7 +170,7 @@
     margin: 15px 0 -1px;
     display: inline-block;
     vertical-align: top;
-    border-radius: 2px;
+    border-radius: var(--button-border-radius);
     overflow: hidden
 }
 
@@ -208,7 +208,7 @@
     width: 200px;
     height: 112px;
     overflow: hidden;
-    border-radius: 2px
+    border-radius: var(--button-border-radius)
 }
 
 .video_module .video:hover {
@@ -241,7 +241,7 @@
     padding: 3px 6px;
     margin: 8px;
     background: var(--video-overlay-background);
-    border-radius: 2px;
+    border-radius: var(--button-border-radius);
     color: var(--white);
     position: absolute;
     bottom: 0;
@@ -409,7 +409,7 @@
     text-align: center;
 }
 
-.page_status, td .nobold {
+.page_status, .page_info_wrap .nobold {
     font-size: 13px
 }
 
@@ -424,6 +424,12 @@
 
 .ugc-table tr>td:nth-of-type(2) {
     font-size: 13px;
+}
+
+.no_info {
+    margin: 20px 0 0;
+    text-align: center;
+    color: var(--muted-text-color);
 }
 
 #basicInfo {
@@ -684,7 +690,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_msg_split .cut_left .button {
-    border-radius: 2px 0 0 2px;
+    border-radius: var(--button-border-radius) 0 0 var(--button-border-radius);
     border-right: 1px solid var(--profile-button-border-color);
     height: 30px
 }
@@ -695,7 +701,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_msg_split .cut_right .button {
-    border-radius: 0 2px 2px 0;
+    border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
     height: 30px;
     width: 38px;
     padding-left: 11px
@@ -717,6 +723,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_actions_split {
+    margin-top: 8px;
     display: flex;
     justify-content: end;
 }
@@ -726,7 +733,13 @@ div.avatar_block:hover .avatar_variants {
     margin-right: 5px;
     display: inline-block;
 }
+.profile_actions_split .profile_link_form:last-child {
+    margin-right: 0;
+}
 
+.search_row .profile_actions_split {
+    margin-top: 0;
+}
 .search_row .profile_actions_split .profile_link_form {
     flex: 0;
 }

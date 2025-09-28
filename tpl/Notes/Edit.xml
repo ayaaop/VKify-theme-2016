@@ -26,23 +26,40 @@
     </div>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
-    {script "js/node_modules/requirejs/bin/r.js"}
     <script>
-        require.config({
-            paths: {
-                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+        window.initNotesMonacoEditor = function() {
+            if (typeof require === 'undefined') {
+                setTimeout(window.initNotesMonacoEditor, 50);
+                return;
             }
-        });
-        require(['vs/editor/editor.main'], function() {
-            window._editor = monaco.editor.create(document.getElementById('editor'), {
-                value: {$note->getSource()},
-                lineNumbers: "off",
-                language: "html"
+            require.config({
+                paths: {
+                    'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
+                }
             });
-        });
-        
-        document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea").value = window._editor.getValue();
-        });
+            require(['vs/editor/editor.main'], function() {
+                if (!document.getElementById('editor')) return;
+                if (window._editor && typeof window._editor.getValue === 'function') return;
+                window._editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: {$note->getSource()},
+                    lineNumbers: "off",
+                    language: "html"
+                });
+
+                const form = document.querySelector('#noteFactory');
+                if (form && !form._monacoSubmitBound) {
+                    form.addEventListener('submit', function() {
+                        const ta = form.querySelector('textarea');
+                        if (ta && window._editor) {
+                            ta.value = window._editor.getValue();
+                        }
+                    });
+                    form._monacoSubmitBound = true;
+                }
+            });
+        };
+
+        // Ensure initialization on direct page loads
+        window.initNotesMonacoEditor();
     </script>
 {/block}

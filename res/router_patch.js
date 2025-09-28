@@ -69,8 +69,6 @@ window.destroyTooltipsInContainer = function(container) {
     }
 };
 
-
-
 window.cleanupModalTooltips = function(modalContainer) {
     if (!modalContainer) return;
 
@@ -256,6 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (window.location.pathname.includes('/albums') && window.initAlbumPhotosLoader && !document.getElementById('photos-section')?.dataset.initialized) {
             setTimeout(window.initAlbumPhotosLoader, 100);
+        }
+
+        if (document.getElementById('editor') && typeof window.initNotesMonacoEditor === 'function') {
+            setTimeout(window.initNotesMonacoEditor, 150);
         }
     }
 

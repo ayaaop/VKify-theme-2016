@@ -10,7 +10,7 @@
 
         {if $count < 1}
             <div class="page_block">
-                {include "../components/error.xml", title => "", description => $type == "my" ? tr("no_suggested_posts_by_you") : tr("no_suggested_posts_by_people")}
+                {include "../components/content_error.xml", title => "", description => $type == "my" ? tr("no_suggested_posts_by_you") : tr("no_suggested_posts_by_people")}
             </div>
         {else}
             <div id="postz" class="infContainer scroll_container">

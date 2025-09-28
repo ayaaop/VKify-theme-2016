@@ -4,6 +4,103 @@ function escapeHtml(text) {
     return div.innerHTML
 }
 
+class LoaderUtils {
+    static show(container, options = {}) {
+        const { size = 'medium', className = '', theme = null } = options;
+        const sizeClass = size === 'small' ? 'pr_small' : size === 'large' ? 'pr_large' : 'pr_medium';
+        const themeClass = theme === 'baw' ? 'pr_baw' : '';
+        const html = `<div class="pr ${sizeClass} ${themeClass} ${className}"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
+        const root = LoaderUtils._asUmbrella(container);
+        root.append(html);
+        return root.find('.pr').last();
+    }
+
+    static showInButton(button) {
+        const btn = LoaderUtils._asUmbrella(button);
+        const loaderHTML = `<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
+        if (!btn.attr('data-loaderutils-original')) {
+            btn.attr('data-loaderutils-original', btn.html());
+        }
+        const span = btn.find('span');
+        if (span.length > 0) span.html(loaderHTML); else btn.html(`<span>${loaderHTML}</span>`);
+        btn.addClass('lagged');
+        return btn;
+    }
+
+    static restoreButton(button) {
+        const btn = LoaderUtils._asUmbrella(button);
+        const original = btn.attr('data-loaderutils-original');
+        if (typeof original === 'string') {
+            btn.html(original);
+            btn.attr('data-loaderutils-original', null);
+        }
+        btn.removeClass('lagged');
+        return btn;
+    }
+
+    static hide(scope = null) {
+        const root = scope ? LoaderUtils._asUmbrella(scope) : u(document);
+        root.find('.pr').remove();
+    }
+
+    static hideGeneral(scope = null) {
+        const root = scope ? LoaderUtils._asUmbrella(scope) : u(document);
+        root.find('.pr').each(function (node) {
+            const element = u(node);
+            if (!element.closest('.button').length) element.remove();
+        });
+    }
+
+    static block(target, { className = 'ui_blocker' } = {}) {
+        const el = LoaderUtils._asUmbrella(target);
+        const overlay = u(`<div class="${className}"></div>`);
+        el.append(overlay);
+        return () => overlay.remove();
+    }
+
+    static async withAsyncButton(button, fn) {
+        LoaderUtils.showInButton(button);
+        try {
+            return await fn();
+        } finally {
+            LoaderUtils.restoreButton(button);
+        }
+    }
+
+    static startKeyed(key, scope = null) {
+        if (!LoaderUtils._keyed) LoaderUtils._keyed = new Map();
+        const handle = { scope };
+        LoaderUtils._keyed.set(key, handle);
+        LoaderUtils.show(scope || u('body'));
+        return handle;
+    }
+
+    static stopKeyed(key) {
+        if (!LoaderUtils._keyed) return;
+        const handle = LoaderUtils._keyed.get(key);
+        if (handle) {
+            LoaderUtils.hide(handle.scope || u('body'));
+            LoaderUtils._keyed.delete(key);
+        }
+    }
+
+    static isVisible(scope = null) {
+        const root = scope ? LoaderUtils._asUmbrella(scope) : u(document);
+        return root.find('.pr').length > 0;
+    }
+
+    static _asUmbrella(obj) {
+        if (!obj) return u(document.body);
+        if (typeof obj === 'string') return u(obj);
+        if (obj.nodes || typeof obj.find === 'function') return obj;
+        return u(obj);
+    }
+}
+
+if (typeof window !== 'undefined' && !window.LoaderUtils) {
+    window.LoaderUtils = LoaderUtils;
+}
+
 function setTip(obj, text, interactive = false) {
     tippy(obj, {
         content: `<text style="font-size: 11px;">${text}</text>`,
@@ -630,49 +727,6 @@ window.toggle_comment_textarea = function (id) {
     }
 }
 
-function createLoader() {
-    const iconFrames = [
-        "data:image/gif;base64,R0lGODlhEAAQAPEDAEVojoSctMHN2QAAACH5BAEAAAMALAAAAAAQABAAAAItnI9pwW0A42rsRTipvVnt7kmDE2LeiaLCeq6C4bbsEHu1e+MvrcM9j/MFU4oCADs=", // prgicon1.gif в Base64
-        "data:image/gif;base64,R0lGODlhEAAQAPEDAEVojoSctMHN2QAAACH5BAEAAAMALAAAAAAQABAAAAIrnI9pwm0B42rsRTipvVnt7kmDE2LeiaKkArQg646V1wIZWdf3nMcU30t5CgA7", // prgicon2.gif в Base64
-        "data:image/gif;base64,R0lGODlhEAAQAPEDAEVojoSctMHN2QAAACH5BAEAAAMALAAAAAAQABAAAAIxnI9pwr3NHpRuwGivVDsL7nVKBZZmAqRgwBopsLbDGwfuqw7sbs84rOP1fkBh74QoAAA7", // prgicon3.gif в Base64
-        "data:image/gif;base64,R0lGODlhEAAQAPEDAEVojoSctMHN2QAAACH5BAEAAAMALAAAAAAQABAAAAItnI9pwG0C42rsRTipvVnt7kmDE2LeiaLBeopr0JpvLBjvPFzyDee6zduIUokCADs=", // prgicon4.gif в Base64
-    ];
-
-    let step = 0;
-    let timer = null;
-    const favicon = document.querySelector('link[rel="icon"]') || document.createElement('link');
-    favicon.rel = 'icon';
-    document.head.appendChild(favicon);
-
-    const updateFavicon = () => {
-        step = (step + 1) % 4;
-        favicon.href = iconFrames[step];
-        timer = setTimeout(updateFavicon, 150);
-    };
-
-    const gifFavicon = () => {
-        favicon.href = 'data:image/gif;base64,R0lGODlhEAAQAPEDAEVojoSctMHN2QAAACH5BA0KAAMAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAACLZyPacFtAONq7EU4qb1Z7e5JgxNi3omiwnquguG27BB7tXvjL63DPY/zBVOKAgAh+QQNCgADACwAAAAAEAAQAAACK5yPacJtAeNq7EU4qb1Z7e5JgxNi3omipAK0IOuOldcCGVnX95zHFN9LeQoAIfkEDQoAAwAsAAAAABAAEAAAAjGcj2nCvc0elG7AaK9UOwvudUoFlmYCpGDAGimwtsMbB+6rDuxuzzis4/V+QGHvhCgAACH5BA0KAAMALAAAAAAQABAAAAItnI9pwG0C42rsRTipvVnt7kmDE2LeiaLBeopr0JpvLBjvPFzyDee6zduIUokCADs=';
-    };
-
-    return {
-        start() {
-            document.body.style.cursor = 'progress';
-            if (/firefox/i.test(navigator.userAgent.toLowerCase())) {
-                gifFavicon();
-            } else {
-                updateFavicon();
-            }
-        },
-        stop() {
-            clearTimeout(timer);
-            document.body.style.cursor = 'default';
-            favicon.href = 'data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKOBYiGjgWKVo4Fi1aOBYt2jgWJxAAAAAKOBYimjgWLUo4Fi76OBYu6jgWLYAAAAAAAAAAAAAAAAAAAAAKOBYlqjgWL3o4Fi/6OBYv+jgWL/o4FiwKOBYhijgWLeo4Fi/6OBYv+jgWL/o4FizAAAAAAAAAAAAAAAAKOBYkujgWL8o4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWL6o4Fi/6OBYv+jgWL/o4Fi/qOBYlIAAAAAAAAAAKOBYh6jgWLuo4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWL/o4Fi/6OBYocAAAAAAAAAAAAAAACjgWK5o4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWL/o4Fi/6OBYv+jgWIMAAAAAAAAAACjgWJco4Fi/6OBYv+jgWL/o4Fiq6OBYv+jgWL/o4Fi/6OBYv+jgWKyo4Fi/6OBYv+jgWL/o4FiVwAAAACjgWINo4Fi6KOBYv+jgWL/o4FivwAAAACjgWL1o4Fi/6OBYv+jgWL7o4FiB6OBYumjgWL/o4Fi/6OBYuOjgWIJo4FigqOBYv+jgWL/o4Fi/6OBYjqjgWICo4Fi9aOBYv+jgWL/o4Fi+AAAAACjgWKTo4Fi/6OBYv+jgWL/o4FicKOBYvWjgWL/o4Fi/6OBYtwAAAAAo4FiQaOBYv+jgWL/o4Fi/6OBYv4AAAAAo4FiMaOBYv+jgWL/o4Fi/6OBYt6jgWLeo4Fi/6OBYv+jgWKFAAAAAKOBYsijgWL/o4Fi/6OBYu+jgWK9AAAAAAAAAACjgWK6o4Fi/6OBYv+jgWLVAAAAAAAAAACjgWIFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAo4FiAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACDAAAALYAAAAAAADDAgAAAAIAAB7/AAAAAAAA4AAAAP/gAAAAAAAAeAAAAP8AAAD//wAAAB4AAAAAAAAAAA==';
-        },
-    };
-}
-
-window.favloader = createLoader();
-
 $(document).ready(function () {
     let vkdropdownJustClosed = false;
     $(document).on('mousedown', 'select', function (e) {
@@ -980,6 +1034,96 @@ window.uiSearch = {
 
 window.uiSearch.init();
 
+function updateNarrow() {
+    const $bar = $(".narrow_column").first();
+    const $barBlock = $bar.find(".page_block").first();
+    const $wideCol = $(".wide_column").first();
+    const $layout = $(".layout").first();
+
+    // bail out early if missing pieces or mobile-like overlays
+    if (!$bar.length || !$barBlock.length || !$wideCol.length) return;
+    if ($("#ajloader:visible").length > 0) return;
+    if (document.body.classList.contains("dimmed")) return;
+
+    const wh = window.innerHeight || 0;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - wh);
+    const st = Math.min($(window).scrollTop(), maxScroll);
+
+    const headH = 57; // fixed header height + offset
+    const isFixed = $bar.css("position") === "fixed";
+
+    const barH = $bar.outerHeight();
+    const pageH = $wideCol.outerHeight();
+    const pagePos = $wideCol.offset().top;
+    const tooBig = barH >= pageH;
+
+    const barPB = Math.max(0, st + wh - pageH - pagePos);
+    const barPos = $bar.offset().top;
+
+    const lastSt = window._lastSt || 0;
+    const lastStyles = window._lastStyles || {};
+    let styles = {};
+    let needFix = false;
+
+    const smallEnough = headH + barH + barPB <= wh;
+
+    if ((st <= headH && !smallEnough) || tooBig) {
+        // reset to natural position
+        styles = { marginTop: "0px" };
+    } else if (st <= Math.min(lastSt, barPos - headH) || smallEnough) {
+        // stick to top
+        styles = {
+            top: headH + "px",
+            marginLeft: Math.min(
+                -document.body.scrollLeft,
+                Math.max(-document.body.scrollLeft, document.body.clientWidth - $layout.outerWidth())
+            ) + "px"
+        };
+        needFix = true;
+    } else if (st >= Math.max(lastSt, barPos + barH - wh) && !barPB) {
+        // stick to bottom
+        styles = {
+            bottom: "0px",
+            marginLeft: Math.min(
+                -document.body.scrollLeft,
+                Math.max(-document.body.scrollLeft, document.body.clientWidth - $layout.outerWidth())
+            ) + "px"
+        };
+        needFix = true;
+    } else {
+        // floating inside content
+        styles = {
+            marginTop: barPB
+                ? (pageH - barH) + "px"
+                : Math.min(barPos - pagePos, pageH - barH + (pagePos - headH)) + "px"
+        };
+    }
+
+    // clear stale styles before applying new ones
+    const resetStyles = {
+        top: "",
+        bottom: "",
+        marginTop: "",
+        marginLeft: ""
+    };
+
+    if (JSON.stringify(styles) !== JSON.stringify(lastStyles)) {
+        $bar.css(resetStyles);  // clear all
+        $bar.css(styles);       // apply current
+        window._lastStyles = styles;
+    }
+
+    // toggle fixed class
+    if (needFix !== isFixed) {
+        $bar.toggleClass("fixed", needFix);
+    }
+
+    window._lastSt = st;
+}
+
+// Initialize
+$(window).on("scroll resize", updateNarrow);
+
 window.initTabSlider = function() {
     const tabContainers = document.querySelectorAll('.ui_tabs');
 
@@ -1202,10 +1346,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 <div class="bigPlayer ctx_place">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title="${tr('play_tip')}"><div class="playIcon"></div></div>
+            <div onmousedown="this.classList.add('pressed')" onmouseup="this.classList.remove('pressed')" class="playButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('play_tip')}"><div class="playIcon"></div></div>
             <div class="arrowsButtons">
-                <div class="nextButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
-                <div class="backButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-title=""></div>
+                <div class="nextButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-tiptitle=""></div>
+                <div class="backButton musicIcon" data-tip="simple-black" data-align="bottom-start" data-tiptitle=""></div>
             </div>
         </div>
 
@@ -1246,9 +1390,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         </div>
 
         <div class="additionalButtons">
-            <div class="repeatButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('repeat_tip')}"></div>
-            <div class="shuffleButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('shuffle_tip')}"></div>
-            <div class="deviceButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-title="${tr('mute_tip')}"></div>
+            <div class="repeatButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('repeat_tip')}"></div>
+            <div class="shuffleButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('shuffle_tip')}"></div>
+            <div class="deviceButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('mute_tip')}"></div>
         </div>
     </div>
 </div>
@@ -1531,6 +1675,36 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     })
 
+    function getOptimalPlacement(element) {
+        const rect = element.getBoundingClientRect();
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        const space = {
+            top: rect.top,
+            bottom: viewportHeight - rect.bottom,
+            left: rect.left,
+            right: viewportWidth - rect.right,
+        };
+
+        let placement = 'top';
+
+        // Prioritize placement with the most available space
+        if (space.bottom > space.top && space.bottom > 100) {
+            placement = 'bottom';
+        } else if (space.right > space.left && space.right > 100) {
+            placement = 'right';
+        } else if (space.left > space.right && space.left > 100) {
+            placement = 'left';
+        }
+
+        if (rect.top < 50 && placement === 'top') {
+            placement = 'bottom';
+        }
+
+        return placement;
+    }
+
     function initializeSimpleTooltips() {
         const elements = document.querySelectorAll('[data-tip="simple-black"]');
         elements.forEach(element => {
@@ -1538,46 +1712,36 @@ window.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const title = element.getAttribute('data-title');
-            const align = element.getAttribute('data-align') || 'top';
+            const title = element.getAttribute('data-tiptitle');
 
-            if (!title || title.trim() === '' || title.startsWith('{_')) {
+            if (!title || title.trim() === '') {
                 return;
             }
 
-            let placement = 'top';
-            switch(align) {
-                case 'top-start':
-                    placement = 'top-start';
-                    break;
-                case 'top-end':
-                    placement = 'top-end';
-                    break;
+            const userAlign = element.getAttribute('data-align');
+            let placement = userAlign || getOptimalPlacement(element);
+
+            switch(userAlign) {
                 case 'top-center':
                     placement = 'top';
-                    break;
-                case 'bottom-start':
-                    placement = 'bottom-start';
-                    break;
-                case 'bottom-end':
-                    placement = 'bottom-end';
                     break;
                 case 'bottom-center':
                     placement = 'bottom';
                     break;
                 default:
-                    placement = 'top';
+                    if (!userAlign) {
+                        placement = getOptimalPlacement(element);
+                    }
             }
 
             tippy(element, {
-                content: escapeHtml(title),
+                content: title, // This is the line that was changed
                 theme: 'special vk small',
                 placement: placement,
                 animation: 'fade',
                 duration: [100, 100],
                 delay: [50, 0],
-                offset: [0, 8],
-                appendTo: 'parent'
+                offset: [4, 8],
             });
         });
     }
@@ -1607,78 +1771,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         childList: true,
         subtree: true
     });
-
-    window.router.route = async function (params = {}) {
-        if (typeof params == 'string') {
-            params = {
-                url: params
-            }
-        }
-
-        const old_url = location.href
-        let url = params.url
-        if (url.indexOf(location.origin)) {
-            url = location.origin + url
-        }
-
-        if ((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
-            window.location.assign(url)
-            return
-        }
-
-        window.favloader.start();
-
-        if (this.prev_page_html && this.prev_page_html.pathname != location.pathname) {
-            this.prev_page_html = null
-        }
-
-        const push_url = params.push_state ?? true
-        const next_page_url = new URL(url)
-        if (push_url) {
-            history.pushState({ 'from_router': 1 }, '', url)
-        } else {
-            history.replaceState({ 'from_router': 1 }, '', url)
-        }
-
-        const parser = new DOMParser
-        const next_page_request = await fetch(next_page_url, {
-            method: 'AJAX',
-            referrer: old_url,
-            headers: {
-                'X-OpenVK-Ajax-Query': '1',
-            }
-        })
-        const next_page_text = await next_page_request.text()
-        const parsed_content = parser.parseFromString(next_page_text, 'text/html')
-
-        if (next_page_request.status >= 400) {
-            const errorTitle = parsed_content.querySelector('title')?.textContent?.trim() || tr('error');
-            const errorMessage = parsed_content.querySelector('main p')?.textContent?.trim() || next_page_request.statusText || 'An error occurred while loading the page.';
-
-            history.replaceState({ 'from_router': 1 }, '', old_url);
-
-            MessageBox(errorTitle, errorMessage, [tr("ok")], [() => {}]);
-            window.favloader.stop();
-            return;
-        }
-
-        if (next_page_request.redirected) {
-            history.replaceState({ 'from_router': 1 }, '', next_page_request.url)
-        }
-
-        this.__closeMsgs()
-        this.__unlinkObservers()
-
-        try {
-            this.__appendPage(parsed_content)
-            await this.__integratePage()
-        } catch (e) {
-            console.error(e)
-            next_page_url.searchParams.delete('al', 1)
-            location.assign(next_page_url)
-        }
-        window.favloader.stop();
-    }
 
 });
 
@@ -2432,50 +2524,80 @@ window.initAlbumPhotosLoader = function() {
     }
 };
 
-function showCreateGroupModal() {
-    const modalBody = `
-        <div class="settings_panel" style="width: 100%; margin: 0;">
-            <div class="form_field">
-                <div class="form_label">${tr('name')}</div>
-                <div class="form_data">
-                    <input type="text" name="group_name" id="group_name_input" value="" style="width: 100%;" />
+
+
+// Generic simple form modal factory for reuse
+function showSimpleFormModal({ title, fields, submitText = tr('create'), cancelText = tr('cancel'), onSubmit, focusFieldId, enableEnterHandler = true }) {
+    const body = `
+        <div class=\"form_group\" style=\"width: 100%; margin: 0;\">
+            ${fields.map(f => `
+                <div class=\"form_field\">
+                    <div class=\"form_label\">${f.label}</div>
+                    <div class=\"form_data\">
+                        ${f.type === 'textarea'
+                            ? `<textarea name=\"${f.name}\" id=\"${f.id}\" style=\"width: 100%;resize: vertical;min-height: 80px;\" placeholder=\"${f.placeholder || ''}\">${(f.value ?? '').toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>`
+                            : `<input type=\"text\" name=\"${f.name}\" id=\"${f.id}\" value=\"${(f.value ?? '').toString().replace(/\"/g,'&quot;')}\" style=\"width: 100%;\" placeholder=\"${f.placeholder || ''}\" />`}
+                    </div>
                 </div>
-            </div>
-            <div class="form_field">
-                <div class="form_label">${tr('description')}</div>
-                <div class="form_data">
-                    <textarea name="group_about" id="group_about_input" style="width: 100%; resize: vertical; min-height: 80px;"></textarea>
-                </div>
-            </div>
+            `).join('')}
         </div>
     `;
 
     const modal = new CMessageBox({
-        title: tr('create_group'),
-        body: modalBody,
-        buttons: [tr('create'), tr('cancel')],
+        title,
+        body,
+        buttons: [submitText, cancelText],
         callbacks: [
-            () => {
-                createGroup();
-            },
-            () => {
-                modal.close();
-            }
+            () => { if (typeof onSubmit === 'function') onSubmit(modal); },
+            () => { modal.close(); }
         ],
         close_on_buttons: false,
         warn_on_exit: false
     });
 
     setTimeout(() => {
-        const nameInput = document.getElementById('group_name_input');
-        if (nameInput) {
-            nameInput.focus();
+        const firstId = focusFieldId || (fields[0] && fields[0].id);
+        const el = firstId ? document.getElementById(firstId) : null;
+        if (el) el.focus();
+
+        // Generic Enter-to-next-or-submit behavior scoped to this modal
+        if (enableEnterHandler && typeof modal.getNode === 'function') {
+            const container = modal.getNode();
+            const ids = fields.map(f => f.id).filter(Boolean);
+            ids.forEach((id, idx) => {
+                container.on('keydown', `#${id}`, (e) => {
+                    if (e.keyCode === 13 && !e.shiftKey) {
+                        e.preventDefault();
+                        const isLast = idx === ids.length - 1;
+                        if (isLast) {
+                            if (typeof onSubmit === 'function') onSubmit(modal);
+                        } else {
+                            const next = document.getElementById(ids[idx + 1]);
+                            if (next) next.focus();
+                        }
+                    }
+                });
+            });
         }
     }, 100);
 
     return modal;
 }
 
+function showCreateGroupModal(e) {
+    e.preventDefault();
+    return showSimpleFormModal({
+        title: tr('create_group'),
+        fields: [
+            { label: tr('name'), type: 'text', id: 'group_name_input', name: 'name' },
+            { label: tr('description'), type: 'textarea', id: 'group_about_input', name: 'about' }
+        ],
+        onSubmit: () => createGroup(),
+        focusFieldId: 'group_name_input'
+    });
+}
+
+// Groups: submit
 async function createGroup() {
     const nameInput = document.getElementById('group_name_input');
     const aboutInput = document.getElementById('group_about_input');
@@ -2488,19 +2610,17 @@ async function createGroup() {
     const groupName = nameInput.value.trim();
     const groupAbout = aboutInput.value.trim();
 
-    if (!groupName || groupName.length === 0) {
+    if (!groupName) {
         NewNotification(tr('error'), tr('error_no_group_name'), null);
         nameInput.focus();
         return;
     }
 
     CMessageBox.toggleLoader();
-
     nameInput.disabled = true;
     aboutInput.disabled = true;
 
-    const csrfToken = window.router.csrf;
-
+    const csrfToken = window.router?.csrf || document.querySelector('meta[name="csrf"]')?.getAttribute('value');
     if (!csrfToken) {
         CMessageBox.toggleLoader();
         nameInput.disabled = false;
@@ -2522,38 +2642,207 @@ async function createGroup() {
             credentials: 'same-origin'
         });
 
-        if (response.url && response.url.includes('/club')) {
-            CMessageBox.toggleLoader();
-            const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
-            if (currentModal) {
-                currentModal.close();
-            }
-            window.router.route(response.url);
-            return;
-        }
+        CMessageBox.toggleLoader();
+        const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
+        if (currentModal) currentModal.close();
 
+        if (response.url) {
+            if (window.router && typeof window.router.route === 'function') {
+                window.router.route(response.url);
+            } else {
+                window.location.href = response.url;
+            }
+        }
     } catch (error) {
         console.error('Error creating group:', error);
         CMessageBox.toggleLoader();
         nameInput.disabled = false;
         aboutInput.disabled = false;
-
-        NewNotification(tr('error'), errorMessage, null);
+        NewNotification(tr('error'), (typeof errorMessage !== 'undefined' ? errorMessage : 'Failed to create group'), null);
         nameInput.focus();
     }
 }
 
-u(document).on('keydown', '#group_name_input, #group_about_input', (e) => {
-    if (e.keyCode === 13 && !e.shiftKey) {
-        if (e.target.id === 'group_name_input') {
-            e.preventDefault();
-            const aboutInput = document.getElementById('group_about_input');
-            if (aboutInput) {
-                aboutInput.focus();
-            }
-        } else if (e.target.id === 'group_about_input') {
-            e.preventDefault();
-            createGroup();
-        }
+// Albums: modal open
+function showCreateAlbumModal(actionUrl) {
+    return showSimpleFormModal({
+        title: tr('creating_album'),
+        fields: [
+            { label: tr('name'), type: 'text', id: 'album_name_input', name: 'name' },
+            { label: tr('description'), type: 'textarea', id: 'album_desc_input', name: 'desc' }
+        ],
+        onSubmit: () => createAlbum(actionUrl),
+        focusFieldId: 'album_name_input'
+    });
+}
+
+// Albums: submit
+async function createAlbum(actionUrl) {
+    const nameInput = document.getElementById('album_name_input');
+    const descInput = document.getElementById('album_desc_input');
+
+    if (!nameInput || !descInput) {
+        console.error('Album form inputs not found');
+        return;
     }
-});
+
+    const albumName = nameInput.value.trim();
+    const albumDesc = descInput.value.trim();
+
+    if (!albumName) {
+        NewNotification(tr('error'), (tr('error_no_album_name') || tr('error_no_group_name') || 'Album name is required'), null);
+        nameInput.focus();
+        return;
+    }
+
+    CMessageBox.toggleLoader();
+    nameInput.disabled = true;
+    descInput.disabled = true;
+
+    const csrfToken = window.router?.csrf || document.querySelector('meta[name="csrf"]')?.getAttribute('value');
+    if (!csrfToken) {
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        descInput.disabled = false;
+        NewNotification(tr('error'), 'CSRF token not found. Please refresh the page and try again.', null);
+        nameInput.focus();
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', albumName);
+    formData.append('desc', albumDesc);
+    formData.append('hash', csrfToken);
+
+    try {
+        const response = await fetch(actionUrl || '/albums/create', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        });
+
+        CMessageBox.toggleLoader();
+        const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
+        if (currentModal) currentModal.close();
+
+        if (response.url) {
+            if (window.router && typeof window.router.route === 'function') {
+                window.router.route(response.url);
+            } else {
+                window.location.href = response.url;
+            }
+        } else {
+            // fallback to reload current albums page
+            if (window.router && typeof window.router.route === 'function') {
+                window.router.route(window.location.pathname + window.location.search);
+            } else {
+                window.location.reload();
+            }
+        }
+    } catch (error) {
+        console.error('Error creating album:', error);
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        descInput.disabled = false;
+        NewNotification(tr('error'), 'Failed to create album', null);
+        nameInput.focus();
+    }
+}
+
+// Albums: edit modal open (prefilled)
+function showEditAlbumModal(ev, actionUrl) {
+    if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+    // Try to infer initial values from the current album page DOM
+    var nameText = document.querySelector('.photos_album_intro h1')?.textContent?.trim() || '';
+    var descText = '';
+    var full = document.querySelector('.photos_album_intro_desc .full_text');
+    if (full) descText = full.textContent.trim(); else {
+        var trunc = document.querySelector('.photos_album_intro_desc');
+        if (trunc) descText = trunc.textContent.trim();
+    }
+
+    const modal = showSimpleFormModal({
+        title: tr('edit_album'),
+        fields: [
+            { label: tr('name'), type: 'text', id: 'album_edit_name_input', name: 'name', value: nameText },
+            { label: tr('description'), type: 'textarea', id: 'album_edit_desc_input', name: 'desc', value: descText }
+        ],
+        submitText: tr('save'),
+        onSubmit: () => updateAlbum(actionUrl),
+        focusFieldId: 'album_edit_name_input'
+    });
+    return false;
+}
+
+// Albums: update submit
+async function updateAlbum(actionUrl) {
+    const nameInput = document.getElementById('album_edit_name_input');
+    const descInput = document.getElementById('album_edit_desc_input');
+
+    if (!nameInput || !descInput) {
+        console.error('Edit album form inputs not found');
+        return;
+    }
+
+    const albumName = nameInput.value.trim();
+    const albumDesc = descInput.value.trim();
+
+    if (!albumName) {
+        NewNotification(tr('error'), (tr('error_no_album_name') || 'Album name is required'), null);
+        nameInput.focus();
+        return;
+    }
+
+    CMessageBox.toggleLoader();
+    nameInput.disabled = true;
+    descInput.disabled = true;
+
+    const csrfToken = window.router?.csrf || document.querySelector('meta[name="csrf"]')?.getAttribute('value');
+    if (!csrfToken) {
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        descInput.disabled = false;
+        NewNotification(tr('error'), 'CSRF token not found. Please refresh the page and try again.', null);
+        nameInput.focus();
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', albumName);
+    formData.append('desc', albumDesc);
+    formData.append('hash', csrfToken);
+
+    try {
+        const response = await fetch(actionUrl, {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
+        });
+
+        CMessageBox.toggleLoader();
+        const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
+        if (currentModal) currentModal.close();
+
+        if (response.url) {
+            if (window.router && typeof window.router.route === 'function') {
+                window.router.route(response.url);
+            } else {
+                window.location.href = response.url;
+            }
+        } else {
+            // fallback to reload current album page
+            if (window.router && typeof window.router.route === 'function') {
+                window.router.route(window.location.pathname + window.location.search);
+            } else {
+                window.location.reload();
+            }
+        }
+    } catch (error) {
+        console.error('Error updating album:', error);
+        CMessageBox.toggleLoader();
+        nameInput.disabled = false;
+        descInput.disabled = false;
+        NewNotification(tr('error'), 'Failed to save album', null);
+        nameInput.focus();
+    }
+}

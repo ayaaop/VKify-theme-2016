@@ -85,6 +85,9 @@
                         </div>
                     </form>
                 {/if}
+                <div class="page_block_footer">
+                    <a href="/support/tickets">{_paginator_back}: {_support_tickets}</a>
+                </div>
             </div>
         </div>
     </div>
