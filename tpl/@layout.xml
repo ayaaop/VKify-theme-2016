@@ -377,7 +377,6 @@
                             {/if}
                         </form>
                     {/ifset}
-                    </div>
                 </div>
                 <div class="floating_sidebar"></div>
             </div>
