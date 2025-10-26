@@ -420,12 +420,12 @@
 								<div class="video_row" n:foreach="$videos as $video">
 									<a id="videoOpen" data-id="{$video->getPrettyId()}" class="video fl_l" href="/video{$video->getPrettyId()}">
 										<div class="video_thumb_label">
-										{if $video->getType() != 0}
-											<span class="video_thumb_label_item">
-												<vkifyloc name="external" />
-											</span>
-										{/if}
-											<span class="video_thumb_label_item">{$video->getFormattedLength()}</span>
+											{if $video->getType() != 0}
+												<span class="video_thumb_label_item">
+													{$video->getType() == \openvk\Web\Models\Entities\Video::TYPE_EMBED ? 'YouTube' : ''}
+												</span>
+												<div class="divider" n:if="$video->getFormattedLength() != '00:00'"></div>
+											{/if}
 										</div>
 										<div class="page_video_play_icon"></div>
 										<span class="page_video_thumb" style="background-image: url('{$video->getThumbnailURL()}');"></span>

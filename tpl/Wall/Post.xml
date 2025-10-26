@@ -42,15 +42,6 @@
                 page => $cPage,
                 model => "posts",
                 parent => $post }
-                {* Пока что не понял че с этим делать *}
-                <a
-                n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
-                style="display:block;width:96%;"
-                class="profile_link"
-                href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
-                >
-                {_changes_history}
-                </a>
             </div>
         </div>
     </div>

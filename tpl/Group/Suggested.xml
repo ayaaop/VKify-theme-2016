@@ -5,7 +5,7 @@
 {block content}
     {include "../components/page_crumb_header.xml", crumbs => [
         ['title' => $club->getCanonicalName(), 'href' => $club->getURL()],
-        ['title' => ($type == "my" ? tr("suggested_posts_by_you") : tr("suggested_posts_by_everyone")) . " ($count)"]
+        ['title' => ($type == "my" ? tr("suggested_posts_by_you") : tr("suggested_posts_by_everyone")), 'count' => $count]
     ]}
 
         {if $count < 1}

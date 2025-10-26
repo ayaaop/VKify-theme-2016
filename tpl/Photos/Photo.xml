@@ -35,10 +35,6 @@
                     <a href="/album{$photo->getAlbum()->getPrettyId()}" class="pv_album_name">{$photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()}</a>
                 </div>
                 <div n:if="isset($thisUser)" class="pv_bottom_actions">
-                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')">
-                        {_share}
-                    </a>
-                    <span class="divider"></span>
                     {if $thisUser->getId() === $photo->getOwner()->getId()}
                         <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete">{_delete}</a>
                         <span class="divider"></span>
@@ -78,7 +74,7 @@
                         <span class="post_like_link">{tr('mobile_like')}</span>
                         <span class="likeCnt post_like_count">{if $likesCount > 0}{$likesCount}{/if}</span>
                     </a>
-                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post_share-button post_share">
+                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post-share-button post_share">
                         <i class="repost-icon post_share_icon"></i>
                         <span class="post_share_link">{tr('share')}</span>
                     </a>

@@ -292,10 +292,9 @@
                             </div>
                         {/if}
                     </div>
-                </div>
-
-                <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
-                    {include "../components/paginator.xml", conf => $extendedPaginatorConf}
+                    {if $paginatorConf->pageCount > 1}
+                        {include "../components/paginator.xml", conf => $extendedPaginatorConf}
+                    {/if}
                 </div>
             </div>
         </div>

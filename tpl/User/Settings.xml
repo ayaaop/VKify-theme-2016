@@ -407,7 +407,7 @@
                 {elseif $isFinance}
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "points"}
-                        <div class="settings_block_msg">
+                        <div class="settings_block_msg settings_padding">
                                 {presenter "openvk!Support->knowledgeBaseArticle", "points"}
                         </div>
                         <div class="form_group clear_fix settings_padding">
@@ -446,11 +446,11 @@
                                     <div class="messagebox-content-header">
                                         ${ tr("transfer_ton_contents") }
                                     </div>
-                                    <div style="margin-top: 30px">` +
+                                    <div style="margin-top: 10px">` +
                                     {tr("transfer_ton_address", OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
                                     `<div style="text-align: center;">
                                         <img width="225" height="225" src="data:` + {$qrCodeType} + `;base64,` + {$qrCodeData} + `"><br>
-                                        <input oninput="convertCurrency(this.value)"> = <span class="coins_dialog_conv">0 TON</span>
+                                        <input oninput="convertCurrency(this.value)" type="number" min="0" value="0" /> = <span class="coins_dialog_conv">0 TON</span>
                                     </div>
                                     </div>`
                                 , [tr("close")], [

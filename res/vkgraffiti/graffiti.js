@@ -727,7 +727,7 @@ var Graffiti = {
     this.resDif = 0;
     this.resW = 586;
     this.resH = 350;
-    this.fsEnabled = false;
+
     this.resizer = ge("graffiti_resizer");
     this.histHelpCanv = ge("graffiti_hist_helper");
     this.histHelpCtx = this.histHelpCanv.getContext("2d");
@@ -743,7 +743,7 @@ var Graffiti = {
     this.grWrapper = ge("graffiti_wrapper");
     this.cpWrapper = ge("graffiti_cpwrap");
     this.cpCanv = ge("graffiti_cpicker");
-    this.rzLink = ge("graffiti_resize_link");
+
     this.cpCtx = this.cpCanv.getContext("2d");
     this.addSlider("size", this.controlsCtx, 267, 31, 20);
     this.addSlider("opacity", this.controlsCtx, 483, 31, 80);
@@ -793,8 +793,11 @@ var Graffiti = {
       return false;
     },
     keyboard: function(e) {
-      Graffiti.keyboardEvents(e);
-      return cancelEvent(e);
+      var handled = Graffiti.keyboardEvents(e);
+      if (handled) {
+        return cancelEvent(e);
+      }
+      return true;
     },
     cancel: function(e) {
       return cancelEvent(e);
@@ -813,7 +816,9 @@ var Graffiti = {
     addEvent(Graffiti.cpCanv, "mousemove click", evs.color);
     addEvent(Graffiti.controlsCanv, "DOMMouseScroll mousewheel", evs.controlsF);
     addEvent(document, "keydown keyup", evs.keyboard);
-    addEvent(document, "contextmenu", evs.cancel);
+    // Only cancel context menu on the drawing canvas, not the entire document
+    addEvent(Graffiti.overlayCanv, "contextmenu", evs.cancel);
+    addEvent(Graffiti.controlsCanv, "contextmenu", evs.cancel);
     addEvent(document.body, "selectstart", evs.cancel);
     addEvent(Graffiti.resizer, "mousedown", evs.resize);
 
@@ -838,7 +843,8 @@ var Graffiti = {
     removeEvent(document, "keydown keyup", evs.keyboard);
     removeEvent(document.body, "selectstart", evs.cancel);
     removeEvent(Graffiti.resizer, "mousedown", evs.resize);
-    removeEvent(document, "contextmenu", evs.cancel);
+    removeEvent(Graffiti.overlayCanv, "contextmenu", evs.cancel);
+    removeEvent(Graffiti.controlsCanv, "contextmenu", evs.cancel);
 
     // Clean up parent window listeners if they exist
     if (window.parent && window.parent !== window) {
@@ -923,86 +929,103 @@ var Graffiti = {
   shiftPressed: false,
 
   keyboardEvents: function(e) {
-    console.log('Graffiti keyboard event:', e.type, e.keyCode, e.ctrlKey);
+    var handled = false;
+
     switch(e.type) {
       case "keydown":
         if(e.shiftKey || e.keyCode == 16) {
           Graffiti.drawPath = true;
-          return;
+          handled = true;
+          return handled;
         }
         switch(e.keyCode) {
           case 90: // Ctrl+Z - Undo
-            if(!e.ctrlKey) return;
-            if(Graffiti.keyboardBlocked) return;
+            if(!e.ctrlKey) return handled;
+            if(Graffiti.keyboardBlocked) return handled;
             Graffiti.keyboardBlocked = true;
             Graffiti.backHistory();
+            handled = true;
           break;
-          case 70: // Ctrl+F - Fullscreen
-            if(!e.ctrlKey) return;
-            Graffiti.fullScreen();
-          break;
+
           case 67: // Ctrl+C - Clear canvas
-            if(!e.ctrlKey) return;
+            if(!e.ctrlKey) return handled;
             Graffiti.flushHistory();
+            handled = true;
           break;
           case 187: // Plus key - Increase brush size
           case 61:  // Plus key (Firefox)
             Graffiti.adjustBrushSize(5);
+            handled = true;
           break;
           case 189: // Minus key - Decrease brush size
           case 173: // Minus key (Firefox)
             Graffiti.adjustBrushSize(-5);
+            handled = true;
           break;
           case 219: // [ - Decrease opacity
             Graffiti.adjustBrushOpacity(-0.1);
+            handled = true;
           break;
           case 221: // ] - Increase opacity
             Graffiti.adjustBrushOpacity(0.1);
+            handled = true;
           break;
           case 49: // 1 - Set small brush
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setBrushSize(0.1);
+            handled = true;
           break;
           case 50: // 2 - Set medium brush
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setBrushSize(0.5);
+            handled = true;
           break;
           case 51: // 3 - Set large brush
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setBrushSize(1.0);
+            handled = true;
           break;
           case 82: // R - Red color
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setColor("255, 0, 0");
+            handled = true;
           break;
           case 71: // G - Green color
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setColor("0, 255, 0");
+            handled = true;
           break;
           case 66: // B - Blue color
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setColor("0, 0, 255");
+            handled = true;
           break;
           case 75: // K - Black color
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setColor("0, 0, 0");
+            handled = true;
           break;
           case 87: // W - White color
-            if(e.ctrlKey) return;
+            if(e.ctrlKey) return handled;
             Graffiti.setColor("255, 255, 255");
+            handled = true;
           break;
         }
       break;
       case "keyup":
         if(e.shiftKey || e.keyCode == 16) {
           Graffiti.stopDrawPathLine();
-          return;
+          handled = true;
+          return handled;
         }
         if(e.keyCode == 90) {
           Graffiti.keyboardBlocked = false;
+          handled = true;
         }
       break;
     }
+
+    return handled;
   },
 
   handleControlsEvents: function(e) {
@@ -1659,97 +1682,7 @@ var Graffiti = {
   cpLastCell: [],
 
 
-  blockResize: false,
-  fsEnabled: false,
-  fullScreen: function() {
-    if (Graffiti.mouse.pressed) return;
-    if (Graffiti.blockResize) return;
-    if (!this.fsEnabled) {
-      this.fsEnabled = true;
-      Graffiti.blockResize = true;
-      setStyle(Graffiti.canvWrapper, {marginTop: -185, marginLeft: 18});
-      addClass(Graffiti.grWrapper, 'graffiti_fullscreen');
-      Graffiti.boxPos = getXY(curBox().bodyNode, true);
 
-      setStyle(Graffiti.grWrapper, {
-        top: Graffiti.boxPos[1],
-        left: Graffiti.boxPos[0],
-        height: Graffiti.H + 141,
-        width: Graffiti.W + 45
-      });
-
-      var width = Math.min(window.innerWidth - 40, 586 * 2);
-      var height = Math.min(intval((350 / 586) * width), window.innerHeight - 120);
-      width = height * (586 / 350);
-
-      Graffiti.W = width;
-      Graffiti.H = height;
-
-      Graffiti.factor = Graffiti.H / 350;
-
-      hide(Graffiti.mainCanv);
-
-      animate(Graffiti.grWrapper, {
-        top: 0,
-        left: 0,
-        height: window.innerHeight,
-        width: bodyNode.scrollWidth
-      }, 200);
-      animate(Graffiti.canvWrapper, {
-        width: Graffiti.W,
-        height: Graffiti.H,
-        marginTop: -Math.floor((Graffiti.H + 75) / 2),
-        marginLeft: ((window.innerWidth - Graffiti.W) / 2)
-      }, 200, function() {
-
-        show(Graffiti.mainCanv);
-
-        Graffiti.resizeCanvases(Graffiti.W, Graffiti.H)
-        Graffiti.copyImage(Graffiti.mainCtx);
-        Graffiti.blockResize = false;
-        Graffiti.rzLink.innerHTML = cur.lang['graffiti_normal_size'];
-
-        setStyle(Graffiti.grWrapper, {height: '100%', width: '100%'});
-      });
-    } else {
-      this.fsEnabled = false;
-      Graffiti.blockResize = true;
-
-      Graffiti.W = Graffiti.resW || 586;
-      Graffiti.H = Graffiti.resH || 350;
-
-      Graffiti.factor = Graffiti.H / 350;
-
-      hide(Graffiti.mainCanv);
-
-      animate(Graffiti.grWrapper, {
-        top: Graffiti.boxPos[1],
-        left: Graffiti.boxPos[0],
-        height: Graffiti.H + 140,
-        width: Graffiti.W + 45
-      }, 200);
-
-      animate(Graffiti.canvWrapper, {
-        width: Graffiti.W,
-        height: Graffiti.H,
-        marginTop: -185,
-        marginLeft: 22
-      }, 200, function() {
-
-        show(Graffiti.mainCanv);
-
-        Graffiti.resizeCanvases(Graffiti.W, Graffiti.H)
-
-        Graffiti.copyImage(Graffiti.mainCtx);
-        Graffiti.blockResize = false;
-        Graffiti.rzLink.innerHTML = cur.lang['graffiti_full_screen'];
-
-        removeClass(Graffiti.grWrapper, 'graffiti_fullscreen');
-        setStyle(Graffiti.grWrapper, {height: 'auto', width: '100%'});
-        setStyle(Graffiti.canvWrapper, {margin: '0 auto'});
-      });
-    }
-  },
 
   resizeCanvases: function(w, h) {
     Graffiti.mainCanv.width = w;

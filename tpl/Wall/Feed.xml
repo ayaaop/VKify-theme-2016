@@ -55,12 +55,4 @@
             </div>
         </div>
     </div>
-    <script>
-        u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
-        
-        u("#pageSelect").on("change", function(e) {
-            let url = "?" + {http_build_query(array_merge($_GET, ['posts' => '__padding']))};
-            window.location.assign(url.replace("__padding", e.target.value));
-        });
-    </script>
 {/block}

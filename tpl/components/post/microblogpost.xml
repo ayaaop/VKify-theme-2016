@@ -78,7 +78,7 @@
                     <div class="post_actions_icon"></div>
                     <div class="tippy-menu">
                         {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false)}
-                            <a class="edit" id="editPost">{_edit}</a>
+                            <a class="edit" id="vkifyEditPost">{_edit}</a>
                         {/if}
                         <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false)" class="delete" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
                         {if $canBePinned && !($forceNoPinLink ?? false)}
@@ -89,9 +89,15 @@
                             {/if}
                         {/if}
                         {if $feedIgnoreButton}
-                            <a id="__ignoreSomeoneFeed"  data-val='1' data-id="{$wallOwner->getRealId()}">{if $wallOwner instanceof \openvk\Web\Models\Entities\Club}{_ignore_club}{else}{_ignore_user}{/if} ({$wallOwner->getCanonicalName()})</a>
+                            <a id="__ignoreSomeoneFeed"  data-val='1' data-id="{$wallOwner->getRealId()}">{if $wallOwner instanceof \openvk\Web\Models\Entities\Club}{_ignore_club}{else}{_ignore_user}{/if}</a>
                         {/if}
                         <a n:if="$thisUser->getId() != $post->getOwner()->getId()"  class="report" href="javascript:reportPost({$post->getId()})">{_report}</a>
+                        {if $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()}
+                            <div class="separator"></div>
+                            <a href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}">
+                                {_changes_history}
+                            </a>
+                        {/if}
                     </div>
                 </div>
             </div>
@@ -171,13 +177,13 @@
                 </a>
             </div>
             <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" class="reply_link_wrap" href="javascript:window.toggle_comment_textarea({$commentTextAreaId})">{_comment}</a>
-            <div n:if="$suggestion && $canBePinned" class="suggestionControls">
+            <div n:if="$suggestion && $canBePinned" class="suggestionControls buttons_row">
                 <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
                 <input type="button" class="button button_gray" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
             </div>
         </div>
         <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
-            <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="button button_wide button_gray expand_button">{_view_other_comments}</a>
+            <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="button button_wide button_gray expand_button post_link">{_view_other_comments}</a>
             <div n:ifcontent class="comments">
                 {foreach $comments as $comment}
                     {include "../comment.xml", comment => $comment, $compact => true}

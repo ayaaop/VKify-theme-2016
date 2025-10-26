@@ -11,9 +11,7 @@
   z-index: 500;
 }
 
-#graffiti_wrapper.graffiti_fullscreen {
-  position: fixed;
-}
+
 
 #graffiti_height {
   height: 435px;
@@ -43,10 +41,7 @@
   z-index: 10003;
 }
 
-.graffiti_fullscreen #graffiti_gwrap {
-  position: absolute;
-  top: 50%;
-}
+
 
 #graffiti_aligner {
   display: block;
@@ -60,9 +55,7 @@
   z-index: 10003;
 }
 
-.graffiti_fullscreen #graffiti_aligner {
-  /*margin-top: -315px;*/
-}
+
 
 #graffiti_overlay {
  position: relative;
@@ -93,10 +86,7 @@
   background: #FFFFFF;
   text-align: center;
 }
-.graffiti_fullscreen #graffiti_bottombar {
-  position: absolute;
-  bottom: 0px;
-}
+
 
 #graffiti_controls {
 width: 586px;
@@ -131,15 +121,9 @@ width: 586px;
    overflow: visible;
 }
 
-.graffiti_fullscreen #graffiti_rewrap {
-  position: absolute;
-  bottom: 0px;
-  left: 50%;
-}
 
-.graffiti_fullscreen #graffiti_cpwrap {
-  left: -230px;
-}
+
+
 
 #graffiti_hist_helper {
   position: absolute;
@@ -155,9 +139,7 @@ width: 586px;
   cursor: s-resize;
 }
 
-.graffiti_fullscreen #graffiti_resizer {
-  display: none;
-}
+
 
 #graffiti_save {
   width: 1px;

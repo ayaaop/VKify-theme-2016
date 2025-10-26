@@ -150,19 +150,19 @@ window.changeLangPopup = function () {
     window.langPopup = new CMessageBox({
         title: tr('select_language'),
         body: `<a href="/language?lg=ru&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-<div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
+<div class="langSelect"><img src="/themepack/vkify16/3.3.2.0/resource/lang_flags/ru.png" style="margin-right: 14px;"><b>Русский</b></div>
 </a>
 <a href="/language?lg=uk&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.8/resource/lang_flags/uk.png"><b>Україньска</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.2.0/resource/lang_flags/uk.png"><b>Україньска</b></div>
 </a>
 <a href="/language?lg=en&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.2.0/resource/lang_flags/en.png" style="margin-right: 14px;"><b>English</b></div>
 </a>
 <a href="/language?lg=ru_sov&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img src="/themepack/vkify16/3.3.1.8/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
+   <div class="langSelect"><img src="/themepack/vkify16/3.3.2.0/resource/lang_flags/sov.png" style="margin-right: 14px;"><b>Советский</b></div>
 </a>
 <a href="/language?lg=ru_old&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.1.8/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
+   <div class="langSelect"><img style="margin-right: 14px;" src="/themepack/vkify16/3.3.2.0/resource/lang_flags/imp.png"><b>Дореволюціонный</b></div>
 </a>
 <a href="/language" onclick="langPopup.close(); allLangsPopup(); return false;">
    <div class="langSelect"><b style="padding: 2px 2px 2px 48px;">All languages »</b></div>
@@ -598,8 +598,8 @@ function parseAudio(onlyscnodes = false) {
 }
 
 const vkfavicon = {
-    "fav": "/themepack/vkify16/3.3.1.8/resource/favicon_vk.ico",
-	"fav_chat": "/themepack/vkify16/3.3.1.8/resource/fav_chat.ico",
+    "fav": "/themepack/vkify16/3.3.2.0/resource/favicon_vk.ico",
+	"fav_chat": "/themepack/vkify16/3.3.2.0/resource/fav_chat.ico",
     "playiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz///////////////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP//////////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAvkQAAL/4AADBsAAAw2wAAMUoAADG6AAAyKgAAMpsAADMNAAAzfwAAM/EAADRlAAA02AAANU0AADXCAAA2Nw==",
     "pauseiconnew": "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAABMLAAATCwAAAAAAAAAAAACrglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzEq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/////////////////q4Jc/6uCXP////////////////+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/////////////////6uCXP+rglz/////////////////q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP////////////////+rglz/q4Jc/////////////////6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDq4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglz/q4Jc/6uCXP+rglzDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
 }
@@ -617,10 +617,11 @@ window.initVKGraffiti = function (event) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.8/stylesheet/styles.css">
-    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.1.8/resource/vkgraffiti/graffiti.css">
+    <link rel="stylesheet" href="/themepack/vkify16/3.3.2.0/stylesheet/styles.css">
+    <link rel="stylesheet" href="/themepack/vkify16/3.3.2.0/resource/css/ui_common.css">
+    <link rel="stylesheet" href="${window.location.origin}/themepack/vkify16/3.3.2.0/resource/vkgraffiti/graffiti.css">
 </head>
-<body style="background: none">
+<body style="background: #fff">
     <div style="margin: 10px"><a onclick="Graffiti.flushHistory();">${window.vkifylang ? window.vkifylang.graffitiflushhistory : 'Clear'}</a> | <a onclick="Graffiti.backHistory();">${window.vkifylang ? window.vkifylang.graffitibackhistory : 'Undo'}</a></div>
     <div style="background-color: #F7F7F7; padding-top: 20px; padding-bottom: 1px;">
         <div id="graffiti_aligner">
@@ -637,14 +638,12 @@ window.initVKGraffiti = function (event) {
     <div id="graffiti_cpwrap" style="display:none; top:-210px;">
         <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
     </div>
-    <script src="${window.location.origin}/themepack/vkify16/3.3.1.8/resource/vkgraffiti/graffiti.js"></script>
+    <script src="/themepack/vkify16/3.3.2.0/resource/vkgraffiti/graffiti.js"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : 'Color:'} ",
             "graffiti_flash_opacity": "${window.vkifylang ? window.vkifylang.graffitiopacity : 'Opacity:'} ",
             "graffiti_flash_thickness": "${window.vkifylang ? window.vkifylang.graffitithickness : 'Thickness:'} ",
-            "graffiti_normal_size": "Оконный режим",
-            "graffiti_full_screen": "Полноэкранный режим"
         }};
         window.onload = function() {
             Graffiti.init();
@@ -1132,21 +1131,84 @@ window.initTabSlider = function() {
 
         if (!slider) return;
 
+        // Store animation state to handle rapid clicks
+        if (!container._tabSliderState) {
+            container._tabSliderState = {
+                isAnimating: false,
+                pendingTab: null,
+                animationTimeout: null,
+                transitionEndHandler: null
+            };
+        }
+
+        const state = container._tabSliderState;
+
         function initSliderPosition() {
             const activeTab = container.querySelector('.ui_tab_sel');
             if (activeTab) {
-                moveSliderTo(activeTab);
+                moveSliderTo(activeTab, false); // No animation for initial position
             }
         }
 
-        function moveSliderTo(tabAnchor) {
+        function moveSliderTo(tabAnchor, animate = true) {
             if (!tabAnchor || !slider) return;
 
+            // Force reflow to ensure accurate measurements
             tabAnchor.offsetHeight;
 
             const { offsetLeft, offsetWidth } = tabAnchor;
-            slider.style.transform = `translateX(${offsetLeft}px)`;
-            slider.style.width = `${offsetWidth}px`;
+
+            if (animate) {
+                // Ensure sliding class is active for animation
+                if (!container.classList.contains('ui_tabs_sliding')) {
+                    container.classList.add('ui_tabs_sliding');
+                }
+                slider.style.transform = `translateX(${offsetLeft}px)`;
+                slider.style.width = `${offsetWidth}px`;
+            } else {
+                // Instant positioning without animation
+                container.classList.remove('ui_tabs_sliding');
+                slider.style.transform = `translateX(${offsetLeft}px)`;
+                slider.style.width = `${offsetWidth}px`;
+            }
+        }
+
+        function finishTabSwitch(targetTab) {
+            if (!targetTab) return;
+
+            // Clear any existing timeout
+            if (state.animationTimeout) {
+                clearTimeout(state.animationTimeout);
+                state.animationTimeout = null;
+            }
+
+            // Update active tab
+            const currentActive = container.querySelector('.ui_tab_sel');
+            if (currentActive) {
+                currentActive.classList.remove('ui_tab_sel');
+            }
+            targetTab.classList.add('ui_tab_sel');
+
+            // Navigate to the URL
+            const href = targetTab.getAttribute('href');
+            if (href) {
+                const fullUrl = new URL(href, window.location.href).href;
+
+                if (window.router && window.router.route) {
+                    window.router.route(fullUrl);
+                } else {
+                    window.location.href = fullUrl;
+                }
+            }
+
+            // Reset animation state
+            state.isAnimating = false;
+            state.pendingTab = null;
+
+            // Remove sliding class after a brief delay to ensure animation completes
+            setTimeout(() => {
+                container.classList.remove('ui_tabs_sliding');
+            }, 50);
         }
 
         container.addEventListener('click', function(e) {
@@ -1155,31 +1217,43 @@ window.initTabSlider = function() {
 
             e.preventDefault();
 
-            container.classList.add('ui_tabs_sliding');
-
-            const currentActive = container.querySelector('.ui_tab_sel');
-            if (currentActive) {
-                currentActive.classList.remove('ui_tab_sel');
+            // If we're currently animating, update the pending tab
+            if (state.isAnimating) {
+                state.pendingTab = clickedTab;
+                moveSliderTo(clickedTab, true);
+                return;
             }
 
-            moveSliderTo(clickedTab);
+            // Start new animation
+            state.isAnimating = true;
+            state.pendingTab = clickedTab;
 
-            setTimeout(() => {
-                clickedTab.classList.add('ui_tab_sel');
+            // Move slider to new position
+            moveSliderTo(clickedTab, true);
 
-                container.classList.remove('ui_tabs_sliding');
-
-                const href = clickedTab.getAttribute('href');
-                if (href) {
-                    const fullUrl = new URL(href, window.location.href).href;
-
-                    if (window.router && window.router.route) {
-                        window.router.route(fullUrl);
-                    } else {
-                        window.location.href = fullUrl;
-                    }
-                }
+            // Set timeout for finishing the switch
+            state.animationTimeout = setTimeout(() => {
+                finishTabSwitch(state.pendingTab);
             }, 200);
+        });
+
+        // Listen for transition end to handle rapid clicks more smoothly
+        slider.addEventListener('transitionend', function(e) {
+            if (e.target === slider && state.isAnimating) {
+                // If there's a pending tab change, finish it immediately
+                if (state.pendingTab) {
+                    // Clear the timeout since we're finishing early
+                    if (state.animationTimeout) {
+                        clearTimeout(state.animationTimeout);
+                        state.animationTimeout = null;
+                    }
+
+                    // Small delay to ensure smooth visual transition
+                    setTimeout(() => {
+                        finishTabSwitch(state.pendingTab);
+                    }, 50);
+                }
+            }
         });
 
         initSliderPosition();
@@ -1566,7 +1640,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     };
 
     topPlayerPlay.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent tippy from opening
+        e.stopPropagation();
         if (window.player.audioPlayer.paused) {
             window.player.play();
         } else {
@@ -1576,14 +1650,14 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
 
     topPlayerPrev.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent tippy from opening
+        e.stopPropagation();
         if (window.player.currentTrack) {
             window.player.playPreviousTrack();
         }
     });
 
     topPlayerNext.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent tippy from opening
+        e.stopPropagation();
         if (window.player.currentTrack) {
             window.player.playNextTrack();
         }
@@ -1735,7 +1809,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             }
 
             tippy(element, {
-                content: title, // This is the line that was changed
+                content: title,
                 theme: 'special vk small',
                 placement: placement,
                 animation: 'fade',
@@ -1953,8 +2027,6 @@ function initializeSearchFastTips() {
             hideFastTips();
         }
     });
-
-
 }
 
 u(document).on('DOMContentLoaded', initializeSearchFastTips);
@@ -2030,7 +2102,7 @@ function switchProfileInfo() {
 const today = new Date();
 if (today.getDate() === 1 && today.getMonth() === 3) {
     const doge = document.createElement('script');
-    doge.setAttribute('src', '/themepack/vkify16/3.3.1.8/resource/doge.js');
+    doge.setAttribute('src', '/themepack/vkify16/3.3.2.0/resource/doge.js');
     document.head.appendChild(doge);
     u(document).on('click', '.post-like-button', function () {
         if (u(this).find('#liked').length) { Doge.show(); }
@@ -2075,7 +2147,7 @@ window.toggleDarkMode = function(enabled) {
             const link = document.createElement('link');
             link.id = 'dark-mode-css';
             link.rel = 'stylesheet';
-            link.href = '/themepack/vkify16/3.3.1.8/resource/css/dark-mode.css';
+            link.href = '/themepack/vkify16/3.3.2.0/resource/css/dark-mode.css';
             document.head.appendChild(link);
         }
     } else {
@@ -2524,8 +2596,6 @@ window.initAlbumPhotosLoader = function() {
     }
 };
 
-
-
 // Generic simple form modal factory for reuse
 function showSimpleFormModal({ title, fields, submitText = tr('create'), cancelText = tr('cancel'), onSubmit, focusFieldId, enableEnterHandler = true }) {
     const body = `
@@ -2745,104 +2815,6 @@ async function createAlbum(actionUrl) {
         nameInput.disabled = false;
         descInput.disabled = false;
         NewNotification(tr('error'), 'Failed to create album', null);
-        nameInput.focus();
-    }
-}
-
-// Albums: edit modal open (prefilled)
-function showEditAlbumModal(ev, actionUrl) {
-    if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
-    // Try to infer initial values from the current album page DOM
-    var nameText = document.querySelector('.photos_album_intro h1')?.textContent?.trim() || '';
-    var descText = '';
-    var full = document.querySelector('.photos_album_intro_desc .full_text');
-    if (full) descText = full.textContent.trim(); else {
-        var trunc = document.querySelector('.photos_album_intro_desc');
-        if (trunc) descText = trunc.textContent.trim();
-    }
-
-    const modal = showSimpleFormModal({
-        title: tr('edit_album'),
-        fields: [
-            { label: tr('name'), type: 'text', id: 'album_edit_name_input', name: 'name', value: nameText },
-            { label: tr('description'), type: 'textarea', id: 'album_edit_desc_input', name: 'desc', value: descText }
-        ],
-        submitText: tr('save'),
-        onSubmit: () => updateAlbum(actionUrl),
-        focusFieldId: 'album_edit_name_input'
-    });
-    return false;
-}
-
-// Albums: update submit
-async function updateAlbum(actionUrl) {
-    const nameInput = document.getElementById('album_edit_name_input');
-    const descInput = document.getElementById('album_edit_desc_input');
-
-    if (!nameInput || !descInput) {
-        console.error('Edit album form inputs not found');
-        return;
-    }
-
-    const albumName = nameInput.value.trim();
-    const albumDesc = descInput.value.trim();
-
-    if (!albumName) {
-        NewNotification(tr('error'), (tr('error_no_album_name') || 'Album name is required'), null);
-        nameInput.focus();
-        return;
-    }
-
-    CMessageBox.toggleLoader();
-    nameInput.disabled = true;
-    descInput.disabled = true;
-
-    const csrfToken = window.router?.csrf || document.querySelector('meta[name="csrf"]')?.getAttribute('value');
-    if (!csrfToken) {
-        CMessageBox.toggleLoader();
-        nameInput.disabled = false;
-        descInput.disabled = false;
-        NewNotification(tr('error'), 'CSRF token not found. Please refresh the page and try again.', null);
-        nameInput.focus();
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('name', albumName);
-    formData.append('desc', albumDesc);
-    formData.append('hash', csrfToken);
-
-    try {
-        const response = await fetch(actionUrl, {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
-        });
-
-        CMessageBox.toggleLoader();
-        const currentModal = window.messagebox_stack[window.messagebox_stack.length - 1];
-        if (currentModal) currentModal.close();
-
-        if (response.url) {
-            if (window.router && typeof window.router.route === 'function') {
-                window.router.route(response.url);
-            } else {
-                window.location.href = response.url;
-            }
-        } else {
-            // fallback to reload current album page
-            if (window.router && typeof window.router.route === 'function') {
-                window.router.route(window.location.pathname + window.location.search);
-            } else {
-                window.location.reload();
-            }
-        }
-    } catch (error) {
-        console.error('Error updating album:', error);
-        CMessageBox.toggleLoader();
-        nameInput.disabled = false;
-        descInput.disabled = false;
-        NewNotification(tr('error'), 'Failed to save album', null);
         nameInput.focus();
     }
 }

@@ -16,12 +16,18 @@
             <textarea name="html" style="display:none;"></textarea>
             <div id="editor" style="height:50vh;border:1px solid var(--border-color)"></div>
             
-            <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
-            
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <button class="button">{_save}</button>
-            &nbsp;
-            <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_gray">{_cancel}</a>
+            <div class="post_full_like_wrap" style="margin: 0; padding-bottom: 0;">
+                <div class="post_full_like">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <p class="nobold" style="margin: 10px 0"><a href="/kb/notes">{_something}</a> {_supports_xhtml}</p>
+                </div>
+                <div class="reply_link_wrap">
+                    <div class="post_full_like">
+                        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_light">{_cancel}</a>
+                        <button class="post_like button">{_save}</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     

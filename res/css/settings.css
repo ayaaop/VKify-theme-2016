@@ -74,6 +74,10 @@
     width: fit-content;
 }
 
+label.checkbox .nobold {
+    margin-top: 5px;
+}
+
 .form_field #filename:not(:empty) {
     margin-top: 10px;
 }

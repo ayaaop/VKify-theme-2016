@@ -60,7 +60,8 @@
                         <a id="__vkifyVideoAttachment" class="attach_video" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_video}">
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        <a id="__vkifyAudioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_audio}">
+                        <a id="__vkifyAudioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_audio}"
+                            {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
                             <div class="post-attach-menu__icon"></div>
                         </a>
 

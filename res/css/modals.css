@@ -31,7 +31,7 @@
 	opacity: 1;
 }
 .photo_close_icon, .photo_minimize_icon, .photo_toggle_sideblock_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_icon.png)no-repeat;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_icon.png)no-repeat;
 }
 .photo_close_icon {
 	background-position: 0 0;
@@ -86,6 +86,9 @@
 	float: left;
 	margin-right: 10px;
 	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 }
 .pv_left .pv_bottom_actions {
 	opacity: 1;
@@ -124,7 +127,7 @@
 .pv_left .pv_bottom_actions .pv_actions_more::after {
 	content: " ";
 	display: inline-block;
-	background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/white_arrow.png);
+	background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/white_arrow.png);
 	width: 8px;
 	height: 6px;
 	margin-left: 5px;
@@ -228,7 +231,7 @@
 	--nav_btn_icon_margin: calc(var(--nav_btn_icon_height)*-1/2);
 	height: var(--nav_btn_icon_height);
 	width: 20px;
-	background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/pv_layer_controls.png);
+	background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/pv_layer_controls.png);
 	background-position: 0-25px;
 	position: absolute;
 	top: 50%;
@@ -390,7 +393,7 @@
 	opacity: 1;
 }
 .video_close_icon, .video_minimize_icon, .video_toggle_sideblock_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_icon.png)no-repeat;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_icon.png)no-repeat;
 }
 .video_close_icon {
 	background-position: 0 0;
@@ -481,7 +484,7 @@
 	height: 15px
 }
 .video_like_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png?8) no-repeat 0 0;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png?8) no-repeat 0 0;
 	float: left;
 	height: 10px;
 	width: 13px;
@@ -493,7 +496,7 @@
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
 	.video_like_icon {
-		background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions_2x.png?8);
+		background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions_2x.png?8);
 		background-size: 19px 199px
 	}
 }
@@ -514,7 +517,7 @@
 	padding-right: 8px
 }
 .video_share_button .video_share_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png?8) no-repeat 0 -44px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png?8) no-repeat 0 -44px;
 	height: 13px;
 	width: 12px;
 	margin-right: 7px;
@@ -524,12 +527,12 @@
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
 	.video_share_button .video_share_icon {
-		background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions_2x.png?8);
+		background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions_2x.png?8);
 		background-size: 19px 199px
 	}
 }
 .video_edit_button .video_edit_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png?8) no-repeat 0 -61px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png?8) no-repeat 0 -61px;
 	height: 12px;
 	width: 12px;
 	display: inline-block;
@@ -539,12 +542,12 @@
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
 	.video_edit_button .video_edit_icon {
-		background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions_2x.png?8);
+		background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions_2x.png?8);
 		background-size: 19px 199px
 	}
 }
 .video_delete_button .video_delete_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png?8) no-repeat 0 -92px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png?8) no-repeat 0 -92px;
 	height: 9px;
 	width: 9px;
 	display: inline-block;
@@ -553,12 +556,12 @@
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
 	.video_delete_button .video_delete_icon {
-		background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions_2x.png?8);
+		background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions_2x.png?8);
 		background-size: 19px 199px
 	}
 }
 .video_add_button .video_add_icon {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png?8) no-repeat 0 -15px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png?8) no-repeat 0 -15px;
 	height: 12px;
 	width: 12px;
 	margin-bottom: -2px;
@@ -589,10 +592,10 @@
 	opacity: 1;
 }
 .miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_return {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_icon.png) no-repeat 3px -116px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_icon.png) no-repeat 3px -116px;
 }
 .miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_close {
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/video_icon.png) no-repeat 3px -136px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/video_icon.png) no-repeat 3px -136px;
 }
 .miniplayer-body {
 	height: calc(100% - 30px);
@@ -625,6 +628,17 @@
 	bottom: 0;
 }
 
+/* post popup */
+.post_popup_modal .ovk-modal-video-window {
+	width: calc(var(--page-width) - 245px)
+}
+.post_popup_modal #standaloneCommentBox {
+	top: unset;
+	bottom: 0;
+}
+.post_popup_modal .pr {
+	padding: 40px 0;
+}
 
 /* attach shenanigans */
 .choose_upload_area {
@@ -644,7 +658,7 @@
 .choose_upload_area_label {
 	display: inline-block;
 	padding-left: 29px;
-	background: url(/themepack/vkify16/3.3.1.8/resource/icons/upload_icon.png) no-repeat left 2px;
+	background: url(/themepack/vkify16/3.3.2.0/resource/icons/upload_icon.png) no-repeat left 2px;
 }
 .ovk-diag-body .attachment_selector:not(:has(.button)) .pr.pr_medium {
 	margin: 15px auto;

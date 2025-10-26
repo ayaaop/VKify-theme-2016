@@ -12,9 +12,6 @@
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
 
         <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
-        {if $_COOKIE['vkify16_darkmode'] === '1'}
-            <link id="dark-mode-css" rel="stylesheet" href="/themepack/vkify16/{$theme->getVersion()|noescape}/resource/css/dark-mode.css">
-        {/if}
         {script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/jquery-ui/dist/jquery-ui.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
@@ -47,6 +44,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
         {include "_includeCSS.xml"}
+        {if $_COOKIE['vkify16_darkmode'] === '1'}
+            <link id="dark-mode-css" rel="stylesheet" href="/themepack/vkify16/{$theme->getVersion()|noescape}/resource/css/dark-mode.css">
+        {/if}
+        {if $_COOKIE['vkify16_2018mode'] === '1'}
+            <link id="2018-mode-css" rel="stylesheet" href="/themepack/vkify16/{$theme->getVersion()|noescape}/resource/css/2018.css">
+        {/if}
 
         {ifset headIncludes}
             {include headIncludes}
@@ -318,7 +321,7 @@
                             </div>
 
                             <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
-                                <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 10px;" />
+                                <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 15px;" />
                             </a>
 
                             <div class="menu_divider" style="margin-left: 0; margin-top: 15px;"></div>
@@ -346,39 +349,6 @@
                                         </a>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="floating_sidebar">
-                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
-                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
-                                        <div class="counter">
-                                            +{$thisUser->getRequestsCount()}
-                                        </div>
-                                    </object>
-                                    <img src="/assets/packages/static/openvk/img/friends.svg">
-                                </a>
-                                <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
-                                    <img src="/assets/packages/static/openvk/img/photos.svg">
-                                </a>
-                                <a id="minilink-messenger" class="minilink" href="/im">
-                                    <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
-                                        <div class="counter">
-                                            +{$thisUser->getUnreadMessagesCount()}
-                                        </div>
-                                    </object>
-                                    <img src="/assets/packages/static/openvk/img/messages.svg">
-                                </a>
-                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
-                                    <img src="/assets/packages/static/openvk/img/groups.svg">
-                                </a>
-                                <a id="minilink-notifications" class="minilink" href="/notifications">
-                                    <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
-                                        <div class="counter">
-                                            +{$thisUser->getNotificationsCount()}
-                                        </div>
-                                    </object>
-                                    <img src="/assets/packages/static/openvk/img/feedback.svg">
-                                </a>
                             </div>
                         {elseif !$thisUser->isActivated()}
                             <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
@@ -409,6 +379,8 @@
                     {/ifset}
                     </div>
                 </div>
+                <div class="floating_sidebar"></div>
+            </div>
 
             <div class="page_body">
                     <script n:ifset="$flashMessage">
@@ -565,21 +537,20 @@
         {ifset bodyScripts}
             {include bodyScripts}
         {/ifset}
-        {script "js/router.js"}
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/router_patch.js"></script>
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/tippys.js"></script>
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/localizator.js" crossorigin="anonymous"></script>
+        <script>
+            window.openvk.locales = {
+            {foreach getLanguages() as $language}
+                {$language['code']}: {$language['native_name']},
+            {/foreach}
+            }
+        </script>
+        <script>
+            window.vkifylocalize("{php echo getLanguage()}");
+        </script>
     </body>
-	<script src="/themepack/vkify16/{$theme->getVersion()}/resource/router_patch.js"></script>
-    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/tippys.js"></script>
-	<script src="/themepack/vkify16/{$theme->getVersion()}/resource/localizator.js" crossorigin="anonymous"></script>
-	<script>
-		window.openvk.locales = {
-        {foreach getLanguages() as $language}
-			{$language['code']}: {$language['native_name']},
-        {/foreach}
-		}
-	</script>
-	<script>
-        window.vkifylocalize("{php echo getLanguage()}");
-	</script>
 </html>
 {/if}
 

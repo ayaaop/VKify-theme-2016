@@ -197,7 +197,7 @@ body {
 }
 
 .home_button .home_button_bg {
-    background: url("/themepack/vkify16/3.3.1.8/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.2.0/resource/icons/head_icons.png") no-repeat;
     background-position: 0 -98px;
     height: 19px;
     width: 32px;
@@ -454,7 +454,7 @@ input:focus, textarea:focus {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -473,7 +473,7 @@ input:focus, textarea:focus {
     background-position: -35px -53px;
 }
 [aria-expanded="true"] .top_nav_btn#headerMusicBtn .top_nav_btn_icon {
-	background-position: -65px -53px;
+    background-position: -65px -53px;
 }
 .top_nav_btn#top_notify_btn .top_nav_btn_icon {
     background-position: -5px -23px
@@ -516,7 +516,7 @@ input:focus, textarea:focus {
     margin: 7px 0px;
 }
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -565,7 +565,7 @@ input:focus, textarea:focus {
 .top_audio_player .top_audio_player_btn>div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -643,6 +643,7 @@ input:focus, textarea:focus {
     width: calc(var(--page-width) - 230px);
     background: var(--module-background-color);
     box-sizing: border-box;
+    z-index: 9;
 }
 .tippy-box[data-theme="musicpopup"] :is(.wide_column_wrap, .narrow_column_wrap) {
     height: 441px;
@@ -738,7 +739,7 @@ input:focus, textarea:focus {
     gap: 8px;
 }
 .musicIcon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/audio_player_controls.png) no-repeat;
     height: 10px;
     width: 12px;
 }
@@ -752,7 +753,7 @@ input:focus, textarea:focus {
 .bigPlayer .playButtons .playButton .playIcon {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/audio_player_controls.png) no-repeat;
     background-position: left top;
 }
 .bigPlayer .playButtons .playButton.pause .playIcon {
@@ -791,13 +792,13 @@ input:focus, textarea:focus {
     gap: 6px
 }
 .audioEntry .buttons .musicIcon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/common.png) no-repeat;
     height: 13px !important;
     width: 13px !important;
     box-sizing: border-box;
 }
 .audioEntry .buttons .musicIcon.download-icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/download_icon.png) no-repeat !important;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/download_icon.png) no-repeat !important;
 }
 .audioEntry .buttons .musicIcon.add-icon {
     background-position: 0px 1px !important;
@@ -939,7 +940,7 @@ input:focus, textarea:focus {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: var(--accent-color-2) url(/themepack/vkify16/3.3.1.8/resource/icons/audio_playpause.png) no-repeat 8px 7px;
+    background: var(--accent-color-2) url(/themepack/vkify16/3.3.2.0/resource/icons/audio_playpause.png) no-repeat 8px 7px;
 }
 .audioEntry.nowPlaying .playIcon {
     background-position-y: -15px !important;
@@ -981,7 +982,7 @@ input:focus, textarea:focus {
     border-radius: 14px;
     -o-transition: background-color .05s, color .05s;
     transition: background-color .05s, color .05s;
-    background: var(--search-color) url(/themepack/vkify16/3.3.1.8/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.3.2.0/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -1021,7 +1022,7 @@ input:focus, textarea:focus {
 }
 
 .navigation .link .link_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/menu_icon.png) no-repeat 7px -441px;
     height: 25px;
     width: 35px;
     opacity: .75;
@@ -1057,7 +1058,7 @@ input:focus, textarea:focus {
     background-position: 7px -105px;
 }
 .navigation .link[href="/donate"] .link_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .navigation .link.my_docs .link_icon {
@@ -1080,7 +1081,7 @@ input:focus, textarea:focus {
 .left_menu_nav_wrap #moreOptionsLink:after, .post-attach-menu__trigger:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1236,9 +1237,9 @@ label:not(:has(a)):only-child {
     margin-top: 0;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a)) {
-	display: flex !important;
-	line-height: 15px;
-	padding-block: 6px;
+    display: flex;
+    line-height: 15px;
+    padding-block: 7px;
 }
 label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {
     display: none;
@@ -1333,6 +1334,7 @@ label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {
     font-size: 12px;
     color: var(--muted-text-color) !important;
     line-height: 13px;
+    margin: 0;
 }
 .audiosContainer .loadMore {
     padding: 7px 0;
@@ -1350,7 +1352,7 @@ label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -1498,7 +1500,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     height: 0;
 }
 
-.post-horizontal:not(:empty), .post-vertical:not(:empty), .post-had-geo:not(:empty), .post-source:not(:empty), .post-has-poll:not(:empty), .post-has-geo.appended-geo {
+.model_content_textarea :is(.post-horizontal:not(:empty), .post-vertical:not(:empty), .post-has-geo:not(:empty), .post-source:not(:empty), .post-has-poll:not(:empty), .post-has-geo.appended-geo) {
     padding: 0 20px 10px;
     margin: 0;
 }
@@ -1519,10 +1521,10 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 .post-buttons .vertical-attachment .vertical-attachment-content {
     padding: 0;
-    max-height: 32px;
+    max-height: unset;
 }
 .attachment_note .attachment_note_text, .post-upload, .post-has-poll, .post-has-note, .post-source {
-    color: var(--muted-text-color)
+    color: var(--muted-text-color-2)
 }
 .vertical-attachment-remove {
     margin: auto 0;
@@ -1582,7 +1584,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .tippy-box .post-opts {
-	margin: 5px 0 0;
+    margin: 5px 0 0;
 }
 
 #wallAttachmentMenu>a:hover {
@@ -1603,6 +1605,18 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 
 .post-attach-menu__trigger::after {
     margin: 2px 0 0;
+}
+
+.post-source #remove_source_button, #small_remove_button {
+    display: block;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/attach_icons.png?4)no-repeat 0 0;
+    width: 9px;
+    height: 9px;
+    margin: 2px;
+    transition: opacity .15s ease;
+}
+.post-source #remove_source_button:hover, #small_remove_button:hover {
+    opacity: .9;
 }
 
 #wallAttachmentMenu>a {
@@ -1627,7 +1641,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .post-attach-menu__icon, .post-upload::before, .post-has-poll::before, .post-has-note::before, .attachment_note::before {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_icon.png) no-repeat;
     opacity: .7;
     content: '';
 }
@@ -1714,7 +1728,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     width: 30px;
     height: 30px;
     border-radius: 3px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/doc_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/doc_icons.png) no-repeat;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1737,8 +1751,15 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     border: 0;
     padding-top: 0;
 }
-.attachment_doc {
+.attachment_doc, .attachments .attachment_note {
     padding: 0;
+}
+.attachment_note .attachment_note_content {
+    height: unset;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
 .attachments .docListViewItem {
     padding: 4px 0;
@@ -1966,7 +1987,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_like_icon, .post_share_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_icon.png) no-repeat 0 0;
     display: inline-block;
     width: 16px;
     height: 13px;
@@ -1998,6 +2019,10 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
     margin-bottom: 0;
     margin: 2px 3px 0;
     width: 14px;
+}
+
+.suggestionControls {
+    margin: 0 auto;
 }
 
 .expand_button {
@@ -2042,6 +2067,9 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .post.copy_quote .wall_post_text {
     padding-top: 0;
 }
+.post.copy_quote .post-signature, .post.copy_quote .sourceDiv {
+    margin-inline: 0;
+}
 
 .written {
     background: none;
@@ -2070,7 +2098,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -2245,7 +2273,7 @@ h4.gifts_section_header {
     vertical-align: top;
 }
 .like_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -2279,7 +2307,7 @@ h4.gifts_section_header {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     cursor: pointer;
     height: 13px;
@@ -2299,18 +2327,24 @@ h4.gifts_section_header {
     opacity: 1;
 }
 .reply_action.reply_report_action {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/common.png) 0px -454px;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/common.png) 0px -454px;
     background-size: 24px;
 }
 .reply .reply_action.reply_report_action:hover {
     opacity: .9;
 }
 .post.reply .reply_text {
-    padding: 3px 0 0;
+    padding: 5px 0 0;
     line-height: 16px;
+}
+.really_text+.attachments {
+    margin: 10px 0 0;
 }
 .reply .edit_menu {
     padding: 6px 0 0;
+}
+.edit-menu .post-buttons {
+    margin-top: 10px;
 }
 .reply_footer {
     font-size: 12.5px;
@@ -2325,6 +2359,9 @@ h4.gifts_section_header {
     font-size: 12.5px;
     color: var(--muted-text-color);
     padding: 0;
+}
+.edit_menu .edit_menu_buttons {
+    margin: 0;
 }
 
 /* album photos */
@@ -2655,7 +2692,7 @@ h4.gifts_section_header {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.1.8/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.2.0/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -2742,7 +2779,7 @@ h4.gifts_section_header {
     width: 16px;
     height: 16px;
     background-repeat: no-repeat;
-    background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/photo_edit_actions.png)
+    background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/photo_edit_actions.png)
 }
 .video_thumb_actions .video_thumb_action_edit .icon {
     background-position: 0 -65px
@@ -2830,7 +2867,8 @@ h4.gifts_section_header {
 #standaloneCommentBox {
     background: var(--module-background-color);
     border-bottom: 0;
-    border-top: 1px solid var(--border-color);
+    border-radius: 0 0 var(--module-border-radius) var(--module-border-radius);
+    box-shadow: 0 1px 0 0 var(--shadow-bottom-color), 0 0 0 1px var(--shadow-outline-color);
 }
 
 .note_post .note_text {
@@ -2926,7 +2964,7 @@ a.poll-retract-vote, .poll h4, .poll-meta {
 .docListViewItem .doc_volume .doc_action {
     height: 13px;
     width: 13px;
-    background: url('/themepack/vkify16/3.3.1.8/resource/icons/common.png');
+    background: url('/themepack/vkify16/3.3.2.0/resource/icons/common.png');
 }
 .docListViewItem .doc_volume .doc_action, .docGalleryItem .doc_top_panel>div {
     opacity: .7;
@@ -3370,7 +3408,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
     height: 48px;
     width: 48px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/post_more.png) no-repeat center center;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/post_more.png) no-repeat center center;
     cursor: pointer;
 }
 
@@ -3473,10 +3511,10 @@ hr {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
-    padding: 6px;
+    padding: 6px 11px;
 }
 .list_view.playlistContainer {
-    padding: 20px 15px;
+    padding: 20px;
 }
 .audio_pl_item {
     display: inline-block;
