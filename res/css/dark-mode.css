@@ -77,7 +77,6 @@ body.dark-mode {
 	--audio-count-text-color: #a5a5a5;
 
 	/* Tooltip colors */
-	--tooltip-background-color: rgba(0, 0, 0, 0.85);
 	--tooltip-background-color-2: var(--module-background-color);
 	--tooltip-text-color: #ffffff;
 	--tooltip-text-color-2: #a5a5a5;
@@ -103,8 +102,6 @@ body.dark-mode {
 	--album-title-muted-color: #858585;
 	--profile-border-color: #454546;
 	--profile-button-border-color: #71aaeb;
-	--video-overlay-background: rgba(0, 0, 0, .7);
-	--video-overlay-background-hover: rgba(0, 0, 0, .8);
 }
 
 body.dark-mode .navigation .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .post_like_icon, body.dark-mode .post_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {

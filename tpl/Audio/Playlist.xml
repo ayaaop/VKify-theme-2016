@@ -34,7 +34,7 @@
         }
     </script>
     {if isset($thisUser) && $canEdit}
-        {var $extra = '<a class="video_edit_button button button_light" data-tip="simple-black" data-title="' . tr('edit_playlist') . '" href="/playlist' . $playlist->getPrettyId() . '/edit"><span class="video_edit_icon"></span></a>'}
+        {var $extra = '<a class="video_edit_button button button_light" data-tip="simple-black" data-tiptitle="' . tr('edit_playlist') . '" href="/playlist' . $playlist->getPrettyId() . '/edit"><span class="video_edit_icon"></span></a>'}
     {else}
         {var $extra = ''}
     {/if}
@@ -64,7 +64,7 @@
                         <h4>{$playlist->getName()}</h4>
                     </div>
                     <div class="playlistAuthor">
-                        <a href="/{$playlist->getOwner()->getId()}">{$playlist->getOwner()->getCanonicalName()}</a>
+                        <a href="{$playlist->getOwner()->getURL()}">{$playlist->getOwner()->getCanonicalName()}</a>
                     </div>
 
                     <div class="moreInfo">

@@ -13,9 +13,9 @@
         <div class="reply_content">
             <div class="fl_r reply_actions_wrap">
                 <div class="reply_actions" n:if="isset($thisUser)">
-                    <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="editPost" data-id="{$comment->getId()}" data-tip="simple-black" data-title="{_edit}"></a>
-                    <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tip="simple-black" data-title="{_delete}"></a>
-                    <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tip="simple-black" data-title="{_report}"></a>
+                    <a n:if="$comment->canBeEditedBy($thisUser)" class="reply_action reply_edit_action" id="vkifyEditPost" data-id="{$comment->getId()}" data-tip="simple-black" data-tiptitle="{_edit}"></a>
+                    <a n:if="$comment->canBeDeletedBy($thisUser)" class="reply_action reply_delete_action" href="/comment{$comment->getId()}/delete" data-tip="simple-black" data-tiptitle="{_delete}"></a>
+                    <a n:if="$thisUser->getId() != $author->getRealId()" class="reply_action reply_report_action" href="javascript:reportComment({$comment->getId()})" data-tip="simple-black" data-tiptitle="{_report}"></a>
                 </div>
             </div>
             <div class="reply_author">
@@ -35,8 +35,12 @@
                             {$comment->getText()|noescape}
                         {/if}
                     </div>
-                    
-                    {var $attachmentsLayout = $comment->getChildrenWithLayout(288)}
+
+                    {var $attachmentWidth = 288}
+                    {if isset($model) && $model === "photos"}
+                        {var $attachmentWidth = 240}
+                    {/if}
+                    {var $attachmentsLayout = $comment->getChildrenWithLayout($attachmentWidth)}
                     <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
                         <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};" data-localized-nsfw-text="{_nsfw_warning}">
                             {include "attachment.xml", attachment => $attachment[2], parent => $comment, parentType => "comment", tilesCount => sizeof($attachmentsLayout->tiles)}

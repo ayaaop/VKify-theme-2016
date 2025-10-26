@@ -28,13 +28,13 @@
     ]
 ]}
     <div class="wide_column_left">
-        <div class="wide_column_left">
-            <div class="narrow_column_wrap">
-                <div class="narrow_column">
-                    {include "../components/ui_rmenu.xml", items => $menuItems}
-                </div>
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.xml", items => $menuItems}
             </div>
-            <div class="wide_column_wrap">
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
                 {include "../components/post.xml", post => $post, forceNoCommentsLink => TRUE}
                 {include "../components/comments.xml",
                 comments => $comments,
@@ -42,15 +42,6 @@
                 page => $cPage,
                 model => "posts",
                 parent => $post }
-                {* Пока что не понял че с этим делать *}
-                <a
-                n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
-                style="display:block;width:96%;"
-                class="profile_link"
-                href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
-                >
-                {_changes_history}
-                </a>
             </div>
         </div>
     </div>

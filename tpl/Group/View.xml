@@ -53,6 +53,14 @@
 										{if $canEdit}
 											<a href="/club{$club->getId()}/edit">{_edit_group}</a>
 											<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
+											{var $clubPinned = $thisUser->isClubPinned($club)}
+											<a href="/groups_pin?club={$club->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$club->getName()}" data-group-url="{$club->getUrl()}">
+												{if $clubPinned}
+													{_remove_from_left_menu}
+												{else}
+													{_add_to_left_menu}
+												{/if}
+											</a>
 											<div class="separator"></div>
 										{/if}
 										{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}

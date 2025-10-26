@@ -52,8 +52,9 @@
                         {$x->getDescription()}
                     </div>
                     <div class="labeled message">
-                        <a n:if="$x->isInstalledBy($thisUser)" href="/apps/uninstall?hash={rawurlencode($csrfToken)}&app={$x->getId()}">{_app_uninstall|firstUpper}</a>{if $thisUser->getId() == $x->getOwner()->getId() && $x->isInstalledBy($thisUser)} • {/if}
-                        <a n:if="$thisUser->getId() == $x->getOwner()->getId()" href="/editapp?app={$x->getId()}">{_app_edit|firstUpper}</a>
+                        <a n:if="$x->isInstalledBy($thisUser)" href="/apps/uninstall?hash={rawurlencode($csrfToken)}&app={$x->getId()}">{_app_uninstall|firstUpper}</a><!--
+                        -->{if $thisUser->getId() == $x->getOwner()->getId() && $x->isInstalledBy($thisUser)}<span class="divider"></span>{/if}<!--
+                        --><a n:if="$thisUser->getId() == $x->getOwner()->getId()" href="/editapp?app={$x->getId()}">{_app_edit|firstUpper}</a>
                     </div>
                 </div>
                 <div class="action_links controls">

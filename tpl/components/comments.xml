@@ -15,7 +15,7 @@
         {/if}
         <div class='scroll_container'>
             {foreach $comments as $comment}
-                {include "comment.xml", comment => $comment}
+                {include "comment.xml", comment => $comment, model => $model}
             {/foreach}
             {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
         </div>

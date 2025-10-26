@@ -28,9 +28,9 @@
         </div>
     </div>
     <div class="doc_volume" n:if="!$hideButtons && $thisUser">
-        <div n:if="!$modifiable" id="report_icon"></div>
-        <div n:if="$modifiable" id="edit_icon"></div>
-        <div n:if="!$copied || $copied && $copyImportance" id="add_icon"></div>
-        <div n:if="$copied && !$copyImportance" id="remove_icon"></div>
+        <div class="doc_action" n:if="!$modifiable" id="report_icon" data-tip="simple-black" data-tiptitle="{_report}"></div>
+        <div class="doc_action" n:if="$modifiable" id="edit_icon" data-tip="simple-black" data-tiptitle="{_edit}"></div>
+        <div class="doc_action" n:if="!$copied" id="add_icon" data-tip="simple-black" data-tiptitle="{_add}"></div>
+        <div class="doc_action" n:if="$copied" id="remove_icon" data-tip="simple-black" data-tiptitle="{_remove}"></div>
     </div>
 </div>

@@ -69,13 +69,13 @@
         {/if}
     </div>
     <div class="labeled">                     
-        {if $manager}
+        {if $manager && $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
                 {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
             </a>
         {/if}
         
-        {if $club->getOwner()->getId() == $user->getId()}
+        {if $club->getOwner()->getId() == $user->getId() && $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
                 {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
             </a>
@@ -95,20 +95,23 @@
                     {_promote_to_admin}
                 {/if}
             </a>
-            <button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
-            <div id="profile_actions_tooltip">
-                <div class="tippy-menu">
-                    {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
-                        <a href="javascript:changeOwner({$club->getId()}, {$user->getId()}, '{$user->getCanonicalName()}')">
-                            {_promote_to_owner}
-                        </a>
-                    {/if}
-                    {if $manager}
-                        <a onclick="setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
-                    {/if}
-                    <a n:if="$club->getOwner()->getId() === $user->getId()" onclick="setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
+            {var $hasActions = ($club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()) || $manager || ($club->getOwner()->getId() === $user->getId())}
+            {if $hasActions}
+                <div class="profile_actions_split">
+                    <button class="button button_gray profile_more_btn fl_r" id="profile_more_btn"><span class="clear_fix">&nbsp;</span></button>
+                    <div id="profile_actions_tooltip" class="tippy-menu">
+                        {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
+                            <a href="javascript:changeOwner({$club->getId()}, {$user->getId()}, '{$user->getCanonicalName()}')">
+                                {_promote_to_owner}
+                            </a>
+                        {/if}
+                        {if $manager}
+                            <a href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
+                        {/if}
+                        <a n:if="$club->getOwner()->getId() === $user->getId()" href="javascript:setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">{_set_comment}</a>
+                    </div>
                 </div>
-            </div>
+            {/if}
         </div>
     {/if}
 {/block}

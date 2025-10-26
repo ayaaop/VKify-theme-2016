@@ -14,35 +14,59 @@
             <br/><br/>
             <textarea name="html" style="display:none;"></textarea>
             <div id="editor" style="height:300px;border:1px solid var(--border-color)"></div>
-            
-            <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
-            
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <button class="button">{_save}</button>
-            <a href="javascript:openPreviewWindow()" style="float: right;">{_note_preview}</a>
+            <div class="post_full_like_wrap" style="margin: 0; padding-bottom: 0;">
+                <div class="post_full_like">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <p class="nobold" style="margin: 10px 0"><a href="/kb/notes">{_something}</a> {_supports_xhtml}</p>
+                </div>
+                <div class="reply_link_wrap">
+                    <div class="post_full_like">
+                        <a href="javascript:openPreviewWindow()" class="button button_light">{_note_preview}</a>
+                        <button class="post_like button">{_save}</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
-    {script "js/node_modules/requirejs/bin/r.js"}
     <script>
-        require.config({
-            paths: {
-                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+        // Initialize Monaco Editor after AMD loader is available.
+        window.initNotesMonacoEditor = function() {
+            if (typeof require === 'undefined') {
+                // Wait for loader to be ready when navigating via AJAX.
+                setTimeout(window.initNotesMonacoEditor, 50);
+                return;
             }
-        });
-        require(['vs/editor/editor.main'], function() {
-            window._editor = monaco.editor.create(document.getElementById('editor'), {
-                value: "",
-                lineNumbers: "off",
-                language: "html"
+            require.config({
+                paths: {
+                    'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
+                }
             });
-        });
-        
-        document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea").value = window._editor.getValue();
-        });
+            require(['vs/editor/editor.main'], function() {
+                if (!document.getElementById('editor')) return;
+                // Prevent double-initialization
+                if (window._editor && typeof window._editor.getValue === 'function') return;
+                window._editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: "",
+                    lineNumbers: "off",
+                    language: "html"
+                });
 
+                const form = document.querySelector('#noteFactory');
+                if (form && !form._monacoSubmitBound) {
+                    form.addEventListener('submit', function() {
+                        const ta = form.querySelector('textarea');
+                        if (ta && window._editor) {
+                            ta.value = window._editor.getValue();
+                        }
+                    });
+                    form._monacoSubmitBound = true;
+                }
+            });
+        };
+
+        // Preview window helper
         window._preview = undefined;
         function openPreviewWindow() {
             if(typeof window._preview != "undefined") {
@@ -53,9 +77,13 @@
             window._preview = window.open("about:blank", "_blank", { popup: true });
             window._preview.document.write(`<style>form { display: none; }</style><form action="${ location.origin }/notes/prerender" method="POST" enctype="multipart/form-data"><input name="title" /><input name="html" /><input name="hash" /></form>`);
             window._preview.document.querySelector("input[name=title]").value = document.querySelector("input[name=name]").value;
-            window._preview.document.querySelector("input[name=html]").value = window._editor.getValue();
+            window._preview.document.querySelector("input[name=html]").value = window._editor ? window._editor.getValue() : '';
             window._preview.document.querySelector("input[name=hash]").value = document.querySelector("meta[name=csrf]").attributes.value.value;
             window._preview.document.querySelector("form").submit();
         }
+
+        // Ensure initialization on direct page loads
+        window.initNotesMonacoEditor();
     </script>
 {/block}
+

@@ -1,7 +1,7 @@
 {extends "../@layout.xml"}
 {block title}{_edit_topic} "{$topic->getTitle()}"{/block}
 
-{block content}
+{block content} 
     {include "../components/page_crumb_header.xml", crumbs: [
         ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
         ['href' => "/board{$club->getId()}", 'title' => tr("discussions")],

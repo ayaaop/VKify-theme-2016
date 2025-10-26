@@ -4,9 +4,9 @@
     {_new_playlist}
 {/block}
 
-{var $playlistsHref = !$_GET["gid"] ? "/playlists" . $thisUser->getId() : "/playlists-" . $club->getId()}
 
 {block content}
+    {var $playlistsHref = !$_GET["gid"] ? "/playlists" . $thisUser->getId() : "/playlists-" . $club->getId()}
     {include "../components/page_crumb_header.xml", crumbs: [
         ['href' => (!$_GET["gid"] ? $thisUser : $club)->getURL(), 'title' => (!$_GET["gid"] ? $thisUser : $club)->getCanonicalName()],
         ['href' => $playlistsHref, 'title' => tr("playlists")],

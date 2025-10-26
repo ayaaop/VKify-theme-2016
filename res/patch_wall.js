@@ -1,9 +1,8 @@
-u(document).on("click", "#editPost", async (e) => {
+u(document).on("click", "#vkifyEditPost", async (e) => {
     e.stopImmediatePropagation();
 
     const target = u(e.target)
     const post = target.closest(".post")
-    const content = post.find(".post-content")
 
     const edit_place_l = post.hasClass('reply')
         ? post.find('.reply_content > .post_edit')
@@ -11,201 +10,206 @@ u(document).on("click", "#editPost", async (e) => {
 
     const edit_place = u(edit_place_l.first())
     const id = post.attr('data-id').split('_')
-
     let type = 'post'
     if (post.hasClass('reply')) {
         type = 'comment'
     }
 
     if (edit_place.html() == '') {
-        target.addClass('lagged')
-        const params = {}
-        if (type == 'post') {
-            params['posts'] = post.attr('data-id')
-        } else {
-            params['owner_id'] = 1
-            params['comment_id'] = id[1]
-        }
+        try {
+            const params = {}
+            if (type == 'post') {
+                params['posts'] = post.attr('data-id')
+            } else {
+                params['owner_id'] = 1
+                params['comment_id'] = id[1]
+            }
 
-        const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
-        const api_post = api_req.items[0]
+            const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
+            const api_post = api_req.items[0]
 
-        edit_place.html(`
+            const html = `
             <div class='edit_menu module_body'>
                 <form id="write">
                     <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
-                    
-                    <div class='post-buttons'>
-                        <div class="post-horizontal"></div>
-                        <div class="post-vertical"></div>
-                        <div class="post-repost"></div>
-                        <div class="post-source"></div>
 
-                        <div class='post-opts'>
-                            ${type == 'post' ? `<label>
-                                <input type="checkbox" name="nsfw" ${api_post.is_explicit ? 'checked' : ''} /> ${tr('contains_nsfw')}
-                            </label>` : ''}
+                <div class='post-buttons'>
+                    <div class="post-horizontal"></div>
+                    <div class="post-vertical"></div>
+                    <div class="post-repost"></div>
+                    <div class="post-source"></div>
 
-                            ${api_post.owner_id < 0 && api_post.can_pin ? `<label>
-                                <input type="checkbox" name="as_group" ${api_post.from_id < 0 ? 'checked' : ''} /> ${tr('post_as_group')}
-                            </label>` : ''}
+                    <div class='post-opts'>
+                        ${type == 'post' ? `<label>
+                            <input type="checkbox" name="nsfw" ${api_post.is_explicit ? 'checked' : ''} /> ${tr('contains_nsfw')}
+                        </label>` : ''}
+
+                        ${api_post.owner_id < 0 && api_post.can_pin ? `<label>
+                            <input type="checkbox" name="as_group" ${api_post.from_id < 0 ? 'checked' : ''} /> ${tr('post_as_group')}
+                        </label>` : ''}
+                    </div>
+
+                    <input type="hidden" id="source" name="source" value="none" />
+                    <div class="post-bottom-acts">
+                        <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
+                            <a class="attach_photo" id="__vkifyPhotoAttachment" data-club="${api_post.owner_id < 0 ? Math.abs(api_post.owner_id) : 0}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('photo')}">
+                                <div class="post-attach-menu__icon"></div>
+                            </a>
+                            <a class="attach_video" id="__vkifyVideoAttachment" data-club="${api_post.owner_id < 0 ? Math.abs(api_post.owner_id) : 0}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('video')}">
+                                <div class="post-attach-menu__icon"></div>
+                            </a>
+                            <a class="attach_audio" id="__vkifyAudioAttachment" data-club="${api_post.owner_id < 0 ? Math.abs(api_post.owner_id) : 0}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('audio')}">
+                                <div class="post-attach-menu__icon"></div>
+                            </a>
+                            <a class="post-attach-menu__trigger" id="moreAttachTrigger">
+                                ${tr('show_more')}
+                            </a>
+                            <div class="tippy-menu" id="moreAttachTooltip">
+                                    <a class="attach_document" id="__vkifyDocumentAttachment" data-club="${api_post.owner_id < 0 ? Math.abs(api_post.owner_id) : 0}">
+                                        <div class="post-attach-menu__icon"></div>
+                                        ${tr('document')}
+                                    </a>
+                                    ${type == 'post' ? `<a class="attach_note" id="__notesAttachment">
+                                        <div class="post-attach-menu__icon"></div>
+                                        ${tr('note')}
+                                    </a>
+                                    <a class="attach_source" id='__sourceAttacher'>
+                                        <div class="post-attach-menu__icon"></div>
+                                        ${tr('source')}
+                                    </a>` : ''}
+                            </div>
                         </div>
-
-                        <input type="hidden" id="source" name="source" value="none" />
-                        <div class="post-bottom-acts">
-                            <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
-                                <a class="attach_photo" id="__vkifyPhotoAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('photo')}">
-                                    <div class="post-attach-menu__icon"></div>
-                                </a>
-                                <a class="attach_video" id="__vkifyVideoAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('video')}">
-                                    <div class="post-attach-menu__icon"></div>
-                                </a>
-                                <a class="attach_audio" id="__vkifyAudioAttachment" data-tip="simple-black" data-align="bottom-start" data-title="${tr('audio')}">
-                                    <div class="post-attach-menu__icon"></div>
-                                </a>
-                                <a class="post-attach-menu__trigger" id="moreAttachTrigger">
-                                    ${tr('show_more')}
-                                </a>
-                                <div class="tippy-menu" id="moreAttachTooltip">
-                                        <a class="attach_document" id="__vkifyDocumentAttachment">
-                                            <div class="post-attach-menu__icon"></div>
-                                            ${tr('document')}
-                                        </a>
-                                        ${type == 'post' ? `<a class="attach_note" id="__notesAttachment">
-                                            <div class="post-attach-menu__icon"></div>
-                                            ${tr('note')}
-                                        </a>
-                                        <a class="attach_source" id='__sourceAttacher'>
-                                            <div class="post-attach-menu__icon"></div>
-                                            ${tr('source')}
-                                        </a>` : ''}
-                                </div>
-                            </div>
-                            <div class='edit_menu_buttons post-bottom-buttons'>
-                                <input class='button button_light' type='button' id='__edit_cancel' value='${tr('cancel')}'>
-                                <input class='button' type='button' id='__edit_save' value='${tr('save')}'>
-                            </div>
+                        <div class='edit_menu_buttons post-bottom-buttons'>
+                            <input class='button button_light' type='button' id='__edit_cancel' value='${tr('cancel')}'>
+                            <input class='button' type='button' id='__edit_save' value='${tr('save')}'>
                         </div>
                     </div>
+                </div>
                 </form>
-            </div>`)
+            </div>`;
 
-        if (api_post.copyright) {
-            edit_place.find('.post-source').html(`
+            edit_place.html(html)
+
+            if (api_post.copyright) {
+                edit_place.find('.post-source').html(`
                 <span>${tr('source')}: <a>${escapeHtml(api_post.copyright.link)}</a></span>
                 <div id='remove_source_button'></div>
             `)
 
-            edit_place.find('.post-source #remove_source_button').on('click', (e) => {
-                edit_place.find('.post-source').html('')
-                edit_place.find(`input[name='source']`).attr('value', 'remove')
-            })
-        }
+                edit_place.find('.post-source #remove_source_button').on('click', (e) => {
+                    edit_place.find('.post-source').html('')
+                    edit_place.find(`input[name='source']`).attr('value', 'remove')
+                })
+            }
 
-        if (api_post.copy_history && api_post.copy_history.length > 0) {
-            edit_place.find('.post-repost').html(`
+            if (api_post.copy_history && api_post.copy_history.length > 0) {
+                edit_place.find('.post-repost').html(`
                 <span>${tr('has_repost')}.</span>
             `)
-        }
-
-        api_post.attachments.forEach(att => {
-            const type = att.type
-            let aid = att[type].owner_id + '_' + att[type].id
-            if (att[type] && att[type].access_key) {
-                aid += "_" + att[type].access_key
             }
 
-            if (type == 'video' || type == 'photo') {
-                let preview = ''
-
-                if (type == 'photo') {
-                    preview = att[type].sizes[1].url
-                } else {
-                    preview = att[type].image[0].url
+            api_post.attachments.forEach(att => {
+                const type = att.type
+                let aid = att[type].owner_id + '_' + att[type].id
+                if (att[type] && att[type].access_key) {
+                    aid += "_" + att[type].access_key
                 }
 
-                __appendToTextarea({
-                    'type': type,
-                    'preview': preview,
-                    'id': aid
-                }, edit_place)
-            } else if (type == 'poll') {
-                __appendToTextarea({
-                    'type': type,
-                    'alignment': 'vertical',
-                    'html': tr('poll'),
-                    'id': att[type].id,
-                    'undeletable': true,
-                }, edit_place)
-            } else {
-                const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
-                __appendToTextarea({
-                    'type': type,
-                    'alignment': 'vertical',
-                    'html': found_block.html(),
-                    'id': aid,
-                }, edit_place)
-            }
-        })
-        window.reinitializeTooltips(edit_place.nodes[0])
-        target.removeClass('lagged')
+                if (type == 'video' || type == 'photo') {
+                    let preview = ''
 
-        edit_place.find('.edit_menu #__edit_save').on('click', async (ev) => {
-            const text_node = edit_place.find('.edit_menu textarea')
-            const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`)
-            const as_group = edit_place.find(`.edit_menu input[name='as_group']`)
-            const copyright = edit_place.find(`.edit_menu input[name='source']`)
-            const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',')
-            const params = {}
+                    if (type == 'photo') {
+                        preview = att[type].sizes[1].url
+                    } else {
+                        preview = att[type].image[0].url
+                    }
 
-            params['owner_id'] = id[0]
-            params['post_id'] = id[1]
-            params['message'] = text_node.nodes[0].value
-
-            if (nsfw_mark.length > 0) {
-                params['explicit'] = Number(nsfw_mark.nodes[0].checked)
-            }
-
-            params['attachments'] = collected_attachments
-            if (collected_attachments.length < 1) {
-                params['attachments'] = 'remove'
-            }
-
-            if (as_group.length > 0 && as_group.nodes[0].checked) {
-                params['from_group'] = 1
-            }
-
-            if (copyright.nodes[0].value != 'none') {
-                params['copyright'] = copyright.nodes[0].value
-            }
-
-            u(ev.target).addClass('lagged')
-            try {
-                if (type == 'post') {
-                    await window.OVKAPI.call('wall.edit', params)
+                    __appendToTextarea({
+                        'type': type,
+                        'preview': preview,
+                        'id': aid
+                    }, edit_place)
+                } else if (type == 'poll') {
+                    __appendToTextarea({
+                        'type': type,
+                        'alignment': 'vertical',
+                        'html': tr('poll'),
+                        'id': att[type].id,
+                        'undeletable': true,
+                    }, edit_place)
                 } else {
-                    params['comment_id'] = id[1]
-                    await window.OVKAPI.call('wall.editComment', params)
+                    const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
+                    __appendToTextarea({
+                        'type': type,
+                        'alignment': 'vertical',
+                        'html': found_block.html(),
+                        'id': aid,
+                    }, edit_place)
                 }
-            } catch (e) {
-                fastError(e.message)
+            })
+            window.reinitializeTooltips(edit_place.nodes[0])
+            target.removeClass('lagged')
+
+            edit_place.find('.edit_menu #__edit_save').on('click', async (ev) => {
+                const text_node = edit_place.find('.edit_menu textarea')
+                const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`)
+                const as_group = edit_place.find(`.edit_menu input[name='as_group']`)
+                const copyright = edit_place.find(`.edit_menu input[name='source']`)
+                const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',')
+                const params = {}
+
+                params['owner_id'] = id[0]
+                params['post_id'] = id[1]
+                params['message'] = text_node.nodes[0].value
+
+                if (nsfw_mark.length > 0) {
+                    params['explicit'] = Number(nsfw_mark.nodes[0].checked)
+                }
+
+                params['attachments'] = collected_attachments
+                if (collected_attachments.length < 1) {
+                    params['attachments'] = 'remove'
+                }
+
+                if (as_group.length > 0 && as_group.nodes[0].checked) {
+                    params['from_group'] = 1
+                }
+
+                if (copyright.nodes[0].value != 'none') {
+                    params['copyright'] = copyright.nodes[0].value
+                }
+
+                u(ev.target).addClass('lagged')
+                try {
+                    if (type == 'post') {
+                        await window.OVKAPI.call('wall.edit', params)
+                    } else {
+                        params['comment_id'] = id[1]
+                        await window.OVKAPI.call('wall.editComment', params)
+                    }
+                } catch (e) {
+                    fastError(e.message)
+                    u(ev.target).removeClass('lagged')
+                    return
+                }
+
+                const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
+                    'method': 'POST'
+                })).text()
                 u(ev.target).removeClass('lagged')
-                return
-            }
+                post.removeClass('editing')
+                post.nodes[0].outerHTML = u(new_post_html).last().outerHTML
 
-            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
-                'method': 'POST'
-            })).text()
-            u(ev.target).removeClass('lagged')
-            post.removeClass('editing')
-            post.nodes[0].outerHTML = u(new_post_html).last().outerHTML
+                bsdnHydrate()
+            })
 
-            bsdnHydrate()
-        })
-
-        edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
-            post.removeClass('editing')
-        })
+            edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
+                post.removeClass('editing')
+            })
+        } catch (err) {
+            console.error('Failed to load post for editing:', err)
+            NewNotification(tr('error'), tr('error_loading_post'), null, () => { }, 4000, false)
+        }
     }
 
     post.addClass('editing')
@@ -226,7 +230,7 @@ function resetWallCheckboxStates() {
 }
 
 function setupTooltipCheckboxListeners() {
-    u(document).on('change', 'input[name="as_group"]', function(e) {
+    u(document).on('change', 'input[name="as_group"]', function (e) {
         window.wallCheckboxStates.as_group = e.target.checked;
 
         if (e.target.checked) {
@@ -238,11 +242,11 @@ function setupTooltipCheckboxListeners() {
         }
     });
 
-    u(document).on('change', 'input[name="force_sign"]', function(e) {
+    u(document).on('change', 'input[name="force_sign"]', function (e) {
         window.wallCheckboxStates.force_sign = e.target.checked;
     });
 
-    u(document).on('change', 'input[name="anon"]', function(e) {
+    u(document).on('change', 'input[name="anon"]', function (e) {
         window.wallCheckboxStates.anon = e.target.checked;
 
         if (e.target.checked) {
@@ -263,7 +267,7 @@ function setupTooltipCheckboxListeners() {
         }
     });
 
-    u(document).on('change', 'input[name="nsfw"]', function(e) {
+    u(document).on('change', 'input[name="nsfw"]', function (e) {
         window.wallCheckboxStates.nsfw = e.target.checked;
     });
 }
@@ -327,7 +331,7 @@ function switchAvatar(el, targetType) {
     }
 }
 
-window.handleWallAsGroupClick = function(el) {
+window.handleWallAsGroupClick = function (el) {
     window.wallCheckboxStates.as_group = el.checked;
 
     if (el.checked) {
@@ -356,7 +360,7 @@ window.handleWallAsGroupClick = function(el) {
     switchAvatar(el, 'group');
 };
 
-window.handleWallAnonClick = function(el) {
+window.handleWallAnonClick = function (el) {
     window.wallCheckboxStates.anon = el.checked;
 
     if (el.checked) {
@@ -377,7 +381,7 @@ window.handleWallAnonClick = function(el) {
     switchAvatar(el, 'anon');
 };
 
-u(document).on("submit", "#write form", function(e) {
+u(document).on("submit", "#write form", function (e) {
     const form = e.target;
 
     const checkboxes = [
@@ -409,7 +413,7 @@ u(document).on("submit", "#write form", function(e) {
     resetWallCheckboxStates();
 });
 
-u(document).on("click", "#write input[type='submit']", function(e) {
+u(document).on("click", "#write input[type='submit']", function (e) {
     const form = u(e.target).closest('form').nodes[0];
 
     const checkboxes = [
@@ -441,7 +445,7 @@ u(document).on("click", "#write input[type='submit']", function(e) {
     resetWallCheckboxStates();
 });
 
-window.initTextareaInteraction = function() {
+window.initTextareaInteraction = function () {
     const showComposer = (target) => {
         if (target.tagName === 'TEXTAREA' || target.classList?.contains('submit_post_field')) {
             target.closest('.model_content_textarea')?.classList.add('shown');
@@ -452,7 +456,6 @@ window.initTextareaInteraction = function() {
         document.addEventListener(event, e => showComposer(e.target), event === 'focus');
     });
 
-    // Show composer for existing attachments
     const checkAttachments = () => {
         document.querySelectorAll('.model_content_textarea').forEach(box => {
             const horizontal = box.querySelector('.post-horizontal');
@@ -463,7 +466,6 @@ window.initTextareaInteraction = function() {
         });
     };
 
-    // Initial check and observe for dynamic content
     checkAttachments();
     new MutationObserver(checkAttachments).observe(document.body, {
         childList: true,
@@ -471,7 +473,7 @@ window.initTextareaInteraction = function() {
     });
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     window.initTextareaInteraction();
 });
 
@@ -530,7 +532,7 @@ function addSuggestedTabToWall() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     addSuggestedTabToWall();
 });
 
@@ -540,7 +542,7 @@ if (window.router && window.router.addEventListener) {
     document.addEventListener('page:loaded', addSuggestedTabToWall);
 }
 
-window.onWallAsGroupClick = function(el) {
+window.onWallAsGroupClick = function (el) {
     const forceSignOpt = document.querySelector("#forceSignOpt");
     if (forceSignOpt) {
         forceSignOpt.style.setProperty('display', el.checked ? 'flex' : 'none', 'important');
@@ -556,7 +558,7 @@ window.onWallAsGroupClick = function(el) {
     }
 };
 
-window.onWallAnonClick = function(el) {
+window.onWallAnonClick = function (el) {
     const asGroupCheckbox = document.querySelector('input[name="as_group"]');
     if (asGroupCheckbox) {
         asGroupCheckbox.disabled = el.checked;
@@ -576,7 +578,7 @@ function toggleLongText(el) {
         return;
     }
 
-    if(full.classList.contains('hidden')) {
+    if (full.classList.contains('hidden')) {
         truncated.style.display = 'none';
         full.classList.remove('hidden');
         el.innerHTML = "<vkifyloc name='show_less'></vkifyloc>";
@@ -595,7 +597,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
     sourceAttacherContext = u(e.target).closest('#write');
 });
 
-u(document).on('click', '.ovk-diag-action #__setsrcbutton', async function(ev) {
+u(document).on('click', '.ovk-diag-action #__setsrcbutton', async function (ev) {
     ev.preventDefault();
     ev.stopImmediatePropagation();
 
@@ -604,7 +606,7 @@ u(document).on('click', '.ovk-diag-action #__setsrcbutton', async function(ev) {
     const source_input = u(`#source_flex_kunteynir input[type='text']`);
     const source_value = source_input.nodes[0].value ?? '';
 
-    if(source_value.length < 1) {
+    if (source_value.length < 1) {
         return;
     }
 
@@ -614,9 +616,9 @@ u(document).on('click', '.ovk-diag-action #__setsrcbutton', async function(ev) {
         const response = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(source_value)}`);
         const result = await response.json();
 
-        if(result.error_code) {
+        if (result.error_code) {
             __removeDialog();
-            switch(result.error_code) {
+            switch (result.error_code) {
                 case 3102:
                     fastError(tr('error_adding_source_regex'));
                     return;
@@ -641,7 +643,7 @@ u(document).on('click', '.ovk-diag-action #__setsrcbutton', async function(ev) {
             <div id='remove_source_button'></div>
         `);
 
-        sourceAttacherContext.find('.post-source #remove_source_button').on('click', function() {
+        sourceAttacherContext.find('.post-source #remove_source_button').on('click', function () {
             const writeContainer = u(this).closest('#write');
             writeContainer.find('.post-source').html('');
             writeContainer.find(`input[name='source']`).attr('value', 'none');
@@ -684,19 +686,19 @@ async function OpenVideo(video_arr = [], init_player = true) {
                     isPrivacyRestricted = true;
                 }
             }
-        } catch(e) {
+        } catch (e) {
             console.warn('Could not check user privacy status:', e);
         }
     }
 
     if (!isPrivacyRestricted) {
         try {
-            video_api = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1});
+            video_api = await window.OVKAPI.call('video.get', { 'videos': `${video_owner}_${video_id}`, 'extended': 1 });
 
-            if(!video_api.items || !video_api.items[0]) {
+            if (!video_api.items || !video_api.items[0]) {
                 throw new Error('Not found');
             }
-        } catch(e) {
+        } catch (e) {
             const errorMessage = e.message ? e.message.toLowerCase() : '';
             if (errorMessage.includes('access') || errorMessage.includes('private') ||
                 errorMessage.includes('permission') || errorMessage.includes('forbidden') ||
@@ -715,8 +717,8 @@ async function OpenVideo(video_arr = [], init_player = true) {
     const author = find_author(video_object.owner_id, video_api.profiles, video_api.groups);
 
     let player_html = '';
-    if(init_player) {
-        if(video_object.platform == 'youtube') {
+    if (init_player) {
+        if (video_object.platform == 'youtube') {
             const video_url = new URL(video_object.player);
             const video_id = video_url.pathname.replace('/', '');
             player_html = `
@@ -731,7 +733,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
                 </div>
             `;
         } else {
-            if(!video_object.is_processed) {
+            if (!video_object.is_processed) {
                 player_html = `<span class='gray'>${tr('video_processing')}</span>`;
             } else {
                 const author_name = `${author.first_name} ${author.last_name}`;
@@ -779,21 +781,19 @@ async function OpenVideo(video_arr = [], init_player = true) {
         `)
     });
 
-    if(video_object.platform != 'youtube' && video_object.is_processed) {
+    if (video_object.platform != 'youtube' && video_object.is_processed) {
         bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0]);
     }
 
     async function loadVideoInfo() {
-        // Show loading indicator
+
         u('#video_info_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
 
-        // Fetch video page - exactly like original implementation
         const fetcher = await fetch(`/video${pretty_id}`);
         const fetch_r = await fetcher.text();
         const dom_parser = new DOMParser();
         const results = u(dom_parser.parseFromString(fetch_r, 'text/html'));
 
-        // Copy original pattern: if element exists, use content; if not, show minimal fallback
         const videoInfo = results.find('.video_info');
         if (videoInfo.length > 0) {
             const viewButton = `<a href="/video${pretty_id}" class="video_view_button button button_light _view_wrap">
@@ -814,7 +814,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
                 }
             }, 200);
         } else {
-            // If video info element doesn't exist (due to privacy or other reasons), show minimal info
+
             msgbox.getNode().find('.video_info').html(`<div class="video_info_title">${escapeHtml(video_object.title)}</div>`);
         }
 
@@ -841,7 +841,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
     });
 
     const originalVideoClose = msgbox.close;
-    msgbox.close = function() {
+    msgbox.close = function () {
         if (window.cleanupModalTooltips) {
             window.cleanupModalTooltips(msgbox.getNode().nodes[0]);
         }
@@ -941,7 +941,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
             containment: 'window',
             handle: '.miniplayer-head',
             cancel: '.miniplayer-head-buttons',
-            stop: function() {
+            stop: function () {
                 saveMiniplayerSettings();
             }
         });
@@ -992,10 +992,10 @@ async function OpenVideo(video_arr = [], init_player = true) {
             maxWidth: 3000,
             minHeight: 150,
             minWidth: 200,
-            resize: function() {
+            resize: function () {
                 adjustVideoPlayerSize();
             },
-            stop: function() {
+            stop: function () {
                 saveMiniplayerSettings();
             }
         });
@@ -1006,7 +1006,7 @@ async function OpenVideo(video_arr = [], init_player = true) {
         window.addEventListener('resize', resizeHandler);
 
         const originalRemove = miniplayer.remove;
-        miniplayer.remove = function() {
+        miniplayer.remove = function () {
             window.removeEventListener('resize', resizeHandler);
             return originalRemove.call(this);
         };
@@ -1037,19 +1037,21 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     if (photo_owner && photo_owner > 0) {
         try {
-            const userInfo = await window.OVKAPI.call('users.get', {
-                'user_ids': photo_owner,
-                'fields': 'is_closed'
-            });
+            const photo_url = `/photo${photo_id}`;
+            const photo_response = await fetch(photo_url, { method: 'HEAD' });
 
-            if (userInfo && userInfo[0] && userInfo[0].is_closed) {
+            if (photo_response.status === 302 || !photo_response.ok || photo_response.redirected || photo_response.status === 403 || photo_response.status === 404) {
                 const currentUser = window.openvk.current_id;
                 if (currentUser != photo_owner) {
                     isPrivacyRestricted = true;
                 }
             }
-        } catch(e) {
-            console.warn('Could not check user privacy status:', e);
+        } catch (e) {
+            console.warn('Could not check photo page accessibility:', e);
+            const currentUser = window.openvk.current_id;
+            if (currentUser != photo_owner) {
+                isPrivacyRestricted = true;
+            }
         }
     }
 
@@ -1134,8 +1136,6 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         msgbox.getNode().find('.pv_counter').html(countText);
     }
 
-
-
     async function loadContext(contextType, contextId) {
         if (contextType == 'post' || contextType == 'comment') {
             const form_data = new FormData();
@@ -1170,7 +1170,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
             });
             imagesCount = result.count;
 
-            if (!json) json = {'body': {}};
+            if (!json) json = { 'body': {} };
             json.body = Object.assign(converted_items, json.body);
         }
 
@@ -1270,26 +1270,26 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     msgbox.getNode().find('#pv_nav_left').on('click', (e) => {
         e.preventDefault();
-        slidePhoto(0); // left
+        slidePhoto(0); 
     });
 
     msgbox.getNode().find('#pv_nav_right').on('click', (e) => {
         e.preventDefault();
-        slidePhoto(1); // right
+        slidePhoto(1); 
     });
 
     initializeNavigation();
 
-    const keyboardHandler = function(e) {
+    const keyboardHandler = function (e) {
         if (msgbox.hidden) return;
 
-        if (e.keyCode === 37) { // Left arrow
+        if (e.keyCode === 37) { 
             e.preventDefault();
-            slidePhoto(0); // left
-        } else if (e.keyCode === 39) { // Right arrow
+            slidePhoto(0); 
+        } else if (e.keyCode === 39) { 
             e.preventDefault();
-            slidePhoto(1); // right
-        } else if (e.keyCode === 27) { // Escape
+            slidePhoto(1); 
+        } else if (e.keyCode === 27) { 
             e.preventDefault();
             msgbox.close();
         }
@@ -1298,7 +1298,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     u(document).on('keydown', keyboardHandler);
 
     const originalPhotoClose = msgbox.close;
-    msgbox.close = function() {
+    msgbox.close = function () {
         u(document).off('keydown', keyboardHandler);
 
         if (window.cleanupModalTooltips) {
@@ -1308,21 +1308,20 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         originalPhotoClose.call(this);
     };
 
-
-
     async function loadPhotoInfoForPhoto(photoId) {
-        // Show loading indicators
-        u('#pv_right_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
-        u('#pv_actions_loader').html(`<div class="pr pr_baw"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div">`);
 
-        // Fetch photo page - exactly like original implementation
+        u('#pv_right_loader').html('');
+        LoaderUtils.show('#pv_right_loader', { size: 'medium' });
+
+        u('#pv_actions_loader').html('');
+        LoaderUtils.show('#pv_actions_loader', { theme: 'baw' });
+
         const photo_url = `/photo${photoId}`;
         const photo_page = await fetch(photo_url);
         const photo_text = await photo_page.text();
         const parser = new DOMParser();
         const body = parser.parseFromString(photo_text, "text/html");
 
-        // Copy original pattern: if element exists, use innerHTML; if not, use empty string
         const pvRight = body.querySelector('.pv_right');
         msgbox.getNode().find('.pv_right').html(pvRight ? pvRight.innerHTML : '');
 
@@ -1332,7 +1331,6 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         const pvAlbumName = body.querySelector('.pv_album_name');
         msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
 
-        // Initialize any dynamic elements that were loaded
         msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
 
         setTimeout(() => {
@@ -1367,31 +1365,135 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 }
 
 if (typeof window.random_int === 'undefined') {
-    window.random_int = function(min, max) {
+    window.random_int = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 }
 
-class BaseRequestManager {
-    constructor() {
-        this.currentRequestId = 0;
-    }
+class AttachmentConfig {
+    static DEFAULT_SETTINGS = {
+        MAX_ATTACHMENTS: 10,
+        DEFAULT_PER_PAGE: window.openvk?.default_per_page || 10,
+        PHOTOS_PER_PAGE: 16,
+        ALBUMS_PER_PAGE: 2,
+        VIDEOS_PER_PAGE: window.openvk?.default_per_page || 10,
+        AUDIOS_PER_PAGE: window.openvk?.default_per_page || 10,
+        DOCS_PER_PAGE: window.openvk?.default_per_page || 10,
+        SEARCH_TIMEOUT: 300,
+        DIALOG_WIDTHS: {
+            photo: '640px',
+            video: '640px',
+            audio: '560px',
+            document: '636px'
+        },
+        DIALOG_HEIGHTS: {
+            photo: '640px',
+            video: '640px',
+            audio: '850px',
+            document: 'auto'
+        },
+        DIALOG_HEIGHT_TYPES: {
+            photo: 'max-height',
+            video: 'max-height',
+            audio: 'height',
+            document: 'max-height'
+        }
+    };
 
-    cancelOngoingRequests() {
-        this.currentRequestId++;
-    }
-
-    createCancellableRequest() {
-        this.cancelOngoingRequests();
-        return ++this.currentRequestId;
-    }
-
-    isRequestCancelled(requestId) {
-        return requestId !== this.currentRequestId;
+    static getConfig(type) {
+        return {
+            ...this.DEFAULT_SETTINGS,
+            itemsPerPage: this.DEFAULT_SETTINGS[`${type.toUpperCase()}S_PER_PAGE`] || this.DEFAULT_SETTINGS.DEFAULT_PER_PAGE
+        };
     }
 }
 
-class RequestManager extends BaseRequestManager {}
+class AttachmentSelectorFactory {
+    static getAttachmentSelector(type, itemId) {
+        const horizontalTypes = ['photo', 'video'];
+        return horizontalTypes.includes(type)
+            ? `.post-horizontal > a[data-type="${type}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${type}"][data-id="${itemId}"]`
+            : `.post-vertical .vertical-attachment[data-type="${type}"][data-id="${itemId}"]`;
+    }
+
+    static getAllAttachmentsSelector() {
+        return '.post-horizontal > a, .post-vertical > .vertical-attachment';
+    }
+
+    static getSpecificAttachmentSelector(type, context = 'form') {
+        if (context === 'playlist' && type === 'audio') {
+            return '.PE_audios .vertical-attachment';
+        }
+        return type === 'audio' && context === 'playlist'
+            ? `.PE_audios .vertical-attachment[data-id="{{itemId}}"]`
+            : `.post-vertical .vertical-attachment[data-type="${type}"][data-id="{{itemId}}"]`;
+    }
+}
+
+class AttachmentErrorHandler {
+    static showError(container, message, type = 'error') {
+        if (container) {
+            container.html(`<div class="information">${message}</div>`);
+        }
+        console.error(`Attachment ${type}:`, message);
+    }
+
+    static showAttachmentLimitError() {
+        NewNotification(
+            tr('error'),
+            tr('too_many_attachments'),
+            null,
+            () => { },
+            5000,
+            false
+        );
+    }
+
+    static showLoadingError(container, errorType) {
+        const messages = {
+            photos: tr('error_loading_photos'),
+            videos: tr('error_loading_videos'),
+            audios: tr('error_loading_audios'),
+            documents: tr('error_loading_documents'),
+            albums: tr('error_loading_albums')
+        };
+        this.showError(container, messages[errorType] || 'Loading error');
+    }
+}
+
+class RequestManager {
+    constructor() {
+        this.requests = new Map();
+        this.requestIdCounter = 0;
+    }
+
+    createCancellableRequest() {
+        const requestId = ++this.requestIdCounter;
+        this.requests.set(requestId, { cancelled: false });
+        return requestId;
+    }
+
+    cancelRequest(requestId) {
+        const request = this.requests.get(requestId);
+        if (request) {
+            request.cancelled = true;
+        }
+    }
+
+    isRequestCancelled(requestId) {
+        const request = this.requests.get(requestId);
+        return request ? request.cancelled : true;
+    }
+
+    cancelOngoingRequests() {
+        this.requests.forEach(request => request.cancelled = true);
+        this.requests.clear();
+    }
+
+    cleanup() {
+        this.requests.clear();
+    }
+}
 
 function formatRelativeTime(timestamp) {
     if (!timestamp) return '';
@@ -1422,12 +1524,7 @@ function formatRelativeTime(timestamp) {
         return tr('time_yesterday');
     }
 
-    const options = {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-    };
-
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
     try {
         return videoDate.toLocaleDateString(document.documentElement.lang, options);
     } catch (e) {
@@ -1435,78 +1532,117 @@ function formatRelativeTime(timestamp) {
     }
 }
 
+class SearchableMixin {
+    initializeSearch(searchElement, loadFunction) {
+        if (!window.uiSearch || !searchElement) return;
+
+        window.uiSearch.init(searchElement, {
+            onInput: (query) => this._handleSearchInput(query, loadFunction),
+            onReset: () => this._handleSearchInput('', loadFunction),
+            timeout: this.config.SEARCH_TIMEOUT
+        });
+    }
+
+    setupSearchWithDebounce(inputElement, loadFunction) {
+        let searchTimeout = null;
+
+        inputElement.on('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => this._handleSearchInput(e.target.value, loadFunction), this.config.SEARCH_TIMEOUT);
+        });
+    }
+
+    _handleSearchInput(query, loadFunction) {
+        this.currentQuery = query;
+        this.requestManager.cancelOngoingRequests();
+        loadFunction(0, query, false);
+    }
+}
+
+class PaginationMixin {
+    calculatePages(totalCount, itemsPerPage) {
+        return Math.ceil(Number(totalCount) / itemsPerPage);
+    }
+
+    createShowMoreButton(pagesCount, className, extraData = {}) {
+        const dataAttrs = Object.entries(extraData).map(([k, v]) => `data-${k}="${v}"`).join(' ');
+        return `<div class="${className} button button_gray button_wide" data-pagesCount="${pagesCount}" ${dataAttrs}><span>${tr('show_more')}</span></div>`;
+    }
+
+    handlePagination(totalCount, currentPage, moreContainerSelector, buttonClass, extraData = {}) {
+        const pagesCount = this.calculatePages(totalCount, this.config.itemsPerPage);
+        const moreContainer = u(moreContainerSelector);
+
+        moreContainer.html(currentPage + 1 < pagesCount ? this.createShowMoreButton(pagesCount, buttonClass, extraData) : '');
+        return currentPage + 1 < pagesCount;
+    }
+
+    setupShowMoreHandler(node, buttonClass, loadFunction) {
+        node.on('click', `.${buttonClass}`, async (e) => {
+            const button = u(e.target).closest(`.${buttonClass}`);
+            LoaderUtils.showInButton(button);
+            try {
+                await loadFunction(button);
+            } catch (error) {
+                console.error('Error in show more handler:', error);
+            }
+        });
+    }
+
+    removeShowMoreButton(moreContainerSelector, buttonClass) {
+        u(moreContainerSelector).find(`.${buttonClass}`).remove();
+    }
+}
+
 class BaseAttachmentManager {
-    constructor(messageBox, requestManager, form = null, attachmentType, constants = {}) {
+    constructor(messageBox, requestManager, form, attachmentType, customConfig = {}) {
         this.messageBox = messageBox;
         this.requestManager = requestManager;
         this.form = form;
         this.attachmentType = attachmentType;
         this.selectedItems = new Set();
-        this.CONSTANTS = {
-            ...constants
-        };
+        this.config = { ...AttachmentConfig.getConfig(attachmentType), ...customConfig };
+        this.currentQuery = '';
+        this.club = 0;
+        this.viewingUserContent = false;
+
+        [SearchableMixin, PaginationMixin].forEach(MixinClass => {
+            Object.getOwnPropertyNames(MixinClass.prototype)
+                .filter(name => name !== 'constructor' && typeof MixinClass.prototype[name] === 'function')
+                .forEach(name => this[name] = MixinClass.prototype[name].bind(this));
+        });
     }
 
     isItemAttached(itemId) {
-        if (!this.form) return false;
-
-        const selector = (this.attachmentType === 'photo' || this.attachmentType === 'video')
-            ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
-            : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
-
-        return this.form.find(selector).length > 0;
+        return this.form?.find(AttachmentSelectorFactory.getAttachmentSelector(this.attachmentType, itemId)).length > 0;
     }
 
     detachItemIfAttached(itemId) {
-        if (!this.form) return;
-
-        const selector = (this.attachmentType === 'photo' || this.attachmentType === 'video')
-            ? `.post-horizontal > a[data-type="${this.attachmentType}"][data-id="${itemId}"], .post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`
-            : `.post-vertical .vertical-attachment[data-type="${this.attachmentType}"][data-id="${itemId}"]`;
-
-        const attachmentElement = this.form.find(selector);
-        if (attachmentElement.length > 0) {
-            attachmentElement.remove();
-        }
+        this.form?.find(AttachmentSelectorFactory.getAttachmentSelector(this.attachmentType, itemId)).remove();
     }
 
     checkAttachmentLimit(newItemsCount = 1) {
-        const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
-
-        if (currentAttachments + newItemsCount > 10) {
-            NewNotification(
-                tr('error'),
-                tr('too_many_attachments'),
-                null,
-                () => {},
-                5000,
-                false
-            );
+        const currentAttachments = this.form?.find(AttachmentSelectorFactory.getAllAttachmentsSelector()).length || 0;
+        if (currentAttachments + newItemsCount > this.config.MAX_ATTACHMENTS) {
+            AttachmentErrorHandler.showAttachmentLimitError();
             return false;
         }
         return true;
     }
 
-    isAlreadyAttached(itemId) {
-        return this.isItemAttached(itemId);
-    }
-
     toggleItemSelection(itemId, elementSelector, selectedClass = 'selected') {
         const element = u(elementSelector);
+        const isSelected = this.selectedItems.has(itemId);
 
-        if (this.selectedItems.has(itemId)) {
+        if (isSelected) {
             this.selectedItems.delete(itemId);
             element.removeClass(selectedClass);
-
             this.detachItemIfAttached(itemId);
-
-            return false;
         } else {
             this.selectedItems.add(itemId);
             element.addClass(selectedClass);
-
-            return true;
         }
+        return !isSelected;
     }
 
     syncSelectionState(itemId, isSelected) {
@@ -1518,12 +1654,12 @@ class BaseAttachmentManager {
     }
 
     filterNewItems(itemIds) {
-        return itemIds.filter(itemId => !this.isAlreadyAttached(itemId));
+        return itemIds.filter(itemId => !this.isItemAttached(itemId));
     }
 
     clearSelection() {
         this.selectedItems.clear();
-        this.updateChooseButton(0);
+        this.updateChooseButton?.(0);
     }
 
     getSelectionCount() {
@@ -1535,104 +1671,273 @@ class BaseAttachmentManager {
     }
 
     setupDialogStyles() {
-        if (this.attachmentType === 'photo' || this.attachmentType === 'video') {
-            this.messageBox.getNode().attr('style', 'width: 640px;');
-            this.messageBox.getNode().find('.ovk-diag-body').attr('style', 'max-height: 640px; padding: 0px !important;');
+        const { DIALOG_WIDTHS, DIALOG_HEIGHTS, DIALOG_HEIGHT_TYPES } = this.config;
+        const width = DIALOG_WIDTHS[this.attachmentType];
+        const height = DIALOG_HEIGHTS[this.attachmentType];
+        const heightType = DIALOG_HEIGHT_TYPES[this.attachmentType] || 'max-height';
+
+        const node = this.messageBox.getNode();
+        if (width) node.attr('style', `width: ${width};`);
+        if (height && height !== 'auto') {
+            node.find('.ovk-diag-body').attr('style', `${heightType}: ${height}; padding: 0px !important;`);
         }
-    }
-
-    showLoader(container) {
-        container.append(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
-    }
-
-    showLoaderInButton(button) {
-        const loaderHTML = `<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
-        const span = button.find('span');
-
-        if (span.length > 0) {
-            span.html(loaderHTML);
-        } else {
-            button.html(`<span>${loaderHTML}</span>`);
-        }
-
-        button.addClass('lagged');
-    }
-
-    hideLoader() {
-        u('.pr').remove();
-    }
-
-    hideGeneralLoader() {
-        u('.pr').each(function(node) {
-            const element = u(node);
-            if (!element.closest('.button').length) {
-                element.remove();
-            }
-        });
     }
 
     showError(container, message) {
-        this.hideLoader();
-        container.html(`<div class="information">${message}</div>`);
+        LoaderUtils.hide();
+        AttachmentErrorHandler.showError(container, message);
     }
 
-    calculatePages(totalCount, itemsPerPage) {
-        return Math.ceil(Number(totalCount) / itemsPerPage);
+    setClub(club) {
+        this.club = club;
     }
 
-    createShowMoreButton(pagesCount, className, extraData = {}) {
-        const dataAttributes = Object.entries(extraData)
-            .map(([key, value]) => `data-${key}="${value}"`)
-            .join(' ');
-
-        return `
-            <div class="${className} button button_gray button_wide" data-pagesCount="${pagesCount}" ${dataAttributes}>
-                <span>${tr('show_more')}</span>
-            </div>
-        `;
+    getOwnerId() {
+        return (this.club != 0 && !this.viewingUserContent) ? Math.abs(this.club) * -1 : window.openvk.current_id;
     }
 
-    handlePagination(totalCount, currentPage, moreContainerSelector, buttonClass, extraData = {}) {
-        const pagesCount = this.calculatePages(totalCount, this.getItemsPerPage());
-        const moreContainer = u(moreContainerSelector);
+    setViewingUserContent(viewing) {
+        this.viewingUserContent = viewing;
+    }
 
-        if (currentPage + 1 < pagesCount) {
-            const showMoreButton = this.createShowMoreButton(pagesCount, buttonClass, extraData);
-            moreContainer.html(showMoreButton);
-            return true;
-        } else {
-            moreContainer.html('');
-            return false;
+    showHideUserClubSwitcher(show) {
+        const linkId = `${this.attachmentType}s_choose_right_link`;
+        u(`#${linkId}`).attr('style', show ? '' : 'display: none;');
+    }
+
+    initializeContextSwitcher(club) {
+        this.setClub(club);
+        const defaultViewingState = this.getDefaultViewingState(club);
+        this.setViewingUserContent(defaultViewingState);
+
+        if (club != 0) {
+            this.addUserContentLink();
         }
     }
 
-    getItemsPerPage() {
-        return window.openvk?.default_per_page || 10;
+    getDefaultViewingState(club) {
+        if (club == 0) {
+            return true;
+        }
+        return false;
     }
 
-    setupShowMoreHandler(node, buttonClass, loadFunction) {
-        node.on('click', `.${buttonClass}`, async (e) => {
-            const button = u(e.target).closest(`.${buttonClass}`);
-            this.showLoaderInButton(button);
-            await loadFunction(button);
-        });
+    switchContentContext(isViewingUserContent) {
+        this.clearSelection();
+        this.setViewingUserContent(isViewingUserContent);
+        this.toggleUserClubLink(isViewingUserContent);
+        this.onContextSwitch?.(isViewingUserContent);
     }
 
-    removeShowMoreButton(moreContainerSelector, buttonClass) {
-        const moreContainer = u(moreContainerSelector);
-        moreContainer.find(`.${buttonClass}`).remove();
+    addUserContentLink() {
+        const header = this.messageBox.getNode().find('.ovk-diag-head');
+
+        if (header.length === 0) {
+            console.warn(`[${this.attachmentType}] No .ovk-diag-head found, cannot add user content link`);
+            return;
+        }
+
+        const linkId = `${this.attachmentType}s_choose_right_link`;
+        const userLinkId = `user_${this.attachmentType}s_link`;
+        const translationKey = `choose_from_my_${this.attachmentType}s`;
+
+        const userContentLink = `<span id="${linkId}"><span class="divider">|</span><a href="#" id="${userLinkId}" class="tab_link"><vkifyloc name="${translationKey}"></a></span>`;
+
+        header.append(userContentLink);
+
+        if (window.processVkifyLocTags) {
+            window.processVkifyLocTags();
+        }
     }
 
-    updateChooseButton(selectedCount) {
+    toggleUserClubLink(isViewingUserContent) {
+
+        this.setViewingUserContent(isViewingUserContent);
+
+        const linkId = `${this.attachmentType}s_choose_right_link`;
+        const userLinkId = `user_${this.attachmentType}s_link`;
+        const backLinkId = `back_to_club_${this.attachmentType}s_link`;
+        const userTranslationKey = `choose_from_my_${this.attachmentType}s`;
+        const clubTranslationKey = `back_to_club_${this.attachmentType}s`;
+
+        const linkHtml = isViewingUserContent
+            ? `<span class="divider">|</span><a href="#" id="${backLinkId}" class="tab_link"><vkifyloc name="${clubTranslationKey}"></a>`
+            : `<span class="divider">|</span><a href="#" id="${userLinkId}" class="tab_link"><vkifyloc name="${userTranslationKey}"></a>`;
+
+        u(`#${linkId}`).html(linkHtml).attr('style', '');
+
+        if (window.processVkifyLocTags) {
+            window.processVkifyLocTags();
+        }
     }
 }
+
+class PhotoManager extends BaseAttachmentManager {
+    constructor(messageBox, requestManager, club, form = null) {
+        super(messageBox, requestManager, form, 'photo');
+        this.setClub(club);
+    }
+
+    get selectedPhotos() {
+        return this.selectedItems;
+    }
+
+    initialize(club) {
+        this.setupDialogStyles();
+        this.initializeContextSwitcher(club);
+    }
+
+    async loadPhotos(albumId, page = 0, append = false) {
+        const requestId = this.requestManager.createCancellableRequest();
+        const [photosContainer, moreContainer] = [u('#photos_content .photos_choose_rows'), u('#photos_content .photos_choose_more_container')];
+
+        if (!append) {
+            photosContainer.html('');
+            moreContainer.html('');
+            LoaderUtils.show(photosContainer);
+        }
+
+        try {
+            const params = {
+                'owner_id': this.getOwnerId(),
+                'photo_sizes': 1,
+                'count': this.config.itemsPerPage,
+                'offset': page * this.config.itemsPerPage
+            };
+
+            if (albumId == 0 && this.club != 0 && !this.viewingUserContent) {
+                throw new Error('Clubs are not supported for getAll photos');
+            }
+
+            const method = albumId == 0 ? 'photos.getAll' : 'photos.get';
+            if (albumId != 0) params.album_id = albumId;
+
+            const photos = await window.OVKAPI.call(method, params);
+
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+
+            LoaderUtils.hideGeneral();
+
+            if (photos.count === 0) {
+                this.showError(photosContainer, tr('is_x_photos_zero'));
+                return;
+            }
+
+            this.renderPhotos(photos.items, append);
+            this.handlePhotoPagination(photos.count, page, albumId);
+
+        } catch (error) {
+            if (this.requestManager.isRequestCancelled(requestId)) return;
+            console.error('Error loading photos:', error);
+            AttachmentErrorHandler.showLoadingError(photosContainer, 'photos');
+        }
+    }
+
+    renderPhotos(photos, append) {
+        const photosContainer = u('#photos_content .photos_choose_rows');
+
+        const photosHTML = photos.map(photo => {
+            const attachmentData = `${photo.owner_id}_${photo.id}`;
+            const isSelected = this.syncSelectionState(attachmentData, this.selectedPhotos.has(attachmentData));
+            const selectedClass = isSelected ? 'selected' : '';
+            const thumbnailUrl = photo.sizes[2]?.url || photo.sizes[1]?.url || photo.sizes[0]?.url;
+            const previewUrl = photo.sizes[1]?.url || photo.sizes[0]?.url;
+
+            return `<a class="photos_choose_row fl_l ${selectedClass}" href="javascript:void(0)" data-photo-id="${attachmentData}" data-preview="${previewUrl}">
+                <div class="photo_row_img" style="background-image: url('${thumbnailUrl}')"></div>
+                <div class="photos_choose_row_bg"></div>
+                <div class="media_check_btn_wrap"><div class="media_check_btn" data-testid="photos_choose_check_button"></div></div>
+            </a>`;
+        }).join('');
+
+        photosContainer[append ? 'append' : 'html'](photosHTML);
+        this.updateChooseButton?.(this.getSelectionCount());
+    }
+
+    handlePhotoPagination(totalCount, currentPage, albumId) {
+        this.handlePagination(totalCount, currentPage, '#photos_content .photos_choose_more_container', 'show_more_photos', { 'album-id': albumId });
+    }
+
+    togglePhotoSelection(photoId) {
+        const isSelected = this.toggleItemSelection(photoId, `[data-photo-id="${photoId}"]`);
+        this.updateChooseButton?.(this.getSelectionCount());
+        return isSelected;
+    }
+
+    attachSelectedPhotos(form) {
+        const newPhotoIds = this.filterNewItems(this.getSelectedItems());
+        if (!this.checkAttachmentLimit(newPhotoIds.length)) return;
+
+        newPhotoIds.forEach(photoId => this._attachPhotoToForm(photoId, form));
+    }
+
+    attachSinglePhoto(photoId, form) {
+        if (this.isItemAttached(photoId) || !this.checkAttachmentLimit(1)) return;
+        this._attachPhotoToForm(photoId, form);
+    }
+
+    _attachPhotoToForm(photoId, form) {
+        const previewUrl = u(`[data-photo-id="${photoId}"]`).attr('data-preview');
+        __appendToTextarea({
+            'type': 'photo',
+            'preview': previewUrl,
+            'id': photoId,
+            'fullsize_url': previewUrl
+        }, form);
+    }
+    clearSelection() {
+        super.clearSelection();
+        u('.photos_choose_row').removeClass('selected');
+    }
+
+    updateMessageBoxButtons(currentAlbum) {
+        const actionBar = this.messageBox.getNode().find('.ovk-diag-action');
+        actionBar.html(currentAlbum === 0 ? '' : `<input type="button" class="button back-to-albums-btn" value="${tr('paginator_back')}">`);
+    }
+
+    clearPhotosContent() {
+        u('#photos_content .photos_choose_rows, #photos_content .photos_choose_more_container').html('');
+    }
+
+    async onContextSwitch(isViewingUserContent) {
+        this.clearPhotosContent();
+        this.clearAlbumsContent();
+
+        if (isViewingUserContent) {
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: block');
+        } else {
+            u('#albums_list').attr('style', 'display: flex');
+            u('#photos_content').attr('style', 'display: none');
+        }
+
+        if (this.messageBox.attachmentDialog && this.messageBox.attachmentDialog.albumManager) {
+            await this.messageBox.attachmentDialog.albumManager.loadAlbums(0, false);
+
+            if (isViewingUserContent || this.club == 0) {
+                await this.loadPhotos(0, 0, false);
+            }
+        }
+    }
+
+    clearAlbumsContent() {
+        u('#albums_list .page_album_row, #albums_list .show_more_albums').remove();
+    }
+}
+
+u(document).on("click", "#__vkifyPhotoAttachment", async (e) => {
+    const form = u(e.target).closest('form');
+    const club = Number(e.currentTarget.dataset.club ?? 0);
+
+    const dialog = new PhotoAttachmentDialog(form, club);
+    await dialog.initialize();
+});
 
 class AlbumManager {
     constructor(photoManager, requestManager, club) {
         this.photoManager = photoManager;
         this.requestManager = requestManager;
         this.club = club;
-        this.viewingUserPhotos = false;
     }
 
     async loadAlbums(page = 0, append = false) {
@@ -1641,7 +1946,7 @@ class AlbumManager {
 
         if (!append) {
             albumsList.html('');
-            this.photoManager.showLoader(albumsList);
+            LoaderUtils.show(albumsList);
         }
 
         try {
@@ -1651,13 +1956,13 @@ class AlbumManager {
                 'need_covers': 1,
                 'photo_sizes': 1,
                 'need_system': 1,
-                'count': this.photoManager.CONSTANTS.ALBUMS_PER_PAGE,
-                'offset': page * this.photoManager.CONSTANTS.ALBUMS_PER_PAGE
+                'count': AttachmentConfig.DEFAULT_SETTINGS.ALBUMS_PER_PAGE,
+                'offset': page * AttachmentConfig.DEFAULT_SETTINGS.ALBUMS_PER_PAGE
             });
 
             if (this.requestManager.isRequestCancelled(requestId)) return;
 
-            this.photoManager.hideGeneralLoader();
+            LoaderUtils.hideGeneral();
 
             if (albums.count === 0) {
                 this.photoManager.showError(albumsList, tr('albums_zero'));
@@ -1683,37 +1988,26 @@ class AlbumManager {
         let albumsHTML = '';
 
         albums.forEach(album => {
-            const coverImg = album.thumb_src ?
-                `<img src="${album.thumb_src}" class="page_album_thumb" loading="lazy" />` :
-                '';
-
+            const coverImg = album.thumb_src ? `<img src="${album.thumb_src}" class="page_album_thumb" loading="lazy" />` : '';
             albumsHTML += `
                 <div class="clear_fix clear page_album_row">
                     <a href="javascript:void(0)" class="page_album_link photos_choose_album_row ${!album.thumb_src ? 'page_album_nocover' : ''}" data-album-id="${album.id}">
-                        <div class="page_album_thumb_wrap">
-                            ${coverImg}
-                        </div>
+                        <div class="page_album_thumb_wrap">${coverImg}</div>
                         <div class="page_album_title">
                             <div class="page_album_size">${album.size}</div>
                             <div class="page_album_title_text">${escapeHtml(album.title)}</div>
                             <div class="page_album_description">${album.description ? escapeHtml(album.description).substring(0, 100) : ''}</div>
                         </div>
                     </a>
-                </div>
-            `;
+                </div>`;
         });
 
-        if (append) {
-            albumsList.append(albumsHTML);
-        } else {
-            albumsList.html(albumsHTML);
-        }
+        if (append) albumsList.append(albumsHTML); else albumsList.html(albumsHTML);
     }
 
     handleAlbumPagination(totalCount, currentPage) {
-        const pagesCount = this.photoManager.calculatePages(totalCount, this.photoManager.CONSTANTS.ALBUMS_PER_PAGE);
+        const pagesCount = this.photoManager.calculatePages(totalCount, AttachmentConfig.DEFAULT_SETTINGS.ALBUMS_PER_PAGE);
         const albumsList = u('#albums_list');
-
         if (currentPage + 1 < pagesCount) {
             const showMoreButton = this.photoManager.createShowMoreButton(pagesCount, 'show_more_albums');
             albumsList.append(showMoreButton);
@@ -1721,233 +2015,14 @@ class AlbumManager {
     }
 
     getOwnerId() {
-        return (this.club != 0 && !this.viewingUserPhotos) ? Math.abs(this.club) * -1 : window.openvk.current_id;
+        return this.photoManager.getOwnerId();
     }
-
-    setViewingUserPhotos(viewing) {
-        this.viewingUserPhotos = viewing;
-    }
-}
-
-class PhotoManager extends BaseAttachmentManager {
-    constructor(messageBox, requestManager, club, form = null) {
-        super(messageBox, requestManager, form, 'photo', {
-            PHOTOS_PER_PAGE: 16,
-            ALBUMS_PER_PAGE: 2
-        });
-        this.club = club;
-        this.viewingUserPhotos = false;
-    }
-
-    get selectedPhotos() {
-        return this.selectedItems;
-    }
-
-    getItemsPerPage() {
-        return this.CONSTANTS.PHOTOS_PER_PAGE;
-    }
-
-    initialize(club) {
-        this.setupDialogStyles();
-        if (club != 0) {
-            this.addUserPhotosLink();
-        }
-    }
-
-    async loadPhotos(albumId, page = 0, append = false) {
-        const requestId = this.requestManager.createCancellableRequest();
-        const photosContainer = u('#photos_content .photos_choose_rows');
-        const moreContainer = u('#photos_content .photos_choose_more_container');
-
-        if (!append) {
-            photosContainer.html('');
-            moreContainer.html('');
-            this.showLoader(photosContainer);
-        }
-
-        try {
-            const ownerId = this.getOwnerId();
-            const params = {
-                'owner_id': ownerId,
-                'photo_sizes': 1,
-                'count': this.CONSTANTS.PHOTOS_PER_PAGE,
-                'offset': page * this.CONSTANTS.PHOTOS_PER_PAGE
-            };
-
-            if (albumId == 0 && this.club != 0 && !this.viewingUserPhotos) {
-                throw new Error('Clubs are not supported for getAll photos');
-            }
-
-            const method = albumId == 0 ? 'photos.getAll' : 'photos.get';
-            if (albumId != 0) {
-                params.album_id = albumId;
-            }
-
-            const photos = await window.OVKAPI.call(method, params);
-
-            if (this.requestManager.isRequestCancelled(requestId)) return;
-
-            this.hideGeneralLoader();
-
-            if (photos.count === 0) {
-                this.showError(photosContainer, tr('is_x_photos_zero'));
-                return;
-            }
-
-            this.renderPhotos(photos.items, append);
-            this.handlePhotoPagination(photos.count, page, albumId);
-
-        } catch (error) {
-            if (this.requestManager.isRequestCancelled(requestId)) return;
-            console.error('Error loading photos:', error);
-            this.showError(photosContainer, tr('error_loading_photos'));
-        }
-    }
-
-    renderPhotos(photos, append) {
-        const photosContainer = u('#photos_content .photos_choose_rows');
-        let photosHTML = '';
-
-        photos.forEach(photo => {
-            const attachmentData = `${photo.owner_id}_${photo.id}`;
-            let isSelected = this.selectedPhotos.has(attachmentData);
-            isSelected = this.syncSelectionState(attachmentData, isSelected);
-
-            const selectedClass = isSelected ? 'selected' : '';
-            const thumbnailUrl = photo.sizes[2]?.url || photo.sizes[1]?.url || photo.sizes[0]?.url;
-            const previewUrl = photo.sizes[1]?.url || photo.sizes[0]?.url;
-
-            photosHTML += `
-                <a class="photos_choose_row fl_l ${selectedClass}" href="javascript:void(0)"
-                   data-photo-id="${attachmentData}" data-preview="${previewUrl}">
-                    <div class="photo_row_img" style="background-image: url('${thumbnailUrl}')"></div>
-                    <div class="photos_choose_row_bg"></div>
-                    <div class="media_check_btn_wrap">
-                        <div class="media_check_btn" data-testid="photos_choose_check_button"></div>
-                    </div>
-                </a>
-            `;
-        });
-
-        if (append) {
-            photosContainer.append(photosHTML);
-        } else {
-            photosContainer.html(photosHTML);
-        }
-
-        this.updateChooseButton(this.getSelectionCount());
-    }
-
-    handlePhotoPagination(totalCount, currentPage, albumId) {
-        const extraData = { 'album-id': albumId };
-        this.handlePagination(totalCount, currentPage, '#photos_content .photos_choose_more_container', 'show_more_photos', extraData);
-    }
-
-    togglePhotoSelection(photoId) {
-        const isSelected = this.toggleItemSelection(photoId, `[data-photo-id="${photoId}"]`);
-        this.updateChooseButton(this.getSelectionCount());
-        return isSelected;
-    }
-
-    attachSelectedPhotos(form) {
-        const selectedPhotoIds = this.getSelectedItems();
-        const newPhotoIds = this.filterNewItems(selectedPhotoIds);
-
-        if (!this.checkAttachmentLimit(newPhotoIds.length)) {
-            return;
-        }
-
-        newPhotoIds.forEach(photoId => {
-            const photoElement = u(`[data-photo-id="${photoId}"]`);
-            const previewUrl = photoElement.attr('data-preview');
-
-            __appendToTextarea({
-                'type': 'photo',
-                'preview': previewUrl,
-                'id': photoId,
-                'fullsize_url': previewUrl
-            }, form);
-        });
-    }
-
-    attachSinglePhoto(photoId, form) {
-        if (this.isAlreadyAttached(photoId)) {
-            return;
-        }
-
-        if (!this.checkAttachmentLimit(1)) {
-            return;
-        }
-
-        const photoElement = u(`[data-photo-id="${photoId}"]`);
-        const previewUrl = photoElement.attr('data-preview');
-
-        __appendToTextarea({
-            'type': 'photo',
-            'preview': previewUrl,
-            'id': photoId,
-            'fullsize_url': previewUrl
-        }, form);
-    }
-
-    getOwnerId() {
-        return (this.club != 0 && !this.viewingUserPhotos) ? Math.abs(this.club) * -1 : window.openvk.current_id;
-    }
-
-    setViewingUserPhotos(viewing) {
-        this.viewingUserPhotos = viewing;
-    }
-
-    clearSelection() {
-        super.clearSelection();
-        u('.photos_choose_row').removeClass('selected');
-    }
-
-    addUserPhotosLink() {
-        const header = this.messageBox.getNode().find('.ovk-diag-head');
-        const userPhotosLink = `<span id="photos_choose_right_link"><span class="divider">|</span><a href="#" id="user_photos_link" class="tab_link"><vkifyloc name="choose_from_my_photos"></a></span>`;
-        header.append(userPhotosLink);
-    }
-
-    updateMessageBoxButtons(currentAlbum) {
-        const actionBar = this.messageBox.getNode().find('.ovk-diag-action');
-
-        if (currentAlbum === 0) {
-            actionBar.html('');
-        } else {
-            actionBar.html(`
-                <input type="button" class="button back-to-albums-btn" value="${tr('paginator_back')}">
-            `);
-        }
-    }
-
-    toggleUserClubLink(isViewingUserPhotos) {
-        const rightLinkContainer = u('#photos_choose_right_link');
-        if (isViewingUserPhotos) {
-            rightLinkContainer.html(`<span class="divider">|</span><a href="#" id="back_to_club_link" class="tab_link"><vkifyloc name="back_to_club_photos"></a>`);
-        } else {
-            rightLinkContainer.html(`<span class="divider">|</span><a href="#" id="user_photos_link" class="tab_link"><vkifyloc name="choose_from_my_photos"></a>`);
-        }
-        rightLinkContainer.attr('style', '');
-    }
-
-    showHideUserClubSwitcher(show) {
-        const switcher = u('#photos_choose_right_link');
-        switcher.attr('style', show ? '' : 'display: none;');
-    }
-
-    clearPhotosContent() {
-        u('#photos_content .photos_choose_rows').html('');
-        u('#photos_content .photos_choose_more_container').html('');
-    }
-
-
 }
 
 class PhotoAttachmentDialog {
     constructor(form, club) {
         this.form = form;
-        this.club = club;
+        this.club = Number(club) || 0;
         this.currentAlbum = 0;
         this.requestManager = new RequestManager();
         this.messageBox = new CMessageBox({
@@ -1955,26 +2030,21 @@ class PhotoAttachmentDialog {
             body: this.createDialogBody(),
             close_on_buttons: false,
         });
-
         this.messageBox.attachmentDialog = this;
+        this.photoManager = new PhotoManager(this.messageBox, this.requestManager, this.club, this.form);
+        this.photoManager.initialize(this.club);
+        this.albumManager = new AlbumManager(this.photoManager, this.requestManager, this.club);
 
-        this.photoManager = new PhotoManager(this.messageBox, this.requestManager, club, this.form);
-        this.photoManager.initialize(club);
-        this.albumManager = new AlbumManager(this.photoManager, this.requestManager, club);
         this.photoManager.updateChooseButton = (selectedCount) => {
             const chooseBtn = this.messageBox.getNode().find('#choose-photos-btn');
             if (selectedCount > 0) {
                 const buttonText = `${tr('attach')} (${selectedCount})`;
                 if (chooseBtn.length === 0) {
-                    this.messageBox.getNode().find('.ovk-diag-action').prepend(`
-                        <input type="button" id="choose-photos-btn" class="button close-dialog-btn" value="${buttonText}">
-                    `);
+                    this.messageBox.getNode().find('.ovk-diag-action').prepend(`<input type="button" id="choose-photos-btn" class="button close-dialog-btn" value="${buttonText}">`);
                 } else {
                     chooseBtn.attr('value', buttonText);
                 }
-            } else {
-                chooseBtn.remove();
-            }
+            } else chooseBtn.remove();
         };
     }
 
@@ -1988,137 +2058,97 @@ class PhotoAttachmentDialog {
     }
 
     async loadInitialContent() {
+        u('#albums_list').attr('style', 'display: flex');
+
         if (this.club == 0) {
-            u('#albums_list').attr('style', 'display: flex');
+
             u('#photos_content').attr('style', 'display: block');
             await this.albumManager.loadAlbums(0, false);
             await this.photoManager.loadPhotos(0, 0, false);
         } else {
-            u('#albums_list').attr('style', 'display: flex');
-            u('#photos_content').attr('style', 'display: none');
-            await this.albumManager.loadAlbums(0, false);
+
+            if (this.photoManager.viewingUserContent) {
+
+                u('#photos_content').attr('style', 'display: block');
+                await this.albumManager.loadAlbums(0, false);
+                await this.photoManager.loadPhotos(0, 0, false);
+            } else {
+
+                u('#photos_content').attr('style', 'display: none');
+                await this.albumManager.loadAlbums(0, false);
+            }
         }
     }
 
     setupEventHandlers() {
         const node = this.messageBox.getNode();
-
         node.on('click', '.photos_choose_album_row', async (e) => {
             const albumId = Number(e.currentTarget.dataset.albumId);
             this.currentAlbum = albumId;
-
             u('#albums_list').attr('style', 'display: none');
             u('#photos_content').attr('style', 'display: block');
             this.photoManager.updateMessageBoxButtons(albumId);
             this.photoManager.showHideUserClubSwitcher(false);
-
+            this.photoManager.clearSelection();
             await this.photoManager.loadPhotos(albumId, 0, false);
         });
-
         node.on('click', '.back-to-albums-btn', async () => {
             this.currentAlbum = 0;
             this.photoManager.clearSelection();
-
-            u('#albums_list').attr('style', 'display: flex');
-            u('#photos_content').attr('style', 'display: block');
             this.photoManager.updateMessageBoxButtons(0);
             this.photoManager.showHideUserClubSwitcher(true);
 
-            if (this.club == 0 || this.albumManager.viewingUserPhotos) {
+            u('#albums_list').attr('style', 'display: flex');
+            await this.albumManager.loadAlbums(0, false);
+
+            if (this.club == 0 || this.photoManager.viewingUserContent) {
+                u('#photos_content').attr('style', 'display: block');
                 await this.photoManager.loadPhotos(0, 0, false);
             } else {
                 u('#photos_content').attr('style', 'display: none');
             }
         });
-
         node.on('click', '.media_check_btn_wrap', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); e.stopPropagation();
             const photoRow = u(e.target).closest('.photos_choose_row');
             const photoId = photoRow.attr('data-photo-id');
             this.photoManager.togglePhotoSelection(photoId);
         });
-
         node.on('click', '.photo_row_img', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); e.stopPropagation();
             const photoRow = u(e.target).closest('.photos_choose_row');
             const photoId = photoRow.attr('data-photo-id');
             this.photoManager.attachSinglePhoto(photoId, this.form);
             this.messageBox.close();
         });
-
-        this.photoManager.setupShowMoreHandler(node, 'show_more_albums', async (button) => {
+        this.photoManager.setupShowMoreHandler(node, 'show_more_albums', async () => {
             const currentAlbumsCount = u('#albums_list .page_album_row').length;
-            const nextPage = Math.floor(currentAlbumsCount / this.photoManager.CONSTANTS.ALBUMS_PER_PAGE);
+            const nextPage = Math.floor(currentAlbumsCount / AttachmentConfig.DEFAULT_SETTINGS.ALBUMS_PER_PAGE);
             await this.albumManager.loadAlbums(nextPage, true);
         });
-
         this.photoManager.setupShowMoreHandler(node, 'show_more_photos', async (button) => {
             const albumId = Number(button.attr('data-album-id'));
-            const currentPage = Math.floor(u('#photos_content .photos_choose_row').length / this.photoManager.CONSTANTS.PHOTOS_PER_PAGE);
+            const currentPage = Math.floor(u('#photos_content .photos_choose_row').length / this.photoManager.config.itemsPerPage);
             await this.photoManager.loadPhotos(albumId, currentPage, true);
         });
-
         node.on('click', '#choose-photos-btn', () => {
             this.photoManager.attachSelectedPhotos(this.form);
             this.messageBox.close();
         });
-
-        node.on('click', '#user_photos_link', async () => {
-            this.requestManager.cancelOngoingRequests();
-
-            this.albumManager.setViewingUserPhotos(true);
-            this.photoManager.setViewingUserPhotos(true);
-            this.currentAlbum = 0;
-
-            this.photoManager.toggleUserClubLink(true);
-            this.photoManager.updateMessageBoxButtons(0);
-
-            u('#albums_list').html('');
-            this.photoManager.clearPhotosContent();
-
-            u('#albums_list').attr('style', 'display: flex');
-            u('#photos_content').attr('style', 'display: block');
-
-            try {
-                await this.albumManager.loadAlbums(0, false);
-                await this.photoManager.loadPhotos(0, 0, false);
-            } catch (error) {
-                console.error('Error loading user photos:', error);
-                this.photoManager.showError(u('#photos_content'), 'Error loading user photos');
-            }
+        node.on('click', '#user_photos_link', async (e) => {
+            e.preventDefault();
+            this.photoManager.switchContentContext(true);
         });
-
-        node.on('click', '#back_to_club_link', async () => {
-            this.requestManager.cancelOngoingRequests();
-            this.albumManager.setViewingUserPhotos(false);
-            this.photoManager.setViewingUserPhotos(false);
-            this.currentAlbum = 0;
-            this.photoManager.toggleUserClubLink(false);
-            this.photoManager.updateMessageBoxButtons(0);
-            u('#albums_list').html('');
-            this.photoManager.clearPhotosContent();
-            u('#albums_list').attr('style', 'display: flex');
-            u('#photos_content').attr('style', 'display: none');
-
-            try {
-                await this.albumManager.loadAlbums(0, false);
-            } catch (error) {
-                console.error('Error loading club albums:', error);
-                this.photoManager.showError(u('#albums_list'), 'Error loading club albums');
-            }
+        node.on('click', '#back_to_club_photos_link', async (e) => {
+            e.preventDefault();
+            this.photoManager.switchContentContext(false);
         });
-
         node.on('click', '.choose_upload_area', () => {
             node.find('#__pickerQuickUpload').nodes[0]?.click();
         });
-
         node.on('change', '#__pickerQuickUpload', (e) => {
             if (e.target.files && e.target.files.length > 0) {
-                Array.from(e.target.files).forEach(file => {
-                    __uploadToTextarea(file, this.form);
-                });
+                Array.from(e.target.files).forEach(file => __uploadToTextarea(file, this.form));
                 this.messageBox.close();
             }
         });
@@ -2132,24 +2162,19 @@ class PhotoAttachmentDialog {
                 <span class="choose_upload_area_label">${tr("upload_button")}</span>
             </div>
             <div id='attachment_insert' style='height: unset; padding: 0'>
-                <div id='albums_list' class='photos_choose_album_rows photos_container_albums'>
-                    <!-- Albums will be loaded here -->
-                </div>
+                <div id='albums_list' class='photos_choose_album_rows photos_container_albums'></div>
                 <div id='photos_content'>
                     <div class="photos_choose_rows clear_fix"></div>
                     <div class="photos_choose_more_container"></div>
                 </div>
             </div>
-        </div>
-        `;
+        </div>`;
     }
 }
 
 class VideoManager extends BaseAttachmentManager {
     constructor(messageBox, requestManager, form = null) {
-        super(messageBox, requestManager, form, 'video', {
-            VIDEOS_PER_PAGE: window.openvk?.default_per_page || 10
-        });
+        super(messageBox, requestManager, form, 'video');
         this.currentQuery = '';
     }
 
@@ -2157,57 +2182,44 @@ class VideoManager extends BaseAttachmentManager {
         return this.selectedItems;
     }
 
-    getItemsPerPage() {
-        return this.CONSTANTS.VIDEOS_PER_PAGE;
-    }
-
     async loadVideos(page = 0, query = '', append = false) {
         const requestId = this.requestManager.createCancellableRequest();
-        const videosContainer = u('.videosInsert');
-        const moreContainer = u('.videos_choose_more_container');
+        const [videosContainer, moreContainer] = [u('.videosInsert'), u('.videos_choose_more_container')];
 
         if (!append) {
             videosContainer.html('');
             moreContainer.html('');
-            this.showLoader(videosContainer);
+            LoaderUtils.show(videosContainer);
         } else {
             this.removeShowMoreButton('.videos_choose_more_container', 'show_more_videos');
         }
 
         try {
-            let videos;
-            if (query === '') {
-                videos = await window.OVKAPI.call('video.get', {
-                    'owner_id': window.openvk.current_id,
-                    'extended': 1,
-                    'count': this.CONSTANTS.VIDEOS_PER_PAGE,
-                    'offset': page * this.CONSTANTS.VIDEOS_PER_PAGE
-                });
-            } else {
-                videos = await window.OVKAPI.call('video.search', {
-                    'q': escapeHtml(query),
-                    'extended': 1,
-                    'count': this.CONSTANTS.VIDEOS_PER_PAGE,
-                    'offset': page * this.CONSTANTS.VIDEOS_PER_PAGE
-                });
-            }
+            const params = {
+                'extended': 1,
+                'count': this.config.itemsPerPage,
+                'offset': page * this.config.itemsPerPage
+            };
+
+            const videos = query === ''
+                ? await window.OVKAPI.call('video.get', { ...params, 'owner_id': window.openvk.current_id })
+                : await window.OVKAPI.call('video.search', { ...params, 'q': escapeHtml(query) });
 
             if (this.requestManager.isRequestCancelled(requestId)) return;
 
-            this.hideGeneralLoader();
+            LoaderUtils.hideGeneral();
 
-            if (videos.count === 0) {
+            if (!videos || videos.count === 0) {
                 this.showError(videosContainer, tr('no_videos'));
                 return;
             }
 
             this.renderVideos(videos.items, append, videos.profiles, videos.groups);
             this.handleVideoPagination(videos.count, page, query);
-
         } catch (error) {
             if (this.requestManager.isRequestCancelled(requestId)) return;
             console.error('Error loading videos:', error);
-            this.showError(videosContainer, tr('error_loading_videos'));
+            AttachmentErrorHandler.showLoadingError(videosContainer, 'videos');
         }
     }
 
@@ -2217,12 +2229,11 @@ class VideoManager extends BaseAttachmentManager {
 
         videos.forEach(video => {
             const videoId = `${video.owner_id}_${video.id}`;
-
             let isSelected = this.selectedVideos.has(videoId);
             isSelected = this.syncSelectionState(videoId, isSelected);
 
             const selectedClass = isSelected ? 'selected' : '';
-            const thumbnailUrl = video.image && video.image[0] ? video.image[0].url : '';
+            const thumb = video.image?.[0]?.url || '';
             const duration = fmtTime(video.duration);
             const title = escapeHtml(video.title || '');
             const videoUrl = `/video${video.owner_id}_${video.id}`;
@@ -2233,10 +2244,10 @@ class VideoManager extends BaseAttachmentManager {
             const formattedDate = video.date ? formatRelativeTime(video.date) : '';
 
             videosHTML += `
-                <div class="video_item ${selectedClass}" data-video-id="${videoId}" data-video-url="${video.player || videoUrl}" data-video-preview="${thumbnailUrl}">
+                <div class="video_item ${selectedClass}" data-video-id="${videoId}" data-video-url="${video.player || videoUrl}" data-video-preview="${thumb}">
                     <a class="video_item__thumb_link" href="javascript:void(0)">
                         <div class="video_item_thumb_wrap">
-                            <div class="video_item_thumb" style="background-image: url('${thumbnailUrl}')"></div>
+                            <div class="video_item_thumb" style="background-image: url('${thumb}')"></div>
                             <div class="video_item_controls">
                                 <div class="video_thumb_label">
                                     ${platform ? `<span class="video_thumb_label_item video_thumb_label_platform">${platform}</span>` : ''}
@@ -2249,19 +2260,13 @@ class VideoManager extends BaseAttachmentManager {
                         </div>
                     </a>
                     <div class="video_item_info">
-                        <a class="video_item_title" href="javascript:void(0)" title="${title}">
-                            ${title}
-                        </a>
+                        <a class="video_item_title" href="javascript:void(0)" title="${title}">${title}</a>
                         <div class="video_item_author">
                             <a class="mem_link" href="${authorUrl}" target="_blank">${authorName}</a>
                         </div>
                         <div class="video_item_add_info">
                             <div>
-                                ${formattedDate ? `
-                                    <span class="video_item_date_info">
-                                        <span class="video_item_updated">${formattedDate}</span>
-                                    </span>
-                                ` : ''}
+                                ${formattedDate ? `<span class="video_item_date_info"><span class="video_item_updated">${formattedDate}</span></span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -2275,104 +2280,74 @@ class VideoManager extends BaseAttachmentManager {
             videosContainer.html(videosHTML);
         }
 
-        this.updateChooseButton(this.getSelectionCount());
+        this.updateChooseButton?.(this.getSelectionCount());
     }
 
     handleVideoPagination(totalCount, currentPage, query) {
-        const extraData = { 'query': query };
-        this.handlePagination(totalCount, currentPage, '.videos_choose_more_container', 'show_more_videos', extraData);
+        this.handlePagination(totalCount, currentPage, '.videos_choose_more_container', 'show_more_videos', { 'query': query });
     }
 
     toggleVideoSelection(videoId) {
         const isSelected = this.toggleItemSelection(videoId, `[data-video-id="${videoId}"]`);
-        this.updateChooseButton(this.getSelectionCount());
+        this.updateChooseButton?.(this.getSelectionCount());
         return isSelected;
     }
 
     attachSelectedVideos(form) {
-        const selectedVideoIds = this.getSelectedItems();
-        const newVideoIds = this.filterNewItems(selectedVideoIds);
-
-        if (!this.checkAttachmentLimit(newVideoIds.length)) {
-            return;
-        }
-
-        newVideoIds.forEach(videoId => {
-            const videoElement = u(`[data-video-id="${videoId}"]`);
-            const videoUrl = videoElement.attr('data-video-url');
-            const previewUrl = videoElement.attr('data-video-preview');
-
-            __appendToTextarea({
-                'type': 'video',
-                'preview': previewUrl || videoUrl,
-                'id': videoId,
-                'fullsize_url': videoUrl
-            }, form);
-        });
+        const newVideoIds = this.filterNewItems(this.getSelectedItems());
+        if (!this.checkAttachmentLimit(newVideoIds.length)) return;
+        newVideoIds.forEach(videoId => this.attachSingleVideo(videoId, form));
     }
 
     attachSingleVideo(videoId, form) {
-        if (this.isAlreadyAttached(videoId)) {
-            return;
-        }
-
-        if (!this.checkAttachmentLimit(1)) {
-            return;
-        }
-
+        if (this.isItemAttached(videoId) || !this.checkAttachmentLimit(1)) return;
         const videoElement = u(`[data-video-id="${videoId}"]`);
         const videoUrl = videoElement.attr('data-video-url');
         const previewUrl = videoElement.attr('data-video-preview');
-
-        __appendToTextarea({
-            'type': 'video',
-            'preview': previewUrl || videoUrl,
-            'id': videoId,
-            'fullsize_url': videoUrl
-        }, form);
+        __appendToTextarea({ 'type': 'video', 'preview': previewUrl || videoUrl, 'id': videoId, 'fullsize_url': videoUrl }, form);
     }
-
-    clearSelection() {
-        super.clearSelection();
-        u('.video_item').removeClass('selected');
-    }
-
-    initialize() {
-        this.setupDialogStyles();
-    }
-
-
 }
 
 class VideoAttachmentDialog {
     constructor(form) {
         this.form = form;
-        this.requestManager = new BaseRequestManager();
+        this.requestManager = new RequestManager();
         this.messageBox = new CMessageBox({
             title: tr('selecting_video'),
             body: this.createDialogBody(),
             close_on_buttons: false,
         });
-
         this.messageBox.attachmentDialog = this;
-
         this.videoManager = new VideoManager(this.messageBox, this.requestManager, this.form);
-        this.videoManager.initialize();
-        this.videoManager.updateChooseButton = (selectedCount) => {
-            const chooseBtn = this.messageBox.getNode().find('#choose-videos-btn');
-            if (selectedCount > 0) {
-                const buttonText = `${tr('attach')} (${selectedCount})`;
-                if (chooseBtn.length === 0) {
-                    this.messageBox.getNode().find('.ovk-diag-action').prepend(`
-                        <input type="button" id="choose-videos-btn" class="button close-dialog-btn" value="${buttonText}">
-                    `);
-                } else {
-                    chooseBtn.attr('value', buttonText);
-                }
+        this.videoManager.updateChooseButton = this._updateChooseButton.bind(this);
+        this._applyDialogStyles();
+    }
+
+    _updateChooseButton(selectedCount) {
+        const actionBar = this.messageBox.getNode().find('.ovk-diag-action');
+        const chooseBtn = actionBar.find('#choose-videos-btn');
+
+        if (selectedCount > 0) {
+            const buttonText = `${tr('attach')} (${selectedCount})`;
+            if (chooseBtn.length === 0) {
+                actionBar.prepend(`<input type="button" id="choose-videos-btn" class="button close-dialog-btn" value="${buttonText}">`);
             } else {
-                chooseBtn.remove();
+                chooseBtn.attr('value', buttonText);
             }
-        };
+        } else {
+            chooseBtn.remove();
+        }
+    }
+
+    _applyDialogStyles() {
+        const { DIALOG_WIDTHS, DIALOG_HEIGHTS, DIALOG_HEIGHT_TYPES } = AttachmentConfig.DEFAULT_SETTINGS;
+        const node = this.messageBox.getNode();
+        const heightType = DIALOG_HEIGHT_TYPES.video || 'max-height';
+
+        if (DIALOG_WIDTHS.video) node.attr('style', `width: ${DIALOG_WIDTHS.video};`);
+        if (DIALOG_HEIGHTS.video && DIALOG_HEIGHTS.video !== 'auto') {
+            node.find('.ovk-diag-body').attr('style', `${heightType}: ${DIALOG_HEIGHTS.video}; padding: 0px !important;`);
+        }
     }
 
     getSelectionCount() {
@@ -2381,70 +2356,49 @@ class VideoAttachmentDialog {
 
     async initialize() {
         this.setupEventHandlers();
-        await this.loadInitialContent();
-
-        if (window.uiSearch) {
-            const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
-            if (searchElement) {
-                window.uiSearch.init(searchElement, {
-                    onInput: async (query) => {
-                        this.videoManager.currentQuery = query;
-                        await this.videoManager.loadVideos(0, query, false);
-                    },
-                    onChange: async (query) => {
-                        this.videoManager.currentQuery = query;
-                        await this.videoManager.loadVideos(0, query, false);
-                    },
-                    onButtonClick: async (query) => {
-                        this.videoManager.currentQuery = query;
-                        await this.videoManager.loadVideos(0, query, false);
-                    },
-                    timeout: 500
-                });
-            }
-        }
-    }
-
-    async loadInitialContent() {
         await this.videoManager.loadVideos(0, '', false);
+
+        const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
+        if (window.uiSearch && searchElement) {
+            const loadVideos = async (query) => {
+                this.videoManager.currentQuery = query;
+                await this.videoManager.loadVideos(0, query, false);
+            };
+
+            window.uiSearch.init(searchElement, {
+                onInput: loadVideos,
+                onChange: loadVideos,
+                onButtonClick: loadVideos,
+                timeout: 500
+            });
+        }
     }
 
     setupEventHandlers() {
         const node = this.messageBox.getNode();
-
         node.on('click', '.media_check_btn_wrap', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); e.stopPropagation();
             const videoRow = u(e.target).closest('.video_item');
             const videoId = videoRow.attr('data-video-id');
             this.videoManager.toggleVideoSelection(videoId);
         });
-
         node.on('click', '.video_item__thumb_link', (e) => {
-            if (u(e.target).closest('.media_check_btn_wrap').length > 0) {
-                return;
-            }
-
-            e.preventDefault();
-            e.stopPropagation();
+            if (u(e.target).closest('.media_check_btn_wrap').length > 0) return;
+            e.preventDefault(); e.stopPropagation();
             const videoRow = u(e.target).closest('.video_item');
             const videoId = videoRow.attr('data-video-id');
             this.videoManager.attachSingleVideo(videoId, this.form);
             this.messageBox.close();
         });
-
         this.videoManager.setupShowMoreHandler(node, 'show_more_videos', async (button) => {
             const query = button.attr('data-query') || '';
-            const currentPage = Math.floor(u('.video_item').length / this.videoManager.CONSTANTS.VIDEOS_PER_PAGE);
+            const currentPage = Math.floor(u('.video_item').length / this.videoManager.config.itemsPerPage);
             await this.videoManager.loadVideos(currentPage, query, true);
         });
-
         node.on('click', '#choose-videos-btn', () => {
             this.videoManager.attachSelectedVideos(this.form);
             this.messageBox.close();
         });
-
-
     }
 
     createDialogBody() {
@@ -2468,315 +2422,174 @@ class VideoAttachmentDialog {
                 <div class="videosInsert video_block_layout"></div>
                 <div class="videos_choose_more_container"></div>
             </div>
-        </div>
-        `;
+        </div>`;
     }
 }
 
+u(document).on('click', '#__vkifyVideoAttachment', async (e) => {
+    const form = u(e.target).closest('form');
+    const dialog = new VideoAttachmentDialog(form);
+    await dialog.initialize();
+});
+
 class AudioManager extends BaseAttachmentManager {
-    constructor(messageBox, requestManager, form = null, type = 'form') {
-        super(messageBox, requestManager, form, 'audio', {
-            AUDIOS_PER_PAGE: window.openvk?.default_per_page || 10
-        });
+    constructor(messageBox, requestManager, form = null, type = 'form', club = 0) {
+        super(messageBox, requestManager, form, 'audio');
         this.currentQuery = '';
         this.searchType = 'by_name';
         this.type = type;
+        this.setClub(club);
     }
 
-    get selectedAudios() {
-        return this.selectedItems;
+    get selectedAudios() { return this.selectedItems; }
+
+    initialize(club) {
+        this.setupDialogStyles();
+        this.initializeContextSwitcher(club);
     }
 
-    getItemsPerPage() {
-        return this.CONSTANTS.AUDIOS_PER_PAGE;
+    async onContextSwitch(isViewingUserContent) {
+        this.currentQuery = '';
+        await this.loadAudios(0, '', false);
     }
 
     async loadAudios(page = 0, query = '', append = false) {
         const requestId = this.requestManager.createCancellableRequest();
         const audiosContainer = u('.audiosInsert');
-
-        if (!append) {
-            audiosContainer.html('');
-            this.showLoader(audiosContainer);
-        }
-
+        if (!append) { audiosContainer.html(''); LoaderUtils.show(audiosContainer); }
         try {
-            let searcher = new playersSearcher("entity_audios", 0);
-
-            if (query !== '') {
-                searcher.context_type = "search_context";
-                searcher.query = query;
-                searcher.searchType = this.searchType;
-            }
-
+            const ownerId = this.getOwnerId();
+            let searcher = new playersSearcher("entity_audios", ownerId);
+            if (query !== '') { searcher.context_type = "search_context"; searcher.query = query; searcher.searchType = this.searchType; }
             return new Promise((resolve, reject) => {
                 searcher.successCallback = (response, thisc) => {
                     if (this.requestManager.isRequestCancelled(requestId)) return;
-
-                    let domparser = new DOMParser();
-                    let result = domparser.parseFromString(response, "text/html");
-
-                    let pagesCount = result.querySelector("input[name='pagesCount']").value;
+                    let result = new DOMParser().parseFromString(response, "text/html");
+                    let pagesCount = Number(result.querySelector("input[name='pagesCount']").value);
                     let count = Number(result.querySelector("input[name='count']").value);
-
-                    if (count < 1) {
-                        this.showError(audiosContainer, thisc.context_type == "entity_audios" ? tr("no_audios_thisuser") : tr("no_results"));
-                        resolve({ count: 0, items: [] });
-                        return;
-                    }
-
+                    if (count < 1) { this.showError(audiosContainer, thisc.context_type == "entity_audios" ? tr("no_audios_thisuser") : tr("no_results")); resolve({ count: 0, items: [] }); return; }
                     const audioElements = Array.from(result.querySelectorAll(".audioEmbed"));
                     this.renderAudios(audioElements, append);
                     this.handleAudioPagination(thisc.page, pagesCount);
-
                     resolve({ count, items: audioElements, page: thisc.page, pagesCount });
                 };
-
-                searcher.errorCallback = () => {
-                    if (this.requestManager.isRequestCancelled(requestId)) return;
-                    this.showError(audiosContainer, 'Error when loading audios.');
-                    reject(new Error('Error loading audios'));
-                };
-
+                searcher.errorCallback = () => { if (this.requestManager.isRequestCancelled(requestId)) return; this.showError(audiosContainer, 'Error when loading audios.'); reject(new Error('Error loading audios')); };
                 searcher.movePage(page + 1);
             });
-
-        } catch (error) {
-            if (this.requestManager.isRequestCancelled(requestId)) return;
-            console.error('Error loading audios:', error);
-            this.showError(audiosContainer, tr('error_loading_audios'));
-        }
+        } catch (error) { if (this.requestManager.isRequestCancelled(requestId)) return; console.error('Error loading audios:', error); AttachmentErrorHandler.showLoadingError(audiosContainer, 'audios'); }
     }
 
     renderAudios(audioElements, append) {
         const audiosContainer = u('.audiosInsert');
         let audiosHTML = '';
-
         audioElements.forEach(el => {
-            // Use realid for playlists, prettyid for forms
             const audioId = this.type === 'playlist' ? el.dataset.realid : el.dataset.prettyid;
             let isSelected = this.selectedAudios.has(audioId);
             if (this.form && !isSelected) {
-                const selector = this.type === 'playlist'
-                    ? `.PE_audios .vertical-attachment[data-id="${audioId}"]`
-                    : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
-                const attachmentExists = this.form.find(selector).length > 0;
-                if (attachmentExists) {
-                    isSelected = true;
-                    this.selectedAudios.add(audioId);
-                }
+                const selector = this.type === 'playlist' ? `.PE_audios .vertical-attachment[data-id="${audioId}"]` : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
+                if (this.form.find(selector).length > 0) { isSelected = true; this.selectedAudios.add(audioId); }
             }
-
             const selectedClass = isSelected ? 'selected' : '';
             const buttonText = isSelected ? tr("detach") : tr("attach");
-
             audiosHTML += `
-                <div class='audio_attachment_header ${selectedClass}' style="display: flex;width: 100%;" data-audio-id="${audioId}">
+                <div class='audio_attachment_header ${selectedClass}' style="display:flex;width:100%;" data-audio-id="${audioId}">
                     <div class='player_part'>${el.outerHTML}</div>
-                    <div class="attachAudio" data-attachmentdata="${audioId}">
-                        <span>${buttonText}</span>
-                    </div>
-                </div>
-            `;
+                    <div class="attachAudio" data-attachmentdata="${audioId}"><span>${buttonText}</span></div>
+                </div>`;
         });
-
-        if (append) {
-            audiosContainer.append(audiosHTML);
-        } else {
-            audiosContainer.html(audiosHTML);
-        }
+        if (append) audiosContainer.append(audiosHTML); else audiosContainer.html(audiosHTML);
     }
 
     handleAudioPagination(currentPage, pagesCount) {
         const moreContainer = u('.audios_choose_more_container');
-
-        if (currentPage < pagesCount) {
-            const extraData = { 'page': currentPage + 1 };
-            const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_audios', extraData);
-            moreContainer.html(showMoreButton);
-        } else {
-            moreContainer.html('');
-        }
+        if (currentPage < pagesCount) { const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_audios', { 'page': currentPage + 1 }); moreContainer.html(showMoreButton); } else moreContainer.html('');
     }
 
     toggleAudioSelection(audioId) {
         const audioElement = u(`[data-audio-id="${audioId}"]`);
-
         if (this.selectedAudios.has(audioId)) {
             this.selectedAudios.delete(audioId);
             audioElement.removeClass('selected');
             audioElement.find('.attachAudio span').html(tr("attach"));
-
             if (this.form) {
-                const selector = this.type === 'playlist'
-                    ? `.PE_audios .vertical-attachment[data-id="${audioId}"]`
-                    : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
+                const selector = this.type === 'playlist' ? `.PE_audios .vertical-attachment[data-id="${audioId}"]` : `.post-vertical .vertical-attachment[data-type="audio"][data-id="${audioId}"]`;
                 const attachmentElement = this.form.find(selector);
-                if (attachmentElement.length > 0) {
-                    attachmentElement.remove();
-                }
+                if (attachmentElement.length > 0) attachmentElement.remove();
             }
         } else {
-            const attachmentSelector = this.type === 'playlist'
-                ? '.PE_audios .vertical-attachment'
-                : '.post-horizontal > a, .post-vertical > .vertical-attachment';
-            const currentAttachments = this.form.find(attachmentSelector).length;
-            if (currentAttachments >= 10) {
-                NewNotification(
-                    tr('error'),
-                    tr('too_many_attachments'),
-                    null,
-                    () => {},
-                    5000,
-                    false
-                );
-                return false;
-            }
-
+            const currentAttachments = this.form.find(AttachmentSelectorFactory.getAllAttachmentsSelector()).length;
+            if (currentAttachments >= this.config.MAX_ATTACHMENTS) { AttachmentErrorHandler.showAttachmentLimitError(); return false; }
             this.selectedAudios.add(audioId);
             audioElement.addClass('selected');
             audioElement.find('.attachAudio span').html(tr("detach"));
-
             const playerPart = audioElement.find('.player_part');
             const targetContainer = this.type === 'playlist' ? '.PE_audios' : '.post-vertical';
             this.form.find(targetContainer).append(`
                 <div class="vertical-attachment upload-item" ${this.type === 'form' ? 'data-type="audio"' : ''} data-id="${audioId}">
-                    <div class='vertical-attachment-content'>
-                        ${playerPart.html()}
-                    </div>
-                    <div class='vertical-attachment-remove'>
-                        <div id='small_remove_button'></div>
-                    </div>
-                </div>
-            `);
+                    <div class='vertical-attachment-content'>${playerPart.html()}</div>
+                    <div class='vertical-attachment-remove'><div id='small_remove_button'></div></div>
+                </div>`);
         }
-
         return this.selectedAudios.has(audioId);
     }
-
-    initialize() {
-        this.setupDialogStyles();
-    }
-
-
 }
 
 class AudioAttachmentDialog {
-    constructor(formOrType, form = null) {
-        // Handle both old (form) and new (type, form) parameter patterns
+    constructor(formOrType, form = null, club = 0) {
         if (typeof formOrType === 'string') {
             this.type = formOrType;
             this.form = form;
+            this.club = club;
         } else {
             this.type = 'form';
             this.form = formOrType;
+            this.club = (typeof form === 'number') ? form : club;
         }
-
-        this.searchTimeout = null; // Debounce timeout for search functionality
-
-        // Initialize managers
-        this.requestManager = new BaseRequestManager();
-
-        // Create message box with audio-specific dialog body
-        this.messageBox = new CMessageBox({
-            title: tr('select_audio'),
-            body: this.createDialogBody(),
-        });
-
-        // Set custom dimensions
-        this.messageBox.getNode().attr('style', 'width: 560px');
-        this.messageBox.getNode().find('.ovk-diag-body').attr('style', 'padding: 0px!important; height: 850px');
-
-        // Create and initialize managers
-        this.audioManager = new AudioManager(this.messageBox, this.requestManager, this.form, this.type);
-        this.audioManager.initialize();
-
-
+        this.club = Number(this.club) || 0;
+        this.requestManager = new RequestManager();
+        this.messageBox = new CMessageBox({ title: tr('select_audio'), body: this.createDialogBody() });
+        this.audioManager = new AudioManager(this.messageBox, this.requestManager, this.form, this.type, this.club);
+        this.audioManager.initialize(this.club);
     }
 
-    async loadInitialContent() {
-        try {
-            await this.audioManager.loadAudios(0, '', false);
-        } catch (error) {
-            console.error('Error loading initial audio content:', error);
-        }
+    getSelectionCount() {
+        return this.audioManager.getSelectionCount();
     }
-
+    async loadInitialContent() { try { await this.audioManager.loadAudios(0, '', false); } catch (e) { console.error(e); } }
     setupEventHandlers() {
         const node = this.messageBox.getNode();
-
-        node.on('click', '.audio-upload-btn', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            this.messageBox.close();
-
-            showAudioUploadPopup();
-        });
-
-        node.on('click', '.attachAudio', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const audioHeader = u(e.target).closest('.audio_attachment_header');
-            const audioId = audioHeader.attr('data-audio-id');
-            const wasAttached = this.audioManager.selectedAudios.has(audioId);
-
-            this.audioManager.toggleAudioSelection(audioId);
-
-            if (!wasAttached && !e.ctrlKey) {
-                this.messageBox.close();
-            }
-        });
-
-        this.audioManager.setupShowMoreHandler(node, 'show_more_audios', async (button) => {
-            const page = Number(button.attr('data-page')) - 1;
-            await this.audioManager.loadAudios(page, this.audioManager.currentQuery, true);
-        });
-
-        node.on('change', '.audio_search_type', (e) => {
-            this.audioManager.searchType = e.target.value;
-            this.audioManager.loadAudios(0, this.audioManager.currentQuery, false);
-        });
-    }
-
-    async initialize() {
-        this.setupEventHandlers();
-        await this.loadInitialContent();
-
+        node.on('click', '.audio-upload-btn', (e) => { e.preventDefault(); e.stopPropagation(); this.messageBox.close(); showAudioUploadPopup(); });
+        node.on('click', '.attachAudio', (e) => { e.preventDefault(); e.stopPropagation(); const audioHeader = u(e.target).closest('.audio_attachment_header'); const audioId = audioHeader.attr('data-audio-id'); const wasAttached = this.audioManager.selectedAudios.has(audioId); this.audioManager.toggleAudioSelection(audioId); if (!wasAttached && !e.ctrlKey) this.messageBox.close(); });
+        this.audioManager.setupShowMoreHandler(node, 'show_more_audios', async (button) => { const page = Number(button.attr('data-page')) - 1; await this.audioManager.loadAudios(page, this.audioManager.currentQuery, true); });
         if (window.uiSearch) {
             const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
             if (searchElement) {
-                window.uiSearch.init(searchElement, {
-                    onInput: (query) => {
-                        this.audioManager.currentQuery = query;
-                        this.requestManager.cancelOngoingRequests();
-                        this.audioManager.loadAudios(0, query, false);
-                    },
-                    onReset: () => {
-                        this.audioManager.currentQuery = '';
-                        this.audioManager.loadAudios(0, '', false);
-                    },
-                    timeout: 300
-                });
+                window.uiSearch.init(searchElement, { onInput: (q) => { this.audioManager.currentQuery = q; this.audioManager.loadAudios(0, q, false); }, onReset: () => { this.audioManager.currentQuery = ''; this.audioManager.loadAudios(0, '', false); }, timeout: 300 });
             }
         }
+        node.on('change', '.audio_search_type', (e) => { this.audioManager.searchType = e.target.value; this.audioManager.loadAudios(0, this.audioManager.currentQuery, false); });
+        node.on('click', '#user_audios_link', async (e) => {
+            e.preventDefault();
+            this.audioManager.switchContentContext(true);
+        });
+        node.on('click', '#back_to_club_audios_link', async (e) => {
+            e.preventDefault();
+            this.audioManager.switchContentContext(false);
+        });
     }
-
+    async initialize() { this.setupEventHandlers(); await this.loadInitialContent(); }
     createDialogBody() {
         return `
         <div class='attachment_selector no_hack'>
-            <div class="choose_upload_area audio-upload-btn" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </div>
+            <div class="choose_upload_area audio-upload-btn" role="button" tabindex="0"><span class="choose_upload_area_label">${tr("upload_button")}</span></div>
             <div class='audios_tab_content'>
                 <div class='audios_search_container clear_fix'>
                     <div class='ui_search_new ui_search ui_search_field_empty'>
                         <div class='ui_search_input_block'>
                             <button class="ui_search_button_search">&nbsp;</button>
                             <div class="ui_search_input_inner">
-                                <div class='ui_search_reset' style="visibility: hidden; opacity: 0;"></div>
-                                <input type='text' class='ui_search_field' placeholder='${tr("header_search")}' />
+                                <div class='ui_search_reset' style="visibility:hidden;opacity:0;"></div>
+                                <input type='text' class='ui_search_field' placeholder='${tr("header_search")}'>
                             </div>
                         </div>
                     </div>
@@ -2788,180 +2601,84 @@ class AudioAttachmentDialog {
                 <div class='audiosInsert'></div>
                 <div class='audios_choose_more_container'></div>
             </div>
-        </div>
-        `;
+        </div>`;
     }
 }
 
+u(document).on('click', '#__vkifyAudioAttachment', async (e) => {
+    const form = u(e.target).closest('form');
+    const club = Number(e.currentTarget.dataset.club ?? 0);
+    console.log(`[AudioAttachment] Creating dialog with club: ${club}, dataset.club: ${e.currentTarget.dataset.club}`);
+    const dialog = new AudioAttachmentDialog(form, club);
+    await dialog.initialize();
+});
+
+u(document).on('click', '#_vkifyPlaylistAppendTracks', async () => {
+    const dialog = new AudioAttachmentDialog('playlist', u('.PE_wrapper'));
+    await dialog.initialize();
+});
+
 class DocumentManager extends BaseAttachmentManager {
-    constructor(messageBox, requestManager, form = null, source = "user", sourceArg = 0) {
-        super(messageBox, requestManager, form, 'document', {
-            DOCS_PER_PAGE: window.openvk?.default_per_page || 10
-        });
-        this.source = source;
-        this.sourceArg = sourceArg;
+    constructor(messageBox, requestManager, form = null, source = "user", sourceArg = 0, club = 0) {
+        super(messageBox, requestManager, form, 'document');
+        this.source = source; this.sourceArg = sourceArg; this.currentQuery = ''; this.searchTimeout = null; this.isSearching = false;
+        this.setClub(club);
+    }
+    get selectedDocuments() { return this.selectedItems; }
+
+    initialize(club) {
+        this.setupDialogStyles();
+        this.initializeContextSwitcher(club);
+    }
+
+    async onContextSwitch(isViewingUserContent) {
+
+        this.source = isViewingUserContent ? "user" : "club";
+        this.sourceArg = isViewingUserContent ? 0 : this.club;
+
         this.currentQuery = '';
-        this.searchTimeout = null;
-        this.isSearching = false;
-    }
 
-    get selectedDocuments() {
-        return this.selectedItems;
-    }
-
-    getItemsPerPage() {
-        return this.CONSTANTS.DOCS_PER_PAGE;
+        await this.loadDocuments(0, '', false);
     }
 
     async loadDocuments(page = 0, query = '', append = false) {
         const requestId = this.requestManager.createCancellableRequest();
-        const docsContainer = u('.docsInsert');
-        const moreContainer = u('.docs_choose_more_container');
-
-        if (!append) {
-            docsContainer.html('');
-            moreContainer.html('');
-            this.showLoader(docsContainer);
-        }
-
+        const docsContainer = u('.docsInsert'); const moreContainer = u('.docs_choose_more_container');
+        if (!append) { docsContainer.html(''); moreContainer.html(''); LoaderUtils.show(docsContainer); }
         try {
-            const fd = new FormData();
-            fd.append("context", query ? "search" : "list");
-            fd.append("hash", window.router.csrf);
-            if (query) {
-                fd.append("ctx_query", query);
-            }
-
+            const fd = new FormData(); fd.append("context", query ? "search" : "list"); fd.append("hash", window.router.csrf); if (query) fd.append("ctx_query", query);
             let url = `/docs${this.source == "club" ? this.sourceArg : ""}?picker=1&p=${page + 1}`;
-
-            const req = await fetch(url, {
-                method: "POST",
-                body: fd
-            });
-
-            if (this.requestManager.isRequestCancelled(requestId)) return;
-
-            const res = await req.text();
-            const dom = new DOMParser();
-            const pre = dom.parseFromString(res, "text/html");
-
-            const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value);
-            const count = Number(pre.querySelector("input[name='count']").value);
-
-            if (count < 1) {
-                this.showError(docsContainer, tr("no_documents"));
-                const moreContainer = u('.docs_choose_more_container');
-                moreContainer.html('');
-                return { count: 0, items: [] };
-            }
-
-            const docElements = Array.from(pre.querySelectorAll("._content"));
-            this.renderDocuments(docElements, append);
-            this.handleDocumentPagination(page, pagesCount, query, docElements.length);
-
+            const req = await fetch(url, { method: "POST", body: fd }); if (this.requestManager.isRequestCancelled(requestId)) return;
+            const res = await req.text(); const pre = new DOMParser().parseFromString(res, "text/html");
+            const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value); const count = Number(pre.querySelector("input[name='count']").value);
+            if (count < 1) { this.showError(docsContainer, tr("no_documents")); moreContainer.html(''); return { count: 0, items: [] }; }
+            const docElements = Array.from(pre.querySelectorAll("._content")); this.renderDocuments(docElements, append); this.handleDocumentPagination(page, pagesCount, query, docElements.length);
             return { count, items: docElements, page, pagesCount };
-        } catch (error) {
-            if (this.requestManager.isRequestCancelled(requestId)) return;
-            console.error('Error loading documents:', error);
-            this.showError(docsContainer, tr('error_loading_documents'));
-        }
+        } catch (error) { if (this.requestManager.isRequestCancelled(requestId)) return; console.error('Error loading documents:', error); AttachmentErrorHandler.showLoadingError(docsContainer, 'documents'); }
     }
-
     renderDocuments(docElements, append) {
-        const docsContainer = u('.docsInsert');
-        let docsHTML = '';
-
+        const docsContainer = u('.docsInsert'); let docsHTML = '';
         docElements.forEach(el => {
-            const docId = el.dataset.attachmentdata;
-
-            let isSelected = this.selectedDocuments.has(docId);
-            if (this.form && !isSelected) {
-                const attachmentExists = this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`).length > 0;
-                if (attachmentExists) {
-                    isSelected = true;
-                    this.selectedDocuments.add(docId);
-                }
-            }
-
-            const selectedClass = isSelected ? 'selected' : '';
-            const buttonText = isSelected ? tr("detach") : tr("attach");
-
-            docsHTML += `
-                <div class='document_attachment_header ${selectedClass}' data-document-id="${docId}">
-                    <div class="attachDocument" data-attachmentdata="${docId}">
-                        <span>${buttonText}</span>
-                    </div>
-                    <div class='document_content'>${el.outerHTML}</div>
-                </div>
-            `;
+            const docId = el.dataset.attachmentdata; let isSelected = this.selectedDocuments.has(docId);
+            if (this.form && !isSelected) { if (this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`).length > 0) { isSelected = true; this.selectedDocuments.add(docId); } }
+            const selectedClass = isSelected ? 'selected' : ''; const buttonText = isSelected ? tr("detach") : tr("attach");
+            docsHTML += `<div class='document_attachment_header ${selectedClass}' data-document-id="${docId}"><div class="attachDocument" data-attachmentdata="${docId}"><span>${buttonText}</span></div><div class='document_content'>${el.outerHTML}</div></div>`;
         });
-
-        if (append) {
-            docsContainer.append(docsHTML);
-        } else {
-            docsContainer.html(docsHTML);
-        }
+        if (append) docsContainer.append(docsHTML); else docsContainer.html(docsHTML);
     }
-
-    handleDocumentPagination(currentPage, pagesCount, query = '', documentsLoaded = 0) {
+    handleDocumentPagination(currentPage, pagesCount) {
         const moreContainer = u('.docs_choose_more_container');
-
-        if (query && query.trim() !== '') {
-            const totalDocumentsDisplayed = u('.docsInsert .document_attachment_header').length;
-            if (totalDocumentsDisplayed > 10 && currentPage < pagesCount - 1) {
-                const extraData = { 'page': currentPage + 1 };
-                const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_docs', extraData);
-                moreContainer.html(showMoreButton);
-            } else {
-                moreContainer.html('');
-            }
-        } else {
-            if (currentPage < pagesCount - 1) {
-                const extraData = { 'page': currentPage + 1 };
-                const showMoreButton = this.createShowMoreButton(pagesCount, 'show_more_docs', extraData);
-                moreContainer.html(showMoreButton);
-            } else {
-                moreContainer.html('');
-            }
-        }
+        moreContainer.html(currentPage < pagesCount - 1 ? this.createShowMoreButton(pagesCount, 'show_more_docs', { 'page': currentPage + 1 }) : '');
     }
-
     toggleDocumentSelection(docId) {
         const docElement = u(`[data-document-id="${docId}"]`);
-
         if (this.selectedDocuments.has(docId)) {
-            this.selectedDocuments.delete(docId);
-            docElement.removeClass('selected');
-            docElement.find('.attachDocument span').html(tr("attach"));
-
-            if (this.form) {
-                const attachmentElement = this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`);
-                if (attachmentElement.length > 0) {
-                    attachmentElement.remove();
-                }
-            }
+            this.selectedDocuments.delete(docId); docElement.removeClass('selected'); docElement.find('.attachDocument span').html(tr("attach"));
+            if (this.form) { const el = this.form.find(`.post-vertical .vertical-attachment[data-type="doc"][data-id="${docId}"]`); if (el.length > 0) el.remove(); }
         } else {
-            const currentAttachments = this.form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length;
-            if (currentAttachments >= 10) {
-                NewNotification(
-                    tr('error'),
-                    tr('too_many_attachments'),
-                    null,
-                    () => {},
-                    5000,
-                    false
-                );
-                return false;
-            }
-
-            this.selectedDocuments.add(docId);
-            docElement.addClass('selected');
-            docElement.find('.attachDocument span').html(tr("detach"));
-
-            const docContent = docElement.find('.document_content ._content').nodes[0];
-            const dataset = docContent.dataset;
-            const _url = dataset.attachmentdata.split("_");
-
+            const currentAttachments = this.form.find(AttachmentSelectorFactory.getAllAttachmentsSelector()).length; if (currentAttachments >= this.config.MAX_ATTACHMENTS) { AttachmentErrorHandler.showAttachmentLimitError(); return false; }
+            this.selectedDocuments.add(docId); docElement.addClass('selected'); docElement.find('.attachDocument span').html(tr("detach"));
+            const docContent = docElement.find('.document_content ._content').nodes[0]; const dataset = docContent.dataset; const _url = dataset.attachmentdata.split("_");
             this.form.find('.post-vertical').append(`
                 <div class="vertical-attachment upload-item" draggable="true" data-type='doc' data-id="${dataset.attachmentdata}">
                     <div class='vertical-attachment-content' draggable="false">
@@ -2973,147 +2690,72 @@ class DocumentManager extends BaseAttachmentManager {
                             </div>
                         </div>
                     </div>
-                    <div class='vertical-attachment-remove'>
-                        <div id='small_remove_button'></div>
-                    </div>
-                </div>
-            `);
+                    <div class='vertical-attachment-remove'><div id='small_remove_button'></div></div>
+                </div>`);
         }
-
         return this.selectedDocuments.has(docId);
     }
 
-    async searchDocuments(query) {
-        if (this.isSearching) {
-            return;
-        }
-
-        if (this.searchTimeout) {
-            clearTimeout(this.searchTimeout);
-        }
-
-        this.searchTimeout = setTimeout(async () => {
-            this.isSearching = true;
-            this.currentQuery = query;
-
-            try {
-                await this.loadDocuments(0, query, false);
-            } finally {
-                this.isSearching = false;
-            }
-        }, 300);
+    clearSelection() {
+        super.clearSelection();
+        u('.document_attachment_header').removeClass('selected');
+        u('.document_attachment_header .attachDocument span').html(tr("attach"));
     }
-
-    initialize() {
-        if (window.uiSearch) {
-            const searchElement = this.messageBox.getNode().find('.ui_search').nodes[0];
-            if (searchElement) {
-                window.uiSearch.init(searchElement, {
-                    onInput: (query) => {
-                        this.searchDocuments(query);
-                    },
-                    onButtonClick: (query) => {
-                        this.searchDocuments(query);
-                    },
-                    processQuery: (value) => ovk_proc_strtr(value, 100),
-                    timeout: 300
-                });
-            }
-        }
-    }
-
-
 }
 
 class DocumentAttachmentDialog {
-    constructor(form, source = "user", sourceArg = 0) {
+    constructor(form, source = "user", sourceArg = 0, club = 0) {
         this.form = form;
         this.source = source;
         this.sourceArg = sourceArg;
-        this.searchTimeout = null;
-
-        this.requestManager = new BaseRequestManager();
-
-        this.messageBox = new CMessageBox({
-            title: tr('select_doc'),
-            body: this.createDialogBody(),
-            buttons: source != "user" ? [tr("go_to_my_documents"), tr("close")] : [tr("close")],
-            callbacks: source != "user" ? [
-                async () => {
-                    this.messageBox.close();
-                    const dialog = new DocumentAttachmentDialog(form, "user", 0);
-                    await dialog.initialize();
-                },
-                () => {
-                    this.messageBox.close();
-                }
-            ] : [
-                () => {
-                    this.messageBox.close();
-                }
-            ]
-        });
-
-        this.messageBox.getNode().attr('style', 'width: 636px;');
-
-        this.documentManager = new DocumentManager(this.messageBox, this.requestManager, this.form, source, sourceArg);
-        this.documentManager.initialize();
+        this.club = Number(club) || 0;
+        this.requestManager = new RequestManager();
+        this.messageBox = new CMessageBox({ title: tr('select_doc'), body: this.createDialogBody(), buttons: [tr("close")], callbacks: [() => { this.messageBox.close(); }] });
+        this.documentManager = new DocumentManager(this.messageBox, this.requestManager, this.form, source, sourceArg, this.club);
+        this.documentManager.initialize(this.club);
     }
 
-    async loadInitialContent() {
-        try {
-            await this.documentManager.loadDocuments(0, '', false);
-        } catch (error) {
-            console.error('Error loading initial document content:', error);
-        }
+    getSelectionCount() {
+        return this.documentManager.getSelectionCount();
     }
-
+    async loadInitialContent() { try { await this.documentManager.loadDocuments(0, '', false); } catch (e) { console.error(e); } }
     setupEventHandlers() {
         const node = this.messageBox.getNode();
-
-        node.on('click', '.document-upload-btn', (e) => {
+        node.on('click', '.document-upload-btn', (e) => { e.preventDefault(); e.stopPropagation(); this.messageBox.close(); showDocumentUploadDialog("search", this.sourceArg >= 0 ? NaN : Math.abs(this.sourceArg), () => { }); });
+        node.on('click', '.attachDocument', (e) => { e.preventDefault(); e.stopPropagation(); const docHeader = u(e.target).closest('.document_attachment_header'); const docId = docHeader.attr('data-document-id'); const wasAttached = this.documentManager.selectedDocuments.has(docId); this.documentManager.toggleDocumentSelection(docId); if (!wasAttached && !e.ctrlKey) this.messageBox.close(); });
+        this.documentManager.setupShowMoreHandler(node, 'show_more_docs', async (button) => { const page = Number(button.attr('data-page')); await this.documentManager.loadDocuments(page, this.documentManager.currentQuery, true); button.remove(); });
+        node.on('click', '#user_documents_link', async (e) => {
             e.preventDefault();
-            e.stopPropagation();
-
-            this.messageBox.close();
-
-            showDocumentUploadDialog("search", this.sourceArg >= 0 ? NaN : Math.abs(this.sourceArg), () => {
-            });
+            this.documentManager.switchContentContext(true);
         });
-
-        node.on('click', '.attachDocument', (e) => {
+        node.on('click', '#back_to_club_documents_link', async (e) => {
             e.preventDefault();
-            e.stopPropagation();
-
-            const docHeader = u(e.target).closest('.document_attachment_header');
-            const docId = docHeader.attr('data-document-id');
-            const wasAttached = this.documentManager.selectedDocuments.has(docId);
-            this.documentManager.toggleDocumentSelection(docId);
-            if (!wasAttached && !e.ctrlKey) {
-                this.messageBox.close();
-            }
+            this.documentManager.switchContentContext(false);
         });
-
-        this.documentManager.setupShowMoreHandler(node, 'show_more_docs', async (button) => {
-            const page = Number(button.attr('data-page'));
-            await this.documentManager.loadDocuments(page, this.documentManager.currentQuery, true);
-            button.remove();
-        });
-
-
     }
-
     async initialize() {
         this.setupEventHandlers();
+        const node = this.messageBox.getNode();
+        const searchBox = node.find('.ui_search');
+        if (searchBox.length) {
+            const sid = `doc_search_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+            searchBox.attr('data-search-id', sid);
+        }
+        const searchElement = searchBox.nodes && searchBox.nodes[0] ? searchBox.nodes[0] : undefined;
+        if (searchElement && typeof this.documentManager.initializeSearch === 'function' && window.uiSearch) {
+            this.documentManager.initializeSearch(searchElement, (page, q, append) => this.documentManager.loadDocuments(page, q, append));
+        } else {
+            const input = node.find('.ui_search_field');
+            if (input.length && typeof this.documentManager.setupSearchWithDebounce === 'function') {
+                this.documentManager.setupSearchWithDebounce(input, (page, q, append) => this.documentManager.loadDocuments(page, q, append));
+            }
+        }
         await this.loadInitialContent();
     }
-
     createDialogBody() {
         return `
         <div class="docs_choose_wrap">
-            <div class="choose_upload_area document-upload-btn" role="button" tabindex="0">
-                <span class="choose_upload_area_label">${tr("upload_button")}</span>
-            </div>
+            <div class="choose_upload_area document-upload-btn" role="button" tabindex="0"><span class="choose_upload_area_label">${tr("upload_button")}</span></div>
             <div class="docs_choose_search">
                 <div class="ui_search_new ui_search ui_search_field_empty">
                     <div class="ui_search_input_block">
@@ -3129,44 +2771,472 @@ class DocumentAttachmentDialog {
                 <div class="docsInsert"></div>
                 <div class="docs_choose_more_container"></div>
             </div>
-        </div>
-        `;
+        </div>`;
     }
 }
 
-u(document).on("click", "#__vkifyPhotoAttachment", async (e) => {
-    const form = u(e.target).closest('form');
-    const club = Number(e.currentTarget.dataset.club ?? 0);
-
-    const dialog = new PhotoAttachmentDialog(form, club);
-    await dialog.initialize();
-});
-
-u(document).on('click', '#__vkifyVideoAttachment', async (e) => {
-    const form = u(e.target).closest('form');
-
-    const dialog = new VideoAttachmentDialog(form);
-    await dialog.initialize();
-});
-
-u(document).on('click', '#__vkifyAudioAttachment', async (e) => {
-    const form = u(e.target).closest('form');
-
-    const dialog = new AudioAttachmentDialog(form);
-    await dialog.initialize();
-});
-
-u(document).on('click', '#_vkifyPlaylistAppendTracks', async () => {
-    const dialog = new AudioAttachmentDialog('playlist', u('.PE_wrapper'));
-    await dialog.initialize();
-})
-
 u(document).on('click', '#__vkifyDocumentAttachment', async (e) => {
     const form = u(e.target).closest('form');
-
-    const dialog = new DocumentAttachmentDialog(form);
+    const club = Number(e.currentTarget.dataset.club ?? 0);
+    const source = club != 0 ? "club" : "user";
+    const sourceArg = club != 0 ? club : 0;
+    const dialog = new DocumentAttachmentDialog(form, source, sourceArg, club);
     await dialog.initialize();
 });
+
+class PostPopupManager {
+    constructor() {
+        this.currentModal = null;
+        this.originalUrl = null;
+        this.modalPaginationObserver = null;
+        this.setupEventListeners();
+        this.checkInitialUrl();
+    }
+
+    setupEventListeners() {
+        u(document).on('click', '.scroll_container .post_link', (e) => {
+            const link = u(e.target).closest('.post_link');
+            const href = link.attr('href');
+
+            if (href && href.match(/^\/wall-?\d+_\d+$/)) {
+                e.preventDefault();
+                this.openPostPopup(href);
+            }
+        });
+
+        window.addEventListener('popstate', () => {
+            const urlParams = new URLSearchParams(location.search);
+            const wallParam = urlParams.get('w');
+            const sortParam = urlParams.get('sort');
+            const pageParam = urlParams.get('p');
+
+            if (wallParam && wallParam.startsWith('wall')) {
+                const postPath = '/' + wallParam;
+                this.openPostPopup(postPath, false, sortParam, pageParam);
+            } else if (this.currentModal) {
+                this.closePostPopup(false);
+            }
+        });
+    }
+
+    checkInitialUrl() {
+        const urlParams = new URLSearchParams(location.search);
+        const wallParam = urlParams.get('w');
+        const sortParam = urlParams.get('sort');
+        const pageParam = urlParams.get('p');
+        if (wallParam && wallParam.startsWith('wall')) {
+            const postPath = '/' + wallParam;
+            this.openPostPopup(postPath, false, sortParam, pageParam);
+        }
+    }
+
+    async openPostPopup(postPath, updateUrl = true, sortParam = null, pageParam = null) {
+        try {
+            if (u('#ajloader').hasClass('shown')) {
+                return;
+            }
+
+            if (this.currentModal) {
+                this.closePostPopup(false);
+            }
+
+            const postId = this.extractPostId(postPath);
+            if (!postId) return;
+
+            if (updateUrl) {
+                this.originalUrl = location.href;
+                const newUrl = new URL(location.href);
+                newUrl.searchParams.set('w', postPath.substring(1));
+                if (sortParam) {
+                    newUrl.searchParams.set('sort', sortParam);
+                }
+                if (pageParam) {
+                    newUrl.searchParams.set('p', pageParam);
+                }
+                history.pushState({ postPopup: postPath }, '', newUrl.toString());
+            }
+
+            CMessageBox.toggleLoader();
+
+            const fetchUrl = new URL(postPath, location.origin);
+            if (sortParam) {
+                fetchUrl.searchParams.set('sort', sortParam);
+            }
+            if (pageParam) {
+                fetchUrl.searchParams.set('p', pageParam);
+            }
+
+            const response = await fetch(fetchUrl.toString(), {
+                headers: {
+                    'X-OpenVK-Ajax-Query': '1',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const postContent = doc.querySelector('.wide_column');
+            if (!postContent) {
+                throw new Error('Post content not found');
+            }
+
+            CMessageBox.toggleLoader();
+
+            this.currentModal = new CMessageBox({
+                title: tr('post'),
+                custom_template: u(`
+                    <div class="ovk-photo-view-dimmer post_popup_modal">
+                        <div class="ovk-modal-video-window">
+                            <div id="video_top_controls_wrapper">
+                                <div id="video_top_controls">
+                                    <div id="__modalPlayerClose" class="video_top_button video_top_close" role="button" tabindex="0" aria-label="Close">
+                                        <div class="video_close_icon"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-popup-content">${postContent.innerHTML}</div>
+                            </div>
+                        </div>
+                    </div>
+                `),
+                close_on_buttons: false,
+                warn_on_exit: false,
+                unique_name: null
+            });
+
+            const modalNode = this.currentModal.getNode();
+
+            const originalExitDialog = this.currentModal.__exitDialog.bind(this.currentModal);
+            this.currentModal.__exitDialog = () => {
+                originalExitDialog();
+                this.handleModalClosed();
+            };
+
+            modalNode.on('click', '#__modalPlayerClose', () => {
+                this.closePostPopup();
+            });
+
+            modalNode.on('click', '.sort_link', (e) => {
+                e.preventDefault();
+                const sortLink = u(e.target).closest('.sort_link');
+                const href = sortLink.attr('href');
+                const sortMatch = href.match(/[?&]sort=([^&]+)/);
+
+                if (sortMatch) {
+                    const sortParam = sortMatch[1];
+                    this.refreshModalWithSort(postPath, sortParam);
+                }
+            });
+
+            modalNode.on('click', '.paginator a', (e) => {
+                e.preventDefault();
+                const paginatorLink = u(e.target).closest('a');
+                const href = paginatorLink.attr('href');
+
+                if (href && href.includes('?')) {
+                    const urlParams = new URLSearchParams(href.split('?')[1]);
+                    const pageParam = urlParams.get('p');
+                    const sortParam = urlParams.get('sort');
+
+                    if (pageParam) {
+                        this.appendModalComments(postPath, pageParam, sortParam);
+                    }
+                }
+            });
+
+            if (window.processVkifyLocTags) {
+                window.processVkifyLocTags();
+            }
+
+            this.setupModalPaginationObserver(postPath, sortParam);
+
+        } catch (error) {
+            console.error('Failed to load post:', error);
+            CMessageBox.toggleLoader();
+            if (this.currentModal) {
+                this.closePostPopup(false);
+            }
+            if (updateUrl) {
+                location.href = postPath;
+            }
+        }
+    }
+
+    handleModalClosed() {
+
+        if (this.modalPaginationObserver) {
+            this.modalPaginationObserver.disconnect();
+            this.modalPaginationObserver = null;
+        }
+
+        this.currentModal = null;
+
+        const newUrl = new URL(location.href);
+        newUrl.searchParams.delete('w');
+        newUrl.searchParams.delete('sort');
+        newUrl.searchParams.delete('p');
+        const urlWithoutParam = newUrl.toString();
+
+        if (this.originalUrl && this.originalUrl !== urlWithoutParam) {
+            history.pushState(null, '', urlWithoutParam);
+        } else {
+            history.replaceState(null, '', urlWithoutParam);
+        }
+        this.originalUrl = null;
+    }
+
+    async refreshModalWithSort(postPath, sortParam) {
+        if (!this.currentModal) return;
+
+        try {
+            const modalNode = this.currentModal.getNode();
+            const commentsContainer = modalNode.find('.page_block.comments');
+            if (commentsContainer.length === 0) {
+                console.warn('Comments container not found in modal');
+                return;
+            }
+
+            commentsContainer.html('');
+            LoaderUtils.show(commentsContainer, { size: 'medium' });
+
+            const fetchUrl = new URL(postPath, location.origin);
+            fetchUrl.searchParams.set('sort', sortParam);
+
+            const response = await fetch(fetchUrl.toString(), {
+                headers: {
+                    'X-OpenVK-Ajax-Query': '1',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const newCommentsContainer = doc.querySelector('.page_block.comments');
+            if (!newCommentsContainer) {
+                throw new Error('Comments section not found in response');
+            }
+
+            LoaderUtils.hide(commentsContainer);
+            commentsContainer.html(newCommentsContainer.innerHTML);
+
+            const modalPaginator = modalNode.find('.paginator:not(.paginator-at-top)');
+            const newPaginator = doc.querySelector('.paginator:not(.paginator-at-top)');
+            if (modalPaginator.length > 0 && newPaginator) {
+                modalPaginator.html(newPaginator.innerHTML);
+            }
+
+            const currentUrl = new URL(location.href);
+            currentUrl.searchParams.set('sort', sortParam);
+            history.replaceState({ postPopup: postPath }, '', currentUrl.toString());
+
+            if (window.processVkifyLocTags) {
+                window.processVkifyLocTags();
+            }
+
+            this.setupModalPaginationObserver(postPath, sortParam);
+
+        } catch (error) {
+            console.error('Failed to refresh post with sort:', error);
+            if (this.currentModal) {
+                const commentsContainer = this.currentModal.getNode().find('.page_block.comments');
+                if (commentsContainer.length > 0) {
+                    LoaderUtils.hide(commentsContainer);
+                    commentsContainer.html('<div class="post-popup-error">Failed to sort comments. Please try again.</div>');
+                }
+            }
+        }
+    }
+
+    async appendModalComments(postPath, pageParam, sortParam = null) {
+        if (!this.currentModal) return;
+
+        try {
+            const modalNode = this.currentModal.getNode();
+            const scrollContainer = modalNode.find('.scroll_container');
+            if (scrollContainer.length === 0) {
+                console.warn('Scroll container not found in modal');
+                return;
+            }
+
+            const fetchUrl = new URL(postPath, location.origin);
+            fetchUrl.searchParams.set('p', pageParam);
+            if (sortParam) {
+                fetchUrl.searchParams.set('sort', sortParam);
+            }
+
+            const response = await fetch(fetchUrl.toString(), {
+                headers: {
+                    'X-OpenVK-Ajax-Query': '1',
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const newComments = doc.querySelectorAll('.scroll_container .post.reply');
+            newComments.forEach(commentNode => {
+                const commentId = commentNode.getAttribute('data-comment-id');
+                if (commentId) {
+
+                    const existingComment = modalNode.find(`[data-comment-id='${commentId}']`);
+                    if (existingComment.length > 0) {
+                        console.info('AJAX | Found duplicate comment, skipping');
+                        return;
+                    }
+                }
+
+                scrollContainer.nodes[0].appendChild(commentNode);
+            });
+
+            const modalPaginator = modalNode.find('.paginator:not(.paginator-at-top)');
+            const newPaginator = doc.querySelector('.paginator:not(.paginator-at-top)');
+            if (modalPaginator.length > 0 && newPaginator) {
+                modalPaginator.html(newPaginator.innerHTML);
+
+                if (modalPaginator.nodes[0].closest('.scroll_container')) {
+                    scrollContainer.nodes[0].appendChild(modalPaginator.nodes[0].parentNode);
+                }
+            }
+
+            const currentUrl = new URL(location.href);
+            currentUrl.searchParams.set('p', pageParam);
+            if (sortParam) {
+                currentUrl.searchParams.set('sort', sortParam);
+            }
+            history.replaceState({ postPopup: postPath }, '', currentUrl.toString());
+
+            if (window.processVkifyLocTags) {
+                window.processVkifyLocTags();
+            }
+
+        } catch (error) {
+            console.error('Failed to append comments:', error);
+
+        }
+    }
+
+    setupModalPaginationObserver(postPath, sortParam = null) {
+        if (!this.currentModal) return;
+
+        const modalNode = this.currentModal.getNode();
+        const paginator = modalNode.find('.paginator:not(.paginator-at-top)');
+
+        if (paginator.length === 0) return;
+
+        if (this.modalPaginationObserver) {
+            this.modalPaginationObserver.disconnect();
+        }
+
+        this.modalPaginationObserver = new IntersectionObserver(entries => {
+            entries.forEach(async x => {
+                if (x.isIntersecting) {
+
+                    if (Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
+                        return;
+                    }
+
+                    const target = u(x.target);
+                    if (target.length < 1 || target.hasClass('paginator-at-top')) {
+                        return;
+                    }
+                    if (target.hasClass('lagged')) {
+                        return;
+                    }
+
+                    const modalScrollContainer = target.closest('.post_popup_modal').find('.scroll_container');
+                    if (modalScrollContainer.length < 1) {
+                        return;
+                    }
+
+                    target.addClass('lagged');
+                    const activeTab = target.find('.active');
+                    const nextPage = u(activeTab.nodes[0] ? activeTab.nodes[0].nextElementSibling : null);
+                    if (nextPage.length < 1) {
+                        target.removeClass('lagged');
+                        return;
+                    }
+
+                    const pageNumber = Number(nextPage.html());
+
+                    try {
+                        await this.appendModalComments(postPath, pageNumber, sortParam);
+                    } catch (e) {
+                        console.error(e);
+                    }
+
+                    target.removeClass('lagged');
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0,
+        });
+
+        this.modalPaginationObserver.observe(paginator.nodes[0]);
+    }
+
+    closePostPopup(updateUrl = true) {
+        if (this.currentModal) {
+            const modal = this.currentModal;
+            this.currentModal = null;
+
+            modal.__exitDialog();
+
+            if (updateUrl) {
+                const newUrl = new URL(location.href);
+                newUrl.searchParams.delete('w');
+                newUrl.searchParams.delete('sort');
+                newUrl.searchParams.delete('p');
+                const urlWithoutParam = newUrl.toString();
+
+                if (this.originalUrl && this.originalUrl !== urlWithoutParam) {
+                    history.pushState(null, '', urlWithoutParam);
+                } else {
+                    history.replaceState(null, '', urlWithoutParam);
+                }
+                this.originalUrl = null;
+            }
+        } else if (updateUrl) {
+            const newUrl = new URL(location.href);
+            newUrl.searchParams.delete('w');
+            newUrl.searchParams.delete('sort');
+            newUrl.searchParams.delete('p');
+            const urlWithoutParam = newUrl.toString();
+
+            if (this.originalUrl && this.originalUrl !== urlWithoutParam) {
+                history.pushState(null, '', urlWithoutParam);
+            } else {
+                history.replaceState(null, '', urlWithoutParam);
+            }
+            this.originalUrl = null;
+        }
+    }
+
+    extractPostId(postPath) {
+        const match = postPath.match(/^\/wall(-?\d+)_(\d+)$/);
+        return match ? { ownerId: match[1], postId: match[2] } : null;
+    }
+}
+
+if (!window.postPopupManager) {
+    window.postPopupManager = new PostPopupManager();
+}
 
 async function shareAudioPlaylist(event, owner_id, playlist_id) {
     event.preventDefault();
@@ -3203,7 +3273,7 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                     <textarea id='repostMsgInput' placeholder='...'></textarea>
 
                     <div id="repost_signs" class='display_flex_column' style='display:none !important;'>
-                        <label class="checkbox"><input type='checkbox' name="asGroup" onchange="const signedLabel = document.getElementById('signed_label'); signedLabel.style.setProperty('display', this.checked ? 'flex' : 'none', 'important'); if (!this.checked) signedLabel.querySelector('input').checked = false;">${tr('post_as_group')}</label>
+                        <label class="checkbox"><input type='checkbox' name="asGroup" onchange="const signedLabel = document.getElementById('signed_label'); signedLabel.style.setProperty('display', this.checked ? 'flex' : 'none', 'important'); if(!this.checked) signedLabel.querySelector('input').checked = false;">${tr('post_as_group')}</label>
                         <label id="signed_label" style='display:none !important;'><input type='checkbox' name="signed">${tr('add_signature')}</label>
                     </div>
                 </div>
@@ -3217,7 +3287,7 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                 let club_id = 0;
                 try {
                     club_id = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value);
-                } catch(e) {}
+                } catch (e) { }
 
                 const as_group = u(`input[name='asGroup']`).nodes[0].checked;
                 const signed = u(`input[name='signed']`).nodes[0].checked;
@@ -3231,15 +3301,15 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                     owner_id: type == 'group' && club_id != 0 ? -club_id : window.openvk.current_id
                 };
 
-                if(as_group) {
+                if (as_group) {
                     params['from_group'] = 1;
                 }
 
-                if(signed) {
+                if (signed) {
                     params['signed'] = 1;
                 }
 
-                if(attachments && attachments.trim() !== '') {
+                if (attachments && attachments.trim() !== '') {
                     params['attachments'] = attachments;
                 }
 
@@ -3248,8 +3318,8 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                 try {
                     const res = await window.OVKAPI.call('wall.post', params);
                     const postUrl = `/wall${params.owner_id}_${res.post_id}`;
-                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(postUrl)});
-                } catch(e) {
+                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => { window.router.route(postUrl) });
+                } catch (e) {
                     console.error(e);
                     fastError(e.message);
                 }
@@ -3260,7 +3330,7 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
 
     const modal = msg.getNode();
 
-    modal.on('change', 'input[name="repost_type"]', async function() {
+    modal.on('change', 'input[name="repost_type"]', async function () {
         const clubSelect = modal.find('select[name="selected_repost_club"]');
         const repostSigns = modal.find('#repost_signs');
 
@@ -3282,7 +3352,7 @@ async function shareAudioPlaylist(event, owner_id, playlist_id) {
                         option.textContent = club.name;
                         clubSelect.nodes[0].appendChild(option);
                     });
-                } catch(e) {
+                } catch (e) {
                     console.error('Failed to load clubs:', e);
                 }
             }

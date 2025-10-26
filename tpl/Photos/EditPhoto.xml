@@ -19,16 +19,18 @@
     <div class="page_block">
         {include "../components/page_crumb_header.xml", crumbs => $crumbs}
       <form method="post" enctype="multipart/form-data">
-      <div class="form_group settings_padding" style="width: 455px;margin-inline: auto;">
+      <div class="form_group vertical settings_padding">
         <div class="form_field">
             <div class="form_label">{_description}</div>
             <div class="form_data">
                 <textarea name="desc">{$photo->getDescription()}</textarea>
             </div>
         </div>
-        <div class="settings_save_footer">
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="button" name="submit" value="{_save}" />
+        <div class="form_field clear_fix">
+            <div class="form_data">
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button fl_r" name="submit" value="{_save}" />
+            </div>
         </div>
       </div>
       </form>

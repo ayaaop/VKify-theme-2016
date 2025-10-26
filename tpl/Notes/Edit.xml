@@ -16,33 +16,56 @@
             <textarea name="html" style="display:none;"></textarea>
             <div id="editor" style="height:50vh;border:1px solid var(--border-color)"></div>
             
-            <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
-            
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <button class="button">{_save}</button>
-            &nbsp;
-            <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_gray">{_cancel}</a>
+            <div class="post_full_like_wrap" style="margin: 0; padding-bottom: 0;">
+                <div class="post_full_like">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <p class="nobold" style="margin: 10px 0"><a href="/kb/notes">{_something}</a> {_supports_xhtml}</p>
+                </div>
+                <div class="reply_link_wrap">
+                    <div class="post_full_like">
+                        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_light">{_cancel}</a>
+                        <button class="post_like button">{_save}</button>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}
-    {script "js/node_modules/requirejs/bin/r.js"}
     <script>
-        require.config({
-            paths: {
-                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+        window.initNotesMonacoEditor = function() {
+            if (typeof require === 'undefined') {
+                setTimeout(window.initNotesMonacoEditor, 50);
+                return;
             }
-        });
-        require(['vs/editor/editor.main'], function() {
-            window._editor = monaco.editor.create(document.getElementById('editor'), {
-                value: {$note->getSource()},
-                lineNumbers: "off",
-                language: "html"
+            require.config({
+                paths: {
+                    'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
+                }
             });
-        });
-        
-        document.querySelector("#noteFactory").addEventListener("submit", function() {
-            document.querySelector("textarea").value = window._editor.getValue();
-        });
+            require(['vs/editor/editor.main'], function() {
+                if (!document.getElementById('editor')) return;
+                if (window._editor && typeof window._editor.getValue === 'function') return;
+                window._editor = monaco.editor.create(document.getElementById('editor'), {
+                    value: {$note->getSource()},
+                    lineNumbers: "off",
+                    language: "html"
+                });
+
+                const form = document.querySelector('#noteFactory');
+                if (form && !form._monacoSubmitBound) {
+                    form.addEventListener('submit', function() {
+                        const ta = form.querySelector('textarea');
+                        if (ta && window._editor) {
+                            ta.value = window._editor.getValue();
+                        }
+                    });
+                    form._monacoSubmitBound = true;
+                }
+            });
+        };
+
+        // Ensure initialization on direct page loads
+        window.initNotesMonacoEditor();
     </script>
 {/block}

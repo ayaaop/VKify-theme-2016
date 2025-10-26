@@ -27,7 +27,7 @@
                     "atBottom" => true,
                 ]}
         {else}
-            {include "../components/nothing.xml"}
+            {include "../components/nothing.xml", icon => 'video_empty.png'}
         {/if}
     </div>
 {/block}

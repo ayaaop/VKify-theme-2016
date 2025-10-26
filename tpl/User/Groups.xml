@@ -28,7 +28,7 @@
                 'count' => $user->getClubCount(true)
             ]
         ]}
-        {var $createGroupButton = '<a class="button" href="/groups_create" onclick="if(typeof showCreateGroupModal === \'function\') { showCreateGroupModal(); return false; }">' . tr('create_group') . '</a>'}
+        {var $createGroupButton = '<a class="button" href="/groups_create" onclick="showCreateGroupModal(event)">' . tr('create_group') . '</a>'}
         {include "../components/page_tabs_header.xml", tabs => $tabs, id => 'groups_top_tabs', extra => $createGroupButton}
 
         {include "../components/search_bar.xml",

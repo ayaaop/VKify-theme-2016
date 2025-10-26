@@ -33,7 +33,7 @@
         {elseif $type == "doc"}
             {include "../Documents/components/doc.xml", doc => $object}
         {else}
-            {include "../components/error.xml", description => tr("version_incompatibility")}
+            {include "../components/content_error.xml", title => tr("no_data"), description => tr("version_incompatibility")}
         {/if}
     </div>
 {/block}

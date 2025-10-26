@@ -54,18 +54,72 @@
         </style>
         {script "js/node_modules/plotly.js-dist/plotly.js"}
         <script>
-            function makePlot(selector, datum) {
-                Plotly.newPlot(document.querySelector(selector), [datum.total, datum.subs, datum.viral], {
-                    margin: { t: 0 },
-                    layout: { showlegend: true, legend: { xanchor: 'center', x: 0.5, orientation: 'h' } }
+            (function() {
+                function ensurePlotly(callback) {
+                    if (window.Plotly) { callback(); return; }
+                    // If a Plotly script tag is present, wait for it; else inject one.
+                    var existing = Array.prototype.slice.call(document.getElementsByTagName('script')).find(function(s){
+                        return s.src && s.src.indexOf('plotly.js-dist/plotly.js') !== -1;
+                    });
+                    var waited = 0;
+                    function poll() {
+                        if (window.Plotly) { callback(); return; }
+                        waited += 50;
+                        if (waited < 5000) setTimeout(poll, 50); else callback();
+                    }
+                    if (existing) {
+                        existing.addEventListener('load', function(){ callback(); });
+                        // Also start a poll in case load already fired
+                        poll();
+                    } else {
+                        var s = document.createElement('script');
+                        s.src = '/assets/packages/static/openvk/js/node_modules/plotly.js-dist/plotly.js';
+                        s.async = true;
+                        s.onload = function(){ callback(); };
+                        document.head.appendChild(s);
+                        poll();
+                    }
+                }
+
+                function makePlot(selector, datum) {
+                    if (!window.Plotly) return; // safety
+                    var el = document.querySelector(selector);
+                    var styles = getComputedStyle(document.body);
+                    var bg = (styles.getPropertyValue('--module-background-color') || '').trim() || '#ffffff';
+                    var text = (styles.getPropertyValue('--text-color') || '').trim() || '#111111';
+                    var muted = (styles.getPropertyValue('--muted-text-color') || '').trim() || '#6b7280';
+                    Plotly.newPlot(el, [datum.total, datum.subs, datum.viral], {
+                        showlegend: true,
+                        legend: { xanchor: 'center', x: 0.5, orientation: 'h', font: { color: text } },
+                        margin: { t: 0 },
+                        paper_bgcolor: bg,
+                        plot_bgcolor: bg,
+                        font: { color: text },
+                        xaxis: {
+                            tickfont: { color: muted },
+                            title: { font: { color: text } },
+                            gridcolor: muted,
+                            linecolor: muted,
+                            zerolinecolor: muted
+                        },
+                        yaxis: {
+                            tickfont: { color: muted },
+                            title: { font: { color: text } },
+                            gridcolor: muted,
+                            linecolor: muted,
+                            zerolinecolor: muted
+                        }
+                    });
+                }
+
+                const reach = {$reach};
+                const views = {$views};
+
+                ensurePlotly(function(){
+                    makePlot("#reachChart", reach);
+                    makePlot("#viewsChart", views);
                 });
-            }
-            
-            let reach = {$reach};
-            let views = {$views};
-            
-            makePlot("#reachChart", reach);
-            makePlot("#viewsChart", views);
+            })();
         </script>
     </div>
 {/block}

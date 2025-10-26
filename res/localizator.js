@@ -33,10 +33,16 @@ let locales = {
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
 		"deleted_attachment_2": "As such, it can't be displayed.",
 		"dark_mode": "Dark mode",
+		"mode_2018": "Mimic 2018 layout (beta)<div class='nobold'>More saturated colours, rounder buttons, etc.</div>",
 		"gifts_left": "$1 left",
 		"choose_from_my_photos": "Choose from my photos",
-		"back_to_club_photos": "Back to Club Photos",
-		"playlist_share_explain": "OpenVK currently does not support sharing playlists as attachments. Therefore, this action will just create a new post with a link to the playlist appended."
+		"back_to_club_photos": "Back to group photos",
+		"choose_from_my_audios": "Choose from my audios",
+		"back_to_club_audios": "Back to group audios",
+		"choose_from_my_documents": "Choose from my documents",
+		"back_to_club_documents": "Back to group documents",
+		"playlist_share_explain": "OpenVK currently does not support sharing playlists as attachments. Therefore, this action will just create a new post with a link to the playlist appended.",
+		"page_info_read_restricted": "This user chose to hide main information about themselves."
 	},
 	'ru': {
 		"language": "Язык",
@@ -72,10 +78,16 @@ let locales = {
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
 		"deleted_attachment_2": "Поэтому она не может быть отображена.",
 		"dark_mode": "Тёмная тема",
+		"mode_2018": "Имитировать дизайн 2018 года (бета)<div class='nobold'>Более насыщенные цвета, более круглые кнопки, и т.д.</div>",
 		"gifts_left": "$1 осталось",
 		"choose_from_my_photos": "Выбрать из моих фотографий",
 		"back_to_club_photos": "Назад к фотографиям сообщества",
-		"playlist_share_explain": "OpenVK в настоящее время не поддерживает отправку плейлистов в качестве вложений. Поэтому это действие просто создаст новую запись с прикреплённой ссылкой на плейлист."
+		"choose_from_my_audios": "Выбрать из моих аудиозаписей",
+		"back_to_club_audios": "Назад к аудиозаписям сообщества",
+		"choose_from_my_documents": "Выбрать из моих документов",
+		"back_to_club_documents": "Назад к документам сообщества",
+		"playlist_share_explain": "OpenVK в настоящее время не поддерживает отправку плейлистов в качестве вложений. Поэтому это действие просто создаст новую запись с прикреплённой ссылкой на плейлист.",
+		"page_info_read_restricted": "Пользователь предпочёл скрыть основную информацию о себе."
 	},
 	'uk': {
 		"language": "Мова",
@@ -110,17 +122,23 @@ let locales = {
 		"deleted_attachment": "Цей допис містить видалене вкладення та не має тексту.",
 		"deleted_attachment_2": "Тому він не може бути відображений.",
 		"dark_mode": "Темний режим",
+		"mode_2018": "Імітувати дизайн 2018 року (бета)<div class='nobold'>Більш насыщений колір, кругліші кнопки, і т.д.</div>",
 		"gifts_left": "$1 осталось",
 		"choose_from_my_photos": "Вибрати з моїх фотографій",
 		"back_to_club_photos": "Назад до фотографій спільноти",
-		"playlist_share_explain": "OpenVK наразі не підтримує надсилання плейлистів як вкладень. Тому ця дія просто створить новий допис із доданим посиланням на плейлист."
+		"choose_from_my_audios": "Вибрати з моїх аудіозаписів",
+		"back_to_club_audios": "Назад до аудіозаписів спільноти",
+		"choose_from_my_documents": "Вибрати з моїх документів",
+		"back_to_club_documents": "Назад до документів спільноти",
+		"playlist_share_explain": "OpenVK наразі не підтримує надсилання плейлистів як вкладень. Тому ця дія просто створить новий допис із доданим посиланням на плейлист.",
+		"page_info_read_restricted": "Користувач вважав за краще приховати основну інформацію про себе."
 	}
 }
 
 window.vkifylocalize = function(langcode) {
 	if (!(langcode in locales)) {
 		try {
-		fetch(`/themepack/vkify16/3.3.1.8/resource/langs/${langcode}.json`)
+		fetch(`/themepack/vkify16/3.3.2.0/resource/langs/${langcode}.json`)
 			.then(response => {
 				if (!response.ok) {
 					langcode = 'en';

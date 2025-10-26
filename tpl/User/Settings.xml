@@ -126,24 +126,12 @@
                                     <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 20px">
                                         <strong>${tr("profile_deactivate_reason_header")}</strong>
                                         <div class="delete_reason_list">
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"> ${tr("profile_deactivate_reason_1")}</label>
-                                            </div>
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"> ${tr("profile_deactivate_reason_2")}</label>
-                                            </div>
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"> ${tr("profile_deactivate_reason_3")}</label>
-                                            </div>
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"> ${tr("profile_deactivate_reason_4")}</label>
-                                            </div>
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"> ${tr("profile_deactivate_reason_5")}</label>
-                                            </div>
-                                            <div class="form_field">
-                                                <label><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""> ${tr("profile_deactivate_reason_6")}</label>
-                                            </div>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"> ${tr("profile_deactivate_reason_1")}</label>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"> ${tr("profile_deactivate_reason_2")}</label>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"> ${tr("profile_deactivate_reason_3")}</label>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"> ${tr("profile_deactivate_reason_4")}</label>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"> ${tr("profile_deactivate_reason_5")}</label>
+                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""> ${tr("profile_deactivate_reason_6")}</label>
                                         </div>
                                         <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
                                         <label class="checkbox"><input type="checkbox" name="deactivate_share" id="deactivate_share" checked> ${tr("share_with_friends")}</label>
@@ -419,7 +407,7 @@
                 {elseif $isFinance}
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "points"}
-                        <div class="settings_block_msg">
+                        <div class="settings_block_msg settings_padding">
                                 {presenter "openvk!Support->knowledgeBaseArticle", "points"}
                         </div>
                         <div class="form_group clear_fix settings_padding">
@@ -458,11 +446,11 @@
                                     <div class="messagebox-content-header">
                                         ${ tr("transfer_ton_contents") }
                                     </div>
-                                    <div style="margin-top: 30px">` +
+                                    <div style="margin-top: 10px">` +
                                     {tr("transfer_ton_address", OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
                                     `<div style="text-align: center;">
                                         <img width="225" height="225" src="data:` + {$qrCodeType} + `;base64,` + {$qrCodeData} + `"><br>
-                                        <input oninput="convertCurrency(this.value)"> = <span class="coins_dialog_conv">0 TON</span>
+                                        <input oninput="convertCurrency(this.value)" type="number" min="0" value="0" /> = <span class="coins_dialog_conv">0 TON</span>
                                     </div>
                                     </div>`
                                 , [tr("close")], [
@@ -522,33 +510,75 @@
                                     <div class="form_label">&nbsp;</div>
                                     <div class="form_data" dir="auto">
                                         <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"> <vkifyloc name="dark_mode"></vkifyloc></label>
+                                        <label class="checkbox"><input type="checkbox" name="mode_2018" value="1"> <span><vkifyloc name="mode_2018"></vkifyloc></span></label>
                                         <label class="checkbox"><input type="checkbox" name="theme_for_session" value="1"> {_apply_style_for_this_device}</label>
                                     </div>
                                 <script>
-                                    function initDarkModeToggle() {
-                                        const checkbox = document.querySelector('input[name="theme_mode"]');
-                                        const isDarkMode = localStorage.getItem('vkify.darkmode') === '1';
-
-                                        checkbox.checked = isDarkMode;
-
-                                        if (window.toggleDarkMode) {
-                                            window.toggleDarkMode(isDarkMode);
+                                    (function(){
+                                        function getCookie(name) {
+                                            var m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+                                            return m ? decodeURIComponent(m[1]) : null;
                                         }
-
-                                        checkbox.onchange = function() {
-                                            const enabled = this.checked;
-                                            localStorage.setItem('vkify.darkmode', enabled ? '1' : '0');
-                                            if (window.toggleDarkMode) {
-                                                window.toggleDarkMode(enabled);
+                                        function setCookie(name, value, days) {
+                                            var expires = '';
+                                            if (days) {
+                                                var d = new Date();
+                                                d.setTime(d.getTime() + (days*24*60*60*1000));
+                                                expires = '; expires=' + d.toUTCString();
                                             }
-                                        };
-                                    }
-
-                                    if (window.toggleDarkMode) {
-                                        initDarkModeToggle();
-                                    } else {
-                                        window.addEventListener('load', initDarkModeToggle);
-                                    }
+                                            document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+                                        }
+                                        function deleteCookie(name) {
+                                            document.cookie = name + '=; Max-Age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax';
+                                        }
+                                        function initDarkModeToggle() {
+                                            var checkbox = document.querySelector('input[name="theme_mode"]');
+                                            if (!checkbox) return;
+                                            var isDarkMode = getCookie('vkify16_darkmode') === '1';
+                                            checkbox.checked = isDarkMode;
+                                            if (window.toggleDarkMode) {
+                                                window.toggleDarkMode(isDarkMode);
+                                            }
+                                            checkbox.onchange = function() {
+                                                var enabled = this.checked;
+                                                if (enabled) {
+                                                    setCookie('vkify16_darkmode', '1', 365);
+                                                } else {
+                                                    deleteCookie('vkify16_darkmode');
+                                                }
+                                                if (window.toggleDarkMode) {
+                                                    window.toggleDarkMode(enabled);
+                                                }
+                                            };
+                                        }
+                                        function init2018ModeToggle() {
+                                            var checkbox = document.querySelector('input[name="mode_2018"]');
+                                            if (!checkbox) return;
+                                            var is2018 = getCookie('vkify16_2018mode') === '1';
+                                            checkbox.checked = is2018;
+                                            if (window.toggle2018Mode) {
+                                                window.toggle2018Mode(is2018);
+                                            }
+                                            checkbox.onchange = function() {
+                                                var enabled = this.checked;
+                                                if (enabled) {
+                                                    setCookie('vkify16_2018mode', '1', 365);
+                                                } else {
+                                                    deleteCookie('vkify16_2018mode');
+                                                }
+                                                if (window.toggle2018Mode) {
+                                                    window.toggle2018Mode(enabled);
+                                                }
+                                            };
+                                        }
+                                        if (window.toggleDarkMode) {
+                                            initDarkModeToggle();
+                                            init2018ModeToggle();
+                                        } else {
+                                            window.addEventListener('load', initDarkModeToggle);
+                                            window.addEventListener('load', init2018ModeToggle);
+                                        }
+                                    })();
                                 </script>
                                 </div>
                                 <div class="form_field">
@@ -661,7 +691,7 @@
                     <div class="page_block">
                         {include "../components/page_block_header.xml", title => "blacklist", count => $blSize}
                         {if $blSize < 1}
-                            {include "../components/error.xml", description => tr("bl_count_zero_desc")}
+                            {include "../components/content_error.xml", icon => false, description => tr("bl_count_zero_desc")}
                         {else}
                             <div class="list_view">
                                 <div n:foreach="$blItems as $item" class="search_row">

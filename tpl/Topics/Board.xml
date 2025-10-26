@@ -15,7 +15,7 @@
         input_value => $_GET['query'] ?? '',
         input_name => 'query',
         id => 'topics_search_header',
-    }
+    } 
 
     <div class="page_block list_view">
         {var $data = is_array($topics) ? $topics : iterator_to_array($topics)}

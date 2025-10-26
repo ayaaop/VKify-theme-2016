@@ -6,7 +6,7 @@
 {/block}
 
 {block content}
-    <div class="page_block module_body">
+    <div class="page_block page_padding">
         <center>
             <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
         </center>

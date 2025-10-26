@@ -22,14 +22,14 @@
 .form_label {
     color: var(--muted-text-color-2);
     width: 145px;
-    padding: 3px 0 0;
+    padding: 5px 0 0;
     line-height: 18px;
 }
 
 .form_data {
     margin: 0 0 0 15px;
     flex: 1;
-    line-height: 27px;
+    line-height: 28px;
 }
 .form_field:last-child .form_data {
     margin-bottom: 0;
@@ -72,15 +72,19 @@
 .form_field label.checkbox {
     display: flex;
     width: fit-content;
-    margin-bottom: 0;
 }
 
-.form_field label.checkbox {
-    display: block;
+label.checkbox .nobold {
+    margin-top: 5px;
 }
 
 .form_field #filename:not(:empty) {
     margin-top: 10px;
+}
+
+.form_field .button {
+	padding: 7px 16px 8px;
+	line-height: 14px;
 }
 
 /* privacy */
@@ -92,7 +96,8 @@
 }
 
 .settings_privacy_row:first-child {
-    border-top: none
+    border-top: none;
+    padding-top: 0;
 }
 
 .settings_privacy_row:last-child {
@@ -151,51 +156,12 @@
 }
 
 .delete_reason_list {
-    margin: 10px 0 20px;
+    margin: 10px 0;
 }
 
 /* edit page */
 .label_end .form_label {
     text-align:end;
-}
-
-/* followers */
-.group_l_row {
-	position: relative;
-	padding: 15px 0;
-}
-.group_l_row:not(:last-child) {
-	border-bottom: 1px solid var(--border-color);
-}
-.group_u_bigph_wrap {
-	position: relative;
-	overflow: hidden;
-	width: 80px;
-	height: 80px;
-	float: left;
-	margin-right: 12px;
-}
-.group_u_photo_img {
-	width: 80px;
-	height: 80px;
-	border-radius: 50%;
-	overflow: hidden;
-}
-.group_u_actions {
-	float: right;
-	padding-top: 9px;
-}
-.group_u_info {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding-top: 9px;
-}
-.group_u_desc, .group_u_btns_text {
-	padding-top: 6px;
-	color: var(--muted-text-color);
-}
-.group_u_info_row {
-	padding-top: 7px;
 }
 
 .game_edit {
@@ -204,6 +170,10 @@
 }
 
 /* vertical */
+.form_group.vertical {
+    width: fit-content;
+    margin-inline: auto;
+}
 .form_group.vertical .form_field,.form_field.vertical {
     flex-direction: column;
     width: 100%;
@@ -215,4 +185,11 @@
 .vertical .form_data {
     line-height: 18px;
     margin-left: 0;
+}
+
+.form_field:not(:has(.form_label)) .form_data {
+    margin: 0;
+}
+.form_field:not(:has(.form_label)) .form_data *:not([type="submit"], [type="checkbox"], [type="radio"]) {
+    width: 100%;
 }

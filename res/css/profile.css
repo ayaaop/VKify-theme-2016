@@ -93,7 +93,7 @@
 
 .page_album_title {
     font-size: 12.5px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/album_top_shadow.png);
+    background: url(/themepack/vkify16/3.3.2.0/resource/album_top_shadow.png);
     color: var(--white);
     position: absolute;
     bottom: 0;
@@ -134,7 +134,7 @@
 }
 
 .page_album_nocover {
-    background: var(--album-background-color) url(/themepack/vkify16/3.3.1.8/resource/camera_big.png) no-repeat 50% 45%;
+    background: var(--album-background-color) url(/themepack/vkify16/3.3.2.0/resource/camera_big.png) no-repeat 50% 45%;
     width: 279px;
     height: 185px
 }
@@ -170,7 +170,7 @@
     margin: 15px 0 -1px;
     display: inline-block;
     vertical-align: top;
-    border-radius: 2px;
+    border-radius: var(--button-border-radius);
     overflow: hidden
 }
 
@@ -208,7 +208,7 @@
     width: 200px;
     height: 112px;
     overflow: hidden;
-    border-radius: 2px
+    border-radius: var(--button-border-radius)
 }
 
 .video_module .video:hover {
@@ -222,7 +222,7 @@
     left: 0;
     right: 0;
     background: var(--black);
-    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.1.8/resource/video_play_small.png) 19px 13px no-repeat;
+    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.2.0/resource/video_play_small.png) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -241,7 +241,7 @@
     padding: 3px 6px;
     margin: 8px;
     background: var(--video-overlay-background);
-    border-radius: 2px;
+    border-radius: var(--button-border-radius);
     color: var(--white);
     position: absolute;
     bottom: 0;
@@ -409,7 +409,7 @@
     text-align: center;
 }
 
-.page_status, td .nobold {
+.page_status, .page_info_wrap .nobold {
     font-size: 13px
 }
 
@@ -424,6 +424,12 @@
 
 .ugc-table tr>td:nth-of-type(2) {
     font-size: 13px;
+}
+
+.no_info {
+    margin: 20px 0 0;
+    text-align: center;
+    color: var(--muted-text-color);
 }
 
 #basicInfo {
@@ -449,7 +455,7 @@
     margin: 0;
 }
 .audioStatus::before {
-    background-image: url('/themepack/vkify16/3.3.1.8/resource/icons/video_actions.png');
+    background-image: url('/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png');
     width: 13px;
     height: 13px;
     background-position: 0px -44px;
@@ -603,7 +609,7 @@ div.avatar_block:hover .avatar_variants {
     width: 21px;
     height: 21px;
     margin: 10px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/add_info_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/add_info_icons.png) no-repeat 0 0
 }
 
 .profile_warning_img.bday {
@@ -651,7 +657,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
     width: 9px;
     height: 9px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/attach_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/attach_icons.png) no-repeat 0 0
 }
 
 .profile_warning_label {
@@ -684,7 +690,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_msg_split .cut_left .button {
-    border-radius: 2px 0 0 2px;
+    border-radius: var(--button-border-radius) 0 0 var(--button-border-radius);
     border-right: 1px solid var(--profile-button-border-color);
     height: 30px
 }
@@ -695,20 +701,20 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_msg_split .cut_right .button {
-    border-radius: 0 2px 2px 0;
+    border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
     height: 30px;
     width: 38px;
     padding-left: 11px
 }
 
 .profile_gift_icon {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/gift_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/gift_icon.png) no-repeat;
     background-position: left 2px;
     padding-right: 21px;
 }
 
 .profile_more_btn {
-    background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/more_icon.png);
+    background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/more_icon.png);
     background-repeat: no-repeat;
     background-position: 100% 13px;
     width: 36px;
@@ -717,6 +723,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_actions_split {
+    margin-top: 8px;
     display: flex;
     justify-content: end;
 }
@@ -726,7 +733,13 @@ div.avatar_block:hover .avatar_variants {
     margin-right: 5px;
     display: inline-block;
 }
+.profile_actions_split .profile_link_form:last-child {
+    margin-right: 0;
+}
 
+.search_row .profile_actions_split {
+    margin-top: 0;
+}
 .search_row .profile_actions_split .profile_link_form {
     flex: 0;
 }
@@ -797,7 +810,7 @@ div.avatar_block:hover .avatar_variants {
     display: block;
     position: absolute;
     content: '';
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_info_cons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_info_cons.png) no-repeat 0 0;
     height: 15px;
     width: 15px;
     margin: 2px 0 0 -24px;
@@ -807,7 +820,7 @@ div.avatar_block:hover .avatar_variants {
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
     .group_info_row:before {
-        background-image: url(/themepack/vkify16/3.3.1.8/resource/icons/group_info_cons_2x.png);
+        background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/group_info_cons_2x.png);
         background-size: 15px 149px
     }
 }
@@ -835,7 +848,7 @@ div.avatar_block:hover .avatar_variants {
     left: 0;
     width: 12px;
     height: 12px;
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/topic_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/topic_icon.png) no-repeat 0 0;
 }
 .wide_column .topics_module .module_body {
     padding: 1px 20px 5px;
@@ -892,7 +905,7 @@ div.avatar_block:hover .avatar_variants {
     text-overflow: ellipsis;
 }
 .page_upload_label {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_icons.png) no-repeat;
     position: absolute;
     display: block;
     width: 17px;
@@ -905,7 +918,7 @@ div.avatar_block:hover .avatar_variants {
     padding: 17px 13px 17px 47px
 }
 .wide_column .page_upload_label {
-    background: url(/themepack/vkify16/3.3.1.8/resource/icons/group_icons_big.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_icons_big.png) no-repeat;
     width: 25px;
     height: 27px;
     margin-left: -37px;
