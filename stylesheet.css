@@ -81,6 +81,7 @@ body {
     /* Accent colors */
     --accent-color: #5e81a8;
     --accent-color--hover: #6888ad;
+    --accent-color--active: #58799e;
     --accent-color--rgb: 94, 129, 168;
     --accent-text-color: var(--white);
     --accent-color-2: #5181b8;
@@ -97,7 +98,6 @@ body {
     /* Audio player colors */
     --audio-background-color: #edeff1;
     --audio-background-color-2: #f5f7fa;
-    --audio-background-color-3: #e8edf4;
     --audio-slider-color: #e4e7ea;
     --audio-slider-color-2: #e1e8ee;
     --audio-slider-progress-color: #b8c7d7;
@@ -800,10 +800,10 @@ input:focus, textarea:focus {
 .audioEntry .buttons .musicIcon.download-icon {
     background: url(/themepack/vkify16/3.3.2.0/resource/icons/download_icon.png) no-repeat !important;
 }
-.audioEntry .buttons .musicIcon.add-icon {
+.audioEntry .buttons .musicIcon.add-icon,.audioEntry .buttons .musicIcon.add-icon-group {
     background-position: 0px 1px !important;
 }
-.audioEntry .buttons .musicIcon.remove-icon {
+.audioEntry .buttons .musicIcon.remove-icon,.audioEntry .buttons .musicIcon.remove-icon-group {
     background-position: 0px -28px !important;
 }
 .audioEntry .buttons .edit-icon {
@@ -1321,11 +1321,8 @@ label:has(input[type="checkbox"], input[type="radio"]):not(:has(a))+br {
 .vertical-attachment .audioEntry {
     max-height: unset;
 }
-.audioEntry:hover, .vertical-attachment .audioEntry:hover {
-    background-color: var(--audio-background-color-2) !important;
-}
-.audioEntry.nowPlaying, .audioEntry.nowPlaying:hover, .vertical-attachment .audioEntry.nowPlaying:hover {
-    background-color: var(--audio-background-color-3) !important
+.audioEntry:hover, .vertical-attachment .audioEntry:hover,.audioEntry.nowPlaying, .audioEntry.nowPlaying:hover, .vertical-attachment .audioEntry.nowPlaying:hover {
+    background-color: var(--audio-background-color-2) !important
 }
 .audioEntry.nowPlaying .performer a, .audioEntry.nowPlaying .performer {
     color: var(--link-color) !important
@@ -1539,11 +1536,8 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table {
 .audioEntry .mini_timer {
     white-space: nowrap;
 }
-.audioEntry:hover .buttons {
+.audioEntry:hover .buttons,.nowPlaying:hover .buttons {
     background-color: var(--audio-background-color-2);
-}
-.nowPlaying:hover .buttons {
-    background-color: var(--audio-background-color-3);
 }
 
 #wallAttachmentMenu {

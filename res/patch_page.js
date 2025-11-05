@@ -1737,12 +1737,6 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    u(document).on('keyup', async (e) => {
-        if(e.keyCode == 27 && window.messagebox_stack.length > 0) {
-            await window.__vkifyCloseDialog();
-        }
-    })
-
     u(document).on('click', 'body.dimmed .dimmer', async (e) => {
         if(u(e.target).hasClass('dimmer')) {
             await window.__vkifyCloseDialog();

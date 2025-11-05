@@ -54,6 +54,7 @@ body.dark-mode {
 	--accent-color: var(--white);
 	--accent-color--rgb: 255, 255, 255;
 	--accent-color--hover: rgba(255, 255, 255, .8);
+	--accent-color--active: rgba(255, 255, 255, .65);
 	--accent-text-color: var(--black);
 	--accent-color-2: #71aaeb;
 	--accent-color-3: #8fbdf1;
@@ -69,7 +70,6 @@ body.dark-mode {
 	/* Audio player colors */
 	--audio-background-color: #2a2a2b;
 	--audio-background-color-2: #363637;
-	--audio-background-color-3: #454546;
 	--audio-slider-color: #363637;
 	--audio-slider-color-2: #5a5a5b;
 	--audio-slider-progress-color: rgba(255, 255, 255, .25);

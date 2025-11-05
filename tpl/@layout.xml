@@ -67,7 +67,7 @@
 
         <div class="notifications_global_wrap"></div>
         <div class="dimmer">
-            <div id='absolute_territory'></div>
+            <div id='clickable'></div>
         </div>
         <div class="upLeftErrors"></div>
 
@@ -342,7 +342,7 @@
                                             {var $found = false}
                                             {foreach getLanguages() as $language}
                                                 {if $language['code'] === $currentLang && !$found}
-                                                    {_select_language}: {$language['native_name']}
+                                                    {_select_language}: {$language['native_name']|lower}
                                                     {var $found = true}
                                                 {/if}
                                             {/foreach}

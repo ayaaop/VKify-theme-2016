@@ -324,9 +324,10 @@ table * {
     font-family: var(--font-family);
     border: 0;
 }
-.button:active, input[class="button"]:active, .profile_link:active {
+.button:not(.profile_more_btn):active, input[class="button"]:active, .profile_link:active {
     padding-top: 8px;
-    padding-bottom: 7px
+    padding-bottom: 7px;
+    background-color: var(--accent-color--active)
 }
 
 .button.button_gray {
@@ -337,7 +338,7 @@ table * {
     background-color: var(--button-background-color--hover);
     color: var(--link-color-2);
 }
-.button.button_gray[aria-expanded="true"] {
+.button.button_gray[aria-expanded="true"],.button.button_gray:active {
     background-color: var(--button-background-color--active)
 }
 
@@ -406,8 +407,9 @@ body.dimmed>.dimmer {
     background-color: var(--dimmer-background-color);
     opacity: .5;
 }
-body.dimmed>.dimmer #absolute_territory {
+body.dimmed>.dimmer #clickable {
     pointer-events: none;
+    margin: 0;
 }
 
 .ovk-diag {
@@ -1481,7 +1483,7 @@ select:focus {
     background: var(--message-warning-background) url(/themepack/vkify16/3.3.2.0/resource/icons/msg_error.png) no-repeat 12px 12px;
     padding-left: 55px;
     border-color: var(--message-warning-border);
-    min-height: 40px;
+    min-height: 55px;
     line-height: 38px;
 }
 .msg.msg_yellow p {

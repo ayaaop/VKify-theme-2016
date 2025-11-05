@@ -713,7 +713,7 @@ div.avatar_block:hover .avatar_variants {
     padding-right: 21px;
 }
 
-.profile_more_btn {
+.button.profile_more_btn {
     background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/more_icon.png);
     background-repeat: no-repeat;
     background-position: 100% 13px;

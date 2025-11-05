@@ -14,30 +14,9 @@
                         </div>
                     </div>
                     <div class="profile_actions clear_fix" n:if="isset($thisUser)">
-                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
-                            {if $user->getPrivacyPermission('messages.write', $thisUser)}
-                                <div class="profile_msg_split">
-                                    <div class="cut_left">
-                                        <button class="button button_blue profile_btn_cut_left profile_action_btn button_wide" onclick="window.location.href='/im?sel={$user->getId()}'" rel="nofollow">
-                                            {_send_message}
-                                        </button>
-                                    </div>
-                                    <div class="cut_right">
-                                        <button class="button button_blue profile_btn_cut_right profile_action_btn" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
-                                            <span class="profile_gift_icon"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            {else}
-                                <button class="button button_blue profile_action_btn button_wide" onclick="window.location.href='/gifts?act=pick&user={$user->getId()}'">
-                                    <span class="profile_gift_icon"></span> {_gift}
-                                </button>
-                            {/if}
-                        {else}
-                            <a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
-                                {_send_message}
-                            </a>
-                        {/if}
+                        <a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" rel="nofollow">
+                            {_send_message}
+                        </a>
                         {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                         <div class="profile_actions_split">
                             {var $actions = [
