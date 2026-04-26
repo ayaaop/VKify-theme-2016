@@ -1,0 +1,434 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {tr("search_for_$section")}
+    {if $_REQUEST['q']}
+        - {$_REQUEST['q']}
+    {/if}
+{/block}
+
+{block content}
+	{var $tabs = [
+		[
+			'url' => '/search?section=users&q=' . urlencode($query),
+			'title' => 's_people',
+			'active' => $section === 'users'
+		],
+		[
+			'url' => '/search?section=groups&q=' . urlencode($query),
+			'title' => 's_groups',
+			'active' => $section === 'groups'
+		],
+		[
+			'url' => '/search?section=posts&q=' . urlencode($query),
+			'title' => 's_posts',
+			'active' => $section === 'posts'
+		],
+		[
+			'url' => '/search?section=videos&q=' . urlencode($query),
+			'title' => 's_videos',
+			'active' => $section === 'videos'
+		],
+		[
+			'url' => '/search?section=apps&q=' . urlencode($query),
+			'title' => 's_apps',
+			'active' => $section === 'apps'
+		],
+		[
+			'url' => '/search?section=audios&q=' . urlencode($query),
+			'title' => 's_audios',
+			'active' => $section === 'audios'
+		],
+		[
+			'url' => '/search?section=audios_playlists&q=' . urlencode($query),
+			'title' => 's_audios_playlists',
+			'active' => $section === 'audios_playlists'
+		],
+		[
+			'url' => '/search?section=docs&q=' . urlencode($query),
+			'title' => 's_documents',
+			'active' => $section === 'docs'
+		]
+	]}
+
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.latte", items => $tabs}
+                <div id="search_options" class="page_block module module_body" style="padding-block: 15px">
+                    {include searchOptions}
+                </div>
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                {if $section == 'audios' && $count > 1}
+                    <div style="margin-bottom: 15px">
+                        {include "../Audio/bigplayer.latte", tidy => true}
+                    </div>
+                    <script>
+                        window.__current_page_audio_context = {
+                            'name': 'classic_search_context',
+                            'order': {$order},
+                            'query': {$query},
+                            'genre': {$_REQUEST['genre']},
+                            'invert': {$invert ? 1 : 0},
+                            'only_performers': {$_REQUEST['only_performers'] ? 1 : 0},
+                            'with_lyrics': {$_REQUEST['with_lyrics'] ? 1 : 0},
+                            'page': {$page}
+                        }
+                    </script>
+                {/if}
+
+                <div class="page_block wall_posts_tabs">
+                    {include "../components/page_block_header.latte", title => "search_for_$section"}
+                </div>
+                <div n:class='$section !== "posts" ? page_block, page_search'>
+                {include "../components/search_bar.latte",
+                    form_id => 'real_search_form',
+                    form_class => 'search_page_form',
+                    placeholder => tr('header_search'),
+                    action => '/search',
+                    input_name => 'q',
+                    input_value => $_REQUEST['q'],
+                    input_title => tr('header_search'),
+                    input_maxlength => '59',
+                    autocomplete => 'off'
+                }
+                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv,
+                    $section == "audios_playlists" && $count > 0 ? playlistContainer'>
+                        {if $count > 0}
+                            {if $section === 'users'}
+                                <div class='scroll_node search_row' data-uniqueid="user-{$dat->getId()}" n:foreach="$data as $dat">
+                                    <a href="{$dat->getURL()}" class="img">
+                                        <img src="{if str_contains($dat->getAvatarUrl('tiny'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$dat->getAvatarUrl('tiny')}{/if}" 
+                                            width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$dat->getURL()}">
+                                                {$dat->getCanonicalName()}
+                                                {if $dat->getId() == $thisUser->getId()}
+                                                    ({_s_it_is_you})
+                                                {/if}
+                                            </a>
+                                            <a class="page_verified"
+                                                n:if="$dat->isVerified()" href="/verify"></a>
+                                        </div>
+                                        <div class="labeled" n:if="$dat->getCity()">
+                                            {$dat->getCity()}
+                                        </div>
+                                        <div claass="labeled">
+                                            {$dat->isFemale() ? tr("female") : ($dat->isNeutral() ? tr("neutral") : tr("male"))}
+                                        </div>
+                                    </div>
+                                    <div class="action_links controls" n:if="$dat->getId() !== $thisUser->getId()">
+                                        {var $subStatus = $dat->getSubscriptionStatus($thisUser)}
+                                        {var $actions = [
+                                            0 => ['act' => 'add', 'label' => tr('friends_add')],
+                                            1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+                                            2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+                                            3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+                                        ]}
+                                        {if isset($actions[$subStatus])}
+                                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
+                                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                                                <input type="hidden" name="id"  value="{$dat->getId()}" />
+                                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+                                            </form>
+                                        {/if}
+                                    </div>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'groups'}
+                                <div class='scroll_node search_row' data-uniqueid="group-{$dat->getId()}" n:foreach="$data as $dat">
+                                    <a href="{$dat->getURL()}" class="img">
+                                        <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
+                                            ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' 
+                                            : $dat->getAvatarUrl('miniscule')}" 
+                                            width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$dat->getURL()}">
+                                                {$dat->getCanonicalName()}
+                                            </a>
+                                            <a class="page_verified"
+                                                n:if="$dat->isVerified()" href="/verify"></a>
+                                        </div>
+                                        <div class="labeled">
+                                            {tr("participants", $dat->getFollowersCount())}
+                                        </div>
+                                        <div class="labeled" n:if="!empty($dat->getDescription())">
+                                            {$dat->getDescription()|truncate:70}
+                                        </div>
+                                    </div>
+                                    <div class="action_links controls">
+                                        {var $subStatus = $dat->getSubscriptionStatus($thisUser)}
+                                        {var $actions = [
+                                            0 => ['act' => 'add', 'label' => tr('join_community')],
+                                            1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
+                                        ]}
+                                        {if isset($actions[$subStatus ? 1 : 0])}
+                                            <form action="/setSub/club" method="post" class="profile_link_form fl_l" style="width: 100%">
+                                                <input type="hidden" name="act" value="{$actions[$subStatus ? 1 : 0]['act']}" />
+                                                <input type="hidden" name="id"  value="{$dat->getId()}" />
+                                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                                <input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
+                                            </form>
+                                        {/if}
+                                    </div>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'apps'}
+                                <div class='scroll_node search_row' data-uniqueid="app-{$dat->getId()}" n:foreach="$data as $dat">
+                                    <a href="/app{$dat->getId()}" class="img">
+                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="/app{$dat->getId()}">
+                                                {$dat->getName()}
+                                            </a>
+                                        </div>
+                                        <div n:if="!empty($dat->getDescription())" class="labeled">
+                                            {$dat->getDescription()|truncate:70}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'posts'}
+                                {foreach $data as $dat}
+                                    {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                                        <div class="page_block page_padding">
+                                            <div class="closedWallPost">{_closed_group_post}.</div>
+                                        </div>
+                                    {else}
+                                        {include "../components/post.latte", post => $dat, commentSection => true, onWallOf => true}
+                                    {/if}
+                                {/foreach}
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', [".post:not(.comment) .text .really_text"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'videos'}
+                                <div class="videos" style="margin-inline: -2px">
+                                    <span class='scroll_node search_content' data-uniqueid="video-{$dat->getVirtualId()}" n:foreach="$data as $dat">
+                                        {include "../components/video.latte", video => $dat}
+                                    </span>
+
+                                    <script n:if='$count > 0 && !empty($query)'>
+                                        function __scrollHook(page) {
+                                            highlightText({$query}, '.page_search', ['text'])
+                                        }
+
+                                        __scrollHook()
+                                    </script>
+                                </div>
+                            {elseif $section === 'audios'}
+                                <div class='scroll_node search_content' data-uniqueid="audio-{$dat->getId()}" n:foreach="$data as $dat">
+                                    {include "../Audio/player.latte", audio => $dat}
+                                </div>
+                                
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'audios_playlists'}
+                                {foreach $data as $dat}
+                                    {include "../Audio/playlistListView.latte", playlist => $dat}
+                                {/foreach}
+
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', [".audio_item__title"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'docs'}
+                                {foreach $data as $dat}
+                                    {include "../Documents/components/doc.latte", doc => $dat, copyImportance => true, scroll_ocntext => true}
+                                {/foreach}
+
+                                <script n:if="$count > 0 && !empty($query)">
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', [".doc_content .noOverflow"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {/if}
+                        {else}
+                            <div style="padding-top: 20px;">
+                                {include "../components/content_error.latte", icon => false, description => tr("no_results_by_this_query")}
+                            </div>
+                        {/if}
+                    </div>
+                    {if $paginatorConf->pageCount > 1}
+                        {include "../components/paginator.latte", conf => $extendedPaginatorConf}
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block searchOptions}
+    <div class="search_option">
+        <div class="search_option_name search_filter_main ">
+            {_s_order_by}
+        </div>
+        <div class="search_option_content">
+            <select name="order" form="real_search_form" data-default='id'>
+                {if $section == "users"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_reg_date}</option>
+                    
+                    {if \OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
+                        <option value="rating" n:attr="selected => $order == 'rating'">{_s_order_by_rating}</option>
+                    {/if}
+                {elseif $section == "posts"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_publishing_date}</option>
+                {elseif $section == "audios"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_upload_date}</option>
+                {else}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
+                {/if}
+
+                {if $section == "audios" || $section == "audios_playlists"}
+                    <option value="length" n:attr="selected  => $order == 'length'">{_s_order_by_length}</option>
+                    <option value="listens" n:attr="selected => $order == 'listens'">{_s_order_by_listens}</option>
+                {/if}
+            </select>
+
+            <label n:if="$order != 'rating'">
+                <input type="checkbox" name="invert" value="1" form="real_search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
+                {_s_order_invert}
+            </label>
+        </div>
+    </div>
+    <div n:if="$section == 'users'" class="search_option">
+        <div class="search_option_name search_filter_main ">
+
+            {_main}
+        </div>
+        <div class="search_option_content">
+            <input type="text" n:attr="value => $_REQUEST['city']" form="real_search_form" placeholder="{_city}" name="city">
+            <input type="text" n:attr="value => $_REQUEST['hometown']" form="real_search_form" placeholder="{_hometown}" name="hometown">
+            
+            <label>
+                <input name="is_online" type="checkbox" n:attr="checked => $_REQUEST['is_online'] == '1'" form="real_search_form" value="1">
+                {_s_now_on_site}
+            </label>
+        </div>
+    </div>
+
+    <div n:if="$section == 'users'" class="search_option">
+        <div class="search_option_name search_filter_main ">
+            {_pronouns}
+        </div>
+        <div class="search_option_content">
+            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 0" name="gender" value="0">{_male}</label>
+            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 1" name="gender" value="1">{_female}</label>
+            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 2" name="gender" value="2">{_neutral}</label>
+            <label><input type="radio" form="real_search_form" n:attr="checked => is_null($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3">{_s_any}</label>
+        </div>
+    </div>
+    <div n:if="$section == 'users'" n:class="search_option, !isset($_REQUEST['polit_views']) && !isset($_REQUEST['marital_status']) ? search_option_hidden">
+        <div class="search_option_name search_filter_main ">
+            {_s_additional}
+        </div>
+        <div class="search_option_content">
+            <label>
+                {_politViews}
+                <select name="polit_views" form="real_search_form" data-default='0'>
+                    <option n:foreach="range(0, 9) as $i" value="{$i}" n:attr="selected => $_REQUEST['polit_views'] == $i">
+                        {tr("politViews_".$i)}
+                    </option>
+                </select>
+            </label>
+            <label>
+                {_relationship}
+                <select name="marital_status" form="real_search_form" data-default='0'>
+                    <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['marital_status'] == $i">
+                        {tr("relationship_".$i)}
+                    </option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <div n:if="$section == 'videos'" class="search_option">
+        <div class="search_option_name search_filter_main ">
+            {_s_main}
+        </div>
+        <div class="search_option_content">
+            <label class="checkbox">
+                <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="real_search_form">{_s_only_youtube}
+            </label>
+        </div>
+    </div>
+    <div n:if="$section == 'docs'" class="search_option">
+        <div class="search_option_name search_filter_main ">
+            {_s_type}
+        </div>
+        <div class="search_option_content">
+            <select name="type" form="real_search_form" data-default='0'>
+                <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['type'] == $i">
+                    {tr("document_type_".$i)}
+                </option>
+            </select>
+        </div>
+    </div>
+    <div n:if="$section == 'audios'" class="search_option">
+        <div class="search_option_name search_filter_main ">
+            {_s_main}
+        </div>
+        <div class="search_option_content">
+            <label class="checkbox">
+                <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="real_search_form">{_s_only_performers}
+            </label>
+            <label class="checkbox">
+                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="real_search_form">{_s_with_lyrics}
+            </label>
+            <label>
+                {_genre}
+                <select name='genre' form="real_search_form" data-default='any'>
+                    <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>
+                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $_REQUEST['genre'] == $genre" value="{$genre}">
+                        {$genre}
+                    </option>
+                </select>
+            </label>
+        </div>
+    </div>
+    <input class="button button_gray button_wide" id="search_reset" type="button" value="{_reset}">
+{/block}

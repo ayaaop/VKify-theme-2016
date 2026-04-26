@@ -1,0 +1,26 @@
+{var $space = $conf->space ?? 3}
+{var $pageCount = ceil($conf->count / $conf->perPage)}
+{var $legacyPaginator = (isset($legacyPaginator) ? $legacyPaginator : false)}
+{var $atTop = isset($conf->atTop) ? $conf->atTop : null}
+{var $tidy = isset($conf->tidy) ? $conf->tidy : null}
+{var $nextPage = $conf->page < $pageCount ? $conf->page + 1 : $pageCount}
+{var $showPaginator = !($conf->page === 1 && $conf->count <= $conf->perPage)}
+
+<div n:if="$showPaginator" class="clear_fix">
+    <div n:class="vkify-paginator, (($atTop) ?? false) ? vkify-paginator-at-top, ($tidy ? 'tidy'), $legacyPaginator ? vkify-paginator-traditional"
+         n:attr="data-current-page => $conf->page, data-total-pages => $pageCount">
+        {if $legacyPaginator}
+            <a n:if="$conf->page > $space" n:attr="class => ($conf->page === 1 ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => 1]), 'k', '&', PHP_QUERY_RFC3986)}">&laquo;</a>
+            {for $j = $conf->page - ($space-1); $j <= $conf->page + ($space-1); $j++}
+                <a n:if="$j > 0 && $j <= $pageCount" n:attr="class => ($conf->page === $j ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => $j]), 'k', '&', PHP_QUERY_RFC3986)}">{$j}</a>
+            {/for}
+            <a n:if="$conf->page <= $pageCount-$space" n:attr="class => ($conf->page === $pageCount ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => $pageCount]), 'k', '&', PHP_QUERY_RFC3986)}">&raquo;</a>
+        {else}
+            <form method="get" action="?{http_build_query(array_merge($_GET, ['p' => $nextPage]), 'k', '&', PHP_QUERY_RFC3986)}">
+                <button type="submit" class="button button_gray vkify-paginator-loader">
+                    {_show_more}
+                </button>
+            </form>
+        {/if}
+    </div>
+</div>

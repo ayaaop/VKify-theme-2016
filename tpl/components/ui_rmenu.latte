@@ -1,0 +1,127 @@
+{*
+  Reusable UI menu component
+
+  @param items        Array of menu items, each containing:
+                      - url: URL to navigate to
+                      - title: Menu item title/text or translation key name
+                      - active: Boolean indicating if item is selected
+                      - condition: (optional) Condition to show this item
+                      - translate: (optional) Boolean indicating if title is a translation key
+                      - id: (optional) ID for the menu item
+                      - avatar: (optional) URL to avatar image
+                      - additionalInfo: (optional) Additional info text/description
+                      - isRich: (optional) Boolean indicating if this is a rich item with avatar and additional info
+                      - isSeparator: (optional) Boolean indicating if this is a separator
+                      - isHeader: (optional) Boolean indicating if this is a section header
+                      - subitems: (optional) Array of child items with the same shape as items
+                      - extraItem: (optional) Object containing:
+                        - url: URL for the extra item
+                        - class: CSS class for the extra item
+                        - content: HTML content for the extra item
+                        - condition: (optional) Condition to show this item
+                        - onclick: (optional) onclick handler
+  @param id           (optional) ID for the menu element
+  @param additionalCssClass (optional) Additional CSS classes
+  @param ownblockData (optional) Object containing:
+                      - url: URL to navigate back to
+                      - name: Name to display
+                      - img: Image URL
+                      - extraItem: (optional) Object containing:
+                        - url: URL for the extra item
+                        - class: CSS class for the extra item
+                        - content: HTML content for the extra item
+                        - condition: (optional) Condition to show this item
+                        - onclick: (optional) onclick handler
+                      Note: If not provided, will be auto-generated based on $wallOwner.
+*}
+<div class="page_block ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
+    {var $ownblockEntity = (isset($ownblockData) && is_object($ownblockData)) ? $ownblockData : ($wallOwner ?? null)}
+    {if $ownblockEntity && is_object($ownblockEntity)}
+        {var $isClub = $ownblockEntity instanceof \openvk\Web\Models\Entities\Club}
+        {var $ownblockData = [
+            'url' => ($isClub ? "/club" : "/id") . $ownblockEntity->getId(),
+            'name' => $isClub ? $ownblockEntity->getName() : $ownblockEntity->getFirstName() . " " . $ownblockEntity->getLastName(),
+            'img' => $ownblockEntity->getAvatarURL()
+        ]}
+    {/if}
+
+    {if isset($ownblockData)}
+        <a class="ui_ownblock clear_fix" href="{$ownblockData['url']}">
+            <img class="ui_ownblock_img" src="{$ownblockData['img']}" n:if="isset($ownblockData['img'])">
+            <div class="ui_ownblock_info">
+                {if isset($ownblockData['extraItem']) && (!isset($ownblockData['extraItem']['condition']) || $ownblockData['extraItem']['condition'])}
+                    <span class="ui_rmenu_extra_item {$ownblockData['extraItem']['class']}"
+                          data-href="{$ownblockData['extraItem']['url']}"
+                          n:attr="onclick => !isset($ownblockData['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $ownblockData['extraItem']['onclick']">
+                        {$ownblockData['extraItem']['content']|noescape}
+                    </span>
+                {/if}
+                <div class="ui_ownblock_label">{$ownblockData['name']}</div>
+                <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
+            </div>
+        </a>
+        <div class="ui_rmenu_sep"></div>
+    {/if}
+    {foreach $items as $item}
+        {var $itemIsRich = $item['isRich'] ?? false}
+        {var $itemId = $item['id'] ?? null}
+        {if !isset($item['condition']) || $item['condition']}
+            {if isset($item['isSeparator']) && $item['isSeparator']}
+                <div class="ui_rmenu_sep"></div>
+            {elseif isset($item['isHeader']) && $item['isHeader']}
+                <div class="ui_rmenu_header">
+                    {if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}
+                </div>
+            {else}
+                <div class="ui_rmenu_item_wrap">
+                    <a class="ui_rmenu_item {($item['active'] ?? false) ? 'ui_rmenu_item_sel' : ''} {$itemIsRich ? 'ui_ownblock' : ''}" {if !($item['active'] ?? false)}href="{$item['url']}"{/if} n:attr="id => $itemId">
+                        {if $itemIsRich}
+                            <img class="ui_ownblock_img" src="{$item['avatar']}" />
+                            <div class="ui_ownblock_info">
+                                {if isset($item['extraItem']) && (!isset($item['extraItem']['condition']) || $item['extraItem']['condition'])}
+                                    <span class="ui_rmenu_extra_item {$item['extraItem']['class']}"
+                                          data-href="{$item['extraItem']['url']}"
+                                          n:attr="onclick => !isset($item['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $item['extraItem']['onclick']">
+                                        {$item['extraItem']['content']|noescape}
+                                    </span>
+                                {/if}
+                                <div class="ui_ownblock_label">{if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}</div>
+                                <div class="ui_ownblock_hint">{$item['additionalInfo']}</div>
+                            </div>
+                        {else}
+                            <span>
+                                {if isset($item['extraItem']) && (!isset($item['extraItem']['condition']) || $item['extraItem']['condition'])}
+                                    <span class="ui_rmenu_extra_item {$item['extraItem']['class']}"
+                                          data-href="{$item['extraItem']['url']}"
+                                          n:attr="onclick => !isset($item['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $item['extraItem']['onclick']">
+                                        {$item['extraItem']['content']|noescape}
+                                    </span>
+                                {/if}
+                                {if isset($item['translate']) && $item['translate'] === false}{$item['title']}{else}{_$item['title']}{/if}
+                            </span>
+                        {/if}
+                    </a>
+                    {if isset($item['subitems']) && is_array($item['subitems'])}
+                        {var $anySubitemActive = ($item['active'] ?? false) || array_filter($item['subitems'], fn($s) => $s['active'] ?? false)}
+                        {if $anySubitemActive}
+                            {foreach $item['subitems'] as $subitem}
+                                {if !isset($subitem['condition']) || $subitem['condition']}
+                                    <a class="ui_rmenu_subitem {($subitem['active'] ?? false) ? 'ui_rmenu_item_sel' : ''}" {if !($subitem['active'] ?? false)}href="{$subitem['url']}"{/if} n:attr="id => $subitem['id'] ?? null">
+                                        {if isset($subitem['extraItem']) && (!isset($subitem['extraItem']['condition']) || $subitem['extraItem']['condition'])}
+                                            <span class="ui_rmenu_extra_item {$subitem['extraItem']['class']}"
+                                                  data-href="{$subitem['extraItem']['url']}"
+                                                  n:attr="onclick => !isset($subitem['extraItem']['onclick']) ? 'event.stopPropagation(); window.location.href=this.dataset.href;' : $subitem['extraItem']['onclick']">
+                                                {$subitem['extraItem']['content']|noescape}
+                                            </span>
+                                        {/if}
+                                        {if isset($subitem['translate']) && $subitem['translate'] === false}{$subitem['title']}{else}{_$subitem['title']}{/if}
+                                    </a>
+                                {/if}
+                            {/foreach}
+                        {/if}
+                    {/if}
+                </div>
+            {/if}
+        {/if}
+    {/foreach}
+</div>

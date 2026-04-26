@@ -1,0 +1,35 @@
+{*
+  Reusable page tabs header component
+
+  @param tabs         Array of tab items, each containing:
+                      - url: URL to navigate to
+                      - title: Tab title or translation key
+                      - active: Boolean indicating if tab is selected
+                      - id: (optional) ID for the tab <li>
+                      - icon: (optional) URL to icon image
+                      - extra: (optional) HTML content to display inside the tab
+                      - count: (optional) Number to display as count badge
+                      - translate: (optional) Boolean, if false do not translate title
+                      - attrs: (optional) Array of extra attributes for <a>
+  @param id           (optional) ID for the <ul> element
+  @param extra        (optional) HTML content or button after the tabs
+  @param white        (optional) Boolean, if true use white background
+*}
+<h2 class="page_block_h2 tabs_header">
+  <ul class="ui_tabs clear_fix {if !isset($white)} ui_tabs_header{/if}" id="{=$id ?? 'apps_top_tabs'}">
+    {foreach $tabs as $tab}
+      <li{if isset($tab['id'])} id="{$tab['id']}"{/if}>
+        <a class="ui_tab{if !empty($tab['active'])} ui_tab_sel{/if}" href="{$tab['url']}"{if isset($tab['attrs'])} {foreach $tab['attrs'] as $attr => $val}{$attr}="{$val}" {/foreach}{/if}>
+          {if isset($tab['icon'])}<img src="{$tab['icon']}" class="ui_tab_icon" /> {/if}
+          {if isset($tab['translate']) && $tab['translate'] === false}{$tab['title']}{else}{tr($tab['title'])}{/if}
+          {if isset($tab['count']) && $tab['count'] > 0}<span class="ui_tab_count">{$tab['count']}</span>{/if}
+          {if isset($tab['extra'])}{$tab['extra']|noescape}{/if}
+        </a>
+      </li>
+    {/foreach}
+    <div class="ui_tabs_slider"></div>
+    {ifset $extra}
+      {$extra|noescape}
+    {/ifset}
+  </ul>
+</h2>

@@ -1,0 +1,21 @@
+{extends "../@layout.latte"}
+
+{block title}{_transition_is_blocked}{/block}
+
+{block content}
+<div class="page_block wall_posts_tabs">
+    {include "../components/page_block_header.latte", title => "caution"}
+</div>
+<div class="page_block page_padding">
+    <img src="/assets/packages/static/openvk/img/oof.apng" width="110" height="110">
+
+    <div style="padding-left: 115px; margin-top: -100px;">
+        <h4 style="font-size: 14px; margin-bottom: 8px;">{_url_is_banned_title}</h4>
+        <span>
+            {$link->getComment()|noescape}
+        </span>
+        <br><br>
+        <a href="{$to}" class="button button_gray" target="_blank">{_url_is_banned_proceed}</a>
+    </div>
+</div>
+{/block}

@@ -1,0 +1,45 @@
+{extends "../@layout.latte"}
+{block title}{_my_settings} - {_two_factor_authentication}{/block}
+
+{block content}
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", 
+        crumbs: [
+            ['title' => tr('my_settings'), 'href' => '/settings'],
+            ['title' => tr('two_factor_authentication')]
+        ]}
+        <div class="page_padding">
+            {_two_factor_authentication_settings_1|noescape}
+            <p>{_two_factor_authentication_settings_2}</p>
+            <div style="text-align: center;">
+                <img width="225" height="225" src="data:{$qrCodeType};base64,{$qrCodeData}">
+            </div>
+            <p>{tr("two_factor_authentication_settings_3", $secret)|noescape}</p>
+            <p>{_two_factor_authentication_settings_4}</p>
+            <div class="form_group label_end clear_fix">
+                <form method="POST">
+                    <div class="form_field">
+                        <div class="form_label">{_code}: </div>
+                        <div class="form_data">
+                            <input type="text" name="code" required />
+                        </div>
+                    </div>
+                    <div class="form_field">
+                        <div class="form_label">{_password}: </div>
+                        <div class="form_data">
+                            <input type="password" name="password" required />
+                        </div>
+                    </div>
+                    <div class="form_field">
+                        <div class="form_label">&nbsp;</div>
+                        <div class="form_data">
+                            <input type="hidden" name="secret" value="{$secret}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_enable}" class="button" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{/block}

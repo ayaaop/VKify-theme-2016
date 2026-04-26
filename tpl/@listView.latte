@@ -1,0 +1,92 @@
+{extends "@layout.latte"}
+
+{block wrap}
+<div class="wide_column_left">
+    <div class="wide_column_wrap">
+        <div class="wide_column">
+            <div class="page_block wall_posts_tabs">
+                {ifset specpage}
+                    {include specpage, x => $dat}
+                {else}
+                {ifset size}
+                    {include size, x => $dat}
+                {/ifset}
+                {ifset header}
+                    <div class="page_block_h2">
+                        <div class="page_block_header clear_fix">
+                            <div class="page_block_header_inner">
+                                {include header}
+                                <span n:ifset="$count" class="page_block_header_count">{$count}</span>
+                            </div>
+                        </div>
+                    </div>
+                {/ifset}
+               {ifset tabs}
+                    {include tabs}
+               {/ifset}
+               </div>
+                <div class="page_block list_view scroll_container">
+                    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+
+                    {ifset top}
+                        {include top, x => $dat}
+                    {/ifset}
+
+                    {if sizeof($data) > 0}
+                        <div n:class="search_row, scroll_node, isset($row_class) ? $row_class" n:foreach="$data as $dat" n:attr="id => is_null($table_body_id) ? NULL : $table_body_id">
+                            <div n:ifset="preview" class="img">
+                                <a href="{include link, x => $dat}">
+                                    {include preview, x => $dat}
+                                </a>
+                            </div>
+                            <div n:ifset="actions" class="action_links controls">
+                                {include actions, x => $dat}
+                            </div>
+                            <div class="info">
+                                {ifset infotable}
+                                    {include infotable, x => $dat}
+                                {else}
+                                    <div class="labeled name">
+                                        <a href="{include link, x => $dat}">
+                                            {include name, x => $dat}
+                                        </a>
+                                    </div>
+                                    {include description, x => $dat}
+                                {/ifset}
+                            </div>
+                        </div>
+                            {include "components/paginator.latte", conf => (object) [
+                                "page"     => $page,
+                                "count"    => $count,
+                                "amount"   => sizeof($data),
+                                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                                "atBottom" => true,
+                            ]}
+                    {else}
+                        {ifset customErrorMessage}
+                            {include customErrorMessage}
+                        {else}
+                            {include "components/content_error.latte", icon => false, description => tr("no_data_description")}
+                        {/ifset}
+                    {/if}
+                </div>
+            {/ifset}
+        </div>
+    </div>
+    <div class="narrow_column_wrap">
+        <div class="narrow_column">
+            {ifset rtabs}
+                {include rtabs}
+            {/ifset}
+
+            {ifset before_content}
+                {include before_content, x => $dat}
+            {/ifset}
+
+            {ifset bottom}
+                {include bottom}
+            {/ifset}
+        </div>
+    </div>
+</div>
+{/block}

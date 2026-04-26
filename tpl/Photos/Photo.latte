@@ -1,0 +1,117 @@
+{extends "../@layout.latte"}
+
+{block title}{_photo}{/block}
+
+{block content}
+    <style>
+    body {
+        --layout-width: 1075px;
+    }
+    </style>
+    {do $crumbs = [
+        ['href' => $photo->getAlbum() ? $photo->getAlbum()->getOwner()->getURL() : $photo->getOwner()->getURL(), 
+         'title' => $photo->getAlbum() ? $photo->getAlbum()->getOwner()->getCanonicalName() : $photo->getOwner()->getCanonicalName()],
+        ['href' => $photo->getAlbum() ? "/albums{$photo->getAlbum()->getOwner()->getId()}" : "/albums{$photo->getOwner()->getId()}", 
+         'title' => tr("albums")]
+    ]}
+
+    {if $photo->getAlbum()}
+        {do $crumbs[] = [
+            'href' => "/album{$photo->getAlbum()->getPrettyId()}",
+            'title' => $photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()
+        ]}
+    {/if}
+
+    {do $crumbs[] = ['title' => tr("photo")]}
+
+    {include "../components/page_crumb_header.latte", crumbs => $crumbs}
+    <div class="pv_wrapper">
+        <div class="pv_left">
+            <div class="pv_photo">
+                <img src="{$photo->getURLBySizeId('large')}" />
+            </div>
+            <div class="pv_bottom_info">
+                <div class="pv_bottom_info_left" n:if="$photo->getAlbum()">
+                    <a href="/album{$photo->getAlbum()->getPrettyId()}" class="pv_album_name">{$photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()}</a>
+                </div>
+                <div n:if="isset($thisUser)" class="pv_bottom_actions">
+                    {if $thisUser->getId() === $photo->getOwner()->getId()}
+                        <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete?hash={rawurlencode($csrfToken)}">{_delete}</a>
+                        <span class="divider"></span>
+                    {/if}
+                    <span class="pv_actions_more" role="button" data-tippy-content-id="pv_actions_more_menu" data-tippy-theme="dark vk">
+                        {_show_more}
+                    </span>
+                    <div id="pv_actions_more_menu" class="tippy-menu tippy-content-template">
+                        <a n:if="$thisUser->getId() === $photo->getOwner()->getId()" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">{_edit}</a>
+                        <a href="{$photo->getURL()}" target="_blank">{_open_original}</a>
+                        <a n:if="$thisUser->getId() != $photo->getOwner()->getId()" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pv_right">
+            <div class="pv_author_block clear_fix">
+                <div class="pv_author_img fl_l">
+                    <a href="{$owner->getURL()}">
+                        <img loading="lazy" src="{$owner->getAvatarUrl('miniscule')}" />
+                    </a>
+                </div>
+                <div class="pv_author_info fl_l">
+                    <div class="pv_author_name">
+                        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+                        <a class="page_verified" href="/verify" n:if="$owner->isVerified()"></a>
+                    </div>
+                    <div class="pv_author_date">{$photo->getPublicationTime()}</div>
+                </div>
+            </div>
+            <div n:if="isset($thisUser)" class="post_full_like_wrap">
+                <div class="post_full_like">
+                    {var $liked = $photo->hasLikeFrom($thisUser)}
+                    {var $likesCount = $photo->getLikesCount()}
+                    <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post_like action_button {if $liked}my_like{/if}" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
+                        <i class="action_icon" id="{if $liked}liked{/if}"></i>
+                        <span class="action_label">{tr('mobile_like')}</span>
+                        <span class="action_count">{if $likesCount > 0}{$likesCount}{/if}</span>
+                    </a>
+                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="post_share action_button">
+                        <i class="repost-icon action_icon"></i>
+                        <span class="action_label">{tr('share')}</span>
+                    </a>
+                </div>
+            </div>
+            {if ($thisUser->getId() === $photo->getOwner()->getId()) || !empty($photo->getDescription())}
+            {var $descPlain = $photo->getDescription($html = false) ?? ''}
+            {var $descFull = $photo->getDescription() ?? ''}
+            <div class="pv_desc">
+                {if $thisUser->getId() === $photo->getOwner()->getId()}
+                <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
+                    {if strlen($descPlain) > 500}
+                        <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
+                        <span class="full_text hidden">{$descFull|noescape}</span>
+                        <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                    {elseif !empty($descFull)}
+                        {$descFull}
+                    {else}
+                        <span class="pv_no_description">
+                            {_no_description}
+                        </span>
+                    {/if}
+                </a>
+                {else}
+                    {if strlen($descPlain) > 500}
+                        <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
+                        <span class="full_text hidden">{$descFull|noescape}</span>
+                        <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                    {else}
+                        {$descFull}
+                    {/if}
+                {/if}
+            </div>
+            {/if}
+            <div class="pv_comments"> 
+                {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo}
+            </div>
+        </div>
+    </div>
+{/block}

@@ -65,7 +65,7 @@
     text-align: center;
 }
 
-.form_field input:not([type="submit"], [type="checkbox"], [type="radio"]),.form_field:not(.settings_privacy_row) select,.form_field textarea {
+.form_field input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"]),.form_field:not(.settings_privacy_row) select,.form_field textarea {
     width: 300px;
 }
 
@@ -179,8 +179,10 @@ label.checkbox .nobold {
     width: 100%;
 }
 .vertical .form_label {
-    width: 100%;
-    padding: 0 0 6px;
+	width: 100%;
+	padding: 0 0 6px;
+	color: var(--muted-text-color-2);
+	font-weight: 500;
 }
 .vertical .form_data {
     line-height: 18px;
@@ -192,4 +194,12 @@ label.checkbox .nobold {
 }
 .form_field:not(:has(.form_label)) .form_data *:not([type="submit"], [type="checkbox"], [type="radio"]) {
     width: 100%;
+}
+
+.settings_padding .forn_field + input[type="hidden"] {
+    margin-top: -10px;
+}
+
+.outline_table {
+    border-color: var(--border-color)
 }

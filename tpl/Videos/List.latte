@@ -1,0 +1,35 @@
+{extends "../@layout.latte"}
+{var $iterator    = $videos}
+{var $count       = $paginatorConf->count}
+{var $page        = $paginatorConf->page}
+
+{block title}{_videos} {$user->getCanonicalName()}{/block}
+
+{block content}
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+            ['title' => tr("videos"), 'count' => $count]
+        ], extra => '<a class="button" href="javascript:showFastVideoUpload()">'.tr("upload_video").'</a>'
+        }
+        <div class="video_block_layout">
+            {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+            {if sizeof($data) > 0}
+                <div class="video_items_list scroll_container">
+                    {foreach $data as $x}
+                        {include "../components/video.latte", video => $x}
+                    {/foreach}
+                </div>
+                    {include "../components/paginator.latte", conf => (object) [
+                        "page"     => $page,
+                        "count"    => $count,
+                        "amount"   => sizeof($data),
+                        "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                        "atBottom" => true,
+                    ]}
+            {else}
+                {include "../components/nothing.latte", icon => 'video_empty.png'}
+            {/if}
+        </div>
+    </div>
+{/block}

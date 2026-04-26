@@ -1,0 +1,38 @@
+{extends "../@layout.latte"}
+
+{block title}{_edit_photo}{/block}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/autosave.js"></script>
+{/block}
+
+{block content}
+    {do $crumbs = [
+        ['href' => $photo->getOwner()->getURL(), 'title' => $photo->getOwner()->getCanonicalName()],
+        ['href' => "/albums{$photo->getOwner()->getId()}", 'title' => tr("albums")]
+    ]}
+
+    {if $photo->getAlbum()}
+        {do $crumbs[] = [
+            'href' => "/album{$photo->getAlbum()->getPrettyId()}",
+            'title' => $photo->getAlbum()->getName() ?? $photo->getAlbum()->getDescription()
+        ]}
+    {/if}
+
+    {do $crumbs[] = ['href' => "/photo{$photo->getPrettyId()}", 'title' => tr("photo")]}
+    {do $crumbs[] = ['title' => tr("edit_photo")]}
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", crumbs => $crumbs}
+        <div class="form_group label_end settings_padding">
+            <form method="post" enctype="multipart/form-data" data-autosave="true">
+                <div class="form_field">
+                    <div class="form_label">{_description}</div>
+                    <div class="form_data">
+                        <textarea name="desc">{$photo->getDescription()}</textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+            </form>
+        </div>
+    </div>
+{/block}

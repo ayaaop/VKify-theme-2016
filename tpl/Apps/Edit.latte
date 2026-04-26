@@ -1,0 +1,101 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {if $create}
+        {_create_app}
+    {else}
+        {_edit_app}
+    {/if}
+{/block}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/autosave.js"></script>
+{/block}
+
+{block content}
+    {var $tabs = [
+        [
+            'url' => '/apps?act=list',
+            'title' => 'all_apps',
+            'active' => false,
+            'id' => 'apps_tab_list'
+        ],
+        [
+            'url' => '/apps?act=installed',
+            'title' => 'installed_apps',
+            'active' => false,
+            'id' => 'apps_tab_installed'
+        ],
+        [
+            'url' => '/apps?act=dev',
+            'title' => 'own_apps',
+            'active' => true,
+            'id' => 'apps_tab_dev'
+        ]
+    ]}
+    {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="side_link" href="/app' . $id  . '">' . $name . '</a>'}
+    <div class="page_block">
+        <div class="form_group settings_padding label_end game_edit">
+            <form method="POST" enctype="multipart/form-data" data-autosave="true">
+                <div class="form_field">
+                    <div class="form_label">{_name}</div>
+                    <div class="form_data">
+                        <input type="text" name="name" value="{$name ?? ''}" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">{_description}</div>
+                    <div class="form_data">
+                        <input type="text" name="desc" value="{$desc ?? ''}" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">{_avatar}</div>
+                    <div class="form_data">
+                        <input type="file" name="ava" accept="image/*" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">{_app_news}</div>
+                    <div class="form_data">
+                        <input type="text" name="note" placeholder="{ovk_scheme(true) . $_SERVER['HTTP_HOST']}/note{$thisUser->getId()}_10" value="{$note ?? ''}" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">URL</div>
+                    <div class="form_data">
+                        <input type="text" name="url" value="{$url ?? ''}" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">{_app_state}</div>
+                    <div class="form_data">
+                        <label class="checkbox"><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> {_app_enabled}</label>
+                    </div>
+                </div>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+            </form>
+        </div>
+    </div>
+
+    <div class="page_block">
+        {include "../components/page_block_header.latte", title => "additional_information"}
+        <div class="form_group settings_padding">
+            <div class="form_field">
+                <ul style="color: unset;">
+                    {if $create}
+                        <li>{_app_creation_hint_url}</li>
+                        <li>{_app_creation_hint_iframe}</li>
+                    {else}
+                        <li>{tr("app_balance", $coins)|noescape} (<a href="javascript:withdraw({$id})">{_app_withdrawal_q}</a>)</li>
+                        <li>{tr("app_users", $users)|noescape}</li>
+                    {/if}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.coins = {$coins}
+    </script>
+{/block}

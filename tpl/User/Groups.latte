@@ -1,0 +1,179 @@
+{extends "../@listView.latte"}
+{var $iterator = $user->getClubs($page, $admin)}
+{var $count    = $user->getClubCount($admin)}
+
+{block noscroll}{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+    <div class="page_block wall_posts_tabs">
+        {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+            {var $count = $user->getClubCount()}
+            {var $tabs = [
+                [
+                    'url' => "/groups{$user->getId()}",
+                    'title' => 'groups',
+                    'active' => !$admin,
+                    'id' => 'groups_tab_all',
+                    'count' => $count
+                ],
+                [
+                    'url' => "/groups{$user->getId()}?act=managed",
+                    'title' => 'managed',
+                    'active' => $admin,
+                    'id' => 'groups_tab_managed',
+                    'count' => $user->getClubCount(true)
+                ]
+            ]}
+            {var $createGroupButton = '<a class="button" href="/groups_create" onclick="showCreateGroupModal(event)">' . tr('create_group') . '</a>'}
+            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'groups_top_tabs', extra => $createGroupButton}
+        {else}
+            {include "../components/page_block_header.latte", title => 'groups'}
+        {/if}
+        {include "../components/search_bar.latte",
+            id => 'groups_search_header',
+            placeholder => tr('search_by_groups'),
+            action => '/search',
+            section => 'groups',
+            class => 'groups_search_header',
+            onsubmit => 'this.submit(); return false;'
+        }
+    </div>
+{/block}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+	<img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
+		/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
+	{else}
+		{$x->getAvatarUrl('miniscule')}
+		{/if}" 
+		alt="{$x->getCanonicalName()}" width="80" loading=lazy
+	/>
+{/block}
+
+{block name}{/block}
+
+{block infotable}
+    <div class="labeled name">
+        <a href="{$x->getURL()}">{$x->getName()}</a>
+        <img n:if="$x->isVerified()"
+                class="name-checkmark"
+                src="/assets/packages/static/openvk/img/checkmark.png"
+        />
+    </div>
+    <div class="labeled">
+         <a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
+    </div>
+{/block}
+
+{block description}
+    {$x->getDescription()}
+{/block}
+
+{block actions}
+    <div class="post_actions">
+        <div class="post_actions_icon" data-tippy-placement="bottom-end" data-tippy-content-id="group_actions_menu_{$x->getId()}"></div>
+        <div id="group_actions_menu_{$x->getId()}" class="tippy-menu tippy-content-template">
+            {if $x->canBeModifiedBy($thisUser ?? NULL)}
+                {var $clubPinned = $thisUser->isClubPinned($x)}
+                <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                    {if $clubPinned}
+                        {_remove_from_left_menu}
+                    {else}
+                        {_add_to_left_menu}
+                    {/if}
+                </a>
+            {/if}
+            {if $x->getSubscriptionStatus($thisUser) == false}
+                <a href="javascript:void(0)" onclick="this.closest('.tippy-menu').querySelector('form[data-action=add]').submit()">{_join_community}</a>
+                <form style="display: none" data-action="add" action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="add" />
+                    <input type="hidden" name="id" value="{$x->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                </form>
+            {else}
+                <a href="javascript:void(0)" onclick="this.closest('.tippy-menu').querySelector('form[data-action=rem]').submit()">{_leave_community}</a>
+                <form style="display: none" data-action="rem" action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="rem" />
+                    <input type="hidden" name="id" value="{$x->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                </form>
+            {/if}
+        </div>
+    </div>
+{/block}
+
+{block bottom}
+    <div n:if="$user->getId() !== $thisUser->getId()" class="page_block ui_rmenu ui_rmenu_pr">
+        <a class="ui_ownblock clear_fix" href="{$user->getURL()}">
+            <img class="ui_ownblock_img" src="{$user->getAvatarUrl('miniscule')}">
+            <div class="ui_ownblock_info">
+                <div class="ui_ownblock_label">{$user->getCanonicalName()}</div>
+                <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
+            </div>
+        </a>
+    </div>
+    {if !is_null($thisUser)}
+        <div class="page_block module page_list_module groups_module">
+            <a href="/search?section=groups" class="module_header">
+                <h3 class="header_top clear_fix">
+                    <span class="header_label fl_l">
+                        <vkifyloc name="recommended_groups"/>
+                    </span>
+                </h3>
+            </a>
+            <div class="module_body clear_fix">
+                {var $clubsRepo = new \openvk\Web\Models\Repositories\Clubs()}
+                {var $totalClubs = $clubsRepo->getCount()}
+                {var $randomClubs = []}
+                {if $totalClubs > 0}
+                    {var $poolSize = min(20, $totalClubs)}
+                    {var $randomIds = []}
+                    {while count($randomIds) < $poolSize}
+                        {var $candidateId = rand(1, $totalClubs)}
+                        {if !in_array($candidateId, $randomIds)}
+                            {var $randomIds[] = $candidateId}
+                        {/if}
+                    {/while}
+                    {var $candidateClubs = $clubsRepo->getByIds($randomIds)}
+                    {var $eligibleClubs = []}
+                    {foreach $candidateClubs as $clubCandidate}
+                        {if $clubCandidate && !$clubCandidate->isHideFromGlobalFeedEnabled() && !$clubCandidate->isHidingFromGlobalFeedEnforced() && !$clubCandidate->isBanned() && $clubCandidate->getSubscriptionStatus($thisUser) == false}
+                            {var $eligibleClubs[] = $clubCandidate}
+                        {/if}
+                    {/foreach}
+                    {var $randomClubs = array_slice($eligibleClubs, 0, 5)}
+                {/if}
+                {if count($randomClubs) > 0}
+                    <div class="line_cell clear_fix" n:foreach="$randomClubs as $club">
+                        <div class="thumb">
+                            <a href="club{$club->getId()}">
+                                <img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
+                                    /themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
+                                {else}
+                                    {$club->getAvatarUrl()}
+                                {/if}" alt="{$club->getCanonicalName()}" />
+                            </a>
+                        </div>
+                        <div class="desc_info">
+                            <div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
+                            <div class="group_desc">
+                                <span>{$club->getDescription()}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="line_cell">
+                        <a href="/search?section=groups" class="button button_gray button_wide">{_show_more}</a>
+                    </div>
+                {else}
+                    {include "../components/content_error.latte", icon => false, description => tr("groups_zero")}
+                {/if}
+            </div>
+        </div>
+    {/if}
+{/block}

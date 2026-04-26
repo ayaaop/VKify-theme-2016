@@ -1,0 +1,63 @@
+{extends "../@layout.latte"}
+
+{block title}{$note->getName()}{/block}
+
+{block content}
+    {var $author = $note->getOwner()}
+    {var $menuItems = [
+        [
+            'url' => "/wall" . $author->getId() . "?type=owners",
+            'title' => tr("users_posts", ovk_proc_strtr($author->getFirstName(), 20)),
+            'translate' => false,
+            'active' => false
+        ],
+        [
+            'url' => "/wall" . $author->getId(),
+            'title' => 'all_posts',
+            'active' => false
+        ],
+        [
+            'url' => "/notes" . $author->getId(),
+            'title' => 'notes',
+            'active' => false,
+            'subitems' => [
+                [
+                    'url' => "javascript:void(0)",
+                    'title' => 'note',
+                    'active' => true
+                ]
+            ]
+        ]
+    ]}
+
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.latte", items => $menuItems, ownblockData => $author}
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block">
+                    {include "../components/page_crumb_header.latte", crumbs: [
+                        ['href' => $author->getURL(), 'title' => $author->getCanonicalName()],
+                        ['href' => "/notes{$author->getId()}", 'title' => tr("notes")],
+                        ['title' => $note->getName()]
+                    ]}
+                </div>
+
+                {include "../components/notepost.latte", note => $note, forceNoCommentsLink => true}
+                {include "../components/comments.latte",
+                    comments => $comments,
+                    count => $cCount,
+                    page => $cPage,
+                    model => "notes",
+                    parent => $note,
+                    showTitle => false}
+            </div>
+        </div>
+    </div>
+{/block}
+
+ {block bodyScripts}
+ {/block}

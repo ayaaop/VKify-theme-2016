@@ -25,15 +25,14 @@
     position: fixed;
 }
 .notification_ballon {
-	background-color: rgba(0, 0, 0, 0.7);
+	background-color: var(--tooltip-background-color);
 	height: unset;
-	color: white !important;
+	color: var(--white) !important;
 	display: block;
 	animation-name: notification_ballon_appears;
 	animation-duration: 0.5s;
 	cursor: pointer;
 	width: 320px;
-	background: rgba(54, 56, 59, .96);
 	border-radius: 4px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, .2);
 	font-size: 12.5px;
@@ -62,7 +61,7 @@
 	overflow: auto;
 	margin: -10px -12px -11px 12px;
 	opacity: 0.65;
-	color: #fff;
+	color: var(--white);
 	transition-duration: 0.3s;
 	font-size: 0;
 }
@@ -91,6 +90,11 @@
 	height: 50px;
 	object-fit: cover;
 	border-radius: 50%;
+}
+.notification_ballon wrap content a {
+	text-decoration: underline;
+	color: var(--white);
+	font-weight: 700;
 }
 
 .feedback_row {
@@ -145,7 +149,7 @@
 	margin: 0 0 0 52px;
 	min-height: 40px;
 }
-.tippy-content .pr {
+#top_notify_btn_div .tippy-content .pr {
 	width: 100%;
 	margin: auto;
 }
@@ -160,6 +164,8 @@
 	display: block;
 	padding: 10px 0 12px;
 	background-color: inherit;
+	font-size:12.5px;
+	line-height: 1;
 	border-top: 1px solid var(--border-color);
 	text-align: center;
 	border-radius: 0 0 var(--module-border-radius) var(--module-border-radius);
