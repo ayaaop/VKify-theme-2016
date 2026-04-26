@@ -43,7 +43,7 @@
             <a id="videoOpen" data-id="{$video->getPrettyId()}" class="video_item_title" href="/video{$video->getPrettyId()}">
                 <span>{$video->getName()}</span>
             </a>
-            <a class="video_item_author" href="/{$video->getOwner()->getId()}">{$video->getOwner()->getCanonicalName()}</a>
+            <a class="video_item_author" href="{$video->getOwner()->getUrl()}">{$video->getOwner()->getCanonicalName()}</a>
             <div class="video_item_add_info">
                 <span class="video_item_date_info">{$video->getPublicationTime()}</span>
             </div>
