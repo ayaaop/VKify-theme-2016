@@ -1,0 +1,12 @@
+{block content}
+    <div class="content" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        {include "../../components/video.latte", video => $video}
+        <div class="info" style="text-align:center">
+            <p n:if="$video->getDescription()" class="labeled">
+                <span>{$video->getDescription()}</span>
+            </p>
+            <span class="labeled">{_video_uploaded} {$video->getPublicationTime()}</span><br/>
+            <span class="labeled">{_video_updated} {$video->getEditTime() ?? $video->getPublicationTime()}</span>
+        </div>
+    </div>
+{/block}

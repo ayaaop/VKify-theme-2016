@@ -1,0 +1,42 @@
+{extends "../@layout.latte"}
+
+{block title}{$report->getReason()}{/block}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/reports.js"></script>
+{/block}
+
+{block content}
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => '/admin/support/reports', 'title' => tr("list_of_reports")],
+            ['title' => tr("report_number") . " " . $report->getId()]
+        ]}
+    </div>
+    {include "../NoSpam/Tabs.latte", mode => "reports"}
+    <div class="page_block page_padding">
+        <p>
+            <b>{$report->getReportAuthor()->getCanonicalName()}</b> пожаловался на <b>{$report->getContentName()}</b>
+            <br />
+            <b>{_comment}:</b> {$report->getReason()}
+        </p>
+        {include "ViewContent.latte", type => $report->getContentType(), object => $report->getContentObject()}
+        <center>
+        <form action="/admin/reportAction{$report->getId()}" method="post">
+            <center>
+                <form n:if="$report->getContentType() != 'group'" action="/admin/reportAction{$report->getId()}" method="post">
+                    <input type="hidden" name="hash" value="{$csrfToken}"/>
+                    <input type="submit" name="ban" value="{_ban_user_action}" class="button">
+                    <input n:if="$report->getContentType() !== 'user'" type="submit" name="delete" value="{_delete_content}" class="button">
+                    <input type="submit" name="ignore" value="{_ignore_report}" class="button">
+                </form>
+                <form n:if="$report->getContentType() == 'group'" action="/admin/reportAction{$report->getId()}" method="post">
+                    <input type="hidden" name="hash" value="{$csrfToken}"/>
+                    <input type="submit" name="banClubOwner" value="Заблокировать создателя" class="button">
+                    <input type="submit" name="banClub" value="Заблокировать группу" class="button">
+                    <input type="submit" name="ignore" value="{_ignore_report}" class="button">
+                </form>
+            </center>
+        </form>
+    </div>
+{/block}

@@ -3,11 +3,18 @@
     clip-path: unset;
 }
 
-.avatar_block .button, .avatar_block .tippy-menu a {
+.avatar_block .button,
+.avatar_block .tippy-menu a {
     transition: none;
 }
 
-.page_list_module .group_desc, .page_list_module .people_desc, .page_list_module .people_extra {
+.audio_module .module_body {
+    padding-bottom: 10px;
+}
+
+.page_list_module .group_desc,
+.page_list_module .people_desc,
+.page_list_module .people_extra {
     font-size: 12px;
     max-height: 48px;
     overflow: hidden;
@@ -19,8 +26,9 @@
     color: var(--muted-text-color)
 }
 
-.page_list_module .people_extra_lnk, .edit_link {
-    color: var(--muted-text-color)
+.page_list_module .people_extra_lnk,
+.edit_link {
+    color: var(--muted-text-color) !important;
 }
 
 .page_list_module .thumb {
@@ -56,7 +64,9 @@
     margin-top: 0
 }
 
-.page_list_module .line_cell .desc_info, .page_list_module .line_cell .extra_info, .page_list_module .line_cell .info {
+.page_list_module .line_cell .desc_info,
+.page_list_module .line_cell .extra_info,
+.page_list_module .line_cell .info {
     width: 147px;
     overflow: hidden;
     word-wrap: break-word;
@@ -69,7 +79,9 @@
     text-overflow: ellipsis
 }
 
-.page_list_module .group_name, .page_list_module .people_desc, .page_list_module .people_name {
+.page_list_module .group_name,
+.page_list_module .people_desc,
+.page_list_module .people_name {
     margin-bottom: 2px
 }
 
@@ -93,7 +105,7 @@
 
 .page_album_title {
     font-size: 12.5px;
-    background: url(/themepack/vkify16/3.3.2.0/resource/album_top_shadow.png);
+    background: url(/themepack/vkify16/3.3.3.0/resource/album_top_shadow.png);
     color: var(--white);
     position: absolute;
     bottom: 0;
@@ -134,7 +146,7 @@
 }
 
 .page_album_nocover {
-    background: var(--album-background-color) url(/themepack/vkify16/3.3.2.0/resource/camera_big.png) no-repeat 50% 45%;
+    background: var(--album-background-color) url(/themepack/vkify16/3.3.3.0/resource/camera_big.png) no-repeat 50% 45%;
     width: 279px;
     height: 185px
 }
@@ -222,7 +234,7 @@
     left: 0;
     right: 0;
     background: var(--black);
-    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.2.0/resource/video_play_small.png) 19px 13px no-repeat;
+    background: var(--video-overlay-background) url(/themepack/vkify16/3.3.3.0/resource/video_play_small.png) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -329,7 +341,8 @@
     width: 88px
 }
 
-.wide_column .people_module .module_body .people_cell_ava, .wide_column .people_module .module_body .people_cell_img {
+.wide_column .people_module .module_body .people_cell_ava,
+.wide_column .people_module .module_body .people_cell_img {
     width: 68px;
     height: 68px
 }
@@ -338,7 +351,6 @@
     padding: 13px 20px 20px;
     height: 123px;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
@@ -409,8 +421,17 @@
     text-align: center;
 }
 
-.page_status, .page_info_wrap .nobold {
+.client_app.client_app_titlebar>img {
+    filter: none;
+}
+
+.page_status,
+.page_info_wrap .nobold {
     font-size: 13px
+}
+
+table.ugc-table * {
+    vertical-align: top;
 }
 
 .ugc-table td {
@@ -455,7 +476,7 @@
     margin: 0;
 }
 .audioStatus::before {
-    background-image: url('/themepack/vkify16/3.3.2.0/resource/icons/video_actions.png');
+    background-image: url('/themepack/vkify16/3.3.3.0/resource/icons/video_actions.png');
     width: 13px;
     height: 13px;
     background-position: 0px -44px;
@@ -562,6 +583,11 @@ div.avatar_block:hover .avatar_variants {
     margin-bottom: 10px;
 }
 
+.avatar_block_inner img {
+    height: fit-content;
+    width: 100%;
+}
+
 .avatar_controls .avatar_variants {
     width: 200px;
 }
@@ -572,6 +598,16 @@ div.avatar_block:hover .avatar_variants {
     padding: 18px 0 24px;
     text-align: center;
     width: 100%;
+}
+
+.avatar_controls .avatar_variants a {
+    padding: 8px 0;
+}
+._add_image::before {
+    margin-left: 10px;
+}
+.avatar_controls .avatar_variants span {
+    margin-left: 8px;
 }
 
 .profile_actions .button+.button {
@@ -609,7 +645,7 @@ div.avatar_block:hover .avatar_variants {
     width: 21px;
     height: 21px;
     margin: 10px;
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/add_info_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/add_info_icons.png) no-repeat 0 0
 }
 
 .profile_warning_img.bday {
@@ -632,7 +668,9 @@ div.avatar_block:hover .avatar_variants {
     background-position: 0 -125px
 }
 
-.profile_warning_img.posts, .profile_warning_img.interests, .profile_warning_img.status {
+.profile_warning_img.posts,
+.profile_warning_img.interests,
+.profile_warning_img.status {
     background-position: 0 -150px
 }
 
@@ -657,7 +695,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
     width: 9px;
     height: 9px;
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/attach_icons.png) no-repeat 0 0
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/attach_icons.png) no-repeat 0 0
 }
 
 .profile_warning_label {
@@ -681,7 +719,8 @@ div.avatar_block:hover .avatar_variants {
     width: 100%;
 }
 
-.profile_msg_split .cut_left, .profile_msg_split .cut_right {
+.profile_msg_split .cut_left,
+.profile_msg_split .cut_right {
     display: inline-block;
 }
 
@@ -704,17 +743,19 @@ div.avatar_block:hover .avatar_variants {
     border-radius: 0 var(--button-border-radius) var(--button-border-radius) 0;
     height: 30px;
     width: 38px;
-    padding-left: 11px
+    padding: 0;
 }
 
 .profile_gift_icon {
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/gift_icon.png) no-repeat;
-    background-position: left 2px;
-    padding-right: 21px;
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/gift_icon.png) no-repeat;
+    background-position: center;
+    background-size: 11px;
+    width: 100%;
+    height: 100%;
 }
 
-.profile_more_btn {
-    background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/more_icon.png);
+.button.profile_more_btn {
+    background-image: url(/themepack/vkify16/3.3.3.0/resource/icons/more_icon.png);
     background-repeat: no-repeat;
     background-position: 100% 13px;
     width: 36px;
@@ -744,7 +785,8 @@ div.avatar_block:hover .avatar_variants {
     flex: 0;
 }
 
-.content_title_expanded+.page_info, .page_info+div:has(.profile_info) {
+.content_title_expanded+.page_info,
+.page_info+div:has(.profile_info) {
     margin-top: -15px;
 }
 
@@ -810,7 +852,7 @@ div.avatar_block:hover .avatar_variants {
     display: block;
     position: absolute;
     content: '';
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_info_cons.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/group_info_cons.png) no-repeat 0 0;
     height: 15px;
     width: 15px;
     margin: 2px 0 0 -24px;
@@ -818,9 +860,11 @@ div.avatar_block:hover .avatar_variants {
 .group_info_row.site:before {
     background-position: 0 -96px
 }
-@media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(-o-min-device-pixel-ratio: 2/1),
+(min-resolution: 192dpi) {
     .group_info_row:before {
-        background-image: url(/themepack/vkify16/3.3.2.0/resource/icons/group_info_cons_2x.png);
+        background-image: url(/themepack/vkify16/3.3.3.0/resource/icons/group_info_cons_2x.png);
         background-size: 15px 149px
     }
 }
@@ -848,7 +892,7 @@ div.avatar_block:hover .avatar_variants {
     left: 0;
     width: 12px;
     height: 12px;
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/topic_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/topic_icon.png) no-repeat 0 0;
 }
 .wide_column .topics_module .module_body {
     padding: 1px 20px 5px;
@@ -903,9 +947,11 @@ div.avatar_block:hover .avatar_variants {
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: var(--link-color);
+    cursor: pointer;
 }
 .page_upload_label {
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/group_icons.png) no-repeat;
     position: absolute;
     display: block;
     width: 17px;
@@ -918,18 +964,18 @@ div.avatar_block:hover .avatar_variants {
     padding: 17px 13px 17px 47px
 }
 .wide_column .page_upload_label {
-    background: url(/themepack/vkify16/3.3.2.0/resource/icons/group_icons_big.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.3.0/resource/icons/group_icons_big.png) no-repeat;
     width: 25px;
     height: 27px;
     margin-left: -37px;
     margin-top: -4px
 }
 a.page_module_upload:hover,
-.page_module_upload.hover {
+.page_module_upload:hover {
     text-decoration: none
 }
 a.page_module_upload:hover .page_upload_label,
-.page_module_upload.hover .page_upload_label {
+.page_module_upload:hover .page_upload_label {
     opacity: 1
 }
 .page_upload_label.page_docs_upload {

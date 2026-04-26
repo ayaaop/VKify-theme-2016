@@ -1,0 +1,30 @@
+{extends "../@layout.latte"}
+{block title}{_select_language}{/block}
+
+{block header}
+    {_select_language}
+{/block}
+
+{block content}
+    <div class="page_block page_padding">
+        <div class="languages_list clear_fix" id="all_languages_list">
+            {for $col = 0; $col < 4; $col++}
+                <div class="language_column fl_l">
+                    {foreach $languages as $index => $language}
+                        {if $index % 4 === $col}
+                            <div>
+                                <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}" 
+                                   n:class="language_title, $language['code'] === getLanguage() ? language_selected"
+                                   data-tip="simple-black" 
+                                   data-tiptitle="{$language['name']}"
+                                   data-align="top-start">
+                                    {$language['native_name']}
+                                </a>
+                            </div>
+                        {/if}
+                    {/foreach}
+                </div>
+            {/for}
+        </div>
+    </div>
+{/block}

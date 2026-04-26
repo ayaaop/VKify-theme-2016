@@ -1,0 +1,30 @@
+{extends "../@layout.latte"}
+{block title}
+    {_send_gift}
+{/block}
+
+{block content}
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+            ['href' => "/gifts?act=pick&user={$user->getId()}", 'title' => tr("collections")],
+            ['href' => "/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}", 'title' => $cat->getName(tr("__lang"))],
+            ['title' => tr("confirm")]
+        ]}
+    </div>
+    <div class="page_block page_padding" style="text-align: center">
+        <img class="gift_confirm_pic gift_img" style="max-width: 256px;" src="{$gift->getImage(2)}" alt="{_gift}" />
+    
+        <form class="clear_fix" style="width: 65%; margin: 15px auto 0" method="POST">
+            <textarea name="comment" style="resize: vertical; height: 65px;" placeholder="{_gift_your_message}"></textarea>
+            <br/><br/>
+            <input type="submit" value="{_send}" class="button" style="float: right" />
+
+            <label class="checkbox">
+                <input type="checkbox" name="anonymous"> {_as_anonymous}
+            </label>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+        </form>
+    </div>
+{/block}

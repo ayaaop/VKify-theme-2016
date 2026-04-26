@@ -1,0 +1,37 @@
+{extends "../@layout.latte"}
+
+{block title}{_edit_topic} "{$topic->getTitle()}"{/block}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/autosave.js"></script>
+{/block}
+
+{block content} 
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
+            ['href' => "/board{$club->getId()}", 'title' => tr("discussions")],
+            ['title' => $topic->getTitle()]
+        ]}
+        <div class="form_group label_end settings_padding" style="width: 455px;margin-inline: auto;">
+            <form method="POST" enctype="multipart/form-data" data-autosave="true">
+                <div class="form_field">
+                    <div class="form_label">{_title}</div>
+                    <div class="form_data">
+                        <input type="text" name="title" style="width: 100%;" value="{$topic->getTitle()}" />
+                    </div>
+                </div>
+                <div class="form_field">
+                    <div class="form_label">{_topic_settings}</div>
+                    <div class="form_data">
+                        {if $topic->getClub()->canBeModifiedBy($thisUser)}
+                            <label class="checkbox"><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
+                        {/if}
+                        <label class="checkbox"><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
+                    </div>
+                </div>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+            </form>
+        </div>
+    </div>
+{/block}

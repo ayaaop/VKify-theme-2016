@@ -1,0 +1,73 @@
+{extends "../@layout.latte"}
+{var $iterator = $notes}
+
+{block title}{_notes} {$owner->getCanonicalName()}{/block}
+
+{block content}
+{var $menuItems = [
+    [
+        'url' => "/wall" . $owner->getId() . "?type=owners",
+        'title' => tr("users_posts", ovk_proc_strtr($owner->getFirstName(), 20)),
+        'translate' => false,
+        'active' => false
+    ],
+    [
+        'url' => "/wall" . $owner->getId(),
+        'title' => 'all_posts',
+        'active' => false
+    ],
+    [
+        'url' => "/notes" . $owner->getId(),
+        'title' => 'notes',
+        'active' => true
+    ]
+]}
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.latte", items => $menuItems, ownblockData => $owner}
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block wall_posts_tabs">
+                    {include "../components/page_crumb_header.latte", crumbs: [
+                        ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+                        ['title' => tr("notes"), 'count' => $count]
+                    ], extra => '<a class="button" href="/notes/create">'.tr("create_note").'</a>'
+                    }
+                </div>
+                <div class="notes_list_layout scroll_container">
+                    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+                    {if sizeof($data) > 0}
+                        {foreach $data as $note}
+                            {include "../components/notepost.latte", note => $note, commentSection => true, compact => true}
+                        {/foreach}
+
+                        {include "../components/paginator.latte", conf => (object) [
+                            "page"     => $page,
+                            "count"    => $count,
+                            "amount"   => sizeof($data),
+                            "perPage"  => 10,
+                            "atBottom" => true,
+                        ]}
+
+                    {else}
+                        <div class="page_block page_padding">
+                            {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
+                                <h4>{_welcome}</h4>
+                                <p>{_notes_start_screen}</p>
+                            {else}
+                                {ifset customErrorMessage}
+                                    {include ../customErrorMessage}
+                                {else}
+                                    {include ../components/nothing.latte}
+                                {/ifset}
+                            {/if}
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

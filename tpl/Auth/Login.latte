@@ -1,0 +1,23 @@
+{extends "../@layout.latte"}
+{block title}{_log_in}{/block}
+
+{block content}
+    <div id="auth" class="page_block">
+        <h2 class="login_header">{_log_in}</h2>
+        <form id="login_form" method="POST" enctype="multipart/form-data">
+            <input class="big_text" type="text" name="login" required placeholder="{_email}" />
+            <input class="big_text" type="password" name="password" required placeholder="{_password}" />
+            <div class="login_buttons_wrap">
+                <input type="submit" value="{_log_in}" class="button button_blue" />
+                <a href="/reg" class="button button_green" style="display: inline-block;">{_registration}</a><br><br>
+            </div>
+            <div class="forgot">
+                <a href="/restore">{_forgot_password}</a>
+            </div>
+        </form>
+                <!-- div style="margin-bottom: 8px;"> 
+                    <input type="checkbox" name="someone_pc" value=""/>
+                    <label for="someone_pc" class="nobold">{_not_your_pc}?</label><br>
+                </div -->
+    </div>
+{/block}

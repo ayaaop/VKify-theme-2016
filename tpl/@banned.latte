@@ -1,0 +1,45 @@
+{extends "@layout.latte"}
+{block title}{_banned_title}{/block}
+
+{block content}
+<div class="page_block">
+    {include "../components/page_block_header.latte", title => "caution"}
+    
+    <div class="page_padding">
+        <img src="/assets/packages/static/openvk/img/oof.apng" width="110" height="110">
+
+        <div style="padding-left: 115px; margin-top: -100px;">
+            <h4 style="font-size: 14px; margin-bottom: 8px;">{_banned_header}</h4>
+            <div>
+                {var $ban = $thisUser->getBanReason("banned")}
+                {if is_string($ban)}
+                    {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
+                    {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
+                {else}
+                    {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}
+                    <div>
+                        Эта страница была заморожена {$ban[0]|noescape}
+                        {if $ban[1] !== "app"}
+                            {include "Report/ViewContent.latte", type => $ban[1], object => $ban[2]}
+                        {/if}
+                    </div>
+                {/if}
+
+                {if !$thisUser->getUnbanTime()}
+                    {_banned_perm}
+                {else}
+                    {tr("banned_until_time", $thisUser->getUnbanTime())|noescape}
+                {/if}
+            </div>
+            <br><br>
+            {if $thisUser->canUnbanThemself()}
+                <a href="/unban.php" class="button">{_banned_unban_myself}</a>
+            {/if}
+            <br><br>
+            <div>
+                {tr("banned_3", urlencode($csrfToken))|noescape}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

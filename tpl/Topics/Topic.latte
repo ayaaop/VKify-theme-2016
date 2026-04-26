@@ -1,0 +1,18 @@
+{extends "../@layout.latte"}
+{block title}{_view_topic} "{$topic->getTitle()}"{/block}
+
+{block content}
+<div class="page_block">
+    {var $editButton = $topic->canBeModifiedBy($thisUser) ? '<a class="button" href="javascript:showEditTopicModal(\''.$club->getId().'_'.$topic->getVirtualId().'\')">'.tr("edit_topic_action").'</a>' : ''}
+    {include "../components/page_crumb_header.latte", crumbs: [
+        ['href' => $club->getURL(), 'title' => $club->getCanonicalName()],
+        ['href' => "/board{$club->getId()}", 'title' => tr("discussions")],
+        ['title' => $topic->getTitle(), 'count' => $count]
+    ], extra => $editButton
+    }
+    <div class="page_block_sub_header bt_header">
+        {$topic->getTitle()}
+    </div>
+</div>
+    {include "../components/comments.latte", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), showTitle => false, parent => $topic}
+{/block}

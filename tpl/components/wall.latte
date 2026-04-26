@@ -1,0 +1,54 @@
+{capture $wallSearchExtra}
+<div class="ui_tabs_right_section">
+    <div class="ui_tab_search_wrap ui_tab_item">
+        <a class="ui_tab_plain ui_tab_search" href="/wall{$owner}?type=search">
+        </a>
+        {include "search_bar.latte",
+            id => 'wall_search',
+            form_id => 'wall_search_form',
+            action => "/wall{$owner}",
+            input_name => 'q',
+            hidden_fields => ['type' => 'search'],
+            class => '_wrap ui_search_old'}
+    </div>
+</div>
+{/capture}
+<div class="wall_module">
+    <div class="insertThere" id="postz"></div>
+    <div id="underHeader">
+        <div n:if="$canPost" class="page_block">
+            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
+        </div>
+        {var $tabs = [
+            [
+                'url' => "/wall{$owner}",
+                'title' => 'all_posts',
+                'active' => true,
+                'id' => 'wall_tab_all',
+                'count' => $count
+            ],
+            [
+                'url' => "/wall{$owner}?type=owners",
+                'title' => isset($club) ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20)),
+                'active' => false,
+                'id' => 'wall_tab_owners',
+                'translate' => isset($club) ? true : false,
+            ]
+        ]}
+        <div class="page_block wall_posts_tabs">
+            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'wall_top_tabs', white => true, extra => $wallSearchExtra}
+        </div>
+        <div class="wall_posts content scroll_container">
+            {if sizeof($posts) > 0}
+                {foreach $posts as $post}
+                    {include "../components/post.latte", post => $post, commentSection => true, onWallOf => true}
+                {/foreach}
+                {include "../components/paginator.latte", conf => $paginatorConf}
+            {else}
+				<div class="page_block page_padding">
+					{include "../components/content_error.latte", description => tr("no_posts_abstract")}
+				</div>
+            {/if}
+        </div>
+    </div>
+</div>

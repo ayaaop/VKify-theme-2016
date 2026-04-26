@@ -1,0 +1,24 @@
+{block content}
+    <div class="search_row">
+        <div class="img">
+            <a href="{$group->getURL()}">
+                <img src="{if str_contains($group->getAvatarURL('normal'), 'camera_200.png')}
+                    /themepack/vkify16/{$theme->getVersion()}/resource/{if !$isUser}community_200.png{else}camera_200.png{/if}
+                {else}
+                    {$group->getAvatarURL('normal')}
+                {/if}" width="75" alt="Фотография">
+            </a>
+        </div>
+        <div class="info">
+            <div class="labeled name">
+                <a href="{$group->getURL()}">
+                    <b>{!$isUser ? $group->getName() : $group->getCanonicalName()}</b>
+                    <a href="/verify" n:if="$group->isVerified()" class="page_verified"></a>
+                </a>
+            </div>
+            <a href="/club{$group->getId()}/followers" n:if="!$isUser" class="labeled">
+                {tr("participants", $group->getFollowersCount())}
+            </a>
+        </div>
+    </div>
+{/block}

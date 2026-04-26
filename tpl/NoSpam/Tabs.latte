@@ -1,0 +1,17 @@
+{include "../components/page_tabs_header.latte", tabs => [
+    [
+        'url' => '/noSpam',
+        'title' => 'template_ban',
+        'active' => $mode === 'form'
+    ],
+    [
+        'url' => '/noSpam?act=templates',
+        'title' => 'active_templates',
+        'active' => $mode === 'templates'
+    ],
+    [
+        'url' => '/scumfeed',
+        'title' => 'users_reports',
+        'active' => $mode === 'reports'
+    ]
+], white => true}

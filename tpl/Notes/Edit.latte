@@ -1,0 +1,88 @@
+{extends "../@layout.latte"}
+
+{block title}{_edit_note}{/block}
+
+{block content}
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
+            ['href' => "/notes{$thisUser->getId()}", 'title' => tr("notes")],
+            ['href' => "/note{$thisUser->getId()}_{$note->getVirtualId()}", 'title' => $note->getName()],
+            ['title' => tr("edit_note")]
+        ]}
+    </div>
+    <div class="page_block page_padding">
+        <form id="noteFactory" method="POST">
+            <input type="text" name="name" placeholder="{_name_note}" value="{$note->getName()}" />
+            <br/><br/>
+            <textarea name="html" style="display:none;"></textarea>
+            <div id="editor" style="height:50vh;border:1px solid var(--border-color)"></div>
+            
+            <div class="post_full_like_wrap" style="margin: 0; padding-bottom: 0;">
+                <div class="post_full_like">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <p class="nobold" style="margin: 10px 0"><a href="/kb/notes">{_something}</a> {_supports_xhtml}</p>
+                </div>
+                <div class="reply_link_wrap">
+                    <div class="buttons_row">
+                        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button button_light">{_cancel}</a>
+                        <button class="button">{_save}</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+    <script>
+        window.initNotesMonacoEditor = function() {
+            if (typeof require === 'undefined') {
+                setTimeout(window.initNotesMonacoEditor, 50);
+                return;
+            }
+            
+            // Cleanup existing editor instance if present
+            if (window._editor && typeof window._editor.dispose === 'function') {
+                try {
+                    window._editor.dispose();
+                    window._editor = null;
+                } catch (e) {
+                    console.warn('Failed to dispose Monaco editor:', e);
+                }
+            }
+            
+            require.config({
+                paths: {
+                    'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs'
+                }
+            });
+            require(['vs/editor/editor.main'], function() {
+                const editorElement = document.getElementById('editor');
+                if (!editorElement) return;
+                
+                // Clear any existing Monaco content
+                editorElement.innerHTML = '';
+                
+                window._editor = monaco.editor.create(editorElement, {
+                    value: {$note->getSource()},
+                    lineNumbers: "off",
+                    language: "html"
+                });
+
+                const form = document.querySelector('#noteFactory');
+                if (form && !form._monacoSubmitBound) {
+                    form.addEventListener('submit', function() {
+                        const ta = form.querySelector('textarea');
+                        if (ta && window._editor) {
+                            ta.value = window._editor.getValue();
+                        }
+                    });
+                    form._monacoSubmitBound = true;
+                }
+            });
+        };
+
+        // Ensure initialization on direct page loads
+        window.initNotesMonacoEditor();
+    </script>
+{/block}

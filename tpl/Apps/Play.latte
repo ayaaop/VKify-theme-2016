@@ -1,0 +1,33 @@
+{extends "../@layout.latte"}
+{var $canReport = $owner->getId() !== $thisUser->getId()}
+
+{block title}
+    {$name}
+{/block}
+
+{block content}
+    <div class="page_block" style="width: 650px">
+        {include "../components/page_block_header.latte", title => $name, translate => false, extra => (($canReport ?? false) ? '<a style="float: right;" onClick="reportApp({$id})">{_report}</a>' : '')}
+        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="650"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
+
+            <div n:if="!is_null($news)" class="page_padding">
+                <h4>{$news->getName()}</h4>
+                <div id="app_news_container" style="margin-bottom: 0">
+                    {$news->getText()|noescape}
+                </div>
+            </div>
+            <div class="page_block_footer">
+                {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
+            </div>
+    </div>
+
+    <script>
+        window.appId     = {$id};
+        window.appTitle  = {$name};
+        window.appPerms  = {$perms};
+        window.appOrigin = {$origin};
+    </script>
+
+    {script "js/al_games.js"}
+{/block}

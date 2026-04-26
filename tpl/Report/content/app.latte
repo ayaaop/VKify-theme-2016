@@ -1,0 +1,19 @@
+{block content}
+    <div class="search_row" style="padding: 0">
+        <div class="img">
+            <a href="/app{$app->getId()}">
+                <img src="{$app->getAvatarUrl()}" />
+            </a>
+        </div>
+        <div class="info">
+            <div class="labeled name">
+                <a href="/app{$app->getId()}">
+                    <b>{$app->getName()}</b>
+                </a>
+            </div>
+            <div class="labeled">
+                {$app->getDescription()}
+            </div>
+        </div>
+    </div>
+{/block}

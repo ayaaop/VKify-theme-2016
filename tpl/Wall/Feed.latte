@@ -1,0 +1,61 @@
+{extends "../@layout.latte"}
+{block title}{_feed}{/block}
+
+{block content}
+
+    {var $menuItems = [
+        [
+            'url' => '/feed',
+            'title' => 'my_news',
+            'active' => !isset($globalFeed)
+        ],
+        [
+            'url' => '/feed/all',
+            'title' => 'all_news',
+            'active' => isset($globalFeed)
+        ],
+        [
+            'id' => '__feed_settings_link',
+            'url' => '#',
+            'title' => 'feed_settings',
+            'active' => false
+        ]
+    ]}
+
+    {php $GLOBALS["_bigWall"] = 1}
+
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.latte", items => $menuItems}
+            </div>
+        </div>
+
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block postFeedWrapperMicroblog">
+                    {include "../components/textArea.latte", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
+                </div>
+                
+                <div class='scroll_container'>
+                    {if !empty($posts)}
+                        {foreach $posts as $post}
+                            {include "../components/post.latte", post => $post, commentSection => true}
+                        {/foreach}
+                    {else}
+                        {include "../components/content_error.latte", description => tr("no_posts_abstract")}
+                    {/if}
+                </div>
+
+                <div class="postFeedBottom">
+                    <div class="postFeedPaginator">
+                        {include "../components/paginator.latte", conf => $paginatorConf}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}
+
+{block bodyScripts}
+{/block}

@@ -1,0 +1,244 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {if $mode == 'list'}
+        {if $ownerId > 0}
+            {_audios} {$owner->getMorphedName("genitive", false)}
+        {else}
+            {_audios_group}
+        {/if}
+    {elseif $mode == 'new'}
+        {_audio_new}
+    {elseif $mode == 'uploaded'}
+        {_my_audios_small_uploaded}
+    {elseif $mode == 'popular'}
+        {_audio_popular}
+    {elseif $mode == 'alone_audio'}
+        {$alone_audio->getName()}
+    {else}
+        {if $ownerId > 0}
+            {_playlists} {$owner->getMorphedName("genitive", false)}
+        {else}
+            {_playlists_group}
+        {/if}
+    {/if}
+{/block}
+
+{block content}
+    {var $isMy = $isMy ?? false}
+    {var $isMyClub = $isMyClub ?? false}
+    {var $club = $club ?? null}
+    {var $friendsAudios = $friendsAudios ?? []}
+    {* ref: https://archive.li/P32em *}
+
+    <script>
+        window.__current_page_audio_context = null
+        {if $mode == 'list'}
+            window.__current_page_audio_context = {
+                name: 'entity_audios',
+                entity_id: {$ownerId},
+                page: {$page}
+            }
+        {elseif $mode == 'uploaded'}
+            window.__current_page_audio_context = {
+                name: 'uploaded',
+                entity_id: 0,
+                page: {$page}
+            }
+        {elseif $mode == 'alone_audio'}
+            window.__current_page_audio_context = {
+                name: 'alone_audio',
+                entity_id: {$alone_audio->getId()},
+                page: 1
+            }
+        {/if}
+    </script>
+
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+
+                {var $tabMenuItems = []}
+
+                {* Own user tabs *}
+                {if isset($thisUser)}
+
+                    {var $tabMenuItems[] = [
+                        'url'       => '/audios' . $thisUser->getId(),
+                        'title'     => 'my_music',
+                        'count'     => $audiosCount ?? 0,
+                        'active'    => $mode === 'list' && $isMy,
+                        'id'        => $mode === 'list' && $isMy ? 'mymussel' : null,
+                        'extraItem' => [
+                            'url'     => '/player/upload',
+                            'class'   => 'addAudioSmall',
+                            'content' => '<div class="addIcon"></div>',
+                            'onclick' => 'showAudioUploadPopup(); return false;'
+                        ]
+                    ]}
+
+                    {var $tabMenuItems[] = [
+                        'url'    => '/audios/uploaded',
+                        'title'  => 'my_audios_small_uploaded',
+                        'active' => $mode === 'uploaded',
+                        'id'     => $mode === 'uploaded' ? 'used' : null
+                    ]}
+
+                    {var $tabMenuItems[] = [
+                        'url'    => '/search?section=audios',
+                        'title'  => 'audio_new',
+                        'active' => $mode === 'new',
+                        'id'     => $mode === 'new' ? 'used' : null
+                    ]}
+
+                    {var $tabMenuItems[] = [
+                        'url'    => '/search?section=audios&order=listens',
+                        'title'  => 'audio_popular',
+                        'active' => $mode === 'popular',
+                        'id'     => $mode === 'popular' ? 'used' : null
+                    ]}
+
+                    {var $tabMenuItems[] = ['isSeparator' => true]}
+
+                    {var $tabMenuItems[] = [
+                        'url'    => '/playlists' . $thisUser->getId(),
+                        'title'  => 'my_playlists',
+                        'active' => $mode === 'playlists' && $ownerId == $thisUser->getId(),
+                        'id'     => ($mode === 'playlists' && $ownerId == $thisUser->getId()) ? 'used' : null
+                    ]}
+
+                    {var $tabMenuItems[] = [
+                        'url'    => '/audios/newPlaylist',
+                        'title'  => 'new_playlist',
+                        'active' => false
+                    ]}
+
+                {/if}
+
+                {* Other user/club tabs *}
+                {if !$isMy && !in_array($mode, ['popular', 'new', 'alone_audio', 'uploaded'])}
+
+                    {var $tabMenuItems[] = ['isSeparator' => true]}
+
+                    {var $tabMenuItems[] = [
+                        'url'       => '/audios' . $ownerId,
+                        'title'     => $ownerId > 0 ? 'music_user' : 'music_club',
+                        'active'    => $mode === 'list',
+                        'id'        => $mode === 'list' ? 'used' : null,
+                        'extraItem' => (isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser))
+                            ? [
+                                'url'     => '/player/upload?gid=' . abs($ownerId),
+                                'class'   => 'addAudioSmall',
+                                'content' => '<div class="addIcon"></div>',
+                                'onclick' => 'showAudioUploadPopup({ ownerId: ' . $ownerId . ' }); return false;'
+                            ]
+                            : null
+                    ]}
+
+                    {if isset($thisUser) && $ownerId != $thisUser->getId()}
+                        {var $tabMenuItems[] = [
+                            'url'    => '/playlists' . $ownerId,
+                            'title'  => $ownerId > 0 ? 'playlists_user' : 'playlists_club',
+                            'active' => $mode === 'playlists',
+                            'id'     => $mode === 'playlists' ? 'used' : null
+                        ]}
+                    {/if}
+
+                    {if $isMyClub}
+                        {var $tabMenuItems[] = [
+                            'url'    => '/audios/newPlaylist?gid=' . abs($ownerId),
+                            'title'  => 'new_playlist',
+                            'active' => false
+                        ]}
+                    {/if}
+
+                {/if}
+
+                {include "../components/ui_rmenu.latte",
+                    items => $tabMenuItems,
+                    additionalCssClass => 'audio_tabs',
+                    id => 'audio_tabs'
+                }
+
+                {* Friends audios *}
+                {if $friendsAudios}
+                    {var $friendsMenuItems = []}
+
+                    {foreach $friendsAudios as $friend}
+                        {if $iterator->counter <= 5}
+                            {var $friendsMenuItems[] = [
+                                'url'            => '/audios' . $friend->getRealId(),
+                                'title'          => $friend->getCanonicalName(),
+                                'translate'      => false,
+                                'avatar'         => $friend->getAvatarURL(),
+                                'additionalInfo' => ($audioStatus ?? null) ? $audioStatus->getName() : tr('audios_count', $friend->getAudiosCollectionSize()),
+                                'isRich'         => true
+                            ]}
+                        {/if}
+                    {/foreach}
+
+                    {include "../components/ui_rmenu.latte",
+                        items => $friendsMenuItems,
+                        additionalCssClass => 'friends_audio_list',
+                        id => 'friends_audio_list'
+                    }
+                {/if}
+
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block wall_posts_tabs">
+                    {include "bigplayer.latte", buttonsShow_summary => ($audiosCount ?? 0) > 10}
+                </div>
+                
+                <div class="page_block audiosDiv">
+                    <div class="audiosContainer audiosSideContainer" n:if="$mode != 'playlists'">
+                        {if ($audiosCount ?? 0) <= 0}
+                            {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
+                        {/if}
+                        <div n:if="($audiosCount ?? 0) > 0" class="scroll_container">
+                            <div class="scroll_node" n:foreach="($audios ?? []) as $audio">
+                                {include "player.latte", audio => $audio, club => $club}
+                            </div>
+                        </div>
+
+                        <div n:if="$mode != 'new' && $mode != 'popular'">
+                            {include "../components/paginator.latte", conf => (object) [
+                                "page"     => $page,
+                                "count"    => $audiosCount ?? 0,
+                                "amount"   => sizeof($audios ?? []),
+                                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                                "atBottom" => true,
+                                "tidy"     => true,
+                            ]}
+                        </div>
+                    </div>
+                    
+                    {if $mode == 'playlists'}
+                        <div n:if="$playlistsCount <= 0" style='height: 100%;'>
+                            {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
+                        </div>
+
+                        <div class="scroll_container playlistContainer" n:if="$playlistsCount > 0">
+                            {foreach $playlists as $playlist}
+                                {include 'playlistListView.latte', playlist => $playlist}
+                            {/foreach}
+                        </div>
+
+                        <div>
+                            {include "../components/paginator.latte", conf => (object) [
+                                "page"     => $page,
+                                "count"    => $playlistsCount,
+                                "amount"   => sizeof($playlists),
+                                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                                "atBottom" => true,
+                                "tidy"     => true,
+                            ]}
+                        </div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

@@ -1,0 +1,94 @@
+{extends "../@layout.latte"}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/masonry.js"></script>
+{/block}
+
+{block title}{_bookmarks_tab}{/block}
+
+{block content}
+    {var $isPosts    = $section === 'posts'}
+    {var $isComments = $section === 'comments'}
+    {var $isPhotos   = $section === 'photos'}
+    {var $isVideos   = $section === 'videos'}
+
+    {var $menuItems = [
+        [
+            'url' => '/fave?section=posts',
+            'title' => 's_posts',
+            'active' => $isPosts
+        ],
+        [
+            'url' => '/fave?section=comments',
+            'title' => 's_comments',
+            'active' => $isComments
+        ],
+        [
+            'url' => '/fave?section=photos',
+            'title' => 's_photos',
+            'active' => $isPhotos
+        ],
+        [
+            'url' => '/fave?section=videos',
+            'title' => 's_videos',
+            'active' => $isVideos
+        ]
+    ]}
+
+    <div class="wide_column_left">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                {include "../components/ui_rmenu.latte", items => $menuItems}
+            </div>
+        </div>
+        <div class="wide_column_wrap">
+            <div class="wide_column">
+                <div class="page_block wall_posts_tabs">
+                    {include "../components/page_block_header.latte", title => "bookmarks_tab"}
+                </div>
+                <div n:class="scroll_container, ($section == 'photos' && $count > 0 ? 'page_block page_padding' : ''), ($section == 'videos' && $count > 0 ? 'page_block video_block_layout video_items_list' : '')">
+                    {if $count > 0}
+                        {if $section == 'photos' && $count > 0}
+                            <div class="album-flex">
+                        {/if}
+                        {foreach $data as $dat}
+                            {if $dat->isDeleted()}
+                                <div n:class="page_block, page_padding, deleted_mark, $section == 'photos' ? album-photo : deleted_mark_average">
+                                    <span>[deleted]</span>
+                                </div>
+                            {else}
+                                {if $section == "posts"}
+                                    {include "../components/post.latte", post => $dat, commentSection => true}
+                                {elseif $section == "comments"}
+                                    <div class="page_block">
+                                        <div class="scroll_node" data-uniqueid="comment-{$dat->getId()}">
+                                            {include "../components/comment.latte", comment => $dat, correctLink => true, no_reply_button => true}
+                                        </div>
+                                    </div>
+                                {elseif $section == "photos"}
+                                    <div class="album-photo masonry-item scroll_node" data-uniqueid="photo-{$dat->getId()}">
+                                        <a href="/photo{$dat->getPrettyId()}" onclick="OpenMiniature(event, {$dat->getURLBySizeId('large')}, null, {$dat->getPrettyId()}, null)">
+                                            <img class="album-photo--image" src="{$dat->getURLBySizeId('small')}" alt="{$dat->getDescription()}" loading="lazy" />
+                                        </a>
+                                    </div>
+                                {elseif $section == "videos"}
+                                    <div class="scroll_node" data-uniqueid="video-{$dat->getVirtualId()}">
+                                        {include "../components/video.latte", video => $dat}
+                                    </div>
+                                {/if}
+                            {/if}
+                        {/foreach}
+                        {if $section == 'photos' && $count > 0}
+                            </div> {* close album-flex *}
+                        {/if}
+                    {else}
+                        <div class="page_block">
+                            {include "../components/content_error.latte", icon => false, description => tr("faves_".$section."_empty_tip")}
+                        </div>
+                    {/if}
+                    {include "../components/paginator.latte", conf => $extendedPaginatorConf}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

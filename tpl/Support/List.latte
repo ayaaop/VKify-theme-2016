@@ -1,0 +1,49 @@
+{extends "../@listView.latte"}
+
+{block title}
+    Helpdesk
+{/block}
+
+{block tabs}
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_block_header.latte", title: "support_tickets"}
+        {include "../components/page_tabs_header.latte", tabs => [
+        [
+            'url' => '?act=open',
+            'title' => 'support_opened',
+            'active' => $act === 'open'
+        ],
+        [
+            'url' => '?act=answered',
+            'title' => 'support_answered',
+            'active' => $act === 'answered'
+        ],
+        [
+            'url' => '?act=closed',
+            'title' => 'support_closed',
+            'active' => $act === 'closed'
+        ],
+        [
+            'url' => '/support/agent' . $thisUser->getId(),
+            'title' => 'agent_profile',
+            'active' => false
+        ]
+    ], white => true}
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /support/reply/{$x->getId()}
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    <div class="labeled name">{var $author = $x->getUser()}</div>    
+    <div class="labeled">{ovk_proc_strtr($x->getContext(), 50)}</div>
+    <div class="labeled">{_author}: <a href="{$author->getURL()}">{$author->getCanonicalName()}</a></div>
+{/block}

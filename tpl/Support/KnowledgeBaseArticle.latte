@@ -1,0 +1,20 @@
+{extends "../@layout.latte"}
+
+{block title}{$heading}{/block}
+
+{block content}
+	{if !isset($embedded)}
+		<div class="page_block wall_posts_tabs">
+			{include "../components/page_block_header.latte", title: $heading, translate: false}
+		</div>
+		<div class="page_block page_padding">
+			<div class="knowledgeBaseArticle">
+				{$content|noescape}
+			</div>
+		</div>
+	{else}
+		<div class="knowledgeBaseArticle">
+			{$content|noescape}
+		</div>
+	{/if}
+{/block}

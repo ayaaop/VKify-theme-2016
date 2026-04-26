@@ -1,0 +1,60 @@
+{extends "../@layout.latte"}
+{var $iterator = iterator_to_array($albums)}
+{var $page     = $paginatorConf->page}
+
+{block title}{_albums} {$owner->getCanonicalName()}{/block}
+
+{block bodyScripts}
+    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/masonry.js"></script>
+{/block}
+
+{block content}
+    {var $isClub = ($owner instanceof \openvk\Web\Models\Entities\Club)}
+    {var $createUrl = $isClub ? '/albums/create?gpid=' . $owner->getId() : '/albums/create'}
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+            ['title' => tr("albums"), 'count' => $count]
+        ], extra => '<a n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()" class="button" href="#" onclick="if (typeof showCreateAlbumModal === \'function\') { showCreateAlbumModal(\'' . $createUrl . '\'); return false; }">' . tr('create_album') . '</a>'}
+    </div>
+
+    <div n:ifcontent class="page_block page_padding">
+        <div n:ifcontent class="photo_items_list">
+            {foreach $iterator as $x}
+                <div class="clear_fix clear page_album_row">
+                    <a href="/album{$x->getPrettyId()}" class="page_album_link {if is_null($x->getCoverPhoto())}page_album_nocover{/if}">
+                        {var $cover = $x->getCoverPhoto()}
+                        <div class="page_album_thumb_wrap">
+                            <img n:if="!is_null($cover)"
+                                src="{$cover->getURLBySizeId('normal')}"
+                                class="page_album_thumb" loading="lazy" />
+                        </div>
+                        <div class="page_album_title">
+                            <div class="page_album_size">{$x->getPhotosCount()}</div>
+                            <div class="page_album_title_text">{$x->getName()}</div>
+                            <div class="page_album_description">{$x->getDescription()|truncate:100|noescape}</div>
+                        </div>
+                    </a>
+                </div>
+            {/foreach}
+        </div>
+        {if $count == 0}
+            {include "../components/content_error.latte", description => tr("albums_zero")}
+        {/if}
+    </div>
+    <div n:if="!$isClub" id="photos-section" class="page_block photos_section" data-owner-id="{$owner->getId()}">
+        {include "../components/page_block_header.latte", title => all_photos}
+        <div id="photos-loading" class="photos-skeleton">
+            <div class="photos-skeleton-item skeleton" style="height: 180px;"></div>
+            <div class="photos-skeleton-item skeleton" style="height: 120px;"></div>
+            <div class="photos-skeleton-item skeleton" style="height: 150px;"></div>
+            <div class="photos-skeleton-item skeleton" style="height: 140px;"></div>
+            <div class="photos-skeleton-item skeleton" style="height: 160px;"></div>
+            <div class="photos-skeleton-item skeleton" style="height: 130px;"></div>
+        </div>
+        <div id="photos-container" class="photos_container"></div>
+        <div id="photos-show-more-container" style="display: none; text-align: center; padding: 20px;">
+            <button id="photos-show-more-btn" class="button button_gray">{tr('show_more')}</button>
+        </div>
+    </div>
+{/block}

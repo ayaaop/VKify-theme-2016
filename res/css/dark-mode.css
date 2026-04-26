@@ -54,6 +54,7 @@ body.dark-mode {
 	--accent-color: var(--white);
 	--accent-color--rgb: 255, 255, 255;
 	--accent-color--hover: rgba(255, 255, 255, .8);
+	--accent-color--active: rgba(255, 255, 255, .65);
 	--accent-text-color: var(--black);
 	--accent-color-2: #71aaeb;
 	--accent-color-3: #8fbdf1;
@@ -69,7 +70,6 @@ body.dark-mode {
 	/* Audio player colors */
 	--audio-background-color: #2a2a2b;
 	--audio-background-color-2: #363637;
-	--audio-background-color-3: #454546;
 	--audio-slider-color: #363637;
 	--audio-slider-color-2: #5a5a5b;
 	--audio-slider-progress-color: rgba(255, 255, 255, .25);
@@ -87,8 +87,8 @@ body.dark-mode {
 	--tab-text-color: #a5a5a5;
 	--dropdown-border-color: #454546;
 	--dropdown-hover-color: rgba(255, 255, 255, 0.08);
-	--post-action-color: var(--text-color);
-	--post-action-active-color: var(--muted-text-color);
+	--post-action-color: var(--muted-text-color-3);
+	--post-action-active-color: var(--muted-text-color-3);
 	--post-meta-color: #a5a5a5;
 	--quote-border-color: #454546;
 	--search-placeholder-color: #858585;
@@ -104,7 +104,7 @@ body.dark-mode {
 	--profile-button-border-color: #71aaeb;
 }
 
-body.dark-mode .navigation .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .post_like_icon, body.dark-mode .post_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {
+body.dark-mode .sidebar_inner .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .post_like_icon, body.dark-mode .post_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {
 	filter: brightness(140%);
 }
 body.dark-mode .home_navigation .top_nav_btn_icon {
@@ -114,16 +114,16 @@ body.dark-mode #liked {
     filter: brightness(120%);
 }
 
-body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post-like-button,.button_light) i,.bigPlayer .playButtons .playButton .playIcon {
+body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post_like,.button_light) i,.bigPlayer .playButtons .playButton .playIcon, [src*="/icons/no_music.svg"] {
 	filter: invert(1)!important
 }
 
-body.dark-mode .tippy-menu a {
+body.dark-mode .tippy-menu a,.ovk-diag-head a,.ovk-diag-head .divider::before {
 	color: var(--text-color)
 }
 body.dark-mode .ovk-diag-head {
-	--accent-color-3: var(--module-header-background-color);
-	--accent-text-color: var(--text-color);
+	background-color: var(--module-header-background-color);
+	color: var(--text-color);
 	border-bottom: 1px solid var(--border-color);
 }
 body.dark-mode .button.button_gray {

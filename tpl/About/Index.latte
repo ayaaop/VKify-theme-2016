@@ -1,0 +1,250 @@
+{extends "../@layout.latte"}
+{block title}{_welcome}{/block}
+
+{block content}
+    <div class="index_rcolumn">
+        <div class="page_block login-container">
+            <form id="loginForm" action="/login" method="POST" enctype="multipart/form-data">
+                <input class="big_text" id="login" type="text" name="login" required placeholder="{_email}" />
+                <input class="big_text" id="password" type="password" name="password" required placeholder="{_password}" />
+                <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" value="{_log_in}" class="button button_big_text login_button" style="display: inline-block; font-family: Tahoma" />
+                {if !\OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}
+                <div class="forgot">
+                    <a href="/restore">{_forgot_password}</a>
+                </div>
+                {/if}
+            </form>
+        </div>
+            
+        <div class="page_block register-block">
+            <h2 class="ij_header"><vkifyloc name="newUserQuestionMark"></vkifyloc></h2>
+            <div class="ij_subheader"><vkifyloc name="newUserSubhead"></vkifyloc></div>
+            {if \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] || isset($referer)}
+                <form id="reg_form" method="POST" action="/reg" enctype="multipart/form-data">
+                    <input class="big_text" type="text" name="first_name" required placeholder="{_name}" />
+                    <input class="big_text" type="text" name="last_name" placeholder="{_surname}" />
+                    <input class="big_text" type="email" name="email" required placeholder="{_email}" />
+                    <input class="big_text" type="password" name="password" required placeholder="{_password}" />
+                    
+                    <div>
+                        <div class="ij_label">{_birth_date}: </div>
+                        <input max={date('Y-m-d')} name="birthday" type="date"/>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <div class="ij_label">{_pronouns}: </div>
+                        <select name="pronouns" required>
+                            <option value="male">{_male}</option>
+                            <option value="female">{_female}</option>
+                            <option value="neutral">{_neutral}</option>
+                        </select>
+                    </div>
+                    {if !(strpos(captcha_template(), 'verified'))}
+                        <div style="margin-bottom: 10px;">
+                            <div class="ij_label">CAPTCHA: </div>
+                            {captcha_template()|noescape}
+                        </div>
+                    {/if}
+                    
+                    <div style="margin-bottom: 10px; text-align: left;">
+                        <label class="checkbox"><input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}</label>
+                    </div>
+                    
+                    <div class="login_buttons_wrap">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_registration}" class="button button_big_text button_wide button_green" />
+                    </div>
+                </form>
+            {else}
+                <h4>{_registration_closed}</h4>
+                <p>{_registration_disabled_info}</p>
+                {if \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}
+                    <p>{_admin_banned_link_reason}:<br>
+                    <b>{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}</b></p>
+                {/if}
+            {/if}
+        </div>
+    </div>
+    <div class="login_mobile_promo_wrap clear_fix">
+        <div class="login_mobile_apps">
+            <div class="login_mobile_header">
+                <vkifyloc name="loginPromo"></vkifyloc>
+            </div>
+            <div class="login_mobile_info">
+                <vkifyloc name="loginPromoInfo"></vkifyloc>
+            </div>
+            <div class="login_app_devices">
+                <a href="https://github.com/openvk/mobile-android-legacy/releases/latest" rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_android">
+                    <div class="login_app_device_screen_wrap">
+                        <div class="login_app_device_screen"></div>
+                    </div>
+                    <div class="login_app_download_wrap">
+                        <button class="button button_light">
+                            <span class="login_app_download_icon"></span>
+                            <vkifyloc name="loginPromoAndroid"></vkifyloc>
+                        </button>
+                    </div>
+                </a>
+                <a rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_wp">
+                    <div class="login_app_device_screen_wrap">
+                        <div class="login_app_device_screen"></div>
+                    </div>
+                    <div class="login_app_download_wrap">
+                        <button class="button button_light">
+                            <span class="login_app_download_icon"></span>
+                            <vkifyloc name="loginPromoWp"></vkifyloc>
+                        </button>
+                    </div>
+                </a>
+                <a rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_ios">
+                    <div class="login_app_device_screen_wrap">
+                        <div class="login_app_device_screen"></div>
+                    </div>
+                    <div class="login_app_download_wrap">
+                        <button class="button button_light">
+                            <span class="login_app_download_icon"></span>
+                            <vkifyloc name="loginPromoIos"></vkifyloc>
+                        </button>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {* TO-DO: Add statistics about this instance as on mastodon.social *}
+    {block indexStyles}
+        <style>
+        .page_content {
+            padding: 14px 0 105px;
+        }
+        
+        .index_rcolumn {
+            float: right;
+            width: 320px;
+        }
+
+        .index_rcolumn .page_block {
+            margin: 30px 0 20px;
+            padding: 25px;
+        }
+        .index_rcolumn .page_block:first-child {
+	        margin-top: 0;
+        }
+        .index_rcolumn input:not([type="submit"], [type="checkbox"]) {
+            margin-bottom: 15px;
+        }
+        .index_rcolumn .login_button {
+            margin-right: 15px;
+            width: 100px;
+        }
+        .index_rcolumn .forgot {
+            display: inline-block;
+            padding-top: 12px;
+            text-align: center;
+        }
+
+        .ij_header {
+            margin:-4px 0 0;
+            font-size:20px;
+            text-align:center;
+        }
+        .ij_subheader {
+            padding:5px 0 21px;
+            text-align:center;
+            color:#656565;
+            font-size:12.5px;
+        }
+        .ij_label {
+	        margin: 0 0 10px 1px;
+	        font-weight: 500;
+        	-webkit-font-smoothing: subpixel-antialiased;
+	        -moz-osx-font-smoothing: auto;
+        	color: #939393;
+        }
+
+        .login_mobile_promo_wrap {
+        	line-height: 19px;
+            margin-right: 420px;
+            text-align: center;
+        }
+
+        .login_mobile_header {
+	        margin-bottom: 12px;
+            font-size: 22px;
+        }
+        
+        .login_mobile_info {
+        	font-size: 14px;
+    	    color: #222;
+	        line-height: 23px;
+        }
+
+        .login_mobile_apps {
+            position: relative;
+            padding: 14px 0 0;
+        }
+
+        .login_app_devices {
+            white-space: nowrap;
+            padding: 44px 0 2px;
+        }
+
+        .login_app_device {
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        .login_app_device_android {
+            margin-right: 116px;
+        }
+        .login_app_device_ios {
+        	margin-left: -348px;
+        	margin-right: 156px;
+        }
+
+        .login_app_device_screen {
+            width: 192px;
+            height: 397px;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+        }
+
+        .login_app_download_wrap {
+            margin-top: 20px;
+        }
+
+        .login_app_download_wrap .button {
+            line-height: 19px;
+        }
+
+        .login_app_device_android .login_app_device_screen {
+            background-image: url('/themepack/vkify16/{$theme->getVersion()}/resource/auth/android_ru.png');
+        }
+
+        .login_app_device_wp .login_app_device_screen {
+            background-image: url('/themepack/vkify16/{$theme->getVersion()}/resource/auth/wp_ru.png');
+        }
+
+        .login_app_device_ios .login_app_device_screen {
+            background-image: url('/themepack/vkify16/{$theme->getVersion()}/resource/auth/ios_ru.png');
+        }
+
+        .login_app_download_icon {
+            background-image:url('/themepack/vkify16/{$theme->getVersion()}/resource/auth/platforms.png');
+            width:18px;
+            height:22px;
+            display:inline-block;
+        }
+        .login_app_device_ios .login_app_download_icon {
+            background-position:0px 0px
+        }
+        .login_app_device_android .login_app_download_icon {
+            background-position:0px -23px
+        }
+        .login_app_device_wp .login_app_download_icon {
+            background-position:0px -44px
+        }
+        </style>
+    {/block}
+{/block}

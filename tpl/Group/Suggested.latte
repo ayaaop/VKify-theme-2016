@@ -1,0 +1,30 @@
+{extends "../@layout.latte"}
+
+{block title}{_suggested} {$club->getCanonicalName()}{/block}
+
+{block content}
+    {include "../components/page_crumb_header.latte", crumbs => [
+        ['title' => $club->getCanonicalName(), 'href' => $club->getURL()],
+        ['title' => ($type == "my" ? tr("suggested_posts_by_you") : tr("suggested_posts_by_everyone")), 'count' => $count]
+    ]}
+
+        {if $count < 1}
+            <div class="page_block">
+                {include "../components/content_error.latte", title => "", description => $type == "my" ? tr("no_suggested_posts_by_you") : tr("no_suggested_posts_by_people")}
+            </div>
+        {else}
+            <div id="postz" class="infContainer scroll_container">
+                <div class="infObj scroll_node page_block" data-uniqueid="post-{$post->getPrettyId()}" n:foreach="$posts as $post">
+                    {include "../components/post.latte", post => $post, commentSection => false, suggestion => true, forceNoCommentsLink => true, forceNoPinLink => true, forceNoLike => true, forceNoShareLink => true, forceNoDeleteLink => false}
+                </div>
+
+                {include "../components/paginator.latte", conf => (object) [
+                    "page"     => $page,
+                    "count"    => $count,
+                    "amount"   => sizeof($posts),
+                    "perPage"  => \OPENVK_DEFAULT_PER_PAGE,
+                    "atBottom" => true,
+                ]}
+            </div>
+        {/if}
+{/block}

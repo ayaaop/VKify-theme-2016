@@ -1,0 +1,38 @@
+{var $preview = $doc->hasPreview() ? $doc->getPreview() : NULL}
+{var $tags = $doc->getTags()}
+{var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
+{var $modifiable = $doc->canBeModifiedBy($thisUser)}
+{var $scroll_context = $scroll_context ?? false}
+{var $hideButtons = $hideButtons ?? false}
+
+<div n:class="search_row, docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
+    <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}">
+        {if $preview}
+            <img class="doc_icon" alt="document_preview" src="{$preview->getURLBySizeId('tiny')}">
+        {else}
+            <div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}">
+            </div>
+        {/if}
+    </a>
+    <div class="doc_content noOverflow">
+        <a class="viewerOpener noOverflow" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}"><b class="noOverflow doc_name">{$doc->getName()}</b></a>
+
+        <div class="doc_content_info">
+            <span>{$doc->getPublicationTime()}</span>,
+            <span>{readable_filesize($doc->getFilesize())}</span>{if sizeof($tags) > 0} -
+            <span n:if="!$noTags" class="doc_tags" style="text-wrap: wrap;">
+                {foreach $tags as $tag}
+                    <a href="/search?section=docs&tags={urlencode($tag)}">
+                        {$tag}{if $tag != $tags[sizeof($tags) - 1]},{/if}
+                    </a>
+                {/foreach}
+            </span>{/if}
+        </div>
+    </div>
+    <div class="doc_volume" n:if="!$hideButtons && $thisUser">
+        <div class="doc_action" n:if="!$modifiable" id="report_icon" data-tip="simple-black" data-tiptitle="{_report}"></div>
+        <div class="doc_action" n:if="$modifiable" id="edit_icon" data-tip="simple-black" data-tiptitle="{_edit}"></div>
+        <div class="doc_action" n:if="!$copied" id="add_icon" data-tip="simple-black" data-tiptitle="{_add}"></div>
+        <div class="doc_action" n:if="$copied" id="remove_icon" data-tip="simple-black" data-tiptitle="{_remove}"></div>
+    </div>
+</div>

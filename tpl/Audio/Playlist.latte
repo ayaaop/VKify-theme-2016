@@ -1,0 +1,105 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {_playlist}
+    {$playlist->getName()}
+{/block}
+
+{block headIncludes}
+    <meta property="og:type" content="music.album">
+    <meta property="og:title" content="{$playlist->getName()}">
+    <meta property="og:url" content="{$playlist->getURL()}">
+    <meta property="og:description" content="{$playlist->getDescription()}">
+    <meta property="og:image" content="{$cover_url}">
+    
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org/",
+            "type": "MusicAlbum",
+            "name": {$playlist->getName()},
+            "url": {$playlist->getURL()}
+        }
+    </script>
+{/block}
+
+{block content}
+    <div style="margin-bottom: 15px;">
+        {include "bigplayer.latte"}
+    </div>
+    <script>
+        window.__current_page_audio_context = {
+            name: 'playlist_context',
+            entity_id: {$playlist->getId()},
+            page: {$page}
+        }
+    </script>
+    {if isset($thisUser) && $canEdit}
+        {var $extra = '<a class="video_edit_button button button_light" data-tip="simple-black" data-tiptitle="' . tr('edit_playlist') . '" href="/playlist' . $playlist->getPrettyId() . '/edit"><span class="video_edit_icon"></span></a>'}
+    {else}
+        {var $extra = ''}
+    {/if}
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
+            ['href' => "/playlists{$ownerId}", 'title' => tr("playlists")],
+            ['title' => tr("playlist")]
+        ], extra => $extra}
+        <div class="playlistBlock page_padding" style="margin-top: 0">
+            <div class="playlistCover">
+                <div class="playlistCoverImage">
+                    {if $cover}
+                    <a href="{$cover_url}" target="_blank">
+                        <img onclick="OpenMiniature(event, {$cover_url}, null, {$cover->getPrettyId()}, null)" src="{$cover_url}" alt="{_playlist_cover}">
+                    </a>
+                    {else}
+                        <img src="{$cover_url}" alt="{_playlist_cover}">
+                    {/if}
+                </div>
+                <div class="playlistCount">{tr("is_x_audio", $playlist->size())}</div>
+            </div>
+
+            <div class='playlistWrapper'>
+                <div class="playlistInfo">
+                    <div class="playlistTitle">
+                        <h4>{$playlist->getName()}</h4>
+                    </div>
+                    <div class="playlistAuthor">
+                        <a href="{$playlist->getOwner()->getURL()}">{$playlist->getOwner()->getCanonicalName()}</a>
+                    </div>
+
+                    <div class="moreInfo">
+                        <div class="playlistDesc">
+                            <span>{nl2br($playlist->getDescriptionHTML())|noescape}</span>
+                        </div>
+                        <div class="playlistMeta">
+                            {tr("listens_count", $playlist->getListens())} • {_created_playlist} {$playlist->getPublicationTime()}
+                        </div>
+                    </div>
+                    <div class="video_info_actions playlistActions clear_fix" n:if="isset($thisUser)">
+                        <a class="video_add_button button button_light" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit"><span class="video_add_icon"></span><span class="video_add_link">{_upload_audio}</span></a>
+                        <a class="video_add_button button button_light" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked"><span class="video_add_icon"></span><span class="video_add_link">{_bookmark}</span></a>
+                        <a class="video_delete_button button button_light" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked"><span class="video_delete_icon"></span><span class="video_delete_link">{_unbookmark}</span></a>
+                    </div>
+                </div>
+                <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">
+                    {if $count < 1}
+                        {include "../components/content_error.latte", icon => "no_music.svg", description => tr("empty_playlist")}
+                    {else}  
+                        <div class="scroll_node" n:foreach="$audios as $audio">
+                            {include "player.latte", audio => $audio}
+                        </div>
+
+                        {include "../components/paginator.latte", conf => (object) [
+                            "page"     => $page,
+                            "count"    => $count,
+                            "amount"   => sizeof($audios),
+                            "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                            "atBottom" => true,
+                            'tidy'     => true
+                        ]}
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

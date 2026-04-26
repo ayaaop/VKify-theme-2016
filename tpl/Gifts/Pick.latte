@@ -1,0 +1,42 @@
+{extends "../@layout.latte"}
+{block title}
+    {_gift_select}
+{/block}
+
+{block content}
+    <div class="page_block">
+        {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
+            ['href' => "/gifts?act=pick&user={$user->getId()}", 'title' => tr("collections")],
+            ['title' => $cat->getName(tr("__lang")), 'count' => $count]
+        ]}
+    </div>
+    <div class="page_block">
+        <div class="gifts_section_row">
+            <div class="gift_section_wrap gifts_section_scroll scroll_container clear_fix">
+                <a href='/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}' n:foreach="$gifts as $gift" n:class="scroll_node, gift_cell, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
+                    <img width="107.5" height="107.5" class="gift_img" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
+                    <div class="{if $gift->isFree() || $gift->getPrice() <= 2}gift_free{else}gift_price{/if}">
+                        {if $gift->isFree()}
+                            {_free_gift}
+                        {else}
+                            {tr('coins', $gift->getPrice())}
+                        {/if}
+                    </div>
+
+                    <div n:if="$gift->getUsagesLeft($thisUser) !== \INF" class="gift_limit">
+                        <vkifyloc name="gifts_left" args="{$gift->getUsagesLeft($thisUser)}" />
+                    </div>
+                </a>
+            </div>
+        </div>
+        {include "../components/paginator.latte", conf => (object) [
+            "page"    => $page,
+            "count"   => $count,
+            "amount"  => sizeof($gifts),
+            "perPage" => \OPENVK_DEFAULT_PER_PAGE,
+            "atBottom" => true,
+            "tidy"     => true,
+        ]}
+    </div>
+{/block}

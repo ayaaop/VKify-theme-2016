@@ -1,0 +1,89 @@
+{extends "../@layout.latte"}
+{block title}{_registration}{/block}
+
+{block headIncludes}
+    {if !$referer}
+        <meta name="description" content="{tr('register_meta_desc', \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
+    {else}
+        <meta property="og:title" content="{tr('register_referer_meta_title', $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
+        <meta property="og:image" content="{$referer->getAvatarUrl()}" />
+        
+        <meta name="description"
+              content="{tr('register_referer_meta_desc', $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
+    {/if}
+{/block}
+
+{block content}
+    <style>
+        h4 {
+            margin-top: 15px;
+        }
+        span.nobold + :is(input,select,div) {
+            margin-top: 5px;
+        }
+    </style>
+    <div id="auth" class="page_block">
+        {if \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] || $referer}
+            {if !is_null($referer)}
+                <p align="center">
+                    {tr("invites_you_to", $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
+                </p>
+            {/if}
+            <h2 class="login_header">{_registration}</h2>
+            <form id="login_form" method="POST" enctype="multipart/form-data">
+                <h4>{_main}</h4>
+                <input class="big_text" type="text" name="first_name" required placeholder="{_name}" />
+                <input class="big_text" type="text" name="last_name" placeholder="{_surname}" />
+                <input class="big_text" type="email" name="email" required placeholder="{_email}" />
+                <input class="big_text" type="password" name="password" required placeholder="{_password}" />
+                
+                <h4>{_other_fields}</h4>
+                <div style="margin-bottom: 10px;">
+                    <span class="nobold">{_birth_date}: </span>
+                    <input max={date('Y-m-d')} name="birthday" type="date"/>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <span class="nobold">{_pronouns}: </span>
+                    <select name="pronouns" required>
+                        <option value="male">{_male}</option>
+                        <option value="female">{_female}</option>
+                        <option value="neutral">{_neutral}</option>
+                    </select>
+                </div>
+                {if !(strpos(captcha_template(), 'verified'))}
+                    <div style="margin-bottom: 10px;">
+                        <span class="nobold">CAPTCHA: </span>
+                        {captcha_template()|noescape}
+                    </div>
+                {/if}
+                
+                <div style="margin-bottom: 10px; text-align: left;">
+                    <label class="checkbox"><input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}</label>
+                </div>
+                
+                <div class="login_buttons_wrap">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" value="{_registration}" class="button button_green" />
+                </div>
+            </form>
+        {else}
+            <h4>{_registration_closed}</h4>
+            <table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
+                <tbody>
+                    <tr>
+                        <td style="width: 20%;">
+                            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_registration_closed}" style="width: 100%;"/>
+                        </td>
+                        <td>
+                            {_registration_disabled_info}
+                            {if \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}
+                                <br/><br/>{_admin_banned_link_reason}:<br>
+                                <b>{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}</b>
+                            {/if}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        {/if}
+    </div>
+{/block}
