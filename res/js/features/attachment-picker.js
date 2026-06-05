@@ -50,23 +50,6 @@ vkify.bindOnce('composerAttachmentHandlers', () => {
         u(e.target).closest('a.upload-item').remove();
     });
     u(document).on('click', '.post-buttons .upload-item', (e) => { e.preventDefault(); e.stopPropagation(); });
-
-    u(document).on('paste', '#write .small-textarea', (e) => {
-        try { if (e.clipboardData?.files?.length === 1) window.__uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write')); } catch (err) { console.error('Paste error', err); }
-    });
-    u(document).on('drop', '#write', (e) => {
-        try {
-            if (e.dataTransfer?.types?.includes('Files') && e.dataTransfer.files?.length) {
-                e.preventDefault(); e.dataTransfer.dropEffect = 'copy';
-                window.__uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'));
-            }
-        } catch (err) { console.error('Drop error', err); }
-    });
-    u(document).on('dragover drop', (e) => {
-        try {
-            if (e?.dataTransfer?.types?.includes('Files')) { e.preventDefault(); return false; }
-        } catch (err) { console.error('Dragover/drop error', err); }
-    });
 });
 
 const getAttachedCount = (form) => form?.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length || 0;

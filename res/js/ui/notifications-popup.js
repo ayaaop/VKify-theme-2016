@@ -1,6 +1,35 @@
 (function () {
 'use strict';
 
+function formatNotifyCount(count) {
+    return count > 99 ? '99+' : String(count);
+}
+
+function parseNotifyCount(text) {
+    const t = (text || '').trim();
+    if (t === '99+') return 99;
+    return parseInt(t, 10) || 0;
+}
+
+window.incrementNotificationsCounter = function () {
+    const btn = document.querySelector('#top_notify_btn');
+    if (!btn) return;
+
+    btn.querySelectorAll('object').forEach(el => el.remove());
+
+    let countEl = btn.querySelector('.top_notify_count');
+    const nextCount = (countEl ? parseNotifyCount(countEl.textContent) : 0) + 1;
+
+    if (!countEl) {
+        countEl = document.createElement('div');
+        countEl.className = 'top_notify_count';
+        btn.appendChild(countEl);
+    }
+
+    countEl.textContent = formatNotifyCount(nextCount);
+    btn.classList.add('has_notify');
+};
+
 vkify.once("initNotificationsPopup", () => {
     async function fetchNotificationsContent() {
         try {

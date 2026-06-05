@@ -31,24 +31,18 @@ window.setTip = window.setTip || function (obj, text, interactive = false) {
     });
 };
 
-window.toggleLongText = window.toggleLongText || function (el) {
-    const container = el.parentNode;
+window.expandText = function (item) {
+    const container = item.closest('.really_text') || item.parentElement;
+    if (!container) return;
+
     const truncated = container.querySelector('.truncated_text');
     const full = container.querySelector('.full_text');
+    if (!truncated || !full) return;
 
-    if (!truncated || !full) {
-        return;
-    }
-
-    if (full.classList.contains('hidden')) {
-        truncated.style.display = 'none';
-        full.classList.remove('hidden');
-        el.innerHTML = "<vkifyloc name='show_less'></vkifyloc>";
-    } else {
-        truncated.style.display = 'inline';
-        full.classList.add('hidden');
-        el.textContent = tr('show_more');
-    }
+    const collapsed = full.classList.contains('hidden');
+    truncated.style.display = collapsed ? 'none' : 'inline';
+    full.classList.toggle('hidden', !collapsed);
+    item.textContent = tr(collapsed ? 'show_less' : 'show_more');
 };
 
 window.showBlueWarning = window.showBlueWarning || function (content) {

@@ -29,7 +29,6 @@ let locales = {
 	    "guest_actions": "<a href='/register'>Register now</a> to stay connected with $1 and other people, or <a href='/'>log in</a> if you already have an account.",
 		"guest_actions_group": "<a href='/register'>Register now</a> to join $1 and many other groups, or <a href='/'>log in</a> if you already have an account.",
 		"recommended_groups": "Recommended groups",
-		"show_less": "Show less",
 		"deleted_attachment": "This post contains deleted attachment(s) and doesn't have any text.",
 		"deleted_attachment_2": "As such, it can't be displayed.",
 		"vkify_settings": "VKify16 settings",
@@ -92,7 +91,6 @@ let locales = {
 	    "guest_actions": "<a href='/register'>Зарегистрируйтесь</a>, чтобы оставаться на связи с $1 и другими людьми, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
 		"guest_actions_group": "<a href='/register'>Зарегистрируйтесь</a>, чтобы присоединиться к $1 и многим другим группам, или <a href='/'>войдите</a>, если у вас уже есть аккаунт.",
 		"recommended_groups": "Рекомендуемые сообщества",
-		"show_less": "Показать меньше",
 		"deleted_attachment": "В этой записи содержится удалённое вложение и нет текста.",
 		"deleted_attachment_2": "Поэтому она не может быть отображена.",
 		"vkify_settings": "Настройки VKify16",
@@ -215,7 +213,6 @@ let locales = {
         "guest_actions": "$1 және басқа адамдармен байланыста болу үшін <a href='/register'>тіркеліңіз</a> немесе тіркелгіңіз болса, <a href='/'>кіріңіз</a>.",
         "guest_actions_group": "$1 және басқа да көптеген топтарға қосылу үшін <a href='/register'>тіркеліңіз</a> немесе тіркелгіңіз болса, <a href='/'>кіріңіз</a>.",
         "recommended_groups": "Ұсынылатын бірлестіктер",
-        "show_less": "Азырақ көрсету",
         "deleted_attachment": "Бұл жазбада өшірілген қосымша бар және мәтін жазылмаған.",
         "deleted_attachment_2": "Сол себепті оны көрсету мүмкін емес.",
         "vkify_settings": "VKify16 баптаулары",
@@ -255,7 +252,7 @@ window.vkifylocalize = function(langcode, fallback = 'en') {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.3.0/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.3.1/resource/langs/${langcode}.json`)
 				.then(response => {
 					if (!response.ok) {
 						patchpage(fallbackCode);

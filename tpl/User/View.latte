@@ -317,7 +317,7 @@
 										</a>
 									</div>
 									<div class="desc_info">
-										<div class="group_name"><a href="club{$club->getId()}">{$club->getName()}</a></div>
+										<div class="group_name"><a href="club{$club->getId()}">{$club->getName()|truncate:50}</a></div>
 										<div class="group_desc">
 											<span>{$club->getDescription()|truncate:50}</span>
 										</div>
@@ -348,7 +348,7 @@
 										</a>
 									</div>
 									<div class="desc_info">
-										<div class="group_name"><a href="/event{$meeting->getId()}">{$meeting->getName()}</a></div>
+										<div class="group_name"><a href="/event{$meeting->getId()}">{$meeting->getName()|truncate:50}</a></div>
 										<div class="group_desc">
 												<span>{$meeting->getDescription()|truncate:50}</span>
 										</div>
@@ -371,7 +371,7 @@
 								<div class="topic_row clear_fix" n:foreach="$notes as $note" style="padding-top: 0;">
 									<div class="topic_info">
 										<a class="topic_title" href="/note{$note->getPrettyId()}">
-											{$note->getName()}
+											{$note->getName()|truncate:50}
 										</a>
 										<div class="topic_info">
 											{$note->getPublicationTime()}
@@ -404,7 +404,7 @@
 										</div>
 										<div class="page_album_title">
 											<div class="page_album_size">{$album->getPhotosCount()}</div>
-											<div class="page_album_title_text">{$album->getName()}</div>
+											<div class="page_album_title_text">{$album->getName()|truncate:50}</div>
 										</div>
 									</a>
 								</div>

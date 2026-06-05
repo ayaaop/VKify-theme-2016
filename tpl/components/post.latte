@@ -30,6 +30,7 @@
 {var $scrollNode = $scrollNode ?? true}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
+{var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
 <div data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
     <div class="post_header">
@@ -118,11 +119,10 @@
         <div class="text wall_text" id="text{$post->getPrettyId()}">
             <div data-text="{$post->getText(false)}" n:if="$post->getText(false)" class="really_text wall_post_text">
                 {var $plainText = $post->getText($html = false)}
-                {var $decodedLength = iconv_strlen(html_entity_decode($plainText, 3, 'UTF-8'))}
-                {if $decodedLength > 500 && !($forceNoCommentsLink ?? false)}
+                {if $bigText}
                     <span class="truncated_text">{$plainText|truncate:500}</span>
                     <span class="full_text hidden">{$post->getText()|noescape}</span>
-                    <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                 {else}
                     {$post->getText()|noescape}
                 {/if}

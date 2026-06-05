@@ -27,11 +27,13 @@
             </div>
             <div class="post-content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
+                    {var $commentText = $comment->getText($html = false)}
+                    {var $bigText = strlen($commentText) > 500}
                     <div class="really_text">
-                        {if strlen($comment->getText($html = false)) > 500}
-                            <span class="truncated_text">{$comment->getText($html = false)|truncate:500|noescape}</span> 
+                        {if $bigText}
+                            <span class="truncated_text">{$commentText|truncate:500|noescape}</span>
                             <span class="full_text hidden">{$comment->getText()|noescape}</span>
-                            <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                            <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                         {else}
                             {$comment->getText()|noescape}
                         {/if}

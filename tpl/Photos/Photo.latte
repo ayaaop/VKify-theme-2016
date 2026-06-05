@@ -83,28 +83,31 @@
             {if ($thisUser->getId() === $photo->getOwner()->getId()) || !empty($photo->getDescription())}
             {var $descPlain = $photo->getDescription($html = false) ?? ''}
             {var $descFull = $photo->getDescription() ?? ''}
+            {var $bigText = strlen($descPlain) > 500}
             <div class="pv_desc">
                 {if $thisUser->getId() === $photo->getOwner()->getId()}
-                <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
-                    {if strlen($descPlain) > 500}
-                        <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
-                        <span class="full_text hidden">{$descFull|noescape}</span>
-                        <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
-                    {elseif !empty($descFull)}
-                        {$descFull}
+                    {if !empty($descFull)}
+                        <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
+                            {if $bigText}
+                                <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
+                                <span class="full_text hidden">{$descFull|noescape}</span>
+                            {else}
+                                {$descFull|noescape}
+                            {/if}
+                        </a>
+                        {if $bigText}<a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>{/if}
                     {else}
-                        <span class="pv_no_description">
-                            {_no_description}
-                        </span>
+                        <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
+                            <span class="pv_no_description">{_no_description}</span>
+                        </a>
                     {/if}
-                </a>
                 {else}
-                    {if strlen($descPlain) > 500}
+                    {if $bigText}
                         <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
                         <span class="full_text hidden">{$descFull|noescape}</span>
-                        <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                        <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                     {else}
-                        {$descFull}
+                        {$descFull|noescape}
                     {/if}
                 {/if}
             </div>

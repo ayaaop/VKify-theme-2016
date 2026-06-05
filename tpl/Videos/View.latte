@@ -76,10 +76,12 @@
                 </div>
             </div>
             <div class="video_info_description" n:if="$video->getDescription()">
-                {if strlen($video->getDescription($html = false)) > 500}
-                    <span class="truncated_text">{$video->getDescription($html = false)|truncate:500|noescape}</span> 
+                {var $videoDesc = $video->getDescription($html = false)}
+                {var $bigText = strlen($videoDesc) > 500}
+                {if $bigText}
+                    <span class="truncated_text">{$videoDesc|truncate:500|noescape}</span>
                     <span class="full_text hidden">{$video->getDescription()}</span>
-                    <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                 {else}
                     {$video->getDescription()}
                 {/if}

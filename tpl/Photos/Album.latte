@@ -22,10 +22,11 @@
         <div class="photos_album_intro">
             <h1>{$album->getName()}</h1>
             <div class="photos_album_intro_desc" n:if="$album->getDescription()">
-                {if strlen($album->getDescription()) > 500}
-                    <span class="truncated_text">{$album->getDescription()|truncate:500|noescape}</span> 
+                {var $bigText = strlen($album->getDescription()) > 500}
+                {if $bigText}
+                    <span class="truncated_text">{$album->getDescription()|truncate:500|noescape}</span>
                     <span class="full_text hidden">{$album->getDescription()|noescape}</span>
-                    <a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
                 {else}
                     {$album->getDescription()}
                 {/if}

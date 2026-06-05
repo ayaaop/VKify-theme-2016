@@ -317,12 +317,13 @@
 						<div class="group_info_block info">
 							<div class="group_info_rows">
 								{var $descHtml = $club->getDescriptionHtml()}
+								{var $bigText = strlen($club->getDescription()) > 300}
 								<div class="group_info_row info">
 									{if $descHtml}
-										{if strlen($club->getDescription()) > 300}
-											<span class="truncated_text">{$club->getDescription()|truncate:300|noescape}</span> 
+										{if $bigText}
+											<span class="truncated_text">{$club->getDescription()|truncate:300|noescape}</span>
 											<span class="full_text hidden">{$descHtml|noescape}</span>
-											<a href="javascript:void(0)" class="expand_text" onclick="toggleLongText(this)">{_show_more}</a>
+											<a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
 										{else}
 											{$descHtml|noescape}
 										{/if}
