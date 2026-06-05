@@ -133,6 +133,12 @@ body {
     --profile-button-border-color: #7496b9;
     --video-overlay-background: rgba(0, 0, 0, .5);
     --video-overlay-background-hover: rgba(0, 0, 0, .6);
+
+    --backdrop-dripper-shadow-59: color-mix(in srgb, var(--body-background-color) 59%, transparent);
+    --backdrop-dripper-shadow-43: color-mix(in srgb, var(--body-background-color) 43%, transparent);
+    --backdrop-dripper-shadow-35: color-mix(in srgb, var(--body-background-color) 35%, transparent);
+    --backdrop-dripper-shadow-28: color-mix(in srgb, var(--body-background-color) 28%, transparent);
+    --backdrop-dripper-shadow-16: color-mix(in srgb, var(--body-background-color) 16%, transparent);
 }
 
 #ajax_audio_player {
@@ -146,7 +152,7 @@ body {
 #backdropDripper {
     width: var(--layout-width, 960px);
     background-color: var(--body-background-color);
-    box-shadow: -30px 0px 20px 20px var(--body-background-color), -50px 0px 20px 20px hsl(0deg 0% 93% / 59%), -70px 0px 20px 20px hsl(0deg 0% 93% / 43%), -90px 0px 20px 20px hsl(0deg 0% 93% / 35%), -110px 0px 20px 20px hsl(0deg 0% 93% / 28%), -130px 0px 20px 20px hsl(0deg 0% 93% / 16%), 30px 0px 20px 20px var(--body-background-color), 50px 0px 20px 20px hsl(0deg 0% 93% / 59%), 70px 0px 20px 20px hsl(0deg 0% 93% / 43%), 90px 0px 20px 20px hsl(0deg 0% 93% / 35%), 110px 0px 20px 20px hsl(0deg 0% 93% / 28%), 130px 0px 20px 20px hsl(0deg 0% 93% / 16%)
+    box-shadow: -30px 0px 20px 20px var(--body-background-color), -50px 0px 20px 20px var(--backdrop-dripper-shadow-59), -70px 0px 20px 20px var(--backdrop-dripper-shadow-43), -90px 0px 20px 20px var(--backdrop-dripper-shadow-35), -110px 0px 20px 20px var(--backdrop-dripper-shadow-28), -130px 0px 20px 20px var(--backdrop-dripper-shadow-16), 30px 0px 20px 20px var(--body-background-color), 50px 0px 20px 20px var(--backdrop-dripper-shadow-59), 70px 0px 20px 20px var(--backdrop-dripper-shadow-43), 90px 0px 20px 20px var(--backdrop-dripper-shadow-35), 110px 0px 20px 20px var(--backdrop-dripper-shadow-28), 130px 0px 20px 20px var(--backdrop-dripper-shadow-16)
 }
 
 body {
@@ -163,70 +169,6 @@ body {
 }
 .theme-switching * {
     transition: .5s color, .5s border, .5s background-color, .5s box-shadow;
-}
-
-.page_header {
-    position: fixed;
-    height: var(--header-height);
-    width: 100%;
-    background: var(--header-background-color);
-    z-index: 100;
-    display: flex;
-    left: 0;
-    justify-content: center;
-    top: 0;
-}
-
-.page_header_inner {
-    width: var(--layout-width, 960px);
-    height: 100%;
-}
-
-.home_button {
-    width: 157px;
-    height: var(--header-height);
-    position: static;
-    display: block;
-    float: left;
-    white-space: nowrap;
-    overflow: hidden;
-    padding-left: 8px;
-}
-.home_button:active {
-    padding-top: 1px;
-    height: calc(var(--header-height) - 1px)
-}
-
-.home_button .home_button_bg {
-    background: url("/themepack/vkify16/3.3.3.0/resource/icons/head_icons.png") no-repeat;
-    background-position: 0px -107px;
-    height: 19px;
-    width: 32px;
-    margin: 11px 0;
-    display: inline-block;
-}
-
-.ovkhat .home_button .home_button_bg {
-    background-position: 0px 0px;
-    width: 100%;
-    height: 27px;
-    margin-top: 6.5px;
-}
-
-.home_button .instance_name {
-    font-size: 14px;
-    color: var(--header-text-color);
-    font-weight: 700;
-    margin: 0 8px 12px;
-    border-left: 1px solid var(--header-text-color);
-    padding-left: 8px;
-    white-space: nowrap;
-    max-width: 100px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: inline-block;
-    height: 19px;
-    line-height: 20px;
 }
 
 .layout {
@@ -409,6 +351,70 @@ input:focus, textarea:focus {
     line-height: 160%;
 }
 
+.page_header {
+    position: fixed;
+    height: var(--header-height);
+    width: 100%;
+    background: var(--header-background-color);
+    z-index: 100;
+    display: flex;
+    left: 0;
+    justify-content: center;
+    top: 0;
+}
+
+.page_header_inner {
+    width: var(--layout-width, 960px);
+    height: 100%;
+}
+
+.home_button {
+    width: 157px;
+    height: var(--header-height);
+    position: static;
+    display: block;
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-left: 8px;
+}
+.home_button:active {
+    padding-top: 1px;
+    height: calc(var(--header-height) - 1px)
+}
+
+.home_button .home_button_bg {
+    background: url("/themepack/vkify16/3.3.3.0/resource/icons/head_icons.png") no-repeat;
+    background-position: 0px -107px;
+    height: 19px;
+    width: 32px;
+    margin: 11px 0;
+    display: inline-block;
+}
+
+.ovkhat .home_button .home_button_bg {
+    background-position: 0px 0px;
+    width: 100%;
+    height: 27px;
+    margin-top: 6.5px;
+}
+
+.home_button .instance_name {
+    font-size: 14px;
+    color: var(--header-text-color);
+    font-weight: 700;
+    margin: 0 8px 12px;
+    border-left: 1px solid var(--header-text-color);
+    padding-left: 8px;
+    white-space: nowrap;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    height: 19px;
+    line-height: 20px;
+}
+
 .home_search {
     height: 100%;
     line-height: 16px;
@@ -524,6 +530,7 @@ input:focus, textarea:focus {
     width: 28px;
     border-radius: 14px;
     margin: 7px 0px;
+    object-fit: cover;
 }
 .end_navigation #userMenuArrow {
     background: url(/themepack/vkify16/3.3.3.0/resource/icons/head_arrow.png) no-repeat;
@@ -633,10 +640,10 @@ input:focus, textarea:focus {
 }
 
 [data-theme="musicpopup"].tippy-box .bigPlayer {
-	position: fixed;
+    position: fixed;
 }
 [data-theme="musicpopup"].tippy-box .wide_column_left {
-	padding-top: 60px;
+    padding-top: 60px;
 }
 
 .audio_content_wrap {
@@ -709,14 +716,14 @@ input:focus, textarea:focus {
 .bigPlayer .tip_result,
 .audioEntry .subTracks .lengthTrackWrapper .tip_result,
 .audioEntry .subTracks .volumeTrackWrapper .tip_result {
-	top: 0;
-	margin-top: -20px;
-	transform: none !important;
-	color: var(--tooltip-text-color-2) !important;
-	background: var(--tooltip-background-color-2) !important;
-	padding: 1px 4px 5px 5px !important;
-	border-radius: var(--tooltip-border-radius) !important;
-	border: 0 !important;
+    top: 0;
+    margin-top: -20px;
+    transform: none !important;
+    color: var(--tooltip-text-color-2) !important;
+    background: var(--tooltip-background-color-2) !important;
+    padding: 1px 4px 5px 5px !important;
+    border-radius: var(--tooltip-border-radius) !important;
+    border: 0 !important;
 }
 
 .bigPlayer .additionalButtons .tip_result, .bigPlayer .playButtons .tip_result {
@@ -852,11 +859,11 @@ input:focus, textarea:focus {
     width: 288px;
 }
 .bigPlayer .trackInfo {
-	padding-top: 17px;
-	overflow: hidden;
-	height: unset;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+    padding-top: 17px;
+    overflow: hidden;
+    height: unset;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .bigPlayer .trackInfo>span {
     display: inline-block;
@@ -881,9 +888,9 @@ input:focus, textarea:focus {
 }
 
 .bigPlayer .trackPanel .track {
-	margin: 0;
-	padding-bottom: 10px;
-	position: relative;
+    margin: 0;
+    padding-bottom: 10px;
+    position: relative;
 }
 
 .bigPlayer .volumePanel .volumePanelTrack {
@@ -1032,9 +1039,9 @@ input:focus, textarea:focus {
 }
 
 .bigPlayer .volumePanel {
-	padding: 33px 0 10px;
-	width: 50px;
-	align-self: start;
+    padding: 33px 0 10px;
+    width: 50px;
+    align-self: start;
 }
 
 .audioEntry .subTracks {
@@ -1118,7 +1125,7 @@ input:focus, textarea:focus {
 }
 
 #ctx_menu a.pressed::before {
-	top: 0;
+    top: 0;
 }
 
 #ctx_menu a:not([id]):last-child {
@@ -1643,7 +1650,7 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table, .
     margin-left: 48px;
     vertical-align: top;
     overflow: hidden;
-    width: calc(100% - 40px);
+    width: calc(100% - 48px);
     min-height: 52px;
     max-height: 52px;
     padding: 16px 20px 16px 12px;
@@ -2111,13 +2118,12 @@ center span:only-child, .post-content .text, .post-content, .edit_link, table, .
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 300px;
+    max-width: 400px;
     margin: 0;
-    display: inline;
+    display: inline-block;
 }
 .post_date {
     font-size: 12.5px;
-    padding-top: 2px;
 }
 .post_date, .post_date .post_link, .post_date .promoted_post, .reply_date, .reply_date .reply_link {
     color: var(--muted-text-color-2)
@@ -2568,6 +2574,10 @@ h4.gifts_section_header {
     overflow: hidden;
     text-overflow: ellipsis;
     margin-bottom: 5px;
+    background: none;
+    border: 0;
+    padding: 0;
+    line-height: inherit;
 }
 .reply .attachments {
     padding-top: 5px;
@@ -2670,7 +2680,7 @@ h4.gifts_section_header {
 }
 .reply_footer {
     font-size: 12.5px;
-    padding: 4px 0 0;
+    padding: 5px 0 0;
     margin-bottom: -1px;
 }
 .reply_footer .action_count {

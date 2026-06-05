@@ -35,7 +35,7 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE}
+                {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE, scrollNode => false}
                 {include "../components/comments.latte",
                 comments => $comments,
                 count => $cCount,

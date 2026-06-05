@@ -61,10 +61,7 @@
 {block infotable}
     <div class="labeled name">
         <a href="{$x->getURL()}">{$x->getName()}</a>
-        <img n:if="$x->isVerified()"
-                class="name-checkmark"
-                src="/assets/packages/static/openvk/img/checkmark.png"
-        />
+        <a class="page_verified" n:if="$x->isVerified()" href="/verify"></a>
     </div>
     <div class="labeled">
          <a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>

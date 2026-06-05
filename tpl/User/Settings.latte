@@ -276,7 +276,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_access_page}</div>
                                     <div class="form_data">
-                                        <select name="page.read" style="<!-- -->">
+                                        <select name="page.read">
                                             <option value="3" {if $user->getPrivacySetting('page.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('page.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                         </select>
@@ -285,7 +285,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_read_info}</div>
                                     <div class="form_data">
-                                        <select name="page.info.read" style="<!-- -->">
+                                        <select name="page.info.read">
                                             <option value="3" {if $user->getPrivacySetting('page.info.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('page.info.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('page.info.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -296,7 +296,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_groups}</div>
                                     <div class="form_data">
-                                        <select name="groups.read" style="<!-- -->">
+                                        <select name="groups.read">
                                             <option value="3" {if $user->getPrivacySetting('groups.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('groups.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('groups.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -307,7 +307,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_photos}</div>
                                     <div class="form_data">
-                                        <select name="photos.read" style="<!-- -->">
+                                        <select name="photos.read">
                                             <option value="3" {if $user->getPrivacySetting('photos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('photos.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('photos.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -318,7 +318,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_videos}</div>
                                     <div class="form_data">
-                                        <select name="videos.read" style="<!-- -->">
+                                        <select name="videos.read">
                                             <option value="3" {if $user->getPrivacySetting('videos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('videos.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('videos.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -329,7 +329,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_view_audio}</div>
                                     <div class="form_data">
-                                        <select name="audios.read" style="<!-- -->">
+                                        <select name="audios.read">
                                             <option value="3" {if $user->getPrivacySetting('audios.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('audios.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('audios.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -340,7 +340,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_notes}</div>
                                     <div class="form_data">
-                                        <select name="notes.read" style="<!-- -->">
+                                        <select name="notes.read">
                                             <option value="3" {if $user->getPrivacySetting('notes.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('notes.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('notes.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -351,7 +351,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_friends}</div>
                                     <div class="form_data">
-                                        <select name="friends.read" style="<!-- -->">
+                                        <select name="friends.read">
                                             <option value="3" {if $user->getPrivacySetting('friends.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
                                             <option value="2" {if $user->getPrivacySetting('friends.read') == 2}selected{/if}>{_privacy_value_users}</option>
                                             <option value="1" {if $user->getPrivacySetting('friends.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
@@ -362,7 +362,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_add_to_friends}</div>
                                     <div class="form_data">
-                                        <select name="friends.add" style="<!-- -->">
+                                        <select name="friends.add">
                                             <option value="3" {if $user->getPrivacySetting('friends.add') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="0" {if $user->getPrivacySetting('friends.add') == 0}selected{/if}>{_privacy_value_nobody}</option>
                                         </select>
@@ -371,7 +371,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_write_wall}</div>
                                     <div class="form_data">
-                                        <select name="wall.write" style="<!-- -->">
+                                        <select name="wall.write">
                                             <option value="2" {if $user->getPrivacySetting('wall.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="1" {if $user->getPrivacySetting('wall.write') == 1}selected{/if}>{_privacy_value_friends}</option>
                                             <option value="0" {if $user->getPrivacySetting('wall.write') == 0}selected{/if}>{_privacy_value_only_me}</option>
@@ -381,7 +381,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_write_messages}</div>
                                     <div class="form_data">
-                                        <select name="messages.write", style="<!-- -->">
+                                        <select name="messages.write">
                                             <option value="2" {if $user->getPrivacySetting('messages.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
                                             <option value="0" {if $user->getPrivacySetting('messages.write') == 0}selected{/if}>{_privacy_value_nobody}</option>
@@ -391,7 +391,7 @@
                                 <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']" class="form_field settings_privacy_row">
                                     <div class="form_label">{_privacy_setting_see_likes}</div>
                                     <div class="form_data">
-                                        <select name="likes.read", style="<!-- -->">
+                                        <select name="likes.read">
                                             <option value="2" {if $user->getPrivacySetting('likes.read') == 2}selected{/if}>{_privacy_value_anybody}</option>
                                             <option value="0" {if $user->getPrivacySetting('likes.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
                                         </select>
@@ -400,7 +400,7 @@
                                 <div class="form_field settings_privacy_row">
                                     <div class="form_label">{_profile_type}</div>
                                     <div class="form_data">
-                                        <select name="profile_type", style="<!-- -->">
+                                        <select name="profile_type">
                                             <option value="0" {if $user->getProfileType() == 0}selected{/if}>{_profile_type_open}</option>
                                             <option value="1" {if $user->getProfileType() == 1}selected{/if}>{_profile_type_closed}</option>
                                         </select>

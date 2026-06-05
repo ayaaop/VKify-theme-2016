@@ -4,13 +4,11 @@
 {/block}
 
 {block content}
-    <div class="page_block">
+    <div class="page_block scroll_container">
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
             ['title' => tr("gifts"), 'count' => $count]
         ]}
-    </div>
-    <div class="page_block scroll_container">
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
             <div class="scroll_node" n:foreach="$data as $x">

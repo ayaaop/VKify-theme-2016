@@ -10,8 +10,6 @@
             ['href' => "/gifts?act=pick&user={$user->getId()}", 'title' => tr("collections")],
             ['title' => $cat->getName(tr("__lang")), 'count' => $count]
         ]}
-    </div>
-    <div class="page_block">
         <div class="gifts_section_row">
             <div class="gift_section_wrap gifts_section_scroll scroll_container clear_fix">
                 <a href='/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}' n:foreach="$gifts as $gift" n:class="scroll_node, gift_cell, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">

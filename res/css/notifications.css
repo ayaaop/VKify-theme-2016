@@ -85,6 +85,9 @@
 	font-size: 12.5px;
 	line-height: 16px;
 }
+.notification_ballon wrap avatar {
+	margin-right: 10px;
+}
 .notification_ballon wrap avatar img {
 	width: 50px;
 	height: 50px;
