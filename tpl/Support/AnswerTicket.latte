@@ -170,7 +170,7 @@
                     <div class="post-buttons">
                         <div class="post-bottom-acts">
                             <div n:if="!is_null($fastAnswers)" class="post-attach-menu">
-                                <a href="javascript:showSupportFastAnswerDialog(fastAnswers)">{_fast_answers}</a>
+                                <a href="javascript:showSupportFastAnswerDialog(window.fastAnswers)">{_fast_answers}</a>
                             </div>
                             <div class="post-bottom-buttons">
                                 <select name="status" style="width: unset;">
@@ -184,13 +184,13 @@
                     </div>
                 </form>
             </div>
-            <script>
-                const fastAnswers = [
-                    {foreach $fastAnswers as $answer}
-                        {$answer},
-                    {/foreach}
-                ];
-            </script>
         </div>
     </div>
+    <script>
+        window.fastAnswers = [
+            {foreach $fastAnswers as $answer}
+                {$answer},
+            {/foreach}
+        ];
+    </script>
 {/block}

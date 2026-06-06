@@ -38,3 +38,34 @@
         {_registration_date}: {$x->getRegistrationTime()}
     </div>
 {/block}
+
+{block rtabs}
+{var $menuItems = []}
+{var $postOwner = $item->getOwner()}
+{var $isClubOwner = $postOwner instanceof \openvk\Web\Models\Entities\Club}
+{if $type === "post"}
+    {do $menuItems[] = [
+        'url' => "/wall" . $postOwner->getID() . "?type=owners",
+        'title' => $isClubOwner ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($postOwner->getFirstName(), 20)),
+        'translate' => $isClubOwner,
+        'active' => false
+    ]}
+    {do $menuItems[] = [
+        'url' => "/wall" . $postOwner->getID(),
+        'title' => 'all_posts',
+        'active' => false
+    ]}
+    {do $menuItems[] = [
+        'url' => "/notes" . $postOwner->getID(),
+        'title' => 'notes',
+        'active' => false,
+        'condition' => $postOwner instanceof \openvk\Web\Models\Entities\User
+    ]}
+{/if}
+{do $menuItems[] = [
+    'url' => $item->getPageURL(),
+    'title' => $type,
+    'active' => true
+]}
+{include "../components/ui_rmenu.latte", items => $menuItems, ownblockData => $postOwner}
+{/block}

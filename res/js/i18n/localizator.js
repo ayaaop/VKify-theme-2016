@@ -114,7 +114,7 @@ let locales = {
 		"ajax_timeout_link": "Загрузить без AJAX",
 		"gif_autoplay": "Автоматически воспроизводить GIF-документы",
 		"error_saving": "Ошибка сохранения настроек. Попробуйте обновить страницу и повторить попытку.",
-		"sidebar_note": "Возможно, вам нужно перезагрузить страницу, чтобы изменения вступили в силу.",
+		"sidebar_note": "Возможно, вам придется перезагрузить страницу, чтобы изменения вступили в силу.",
 		"player_fullscreen_tip": "Полный экран",
 		"player_volume_tip": "Громкость",
 		"player_repeat_enable_tip": "Включить автоповтор",
@@ -252,7 +252,7 @@ window.vkifylocalize = function(langcode, fallback = 'en') {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.3.2/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.3.3/resource/langs/${langcode}.json`)
 				.then(response => {
 					if (!response.ok) {
 						patchpage(fallbackCode);

@@ -37,10 +37,9 @@
 <div class="page_block ui_rmenu ui_rmenu_pr {$additionalCssClass ?? ''}" id="{$id ?? 'wall_rmenu'}" role="list">
     {var $ownblockEntity = (isset($ownblockData) && is_object($ownblockData)) ? $ownblockData : ($wallOwner ?? null)}
     {if $ownblockEntity && is_object($ownblockEntity)}
-        {var $isClub = $ownblockEntity instanceof \openvk\Web\Models\Entities\Club}
         {var $ownblockData = [
-            'url' => ($isClub ? "/club" : "/id") . $ownblockEntity->getId(),
-            'name' => $isClub ? $ownblockEntity->getName() : $ownblockEntity->getFirstName() . " " . $ownblockEntity->getLastName(),
+            'url' => $ownblockEntity->getURL(),
+            'name' => $ownblockEntity->getCanonicalName(),
             'img' => $ownblockEntity->getAvatarURL()
         ]}
     {/if}
@@ -74,7 +73,7 @@
                 </div>
             {else}
                 <div class="ui_rmenu_item_wrap">
-                    <a class="ui_rmenu_item {($item['active'] ?? false) ? 'ui_rmenu_item_sel' : ''} {$itemIsRich ? 'ui_ownblock' : ''}" {if !($item['active'] ?? false)}href="{$item['url']}"{/if} n:attr="id => $itemId">
+                    <a class="ui_rmenu_item {($item['active'] ?? false) ? 'ui_rmenu_item_sel' : ''} {$itemIsRich ? 'ui_ownblock' : ''}" href="{$item['url']}" n:attr="id => $itemId">
                         {if $itemIsRich}
                             <img class="ui_ownblock_img" src="{$item['avatar']}" />
                             <div class="ui_ownblock_info">
@@ -106,7 +105,7 @@
                         {if $anySubitemActive}
                             {foreach $item['subitems'] as $subitem}
                                 {if !isset($subitem['condition']) || $subitem['condition']}
-                                    <a class="ui_rmenu_subitem {($subitem['active'] ?? false) ? 'ui_rmenu_item_sel' : ''}" {if !($subitem['active'] ?? false)}href="{$subitem['url']}"{/if} n:attr="id => $subitem['id'] ?? null">
+                                    <a class="ui_rmenu_subitem {($subitem['active'] ?? false) ? 'ui_rmenu_item_sel' : ''}" href="{$subitem['url']}" n:attr="id => $subitem['id'] ?? null">
                                         {if isset($subitem['extraItem']) && (!isset($subitem['extraItem']['condition']) || $subitem['extraItem']['condition'])}
                                             <span class="ui_rmenu_extra_item {$subitem['extraItem']['class']}"
                                                   data-href="{$subitem['extraItem']['url']}"

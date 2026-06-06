@@ -531,20 +531,6 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div id="language-select" class="form_field" style="{if $thisUser->getLeftMenuItemStatus('links')}display: none{/if}">
-                                    <div class="form_label">{_select_language}</div>
-                                    <div class="form_data">
-                                        <span>
-                                            {var $currentLang = getLanguage()}
-                                            {foreach getLanguages() as $language}
-                                                {if $language['code'] === $currentLang}
-                                                    {$language['native_name']}
-                                                    {breakIf true}
-                                                {/if}
-                                            {/foreach}
-                                        </span> <span class="divider"></span> <a onclick="changeLangPopup(); return false;">{_edit_action}</a>
-                                    </div>
-                                </div>
                                 <div class="form_field">
                                     <div class="form_label">{_ui_settings_window}</div>
                                     <div class="form_data">

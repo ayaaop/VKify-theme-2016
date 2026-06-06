@@ -52,6 +52,7 @@ vkify.bindOnce('likeHandlers', () => {
         const heart = btn.find('.action_icon');
         const isLiked = heart.attr('id') === 'liked';
         const isPost = btn.hasClass('post_like');
+        const hasLikesTooltip = isPost || btn.hasClass('video_like_button');
 
         let counter = btn.find('.action_count');
         if (counter.length < 1) {
@@ -69,10 +70,10 @@ vkify.bindOnce('likeHandlers', () => {
         counter.text(nextLikes || '');
         if (isPost) btn.toggleClass('my_like', !isLiked);
 
-        const tip = isPost && btn.first()?._tippy;
+        const tip = hasLikesTooltip && btn.first()?._tippy;
         if (tip) nextLikes <= 0 ? (tip.hide(), tip.destroy()) : tip.enable();
 
-        const cacheKey = isPost && btn.attr('data-type') && btn.attr('data-id')
+        const cacheKey = btn.attr('data-type') && btn.attr('data-id')
             ? `${btn.attr('data-type')}:${btn.attr('data-id')}` : null;
         if (cacheKey) _likesCache.delete(cacheKey);
 
@@ -103,7 +104,7 @@ vkify.bindOnce('likeHandlers', () => {
 vkify.bindOnce('likesTooltip', () => {
     window.tippy.delegate(document.body, {
         animation: 'up_down',
-        target: `.post_like[data-type]:not([data-likes="0"])`,
+        target: `.post_like[data-type]:not([data-likes="0"]), .video_like_button[data-type]:not([data-likes="0"])`,
         theme: 'special vk',
         placement: 'top-start',
         content: '',
