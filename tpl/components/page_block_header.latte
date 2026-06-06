@@ -8,23 +8,23 @@
   @param translate    (optional) Boolean, if false do not translate title
 *}
 <h2 class="page_block_h2">
-  <div class="page_block_header clear_fix">
+  <div class="page_block_header">
     {ifset $extra_left}
     <div class="page_block_header_extra_left _header_extra_left">
       {$extra_left}
     </div>
     {/ifset}
-    {ifset $extra}
-    <div class="page_block_header_extra _header_extra">
-      {$extra|noescape}
-    </div>
-    {/ifset}
-    <span class="settings_saved_label"></span>
     <div class="page_block_header_inner _header_inner">
       {ifset $title}{if isset($translate) && $translate === false}{$title}{else}{tr($title)}{/if}{/ifset}
       {ifset $count}
         <span class="page_block_header_count" id="fw_summary">{$count}</span>
       {/ifset}
     </div>
+    <span class="settings_saved_label"></span>
+    {ifset $extra}
+    <div class="page_block_header_extra _header_extra">
+      {$extra|noescape}
+    </div>
+    {/ifset}
   </div>
 </h2> 

@@ -32,7 +32,7 @@
             {/if}
         </a>
     {/if}
-        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text"
+        <textarea id="wall-post-input{$textAreaId}" placeholder="{ifset $placeholder}{$placeholder}{else}{_write}{/ifset}" name="text"
             style="resize: none;" class="small-textarea"></textarea>
         <div id="post-buttons{$textAreaId}" class='post-buttons'>
             <div class="post-horizontal"></div>
@@ -111,19 +111,19 @@
                             {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
                                 <label class="checkbox">
                                     <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
-                                    {_post_as_group}
+                                    <span>{_post_as_group}</span>
                                 </label>
                                 <label class="checkbox" id="forceSignOpt" style="display: none;">
-                                    <input type="checkbox" name="force_sign" /> {_add_signature}
+                                    <input type="checkbox" name="force_sign" /><span>{_add_signature}</span>
                                 </label>
                             {/if}
                 
                             <label class="checkbox" n:if="$anonEnabled" id="octoberAnonOpt">
-                                <input type="checkbox" name="anon" onchange="window.onWallAnonClick(this)" /> {_as_anonymous}
+                                <input type="checkbox" name="anon" onchange="window.onWallAnonClick(this)" /><span>{_as_anonymous}</span>
                             </label>
                 
                             <label class="checkbox">
-                                <input type="checkbox" name="nsfw" /> {_contains_nsfw}
+                                <input type="checkbox" name="nsfw" /><span>{_contains_nsfw}</span>
                             </label>
                             {if $hasSource}
                                 <div class="separator"></div>
@@ -142,7 +142,7 @@
                         <div class="post-opts tippy-content-template" id="postOptsTooltip{$textAreaId}">
                             <label class="checkbox">
                                 <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
-                                {_comment_as_group}
+                                <span>{_comment_as_group}</span>
                             </label>
                         </div>
                     {/if}

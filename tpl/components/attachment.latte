@@ -30,11 +30,10 @@
             <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
         </div>
     {else}
-        <a class="media-href" style="--post-image: url({$attachment->getThumbnailURL()|noescape})" class='compact_video' id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">
-            <div class='play-button'>
-                <div class='play-button-ico'></div>
+        <a class="video_item media-href compact_video" style="--post-image: url({$attachment->getThumbnailURL()|noescape})" id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">
+            <div class='video_thumb_play'>
             </div>
-            <div class='video-length' n:if="$attachment->getLength() != NULL">
+            <div class='video_thumb_label' n:if="$attachment->getLength() != NULL">
                 {$attachment->getFormattedLength()}
             </div>
 

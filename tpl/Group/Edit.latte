@@ -85,7 +85,7 @@
                                         </select>
                                         <label class="checkbox">
                                             <input type="checkbox" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled(), disabled => $club->isHidingFromGlobalFeedEnforced()" />
-                                            {_group_hide_from_global_feed}
+                                            <span>{_group_hide_from_global_feed}</span>
                                         </label>
                                     </div>
                                 </div>
@@ -95,11 +95,11 @@
                                     <div class="form_data">
                                         <label class="checkbox">
                                             <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" />
-                                            {_everyone_can_create_topics}
+                                            <span>{_everyone_can_create_topics}</span>
                                         </label>
                                         <label class="checkbox">
                                             <input type="checkbox" name="display_topics_above_wall" value="1" n:attr="checked => $club->isDisplayTopicsAboveWallEnabled()" />
-                                            {_display_list_of_topics_above_wall}
+                                            <span>{_display_list_of_topics_above_wall}</span>
                                         </label>
                                     </div>
                                 </div>
@@ -108,17 +108,17 @@
                                     <div class="form_label">{_group_administrators_list}</div>
                                     <div class="form_data">
                                         {var $areAllAdminsHidden = $club->getManagersCount(true) == 0}
-                                        <label class="checkbox">
+                                        <label class="radio">
                                             <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" />
-                                            {_group_display_only_creator}
+                                            <span>{_group_display_only_creator}</span>
                                         </label>
-                                        <label class="checkbox">
+                                        <label class="radio">
                                             <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" />
-                                            {_group_display_all_administrators}
+                                            <span>{_group_display_all_administrators}</span>
                                         </label>
-                                        <label class="checkbox">
+                                        <label class="radio">
                                             <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2" />
-                                            {_group_dont_display_administrators_list}
+                                            <span>{_group_dont_display_administrators_list}</span>
                                         </label>
                                     </div>
                                 </div>
@@ -128,7 +128,7 @@
                                     <div class="form_data">
                                         <label class="checkbox">
                                             <input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" />
-                                            {_everyone_can_upload_audios}
+                                            <span>{_everyone_can_upload_audios}</span>
                                         </label>
                                     </div>
                                 </div>

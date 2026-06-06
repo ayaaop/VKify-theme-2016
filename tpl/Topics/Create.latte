@@ -21,8 +21,8 @@
                     <div class="form_data">
                         <textarea id="wall-post-input1" name="text" style="width: 100%; resize: none;"></textarea>
                         <div n:if="$club->canBeModifiedBy($thisUser)" class="post-opts">
-                            <label>
-                                <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_post_as_group}
+                            <label class="checkbox">
+                                <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /><span>{_post_as_group}</span>
                             </label>
                         </div>
                         <div id="post-buttons1">

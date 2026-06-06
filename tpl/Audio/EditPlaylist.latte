@@ -18,9 +18,6 @@
                     <input type='file' name='cover' style='display:none;' accept=".jpg,.png">
                     <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
                 </a>
-                <div class="profile_links" style="width: 139px;">
-                    <a class="profile_link" style="width: 98%;" id="_deletePlaylist" data-id="{$playlist->getId()}">{_delete_playlist}</a>
-                </div>
             </div>
 
             <div class="PE_playlistInfo">
@@ -32,7 +29,7 @@
                 </div>
                 <label class="checkbox">
                     <input type='checkbox' name='is_unlisted' value='1' n:attr='checked => $playlist->isUnlisted()'>
-                    {_playlist_hide_from_search}
+                    <span>{_playlist_hide_from_search}</span>
                 </label>
                 <a id='_vkifyPlaylistAppendTracks'>{_add_audio_verb}</a>
             </div>
@@ -47,8 +44,13 @@
                 </div>
             </div>
         </div>
-        <div class='PE_end'>
-            <input class="button" type="button" id='playlist_edit' value="{_save}">
+        <div class='PE_end clear_fix'>
+            <div class="fl_l">
+                <a class="button button_light" id="__deletePlaylist" data-id="{$playlist->getId()}">{_delete_playlist}</a>
+            </div>
+            <div class="fl_r">
+                <input class="button" type="button" id='playlist_edit' value="{_save}">
+            </div>
         </div>
     </div>
 {/block}

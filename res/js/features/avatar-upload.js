@@ -38,8 +38,8 @@
                                 <div class="_rotateRight hoverable"></div>
                             </div>
                         </div>
-                        <label style="margin-top: 14px;display: block;">
-                            <input id="publish_on_wall" type="checkbox" checked>${tr("publish_on_wall")}
+                        <label class="checkbox" style="margin-top: 14px;">
+                            <input id="publish_on_wall" type="checkbox" checked><span>${tr("publish_on_wall")}</span>
                         </label>
                     `;
 

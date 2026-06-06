@@ -23,7 +23,7 @@
 {/block}
 
 {block content}
-    <div style="margin-bottom: 15px;">
+    <div class="page_block">
         {include "bigplayer.latte"}
     </div>
     <script>
@@ -33,17 +33,12 @@
             page: {$page}
         }
     </script>
-    {if isset($thisUser) && $canEdit}
-        {var $extra = '<a class="video_edit_button button button_light" data-tip="simple-black" data-tiptitle="' . tr('edit_playlist') . '" href="/playlist' . $playlist->getPrettyId() . '/edit"><span class="video_edit_icon"></span></a>'}
-    {else}
-        {var $extra = ''}
-    {/if}
     <div class="page_block">
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
             ['href' => "/playlists{$ownerId}", 'title' => tr("playlists")],
             ['title' => tr("playlist")]
-        ], extra => $extra}
+        ], extra => $canEdit ? '<a class="action_button video_edit_button" href="/playlist' . $playlist->getPrettyId() . '/edit"><i class="action_icon"></i><span class="action_label">' . tr('edit_playlist') . '</span></a>' : ''}
         <div class="playlistBlock page_padding" style="margin-top: 0">
             <div class="playlistCover">
                 <div class="playlistCoverImage">
@@ -76,9 +71,9 @@
                         </div>
                     </div>
                     <div class="video_info_actions playlistActions clear_fix" n:if="isset($thisUser)">
-                        <a class="video_add_button button button_light" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit"><span class="video_add_icon"></span><span class="video_add_link">{_upload_audio}</span></a>
-                        <a class="video_add_button button button_light" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked"><span class="video_add_icon"></span><span class="video_add_link">{_bookmark}</span></a>
-                        <a class="video_delete_button button button_light" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked"><span class="video_delete_icon"></span><span class="video_delete_link">{_unbookmark}</span></a>
+                        <a class="action_button video_upload_button" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit"><i class="action_icon"></i><span class="action_label">{_upload_audio}</span></a>
+                        <a class="action_button video_add_button" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked"><i class="action_icon"></i><span class="action_label">{_bookmark}</span></a>
+                        <a class="action_button video_delete_button" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked"><i class="action_icon"></i><span class="action_label">{_unbookmark}</span></a>
                     </div>
                 </div>
                 <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">

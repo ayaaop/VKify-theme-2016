@@ -90,7 +90,11 @@ a:hover, .post_header_info a:hover, a.ui_crumb:hover, .post a:hover, .page_heade
 
 /* Checkboxes and radio buttons */
 input[type="checkbox"], input[type="radio"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     background-color: var(--transparent);
+    border: 0;
     width: 15px;
     height: 15px;
     margin: 0 10px 0 0;
@@ -98,6 +102,58 @@ input[type="checkbox"], input[type="radio"] {
     cursor: pointer;
     vertical-align: middle;
     background-repeat: no-repeat;
+    flex-shrink: 0;
+}
+
+label.field {
+    display: block;
+    line-height: 18px;
+}
+
+label.field:only-child {
+    margin-top: 0;
+}
+
+label.checkbox,
+label.radio {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    line-height: 1.4;
+    padding-block: 5px;
+}
+
+label.checkbox > input[type="checkbox"],
+label.radio > input[type="radio"] {
+    margin: 2px 0 0;
+}
+
+label.checkbox > span,
+label.radio > span {
+    display: block;
+    min-width: 0;
+}
+
+[id^="poll_editor"] label.checkbox:has(> span > select) {
+    align-items: center;
+}
+
+[id^="poll_editor"] label.checkbox > span:has(select) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+[id^="poll_editor"] label.checkbox > span select {
+    padding: 2px 6px 3px;
+    line-height: 16px;
+}
+
+label.checkbox + br,
+label.radio + br {
+    display: none;
 }
 
 input[type="checkbox"] {
@@ -484,6 +540,10 @@ body.dimmed>.dimmer #clickable {
 .mb_tab {
     margin-right: 5px;
 }
+.entity_vertical_list {
+    height: auto;
+    overflow-y: unset;
+}
 .entity_vertical_list .entity_vertical_list_item {
     align-items: center;
 }
@@ -499,6 +559,7 @@ body.dimmed>.dimmer #clickable {
 }
 .entity_vertical_list .entity_vertical_list_item .info {
 	width: fit-content;
+    max-width: 280px;
 	flex: 1;
 }
 #_feed_settings_container #__content {
@@ -618,10 +679,26 @@ a.ui_box_header_link {
     cursor: pointer
 }
 .ui_tabs_header {
+    display: flex;
+    align-items: center;
     background: var(--module-header-background-color);
     border-bottom: 1px solid var(--border-color);
     font-size: 14px;
     border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
+}
+.ui_tabs_header > li {
+    flex-shrink: 0;
+}
+.ui_tabs_header .ui_tab {
+    float: none;
+}
+.ui_tabs_header .ui_tabs_extra {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+.ui_tabs_header .ui_tabs_right_section {
+    display: flex;
+    align-items: center;
 }
 .ui_tabs_box .ui_tab, .ui_tabs_box .ui_tab_sel, .ui_tabs_header .ui_tab, .ui_tabs_header .ui_tab_plain, .ui_tabs_header .ui_tab_sel, .ui_tabs_sub_header .ui_tab, .ui_tabs_sub_header .ui_tab_plain, .ui_tabs_sub_header .ui_tab_sel {
     padding: 18px 6px 20px;
@@ -655,11 +732,11 @@ a.ui_box_header_link {
     margin-top: 10px;
     margin-right: 10px;
 }
-.ui_tabs_header .button {
-    margin-top: 12px;
-}
+.ui_tabs_header .button,
 .ui_tabs_header .side_link {
-    margin-top: 22px;
+    float: none;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 .ui_tab_count {
     padding-left: 3px;
@@ -758,7 +835,8 @@ a.ui_box_header_link {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    margin-right: 10px
+    margin-right: 10px;
+    object-fit: cover;
 }
 .ui_ownblock_info {
     white-space: nowrap;
@@ -820,34 +898,45 @@ h2.page_block_h2 {
 }
 
 .page_block_header_extra {
-    float: right
+    flex-shrink: 0;
 }
 
 .page_block_header .button {
-    margin: 11.5px 0;
+    margin: 0;
 }
 
 .page_block_header_extra_left {
-    float: left
+    flex-shrink: 0;
 }
 
 .page_block_header_inner {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap
+    white-space: nowrap;
 }
 
 .page_block_header {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     background: var(--module-header-background-color);
     border-bottom: 1px solid var(--border-color);
     padding: 0 20px;
-    height: 54px;
-    line-height: 54px;
+    min-height: 54px;
+    box-sizing: border-box;
     border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
     font-size: 16px;
     outline: none;
-    color: var(--text-link)
+}
+
+.page_block_header .settings_saved_label {
+    flex-shrink: 0;
+    float: none;
+    height: auto;
 }
 
 .page_block_header.unshown {
@@ -859,18 +948,21 @@ h2.page_block_h2 {
 }
 
 .page_block_header_count {
-    display: inline-block;
+    flex-shrink: 0;
     font-size: 14px;
     color: var(--muted-text-color);
     margin-left: 6px;
+    line-height: 1;
+    margin-top: 2px;
 }
 
 .page_block_sub_header {
-    display: block;
-    height: 55px;
-    line-height: 54px;
+    display: flex;
+    align-items: center;
+    min-height: 55px;
     overflow: hidden;
     padding: 0 20px;
+    box-sizing: border-box;
     font-size: 14px;
     outline: none;
     color: var(--text-link)
@@ -885,24 +977,20 @@ h2.page_block_h2+.scroll_container .page_block {
 
 /* crumbs */
 .ui_crumb {
-    display: inline;
+    min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 54px;
-    height: 54px
 }
 a.ui_crumb {
     color: var(--muted-text-color-2)
 }
 .ui_crumb_sep {
-    display: inline;
-    font-size: 9px;
-    position: relative;
-    top: -2px;
+    flex-shrink: 0;
+    width: 6px;
+    height: 11px;
     background: url(/themepack/vkify16/3.3.3.1/resource/icons/breadcrumbs.png) -6px 0 no-repeat;
-    padding-left: 6px;
-    margin: 23px 10px 21px 7px;
+    margin: 0 10px 0 7px;
 }
 
 @media (-webkit-min-device-pixel-ratio:2), (min-resolution:192dpi) {
@@ -999,6 +1087,9 @@ input.ui_search_field:focus::placeholder {
     float: right;
     margin: 0 4px -1px;
     display: block;
+}
+.ui_tabs_header .ui_tab_plain {
+    float: none;
 }
 .ui_tab_search {
     padding: 17px 6px 14px;
@@ -1441,7 +1532,11 @@ select:focus {
     font-weight: normal;
 }
 
-/* tip_result */
+.tip_result {
+    transition: none !important;
+}
+
+/* tip_result port */
 .tippy-box[data-theme^="special vk small"] {
     width: max-content;
     min-width: 10px;

@@ -67,6 +67,14 @@ const getNextPageNumber = (paginatorEl) => {
     return null;
 };
 
+const scrollNodeUid = (node) => node?.dataset?.uniqueid || node?.dataset?.id || null;
+
+const scrollNodeExists = (uid) => {
+    if (!uid) return false;
+    return u(`.scroll_node[data-uniqueid='${uid}']`).length > 0
+        || u(`.scroll_node[data-id='${uid}']`).length > 0;
+};
+
 const checkExhaustion = (paginatorEl, pageToCheck) => {
     if (!paginatorEl) return false;
 
@@ -92,15 +100,12 @@ window.__resetPaginatorState = function() {
 };
 
 window.__processPaginatorNextPage = async function (page) {
-        if (window.__vkifyPaginatorLoading) return;
         if (window.__vkifyPaginatorExhausted) return;
 
         const paginatorEl = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
         const lastLoaded = Number(window.__vkifyPaginatorLastLoaded || paginatorEl?.dataset?.currentPage || 0);
         if (page <= lastLoaded) return;
         if (checkExhaustion(paginatorEl, page)) return;
-
-        window.__vkifyPaginatorLoading = true;
 
         try {
             const container = u('.scroll_container');
@@ -115,8 +120,8 @@ window.__processPaginatorNextPage = async function (page) {
 
             const newNodes = doc.querySelectorAll('.scroll_node');
             newNodes.forEach(node => {
-                const uid = node.dataset.uniqueid;
-                if (uid && u(`.scroll_node[data-uniqueid='${uid}']`).length > 0) {
+                const uid = scrollNodeUid(node);
+                if (uid && scrollNodeExists(uid)) {
                     return;
                 }
                 container.append(node);
@@ -189,20 +194,23 @@ window.__processPaginatorNextPage = async function (page) {
             }
         } catch (e) {
             console.error('Paginator Error:', e);
-        } finally {
-            window.__vkifyPaginatorLoading = false;
         }
 };
 
 const handlePaginationTrigger = async (paginatorNode, btnNode) => {
+    if (window.__vkifyPaginatorLoading || window.__vkifyPaginatorExhausted) return;
+
     const paginator = u(paginatorNode);
     const btn = u(btnNode);
     if (btn.hasClass('lagged')) return;
+
+    window.__vkifyPaginatorLoading = true;
 
     setButtonLoadingState(btn, true);
 
     const pageNumber = getNextPageNumber(paginatorNode);
     if (!pageNumber || Number.isNaN(pageNumber) || checkExhaustion(paginatorNode, pageNumber)) {
+        window.__vkifyPaginatorLoading = false;
         setButtonLoadingState(btn, false);
         return;
     }
@@ -216,6 +224,7 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
     } catch (e) {
         console.error(e);
     } finally {
+        window.__vkifyPaginatorLoading = false;
         const stillExists = u('.vkify-paginator:not(.vkify-paginator-at-top)');
         if (stillExists.length > 0) {
             const refreshedBtn = stillExists.find('.vkify-paginator-loader');
@@ -226,6 +235,12 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
 
 if (!window.__vkifyPaginatorAutoScrollInit) {
     window.__vkifyPaginatorAutoScrollInit = true;
+
+    if (typeof showMoreObserver !== 'undefined' && u('.vkify-paginator').length > 0) {
+        try {
+            showMoreObserver.disconnect();
+        } catch (e) { /* stock al_wall observer */ }
+    }
 
     const initObserver = () => {
         if (typeof IntersectionObserver !== 'function') return;
@@ -241,6 +256,7 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
                 const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1 || window.openvk?.current_id === 0 || window.openvk?.disable_ajax === 1;
 
                 if (autoScrollDisabled || ajaxRoutingDisabled) return;
+                if (window.__vkifyPaginatorLoading || window.__vkifyPaginatorExhausted) return;
                 if (u('.scroll_container').length < 1) return;
 
                 const target = u(entry.target);

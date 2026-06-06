@@ -453,18 +453,27 @@
 								</h3>
 							</a>
 							<div class="module_body clear_fix">
-								<div class="audio_row" n:foreach="$audios as $audio">
-									<a class="audio fl_l" href="/audios{$user->getId()}">
-										<div class="page_audio_play_icon"></div>
-									</a>
-									<div class="info clear">
-										{include "../Audio/player.latte", audio => $audio}
+								<div class="content_list long">
+									<div class="audio_row" n:foreach="$audios as $audio">
+										<a class="audio fl_l" href="/audios{$user->getId()}">
+											<div class="page_audio_play_icon"></div>
+										</a>
+										<div class="info clear">
+											{include "../Audio/player.latte", audio => $audio, hideButtons => true}
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				<script n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
+					window.__current_page_audio_context = {
+						name: 'entity_audios',
+						entity_id: {$user->getId()},
+						page: 1
+					};
+				</script>
             </div>
         </div>
         <div class="wide_column_wrap">
@@ -477,9 +486,9 @@
 							<form name="status_popup_form" onsubmit="changeStatus(); return false;">
 								<div style="margin-bottom: 10px;">
 									<input type="text" name="status" size="50" value="{$user->getStatus()}" />
-									<label style="width: 316px;display: block;">
+									<label class="checkbox">
 										<input type="checkbox" name="broadcast" n:attr="checked => $user->isBroadcastEnabled()" />
-										{_broadcast_audio}
+										<span>{_broadcast_audio}</span>
 									</label>
 								</div>
 								<input type="hidden" name="hash" value="{$csrfToken}" />
@@ -778,7 +787,7 @@
 			uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
 			uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />"
 			uBanMsgTxt += "<br/><br/><b>Заблокировать до</b>: <input type='date' id='uBanMsgDate' />";
-			uBanMsgTxt += "<br/><br/><input id='uBanMsgIncr' type='checkbox' checked='1'/>Автоматически <b>(до " + {date('d.m.Y H\h', time() + $user->getNewBanTime())} + ")</b>";
+			uBanMsgTxt += "<br/><br/><label class='checkbox'><input id='uBanMsgIncr' type='checkbox' checked='1'/><span>Автоматически <b>(до " + {date('d.m.Y H\h', time() + $user->getNewBanTime())} + ")</b></span></label>";
 
 			MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
 				(function() {
@@ -847,7 +856,7 @@
 			function toggleBanInSupport() {
 				uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
 				uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
-				uBanMsgTxt += "<br/><br/><input type='checkbox' id='uBanClsTicketsInput' /><label for='uBanClsTicketsInput'>Закрыть все обращения пользователя</label>";
+				uBanMsgTxt += "<br/><br/><label class='checkbox'><input type='checkbox' id='uBanClsTicketsInput' /><span>Закрыть все обращения пользователя</span></label>";
 
 				MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
 					(function() {

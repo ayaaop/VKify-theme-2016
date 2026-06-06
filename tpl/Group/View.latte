@@ -1,8 +1,6 @@
 {extends "../@layout.latte"}
 {var $backdrops = $club->getBackDropPictureURLs()}
 {var $canEdit = $thisUser && $club->canBeModifiedBy($thisUser)}
-{var $suggestedPostsCountByUser = isset($thisUser) ? $club->getSuggestedPostsCount($thisUser) : null}
-{var $suggestedPostsCountByEveryone = $club->getSuggestedPostsCount()}
 
 {block title}{$club->getName()}{/block} 
 
@@ -205,7 +203,7 @@
 						{/if}
 					</div>
 
-					<div n:if="$audiosCount > 0 || $canEdit || $club->isEveryoneCanUploadAudios()" class="module">
+					<div n:if="$audiosCount > 0 || $canEdit || $club->isEveryoneCanUploadAudios()" class="module audio_module" >
 						{if $audiosCount > 0}
 							<a href="/audios-{$club->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
@@ -220,7 +218,7 @@
 							<div class="module_body">
 								<div class="content_list long">
 									<div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
-										{include "../Audio/player.latte", audio => $audio}
+										{include "../Audio/player.latte", audio => $audio, hideButtons => true}
 									</div>
 								</div>
 							</div>
@@ -317,11 +315,12 @@
 						<div class="group_info_block info">
 							<div class="group_info_rows">
 								{var $descHtml = $club->getDescriptionHtml()}
-								{var $bigText = strlen($club->getDescription()) > 300}
+								{var $descPlain = $club->getDescription() ?? ''}
+								{var $bigText = strlen($descPlain) > 300}
 								<div class="group_info_row info">
 									{if $descHtml}
 										{if $bigText}
-											<span class="truncated_text">{$club->getDescription()|truncate:300|noescape}</span>
+											<span class="truncated_text">{$descPlain|truncate:300|noescape}</span>
 											<span class="full_text hidden">{$descHtml|noescape}</span>
 											<a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
 										{else}
@@ -373,28 +372,10 @@
 							<div class="page_upload_label page_topics_upload"></div>{_create_topic}</a>
 					{/if}
 				</div>
-				<div id="__vkifyEnableSuggestedWallTab" class="hidden"></div>
-				
-				<div n:if="!is_null($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist hidden">
-					{$suggestedPostsCountByUser}
-				</div>
-
-				<div n:if="!is_null($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist hidden">
-					{$suggestedPostsCountByEveryone}
-				</div>
-
 				{presenter "openvk!Wall->wallEmbedded", -$club->getId()}
 			</div>
 		</div>
 	</div>
-	{* детка, ты сделала костыль на 5 с плюсом ! *}
-	{* ты меня зажгла.. появилось оч сильное и реальное желание сделать ещё парочку.. нет.. именно намутить хорошенько. *}
-	{* чтобы папа Вова и дальше был доволен, жду в ближайшее время всех описанных и перечисленных тобою костылей. ну кроме последнего сценария..)) хотя... ;) *}
-	{* кстати насчет костыля в виде диалогов... в js отлично, а я еще люблю когда они как бы случайно совсем чуть-чуть отваливаются... *}
-	{* и раз уж ты такая плохая девочка, вот видео как раз для тебя: https://ovk.to/video8120_17 *}
-    <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$canEdit">
-        document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
-    </script>
 </div>
 
 {/block}

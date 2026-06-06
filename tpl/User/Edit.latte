@@ -172,7 +172,7 @@
                             <div class="form_field">
                                 <div class="form_label"></div>
                                 <div class="form_data">
-                                    <label class="checkbox"><input type="checkbox" name="broadcast_music" n:attr="checked => $user->isBroadcastEnabled()">{_broadcast_audio}</label>
+                                    <label class="checkbox"><input type="checkbox" name="broadcast_music" n:attr="checked => $user->isBroadcastEnabled()"><span>{_broadcast_audio}</span></label>
                                 </div>
                             </div>
                             <input type="hidden" name="hash" value="{$csrfToken}" />

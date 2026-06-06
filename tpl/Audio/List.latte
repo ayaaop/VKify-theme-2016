@@ -1,31 +1,36 @@
 {extends "../@layout.latte"}
 
-{block title}
-    {if $mode == 'list'}
-        {if $ownerId > 0}
-            {_audios} {$owner->getMorphedName("genitive", false)}
-        {else}
-            {_audios_group}
-        {/if}
-    {elseif $mode == 'new'}
-        {_audio_new}
-    {elseif $mode == 'uploaded'}
-        {_my_audios_small_uploaded}
-    {elseif $mode == 'popular'}
-        {_audio_popular}
-    {elseif $mode == 'alone_audio'}
-        {$alone_audio->getName()}
+{var $isMy = $isMy ?? false}
+{var $audioHeaderCount = $mode == 'playlists' ? ($playlistsCount ?? 0) : ($audiosCount ?? 0)}
+{var $pageTitle = tr('my_music')}
+
+{if $mode == 'playlists'}
+    {if $isMy}
+        {var $pageTitle = tr('my_playlists')}
+    {elseif $ownerId > 0}
+        {var $pageTitle = tr('playlists') . ' ' . $owner->getMorphedName('genitive', false)}
     {else}
-        {if $ownerId > 0}
-            {_playlists} {$owner->getMorphedName("genitive", false)}
-        {else}
-            {_playlists_group}
-        {/if}
+        {var $pageTitle = tr('playlists_club')}
     {/if}
-{/block}
+{elseif $mode == 'uploaded'}
+    {var $pageTitle = tr('my_audios_small_uploaded')}
+{elseif $mode == 'new'}
+    {var $pageTitle = tr('audio_new')}
+{elseif $mode == 'popular'}
+    {var $pageTitle = tr('audio_popular')}
+{elseif $mode == 'alone_audio'}
+    {var $pageTitle = $alone_audio->getName()}
+{elseif $isMy}
+    {var $pageTitle = tr('my_music')}
+{elseif $ownerId > 0}
+    {var $pageTitle = tr('audios') . ' ' . $owner->getMorphedName('genitive', false)}
+{else}
+    {var $pageTitle = tr('music_club')}
+{/if}
+
+{block title}{$pageTitle}{/block}
 
 {block content}
-    {var $isMy = $isMy ?? false}
     {var $isMyClub = $isMyClub ?? false}
     {var $club = $club ?? null}
     {var $friendsAudios = $friendsAudios ?? []}
@@ -188,30 +193,33 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                <div class="page_block wall_posts_tabs">
+                <div class="page_block">
                     {include "bigplayer.latte", buttonsShow_summary => ($audiosCount ?? 0) > 10}
                 </div>
                 
-                <div class="page_block audiosDiv">
-                    <div class="audiosContainer audiosSideContainer" n:if="$mode != 'playlists'">
-                        {if ($audiosCount ?? 0) <= 0}
-                            {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
-                        {/if}
-                        <div n:if="($audiosCount ?? 0) > 0" class="scroll_container">
-                            <div class="scroll_node" n:foreach="($audios ?? []) as $audio">
-                                {include "player.latte", audio => $audio, club => $club}
+                <div class="page_block">
+                    {include "../components/page_block_header.latte", title => $pageTitle, count => $audioHeaderCount, translate => false}
+                    <div class="audiosDiv">
+                        <div class="audiosContainer audiosSideContainer" n:if="$mode != 'playlists'">
+                            {if ($audiosCount ?? 0) <= 0}
+                                {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
+                            {/if}
+                            <div n:if="($audiosCount ?? 0) > 0" class="scroll_container">
+                                <div class="scroll_node" n:foreach="($audios ?? []) as $audio">
+                                    {include "player.latte", audio => $audio, club => $club}
+                                </div>
                             </div>
-                        </div>
 
-                        <div n:if="$mode != 'new' && $mode != 'popular'">
-                            {include "../components/paginator.latte", conf => (object) [
-                                "page"     => $page,
-                                "count"    => $audiosCount ?? 0,
-                                "amount"   => sizeof($audios ?? []),
-                                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
-                                "atBottom" => true,
-                                "tidy"     => true,
-                            ]}
+                            <div n:if="$mode != 'new' && $mode != 'popular'">
+                                {include "../components/paginator.latte", conf => (object) [
+                                    "page"     => $page,
+                                    "count"    => $audiosCount ?? 0,
+                                    "amount"   => sizeof($audios ?? []),
+                                    "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                                    "atBottom" => true,
+                                    "tidy"     => true,
+                                ]}
+                            </div>
                         </div>
                     </div>
                     

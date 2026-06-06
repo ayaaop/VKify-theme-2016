@@ -135,15 +135,15 @@
                                     <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 20px">
                                         <strong>${tr("profile_deactivate_reason_header")}</strong>
                                         <div class="delete_reason_list">
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"> ${tr("profile_deactivate_reason_1")}</label>
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"> ${tr("profile_deactivate_reason_2")}</label>
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"> ${tr("profile_deactivate_reason_3")}</label>
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"> ${tr("profile_deactivate_reason_4")}</label>
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"> ${tr("profile_deactivate_reason_5")}</label>
-                                            <label><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""> ${tr("profile_deactivate_reason_6")}</label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"><span>${tr("profile_deactivate_reason_1")}</span></label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"><span>${tr("profile_deactivate_reason_2")}</span></label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"><span>${tr("profile_deactivate_reason_3")}</span></label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"><span>${tr("profile_deactivate_reason_4")}</span></label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"><span>${tr("profile_deactivate_reason_5")}</span></label>
+                                            <label class="radio"><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""><span>${tr("profile_deactivate_reason_6")}</span></label>
                                         </div>
                                         <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
-                                        <label class="checkbox"><input type="checkbox" name="deactivate_share" id="deactivate_share" checked> ${tr("share_with_friends")}</label>
+                                        <label class="checkbox"><input type="checkbox" name="deactivate_share" id="deactivate_share" checked><span>${tr("share_with_friends")}</span></label>
                                         <input type="hidden" name="hash" value="${hash}" />
                                     </form>
                                 `, [tr("profile_deactivate_button"), tr("cancel")], [
@@ -215,7 +215,7 @@
                                 function viewBackupCodes() {
                                     MessageBox(tr("viewing_backup_codes"), `
                                         <form id="back-codes-view-form" method="post" action="/settings/2fa">
-                                            <label for="password">Пароль</label>
+                                            <label class="field" for="password">Пароль</label>
                                             <input type="password" id="password" name="password" required />
                                             <input type="hidden" name="hash" value={$csrfToken} />
                                         </form>
@@ -229,7 +229,7 @@
                                 function disableTwoFactorAuth() {
                                     MessageBox(tr("disable_2fa"), `
                                         <form id="two-factor-auth-disable-form" method="post" action="/settings/2fa/disable">
-                                            <label for="password">Пароль</label>
+                                            <label class="field" for="password">Пароль</label>
                                             <input type="password" id="password" name="password" required />
                                             <input type="hidden" name="hash" value={$csrfToken} />
                                         </form>
@@ -509,7 +509,7 @@
                                 <div class="form_field">
                                     <div class="form_label">&nbsp;</div>
                                     <div class="form_data" dir="auto">
-                                        <label class="checkbox"><input type="checkbox" name="theme_for_session" value="1"> {_apply_style_for_this_device}</label>
+                                        <label class="checkbox"><input type="checkbox" name="theme_for_session" value="1"><span>{_apply_style_for_this_device}</span></label>
                                     </div>
                                 </div>
                                 <div class="form_field">
@@ -550,19 +550,20 @@
                                     <div class="form_data">
                                         <label class="checkbox">
                                             <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing">
-                                            {_ajax_routing}
+                                            <span>{_ajax_routing}</span>
                                         </label>
                                         <label class="checkbox">
                                             <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll">
-                                            {_auto_scroll}
+                                            <span>{_auto_scroll}</span>
                                         </label>
                                         <label class="checkbox">
                                             <input type='checkbox' data-act='localstorage_item' name='ux.gif_autoplay' id="ux.gif_autoplay">
-                                            <vkifyloc name="gif_autoplay" />
+                                            <span><vkifyloc name="gif_autoplay" /></span>
                                         </label>
                                         <label class="checkbox">
                                             <input class="hidden" type="hidden" name="rating" value="0">
-                                            <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()"> <vkifyloc name="profile_recommendations"/>
+                                            <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()">
+                                            <span><vkifyloc name="profile_recommendations"/></span>
                                         </label>
                                     </div>
                                 </div>
@@ -571,10 +572,10 @@
                                 <div id="vkifySettings" class="form_field">
                                     <div class="form_label"><vkifyloc name="vkify_settings"></vkifyloc></div>
                                     <div class="form_data" dir="auto">
-                                        <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"> <vkifyloc name="dark_mode"></vkifyloc></label>
-                                        <label class="checkbox"><input type="checkbox" name="mode_2018" value="1"> <span><vkifyloc name="mode_2018"></vkifyloc></span></label>
-                                        <label class="checkbox"><input type="checkbox" name="vkgraffiti" value="0"> <vkifyloc name="graffitiswitch"></vkifyloc></label>
-                                        <label class="checkbox"><input type="checkbox" name="ovkhat" value="0"> <vkifyloc name="ovkhat"></vkifyloc></label>
+                                        <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"><span><vkifyloc name="dark_mode"></vkifyloc></span></label>
+                                        <label class="checkbox"><input type="checkbox" name="mode_2018" value="1"><span><vkifyloc name="mode_2018"></vkifyloc></span></label>
+                                        <label class="checkbox"><input type="checkbox" name="vkgraffiti" value="0"><span><vkifyloc name="graffitiswitch"></vkifyloc></span></label>
+                                        <label class="checkbox"><input type="checkbox" name="ovkhat" value="0"><span><vkifyloc name="ovkhat"></vkifyloc></span></label>
                                     </div>
                                 </div>
                             </form>
@@ -588,18 +589,18 @@
                                 <div class="form_field">
                                     <div class="form_label">&nbsp;</div>
                                     <div class="form_data" dir="auto">
-                                        <label class="checkbox"><input type="checkbox" name="menu_bildoj" n:attr="checked => $user->getLeftMenuItemStatus('photos')"> {_my_photos}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_filmetoj" n:attr="checked => $user->getLeftMenuItemStatus('videos')"> {_my_videos}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_muziko" n:attr="checked => $user->getLeftMenuItemStatus('audios')"> {_my_audios}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_mesagoj" n:attr="checked => $user->getLeftMenuItemStatus('messages')"> {_my_messages}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_notatoj" n:attr="checked => $user->getLeftMenuItemStatus('notes')"> {_my_notes}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_grupoj" n:attr="checked => $user->getLeftMenuItemStatus('groups')"> {_my_groups}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_novajoj" n:attr="checked => $user->getLeftMenuItemStatus('news')"> {_my_feed}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_aplikoj" n:attr="checked => $user->getLeftMenuItemStatus('apps')"> {_my_apps}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_doxc" n:attr="checked => $user->getLeftMenuItemStatus('docs')"> {_my_documents}</label>
-                                        <label class="checkbox"><input type="checkbox" name="menu_feva" n:attr="checked => $user->getLeftMenuItemStatus('fave')"> {_bookmarks_tab}</label>
-                                        <label n:if="sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0" class="checkbox"><input type="checkbox" name="menu_ligiloj" n:attr="checked => $user->getLeftMenuItemStatus('links')"> {_additional_links}</label>
-                                        <label n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']" class="checkbox"><input type="checkbox" name="menu_standardo" n:attr="checked => $user->getLeftMenuItemStatus('poster')"> {_ad_poster}</label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_bildoj" n:attr="checked => $user->getLeftMenuItemStatus('photos')"><span>{_my_photos}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_filmetoj" n:attr="checked => $user->getLeftMenuItemStatus('videos')"><span>{_my_videos}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_muziko" n:attr="checked => $user->getLeftMenuItemStatus('audios')"><span>{_my_audios}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_mesagoj" n:attr="checked => $user->getLeftMenuItemStatus('messages')"><span>{_my_messages}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_notatoj" n:attr="checked => $user->getLeftMenuItemStatus('notes')"><span>{_my_notes}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_grupoj" n:attr="checked => $user->getLeftMenuItemStatus('groups')"><span>{_my_groups}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_novajoj" n:attr="checked => $user->getLeftMenuItemStatus('news')"><span>{_my_feed}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_aplikoj" n:attr="checked => $user->getLeftMenuItemStatus('apps')"><span>{_my_apps}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_doxc" n:attr="checked => $user->getLeftMenuItemStatus('docs')"><span>{_my_documents}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="menu_feva" n:attr="checked => $user->getLeftMenuItemStatus('fave')"><span>{_bookmarks_tab}</span></label>
+                                        <label n:if="sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0" class="checkbox"><input type="checkbox" name="menu_ligiloj" n:attr="checked => $user->getLeftMenuItemStatus('links')"><span>{_additional_links}</span></label>
+                                        <label n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']" class="checkbox"><input type="checkbox" name="menu_standardo" n:attr="checked => $user->getLeftMenuItemStatus('poster')"><span>{_ad_poster}</span></label>
                                     </div>
                                 </div>
                                 <input type="hidden" name="hash" value="{$csrfToken}" />

@@ -57,8 +57,8 @@ const audioFrameTpl = Hb.compile(
                 <tr>
                     <td width="120" valign="top"></td>
                     <td>
-                        <label style='display:block'><input type="checkbox" name="explicit">{{lbl_explicit}}</label>
-                        <label class="checkbox"><input type="checkbox" name="unlisted">{{lbl_unlisted}}</label>
+                        <label class="checkbox"><input type="checkbox" name="explicit"><span>{{lbl_explicit}}</span></label>
+                        <label class="checkbox"><input type="checkbox" name="unlisted"><span>{{lbl_unlisted}}</span></label>
                     </td>
                 </tr>
             </tbody>

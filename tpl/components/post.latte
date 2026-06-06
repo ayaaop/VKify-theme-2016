@@ -32,7 +32,7 @@
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 {var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
 
-<div data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
+<div data-id="{$post->getPrettyId()}" n:attr="data-uniqueid => (!$compact && $scrollNode) ? $post->getPrettyId() : null" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
     <div class="post_header">
         <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}{if in_array($onlinePlatform, ['android', 'iphone', 'mobile'])} mobile{/if}" href="{$author->getURL()}">
             {if $author instanceof \openvk\Web\Models\Entities\Club}

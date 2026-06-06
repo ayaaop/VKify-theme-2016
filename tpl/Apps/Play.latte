@@ -7,7 +7,7 @@
 
 {block content}
     <div class="page_block" style="width: 650px">
-        {include "../components/page_block_header.latte", title => $name, translate => false, extra => (($canReport ?? false) ? '<a style="float: right;" onClick="reportApp({$id})">{_report}</a>' : '')}
+        {include "../components/page_block_header.latte", title => $name, translate => false, extra => (($canReport ?? false) ? '<a onClick="reportApp({$id})">{_report}</a>' : '')}
         <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="650"
             sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
 

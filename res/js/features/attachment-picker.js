@@ -52,14 +52,21 @@ vkify.bindOnce('composerAttachmentHandlers', () => {
     u(document).on('click', '.post-buttons .upload-item', (e) => { e.preventDefault(); e.stopPropagation(); });
 });
 
-const getAttachedCount = (form) => form?.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length || 0;
+const getAttachedCount = (form, playlistMode = false) => {
+    if (playlistMode) return form?.find('.PE_audios .vertical-attachment').length || 0;
+    return form?.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length || 0;
+};
 
-const isAttached = (form, type, id) => {
+const isAttached = (form, type, id, playlistMode = false) => {
+    if (playlistMode) {
+        return form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0;
+    }
     if (type === 'photo' || type === 'video') return form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).length > 0;
     return form?.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).length > 0;
 };
 
-const canAttach = (form, count = 1) => {
+const canAttach = (form, count = 1, playlistMode = false) => {
+    if (playlistMode) return true;
     if (getAttachedCount(form) + count > MAX_ATTACHMENTS) {
         NewNotification(tr('error'), tr('too_many_attachments'), null, () => {}, 5000, false);
         return false;
@@ -80,10 +87,12 @@ const appendHorizontal = (form, { type, id, preview, fullsize_url }) => {
     `);
 };
 
-const appendVertical = (form, { type, id, html, undeletable }) => {
+const appendVertical = (form, { type, id, html, undeletable }, playlistMode = false) => {
     if (!form?.length || !type || !id) return;
-    form.find('.post-vertical').append(`
-        <div class="vertical-attachment upload-item" draggable="true" data-type='${type}' data-id="${id}">
+    const target = playlistMode ? '.PE_audios' : '.post-vertical';
+    const dataTypeAttr = playlistMode ? '' : ` data-type='${type}'`;
+    form.find(target).append(`
+        <div class="vertical-attachment upload-item" draggable="true"${dataTypeAttr} data-id="${id}">
             <div class='vertical-attachment-content' draggable="false">${html || ''}</div>
             <div class='${undeletable ? 'lagged' : ''} vertical-attachment-remove'>
                 <div id='small_remove_button'></div>
@@ -92,7 +101,11 @@ const appendVertical = (form, { type, id, html, undeletable }) => {
     `);
 };
 
-const removeAttachment = (form, type, id) => {
+const removeAttachment = (form, type, id, playlistMode = false) => {
+    if (playlistMode) {
+        form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove();
+        return;
+    }
     if (type === 'photo' || type === 'video') {
         form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).remove();
     } else {
@@ -150,6 +163,7 @@ class AttachmentPickerBase {
         this.form = options.form;
         this.club = Number(options.club) || 0;
         this.type = options.type || 'photo';
+        this.playlistMode = !!options.playlistMode;
         this.selected = new Set();
         this.viewingUser = this.club === 0;
         this.msgbox = null;
@@ -160,7 +174,7 @@ class AttachmentPickerBase {
     }
 
     isSelected(id) {
-        return this.selected.has(id) || isAttached(this.form, this.type, id);
+        return this.selected.has(id) || isAttached(this.form, this.type, id, this.playlistMode);
     }
 
     close() {
@@ -207,9 +221,9 @@ class AttachmentPickerBase {
             row.removeClass('selected');
             row.find('.picker-item-select span, .attachAudio span, .attachDocument span').text(tr('attach'));
         } else {
-            const currentAttached = getAttachedCount(this.form);
-            const pendingNew = [...this.selected].filter(sid => !isAttached(this.form, this.type, sid)).length;
-            if (currentAttached + pendingNew + 1 > MAX_ATTACHMENTS) {
+            const currentAttached = getAttachedCount(this.form, this.playlistMode);
+            const pendingNew = [...this.selected].filter(sid => !isAttached(this.form, this.type, sid, this.playlistMode)).length;
+            if (!this.playlistMode && currentAttached + pendingNew + 1 > MAX_ATTACHMENTS) {
                 NewNotification(tr('error'), tr('too_many_attachments'), null, () => {}, 5000, false);
                 return;
             }
@@ -221,20 +235,20 @@ class AttachmentPickerBase {
     }
 
     handleItemAttach(row, id) {
-        if (isAttached(this.form, this.type, id)) return;
-        if (!canAttach(this.form, 1)) return;
+        if (isAttached(this.form, this.type, id, this.playlistMode)) return;
+        if (!canAttach(this.form, 1, this.playlistMode)) return;
         this.attachItem(this._getItemData(row, id));
         this.close();
     }
 
     attachItem(data) {
-        if (data.alignment === 'vertical' || data.html) appendVertical(this.form, data);
+        if (data.alignment === 'vertical' || data.html) appendVertical(this.form, data, this.playlistMode);
         else appendHorizontal(this.form, data);
     }
 
     attachSelected() {
-        const toAttach = [...this.selected].filter(id => !isAttached(this.form, this.type, id));
-        if (!canAttach(this.form, toAttach.length)) return;
+        const toAttach = [...this.selected].filter(id => !isAttached(this.form, this.type, id, this.playlistMode));
+        if (!canAttach(this.form, toAttach.length, this.playlistMode)) return;
         toAttach.forEach(id => {
             const row = this.msgbox.getNode().find(`[data-picker-id="${id}"]`);
             this.attachItem(this._getItemData(row, id));
@@ -246,7 +260,6 @@ class AttachmentPicker extends AttachmentPickerBase {
     constructor(options) {
         super(options);
         this.adapter = options.adapter;
-        this.playlistMode = !!options.playlistMode;
         this.loading = false;
         this.abortController = null;
         this._loadGeneration = 0;

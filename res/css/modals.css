@@ -428,7 +428,7 @@
 .video_info_actions {
 	padding-bottom: 15px;
 	border-bottom: 1px solid var(--border-color);
-	line-height: 1.5;
+	line-height: 14px;
 	margin: 0px 0 15px;
 	display: flex;
 	align-items: center;
@@ -507,16 +507,7 @@
 .tt_w.like_tt.video_like_tt.tt_down:after {
 	left: 26px
 }
-.video_add_button,
-.video_delete_button,
-.video_edit_button,
-.video_share_button {
-	position: relative;
-	float: left;
-	margin-left: 6px;
-	padding-left: 8px;
-	padding-right: 8px
-}
+
 .video_share_button .action_icon {
 	background: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions.png?8) no-repeat 0 -44px;
 	height: 13px;
@@ -531,7 +522,7 @@
 		background-size: 19px 199px
 	}
 }
-.video_edit_button .video_edit_icon {
+.video_edit_button .action_icon {
 	background: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions.png?8) no-repeat 0 -61px;
 	height: 12px;
 	width: 12px;
@@ -540,36 +531,20 @@
 	margin-bottom: -2px
 }
 @media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
-	.video_edit_button .video_edit_icon {
+	.video_edit_button .action_icon {
 		background-image: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions_2x.png?8);
 		background-size: 19px 199px
 	}
 }
-.video_delete_button .video_delete_icon {
-	background: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions.png?8) no-repeat 0 -92px;
-	height: 9px;
-	width: 9px;
+.video_delete_button .action_icon,.video_add_button .action_icon {
+	background: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions_2x.png) no-repeat 2px -30px;
 	display: inline-block;
 	position: relative;
+	background-size: 19px 199px;
+	opacity: .8;
 }
-@media (-webkit-min-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2/1), (min-resolution: 192dpi) {
-	.video_delete_button .video_delete_icon {
-		background-image: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions_2x.png?8);
-		background-size: 19px 199px
-	}
-}
-.video_add_button .video_add_icon {
-	background: url(/themepack/vkify16/3.3.3.1/resource/icons/video_actions.png?8) no-repeat 0 -15px;
-	height: 12px;
-	width: 12px;
-	margin-bottom: -2px;
-	display: inline-block;
-	position: absolute;
-	top: 0px;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	-o-transition: all 200ms ease;
-	transition: all 200ms ease
+.video_add_button .action_icon {
+	background-position: 2px -15px;
 }
 
 .ovk-modal-video-window .page_block+#standaloneCommentBox {

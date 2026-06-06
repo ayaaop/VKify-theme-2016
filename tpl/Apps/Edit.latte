@@ -70,7 +70,7 @@
                 <div class="form_field">
                     <div class="form_label">{_app_state}</div>
                     <div class="form_data">
-                        <label class="checkbox"><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> {_app_enabled}</label>
+                        <label class="checkbox"><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /><span>{_app_enabled}</span></label>
                     </div>
                 </div>
                 <input type="hidden" name="hash" value="{$csrfToken}" />

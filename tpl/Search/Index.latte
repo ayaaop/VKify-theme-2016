@@ -330,9 +330,9 @@
                 {/if}
             </select>
 
-            <label n:if="$order != 'rating'">
+            <label n:if="$order != 'rating'" class="checkbox">
                 <input type="checkbox" name="invert" value="1" form="real_search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
-                {_s_order_invert}
+                <span>{_s_order_invert}</span>
             </label>
         </div>
     </div>
@@ -345,9 +345,9 @@
             <input type="text" n:attr="value => $_REQUEST['city']" form="real_search_form" placeholder="{_city}" name="city">
             <input type="text" n:attr="value => $_REQUEST['hometown']" form="real_search_form" placeholder="{_hometown}" name="hometown">
             
-            <label>
+            <label class="checkbox">
                 <input name="is_online" type="checkbox" n:attr="checked => $_REQUEST['is_online'] == '1'" form="real_search_form" value="1">
-                {_s_now_on_site}
+                <span>{_s_now_on_site}</span>
             </label>
         </div>
     </div>
@@ -357,10 +357,10 @@
             {_pronouns}
         </div>
         <div class="search_option_content">
-            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 0" name="gender" value="0">{_male}</label>
-            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 1" name="gender" value="1">{_female}</label>
-            <label><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 2" name="gender" value="2">{_neutral}</label>
-            <label><input type="radio" form="real_search_form" n:attr="checked => is_null($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3">{_s_any}</label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 0" name="gender" value="0"><span>{_male}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 1" name="gender" value="1"><span>{_female}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 2" name="gender" value="2"><span>{_neutral}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => is_null($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3"><span>{_s_any}</span></label>
         </div>
     </div>
     <div n:if="$section == 'users'" n:class="search_option, !isset($_REQUEST['polit_views']) && !isset($_REQUEST['marital_status']) ? search_option_hidden">
@@ -368,7 +368,7 @@
             {_s_additional}
         </div>
         <div class="search_option_content">
-            <label>
+            <label class="field">
                 {_politViews}
                 <select name="polit_views" form="real_search_form" data-default='0'>
                     <option n:foreach="range(0, 9) as $i" value="{$i}" n:attr="selected => $_REQUEST['polit_views'] == $i">
@@ -376,7 +376,7 @@
                     </option>
                 </select>
             </label>
-            <label>
+            <label class="field">
                 {_relationship}
                 <select name="marital_status" form="real_search_form" data-default='0'>
                     <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['marital_status'] == $i">
@@ -392,7 +392,7 @@
         </div>
         <div class="search_option_content">
             <label class="checkbox">
-                <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="real_search_form">{_s_only_youtube}
+                <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="real_search_form"><span>{_s_only_youtube}</span>
             </label>
         </div>
     </div>
@@ -414,12 +414,12 @@
         </div>
         <div class="search_option_content">
             <label class="checkbox">
-                <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="real_search_form">{_s_only_performers}
+                <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="real_search_form"><span>{_s_only_performers}</span>
             </label>
             <label class="checkbox">
-                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="real_search_form">{_s_with_lyrics}
+                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="real_search_form"><span>{_s_with_lyrics}</span>
             </label>
-            <label>
+            <label class="field">
                 {_genre}
                 <select name='genre' form="real_search_form" data-default='any'>
                     <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>

@@ -18,7 +18,7 @@ const SimpleFormModal = vkify.once('SimpleFormModal', () => {
             '<textarea name="{{name}}" id="{{id}}" placeholder="{{placeholder}}" style="width:100%;resize:vertical;min-height:80px">{{value}}</textarea>'
         ),
         checkbox: Hb.compile(
-            '<label><input type="checkbox" name="{{name}}" id="{{id}}" {{#if checked}}checked{{/if}} {{#if onChange}}onchange="{{onChange}}"{{/if}} /> {{{text}}}</label>'
+            '<label class="checkbox"><input type="checkbox" name="{{name}}" id="{{id}}" {{#if checked}}checked{{/if}} {{#if onChange}}onchange="{{onChange}}"{{/if}} /><span>{{{text}}}</span></label>'
         ),
         file: Hb.compile(
             '<input type="file" name="{{name}}" id="{{id}}" {{#if accept}}accept="{{accept}}"{{/if}} {{#if multiple}}multiple{{/if}} style="{{#if hidden}}display:none{{/if}}" />'

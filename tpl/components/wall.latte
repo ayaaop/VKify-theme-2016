@@ -13,31 +13,54 @@
     </div>
 </div>
 {/capture}
+
+{var $tabs = [
+    [
+        'url' => "/wall{$owner}",
+        'title' => 'all_posts',
+        'active' => true,
+        'id' => 'wall_tab_all',
+        'count' => $count
+    ],
+    [
+        'url' => "/wall{$owner}?type=owners",
+        'title' => isset($club) ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20)),
+        'active' => false,
+        'id' => 'wall_tab_owners',
+        'translate' => isset($club) ? true : false,
+    ]
+]}
+
+{ifset $club}
+    {if isset($thisUser) && $club->getWallType() == 2}
+        {var $suggestedWallCount = $club->getSuggestedPostsCount($thisUser) ?? 0}
+        {if $suggestedWallCount > 0}
+            {var $tabs = array_merge($tabs, [[
+                'url' => "/club{$club->getId()}/suggested",
+                'title' => 'suggested',
+                'active' => false,
+                'id' => 'wall_tab_suggested',
+                'count' => $suggestedWallCount
+            ]])}
+        {/if}
+    {/if}
+{/ifset}
+
+{var $wallPostPlaceholder = null}
+{ifset $club}
+    {if isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)}
+        {var $wallPostPlaceholder = tr("suggest_new")}
+    {/if}
+{/ifset}
 <div class="wall_module">
+    <div n:if="$canPost" class="page_block">
+        {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true, placeholder => $wallPostPlaceholder}
+    </div>
+    <div class="page_block wall_posts_tabs">
+        {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'wall_top_tabs', white => true, extra => $wallSearchExtra}
+    </div>
     <div class="insertThere" id="postz"></div>
     <div id="underHeader">
-        <div n:if="$canPost" class="page_block">
-            {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
-        </div>
-        {var $tabs = [
-            [
-                'url' => "/wall{$owner}",
-                'title' => 'all_posts',
-                'active' => true,
-                'id' => 'wall_tab_all',
-                'count' => $count
-            ],
-            [
-                'url' => "/wall{$owner}?type=owners",
-                'title' => isset($club) ? "clubs_posts" : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20)),
-                'active' => false,
-                'id' => 'wall_tab_owners',
-                'translate' => isset($club) ? true : false,
-            ]
-        ]}
-        <div class="page_block wall_posts_tabs">
-            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'wall_top_tabs', white => true, extra => $wallSearchExtra}
-        </div>
         <div class="wall_posts content scroll_container">
             {if sizeof($posts) > 0}
                 {foreach $posts as $post}

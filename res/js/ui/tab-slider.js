@@ -1,6 +1,27 @@
 (function () {
 'use strict';
 
+function moveTabSlider(container, tabAnchor, animate = true) {
+    const slider = container?.querySelector('.ui_tabs_slider');
+    if (!slider || !tabAnchor) return;
+
+    tabAnchor.offsetHeight;
+
+    const { offsetLeft, offsetWidth } = tabAnchor;
+
+    if (animate) {
+        container.classList.add('ui_tabs_sliding');
+        slider.style.transform = `translateX(${offsetLeft}px)`;
+        slider.style.width = `${offsetWidth}px`;
+    } else {
+        container.classList.remove('ui_tabs_sliding');
+        slider.style.transform = `translateX(${offsetLeft}px)`;
+        slider.style.width = `${offsetWidth}px`;
+    }
+}
+
+window.__vkifyMoveTabSlider = moveTabSlider;
+
 window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function () {
     const tabContainers = document.querySelectorAll('.ui_tabs');
 
@@ -25,30 +46,10 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
 
         const state = container._tabSliderState;
 
-        function moveSliderTo(tabAnchor, animate = true) {
-            if (!tabAnchor || !slider) return;
-
-            tabAnchor.offsetHeight;
-
-            const { offsetLeft, offsetWidth } = tabAnchor;
-
-            if (animate) {
-                if (!container.classList.contains('ui_tabs_sliding')) {
-                    container.classList.add('ui_tabs_sliding');
-                }
-                slider.style.transform = `translateX(${offsetLeft}px)`;
-                slider.style.width = `${offsetWidth}px`;
-            } else {
-                container.classList.remove('ui_tabs_sliding');
-                slider.style.transform = `translateX(${offsetLeft}px)`;
-                slider.style.width = `${offsetWidth}px`;
-            }
-        }
-
         function initSliderPosition() {
             const activeTab = container.querySelector('.ui_tab_sel');
             if (activeTab) {
-                moveSliderTo(activeTab, false);
+                moveTabSlider(container, activeTab, false);
             }
         }
 
@@ -67,9 +68,14 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
             targetTab.classList.add('ui_tab_sel');
 
             const href = targetTab.getAttribute('href');
-            if (href) {
-                const fullUrl = new URL(href, window.location.href).href;
+            let handled = false;
 
+            if (typeof window.__vkifyOnWallTabSwitch === 'function') {
+                handled = window.__vkifyOnWallTabSwitch(targetTab) === true;
+            }
+
+            if (!handled && href) {
+                const fullUrl = new URL(href, window.location.href).href;
                 vkify.navigate(fullUrl);
             }
 
@@ -89,14 +95,14 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
 
             if (state.isAnimating) {
                 state.pendingTab = clickedTab;
-                moveSliderTo(clickedTab, true);
+                moveTabSlider(container, clickedTab, true);
                 return;
             }
 
             state.isAnimating = true;
             state.pendingTab = clickedTab;
 
-            moveSliderTo(clickedTab, true);
+            moveTabSlider(container, clickedTab, true);
 
             state.animationTimeout = setTimeout(() => {
                 finishTabSwitch(state.pendingTab);

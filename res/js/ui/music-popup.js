@@ -366,6 +366,7 @@ function patchPlayerInitEventsOnce() {
         if (!this.__vkifySeekResetBound && typeof this.setTrack === 'function') {
             this.__vkifySeekResetBound = true;
             vkify.hook(this, 'setTrack', function() {
+                ensurePlayerContext(this);
                 try {
                     if (this.audioPlayer) this.audioPlayer.currentTime = 0;
                 } catch (e) {
@@ -763,6 +764,16 @@ async function initMusicPopupTippyOnce() {
     anchor.__vkifyBindingTippy = false;
 }
 
+function defaultPlayerContext() {
+    return { object: null, pagesCount: 0, count: 0, playedPages: [] };
+}
+
+function ensurePlayerContext(player) {
+    if (!player?.context) {
+        player.context = defaultPlayerContext();
+    }
+}
+
 function patchPlayerContextCheckOnce() {
     if (!window.player || window.player.__vkifyPatchedContextCheck) return;
     window.player.__vkifyPatchedContextCheck = true;
@@ -772,6 +783,19 @@ function patchPlayerContextCheckOnce() {
         if (!this.context?.object?.url) return false;
         return original.call(this);
     };
+
+    window.player.hasContext = function() {
+        ensurePlayerContext(this);
+        return Boolean(this.context.object?.url);
+    };
+
+    if (typeof window.player.loadDump === 'function') {
+        vkify.hook(window.player, 'loadDump', function(dump_object) {
+            if (!dump_object?.context) {
+                dump_object.context = defaultPlayerContext();
+            }
+        }, 'before');
+    }
 }
 
 function bindAjCloseOnce() {
@@ -904,6 +928,56 @@ async function init() {
         window.__vkifyMusicPopupTryWrapUpdateFace();
     }
 }
+
+function updatePlaylistBookmarkButton(el, wasUnbookmark) {
+    const isBookmarked = !wasUnbookmark;
+
+    el.setAttribute('id', isBookmarked ? 'unbookmarkPlaylist' : 'bookmarkPlaylist');
+
+    const label = el.querySelector('.action_label');
+    if (label) {
+        label.innerHTML = isBookmarked ? tr('unbookmark') : tr('bookmark');
+        el.classList.toggle('video_add_button', !isBookmarked);
+        el.classList.toggle('video_delete_button', isBookmarked);
+        return;
+    }
+
+    if (el.classList.contains('audio_pl__actions_add') || el.classList.contains('audio_pl__actions_remove')) {
+        el.classList.toggle('audio_pl__actions_add', !isBookmarked);
+        el.classList.toggle('audio_pl__actions_remove', isBookmarked);
+        return;
+    }
+
+    el.innerHTML = isBookmarked ? tr('unbookmark') : tr('bookmark');
+}
+
+vkify.bindOnce('playlistBookmark', () => {
+    document.addEventListener('click', (e) => {
+        const el = e.target.closest('#bookmarkPlaylist, #unbookmarkPlaylist');
+        if (!el) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const wasUnbookmark = el.id === 'unbookmarkPlaylist';
+
+        $.ajax({
+            type: 'POST',
+            url: `/playlist${el.dataset.id}/action?act=${wasUnbookmark ? 'unbookmark' : 'bookmark'}`,
+            data: { hash: vkify.getCsrf() },
+            beforeSend: () => el.classList.add('lagged'),
+            success: (response) => {
+                if (response.success) {
+                    updatePlaylistBookmarkButton(el, wasUnbookmark);
+                    el.classList.remove('lagged');
+                } else {
+                    fastError(response.flash.message);
+                }
+            },
+        });
+    }, true);
+});
 
 vkify.onPage(init);
 })();

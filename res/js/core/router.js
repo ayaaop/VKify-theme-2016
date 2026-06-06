@@ -385,10 +385,6 @@ window.router = new class Router {
         window.processVkifyLocTags?.();
         window.reinitializeTooltips?.();
 
-        if (window.addSuggestedTabToWall) {
-            setTimeout(window.addSuggestedTabToWall, 100);
-        }
-
         if (location.pathname === '/search') {
             window.initializeSearchOptions;
             window.initializeSearchOptionToggle;

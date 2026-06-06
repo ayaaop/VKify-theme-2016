@@ -69,13 +69,17 @@
     width: 300px;
 }
 
-.form_field label.checkbox {
-    display: flex;
-    width: fit-content;
+.form_field label.checkbox,
+.form_field label.radio {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 label.checkbox .nobold {
+    display: block;
     margin-top: 5px;
+    line-height: 1.4;
 }
 
 .form_field #filename:not(:empty) {

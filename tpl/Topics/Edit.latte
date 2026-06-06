@@ -25,9 +25,9 @@
                     <div class="form_label">{_topic_settings}</div>
                     <div class="form_data">
                         {if $topic->getClub()->canBeModifiedBy($thisUser)}
-                            <label class="checkbox"><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
+                            <label class="checkbox"><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /><span>{_pin_topic}</span></label><br />
                         {/if}
-                        <label class="checkbox"><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
+                        <label class="checkbox"><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /><span>{_close_topic}</span></label>
                     </div>
                 </div>
                 <input type="hidden" name="hash" value="{$csrfToken}" />

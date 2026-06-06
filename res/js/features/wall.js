@@ -58,11 +58,11 @@ function renderEditMenuLayout(apiPost, type, postId) {
                     <div class="post-repost"></div>
                     <div class="post-source"></div>
                     <div class='post-opts'>
-                        ${type == 'post' ? `<label>
-                            <input type="checkbox" name="nsfw" ${apiPost.is_explicit ? 'checked' : ''} /> ${tr('contains_nsfw')}
+                        ${type == 'post' ? `<label class="checkbox">
+                            <input type="checkbox" name="nsfw" ${apiPost.is_explicit ? 'checked' : ''} /><span>${tr('contains_nsfw')}</span>
                         </label>` : ''}
-                        ${apiPost.owner_id < 0 && apiPost.can_pin ? `<label>
-                            <input type="checkbox" name="as_group" ${apiPost.from_id < 0 ? 'checked' : ''} /> ${tr('post_as_group')}
+                        ${apiPost.owner_id < 0 && apiPost.can_pin ? `<label class="checkbox">
+                            <input type="checkbox" name="as_group" ${apiPost.from_id < 0 ? 'checked' : ''} /><span>${tr('post_as_group')}</span>
                         </label>` : ''}
                     </div>
                     <input type="hidden" id="source" name="source" value="none" />
@@ -139,10 +139,10 @@ function renderRepostBottomLayout() {
                     </div>
                     <div class="post-opts tippy-menu tippy-content-template" id="__vkifyRepostOptsTooltip">
                         <label class="checkbox">
-                            <input type="checkbox" name="asGroup" /> ${tr('post_as_group')}
+                            <input type="checkbox" name="asGroup" /><span>${tr('post_as_group')}</span>
                         </label>
                         <label class="checkbox" id="__vkifyRepostSignedOpt" style="display:none">
-                            <input type="checkbox" name="signed" /> ${tr('add_signature')}
+                            <input type="checkbox" name="signed" /><span>${tr('add_signature')}</span>
                         </label>
                     </div>
                     <input type="button" value="${tr('send')}" class="button" id="__vkifyRepostSend" />
@@ -639,47 +639,262 @@ if (document.readyState === 'loading') {
     window.initTextareaInteraction();
 }
 
-function initSuggestedTabHooksOnce() {
-    if (!ge('__vkifyEnableSuggestedWallTab')) return;
-    if (!vkify.bindOnce('suggestedTabHooks', initSuggestedTabHooksOnce)) return;
+function getSuggestionPostNode(el) {
+    return el?.closest('.post') || el?.closest('table') || null;
+}
 
-    const addSuggestedTabToWall = () => {
-        const currentUrl = window.location.pathname;
-        const groupMatch = currentUrl.match(/^\/club(\d+)/);
-        if (groupMatch) {
-            const groupId = groupMatch[1];
-            const suggListElement = document.querySelector('.sugglist');
-            if (suggListElement) {
-                const wallTabs = document.querySelector('#wall_top_tabs');
-                if (wallTabs) {
-                    const existingTab = wallTabs.querySelector('#wall_tab_suggested');
-                    if (existingTab) {
-                        return;
-                    }
+function getClubPageUrl() {
+    const match = location.pathname.match(/^\/club(\d+)/);
+    return match ? `/club${match[1]}` : location.pathname.replace(/\/suggested$/, '');
+}
 
-                    const countMatch = suggListElement.textContent.match(/(\d+)/);
-                    const suggestedCount = countMatch ? countMatch[1] : '0';
+function setWallTabSelected(tabId, animate = true) {
+    const container = document.getElementById('wall_top_tabs');
+    const targetTab = document.getElementById(tabId)?.querySelector('.ui_tab');
+    if (!container || !targetTab) return;
 
-                    const suggestedTab = document.createElement('li');
-                    suggestedTab.id = 'wall_tab_suggested';
-                    suggestedTab.innerHTML = `
-                        <a class="ui_tab" href="/club${groupId}/suggested">
-                            ${tr('suggested')}
-                            <span class="ui_tab_count">${suggestedCount}</span>
-                        </a>
-                    `;
-                    wallTabs.appendChild(suggestedTab);
+    document.querySelectorAll('#wall_top_tabs > li').forEach((li) => {
+        const tab = li.querySelector('.ui_tab');
+        if (!tab) return;
+        tab.classList.toggle('ui_tab_sel', li.id === tabId);
+    });
+
+    window.__vkifyMoveTabSlider?.(container, targetTab, animate);
+}
+
+function isSuggestedWallOpen() {
+    const insertThere = document.querySelector('.wall_module .insertThere');
+    return insertThere?.style.display === 'block';
+}
+
+function showSuggestedWallContent() {
+    const insertThere = document.querySelector('.wall_module .insertThere');
+    const underHeader = document.getElementById('underHeader');
+    const tabLink = document.querySelector('#wall_tab_suggested a');
+    if (!insertThere || !underHeader || !tabLink) return;
+
+    underHeader.style.display = 'none';
+    insertThere.style.display = 'block';
+    insertThere.classList.add('infContainer');
+    history.pushState({}, '', tabLink.href);
+
+    if (insertThere.innerHTML !== '') return;
+
+    ky.get(tabLink.href, {
+        hooks: {
+            beforeRequest: [() => {
+                insertThere.insertAdjacentHTML('afterbegin', '<img src="/assets/packages/static/openvk/img/loading_mini.gif">');
+            }],
+            afterResponse: [async (_request, _options, response) => {
+                const result = new DOMParser()
+                    .parseFromString(await response.text(), 'text/html')
+                    .querySelector('.infContainer');
+                if (!result) return;
+                result.querySelectorAll('.bsdn').forEach(bsdnInitElement);
+                insertThere.innerHTML = result.innerHTML;
+            }],
+        },
+    });
+}
+
+function hideSuggestedWallContent() {
+    const insertThere = document.querySelector('.wall_module .insertThere');
+    const underHeader = document.getElementById('underHeader');
+    if (!insertThere || !underHeader) return;
+
+    underHeader.style.display = '';
+    insertThere.style.display = 'none';
+    insertThere.classList.remove('infContainer');
+    history.pushState({}, '', getClubPageUrl());
+}
+
+function updateSuggestionCounts(newCount) {
+    const count = String(newCount);
+
+    const tabCount = document.querySelector('#wall_tab_suggested .ui_tab_count');
+    if (tabCount) tabCount.textContent = count;
+
+    const cound = document.getElementById('cound');
+    if (cound) {
+        cound.textContent = tr('suggested_posts_in_group', newCount);
+    }
+
+    document.querySelectorAll('.page_block_header_inner .ui_crumb_count').forEach((el, idx, all) => {
+        if (idx === all.length - 1) el.textContent = count;
+    });
+
+    if (newCount < 1) {
+        if (isSuggestedWallOpen()) hideSuggestedWallContent();
+        document.getElementById('wall_tab_suggested')?.remove();
+        setWallTabSelected('wall_tab_all', false);
+    }
+}
+
+function removeSuggestionPost(postNode) {
+    if (!postNode) return;
+    postNode.style.transition = 'opacity 300ms ease-in-out';
+    postNode.style.opacity = '0';
+    postNode.classList.remove('post');
+    setTimeout(() => { postNode.outerHTML = ''; }, 300);
+}
+
+function loadMoreSuggestedPostsVkify() {
+    let link = location.href;
+    if (!link.includes('/suggested')) {
+        link += '/suggested';
+    }
+
+    const container = document.getElementById('postz') || document.getElementById('wall_block_posts');
+    if (!container) return;
+
+    ky.get(link, {
+        hooks: {
+            beforeRequest: [() => {
+                container.innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+            }],
+            afterResponse: [async (_request, _options, response) => {
+                const body = new DOMParser().parseFromString(await response.text(), 'text/html');
+                const posts = body.querySelectorAll('.post');
+
+                if (posts.length < 1) {
+                    const url = new URL(location.href);
+                    const page = Number(url.searchParams.get('p') || 1);
+                    if (page < 2) return;
+                    url.searchParams.set('p', String(page - 1));
+                    history.pushState({}, '', url);
+                    loadMoreSuggestedPostsVkify();
+                    return;
                 }
-            }
+
+                body.querySelectorAll('.bsdn').forEach(bsdnInitElement);
+                const source = body.getElementById('postz') || body.getElementById('wall_block_posts');
+                if (source) container.innerHTML = source.innerHTML;
+            }],
+        },
+    });
+}
+
+function initSuggestionsAdapterOnce() {
+    if (!vkify.bindOnce('suggestionsAdapter', initSuggestionsAdapterOnce)) return;
+    if (typeof window.ky === 'undefined' || typeof window.MessageBox !== 'function') return;
+
+    window.endSuggestAction = (newCount, postNode) => {
+        updateSuggestionCounts(newCount);
+        removeSuggestionPost(postNode);
+
+        const postsRoot = document.getElementById('postz') || document.getElementById('wall_block_posts');
+        if (
+            postsRoot
+            && postsRoot.querySelectorAll('.post').length < 1
+            && newCount > 0
+            && document.querySelector('.paginator')
+        ) {
+            loadMoreSuggestedPostsVkify();
         }
     };
 
-    window.addSuggestedTabToWall = addSuggestedTabToWall;
+    window.loadMoreSuggestedPosts = loadMoreSuggestedPostsVkify;
 
-    vkify.onPage(addSuggestedTabToWall);
+    window.__vkifyOnWallTabSwitch = (tab) => {
+        const tabId = tab.closest('li')?.id;
+        if (tabId === 'wall_tab_suggested') {
+            showSuggestedWallContent();
+            return true;
+        }
+        if (tabId === 'wall_tab_all' && isSuggestedWallOpen() && /^\/club\d+/.test(location.pathname)) {
+            hideSuggestedWallContent();
+            return true;
+        }
+        return false;
+    };
+
+    document.addEventListener('click', (e) => {
+        const declineBtn = e.target.closest('#decline_post');
+        if (declineBtn) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const post = getSuggestionPostNode(declineBtn);
+            const formData = new FormData();
+            formData.append('id', declineBtn.dataset.id);
+            formData.append('hash', u('meta[name=csrf]').attr('value'));
+
+            declineBtn.classList.add('lagged');
+            declineBtn.removeAttribute('id');
+
+            ky.post('/wall/decline', { body: formData }).then(async (response) => {
+                const json = await response.json();
+                if (json.success) {
+                    window.endSuggestAction(json.new_count, post);
+                } else {
+                    MessageBox(tr('error'), json.flash.message, [tr('ok')], [Function.noop]);
+                }
+                declineBtn.textContent = tr('decline_suggested');
+                declineBtn.id = 'decline_post';
+                declineBtn.classList.remove('lagged');
+            }).catch(console.error);
+
+            return;
+        }
+
+        const publishBtn = e.target.closest('#publish_post');
+        if (!publishBtn) return;
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        const post = getSuggestionPostNode(publishBtn);
+        const sourceText = post?.querySelector('.really_text')?.dataset?.text || '';
+        const body = `
+            <textarea id="pooblish" style="max-height:500px;resize:vertical;min-height:54px;"></textarea>
+            <label class="checkbox"><input type="checkbox" id="signatr" checked><span>${tr('add_signature')}</span></label>
+        `;
+
+        MessageBox(tr('publishing_suggested_post'), body, [tr('publish'), tr('cancel')], [
+            async () => {
+                const formData = new FormData();
+                formData.append('id', publishBtn.dataset.id);
+                formData.append('sign', document.getElementById('signatr')?.checked ? 1 : 0);
+                formData.append('new_content', document.getElementById('pooblish')?.value || '');
+                formData.append('hash', u('meta[name=csrf]').attr('value'));
+
+                publishBtn.classList.add('lagged');
+                publishBtn.removeAttribute('id');
+
+                try {
+                    const response = await ky.post('/wall/accept', { body: formData });
+                    const json = await response.json();
+
+                    if (json.success) {
+                        NewNotification(
+                            tr('suggestion_succefully_published'),
+                            tr('suggestion_press_to_go'),
+                            null,
+                            () => { window.location.assign('/wall' + json.id); }
+                        );
+                        window.endSuggestAction(json.new_count, post);
+                    } else {
+                        MessageBox(tr('error'), json.flash.message, [tr('ok')], [Function.noop]);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+
+                publishBtn.textContent = tr('publish_suggested');
+                publishBtn.id = 'publish_post';
+                publishBtn.classList.remove('lagged');
+            },
+            Function.noop,
+        ]);
+
+        const pooblish = document.getElementById('pooblish');
+        if (pooblish) pooblish.value = sourceText;
+        const diagBody = document.querySelector('.ovk-diag-body');
+        if (diagBody) diagBody.style.padding = '9px';
+    }, true);
 }
 
-initSuggestedTabHooksOnce();
+initSuggestionsAdapterOnce();
 
 vkify.once('reportPost', () => {
     window.reportPost = function (postId) {
@@ -850,7 +1065,6 @@ bindPostDeleteConfirmOnce();
 vkify.hook(vkify, 'onPageReady', () => {
     if (!window.postPopupManager?.currentModal) {
         window.postPopupManager.checkInitialUrl();
-        initSuggestedTabHooksOnce();
         bindPostDeleteConfirmOnce();
     }
 }, 'after');
@@ -996,14 +1210,14 @@ vkify.once('shareAudioPlaylist', () => {
                     <b>${tr('auditory')}</b>
 
                     <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
-                        <label>
+                        <label class="radio">
                             <input type="radio" name="repost_type" value="wall" checked>
-                            ${tr("in_wall")}
+                            <span>${tr("in_wall")}</span>
                         </label>
 
-                        <label>
+                        <label class="radio">
                             <input type="radio" name="repost_type" value="group">
-                            ${tr("in_group")}
+                            <span>${tr("in_group")}</span>
                         </label>
 
                         <select name="selected_repost_club" style='display:none;'></select>
@@ -1016,8 +1230,8 @@ vkify.once('shareAudioPlaylist', () => {
                         <textarea id='repostMsgInput' placeholder='...'></textarea>
 
                         <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                            <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                            <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                            <label class="checkbox"><input type='checkbox' name="asGroup"><span>${tr('post_as_group')}</span></label>
+                            <label class="checkbox"><input type='checkbox' name="signed"><span>${tr('add_signature')}</span></label>
                         </div>
                     </div>
                 </div>
@@ -1169,7 +1383,7 @@ const Hb = window.Handlebars;
 const tplMapIcon = `<svg class="map_svg_icon" width="13" height="12" viewBox="0 0 3.4395833 3.175"><g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g></svg>`;
 
 const postTpl = Hb.compile(
-`<div class="post page_block scroll_node" data-id="{{pretty_id}}">
+`<div class="post page_block scroll_node" data-id="{{pretty_id}}" data-uniqueid="{{pretty_id}}">
     <div class="post_header">
         <a class="post_image" href="{{owner.domain}}">
             <img src="{{owner.photo_50}}" width="50" class="post-avatar">
