@@ -2,6 +2,7 @@
 
 {var $isMy = $isMy ?? false}
 {var $audioHeaderCount = $mode == 'playlists' ? ($playlistsCount ?? 0) : ($audiosCount ?? 0)}
+{var $audioSearchSection = $mode == 'playlists' ? 'audios_playlists' : 'audios'}
 {var $pageTitle = tr('my_music')}
 
 {if $mode == 'playlists'}
@@ -199,8 +200,21 @@
                 
                 <div class="page_block">
                     {include "../components/page_block_header.latte", title => $pageTitle, count => $audioHeaderCount, translate => false}
-                    <div class="audiosDiv">
-                        <div class="audiosContainer audiosSideContainer" n:if="$mode != 'playlists'">
+                    {include "../components/search_bar.latte",
+                        id => 'audios_search_header',
+                        form_class => 'search_page_form',
+                        placeholder => tr('header_search'),
+                        action => '/search',
+                        section => $audioSearchSection,
+                        input_name => 'q',
+                        input_title => tr('header_search'),
+                        input_maxlength => '59',
+                        autocomplete => 'off',
+                        class => 'audios_search_header',
+                        onsubmit => 'this.submit(); return false;'
+                    }
+                    <div class="audiosDiv" n:if="$mode != 'playlists'">
+                        <div class="audiosContainer audiosSideContainer">
                             {if ($audiosCount ?? 0) <= 0}
                                 {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
                             {/if}
@@ -228,7 +242,7 @@
                             {include "../components/content_error.latte", icon => "no_music.svg", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
                         </div>
 
-                        <div class="scroll_container playlistContainer" n:if="$playlistsCount > 0">
+                        <div class="list_view scroll_container playlistContainer" n:if="$playlistsCount > 0">
                             {foreach $playlists as $playlist}
                                 {include 'playlistListView.latte', playlist => $playlist}
                             {/foreach}

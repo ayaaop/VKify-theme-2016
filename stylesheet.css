@@ -3019,6 +3019,8 @@ h4.gifts_section_header {
 .video_items_list {
     display: flex;
     flex-wrap: wrap;
+    padding-top: 15px;
+    padding-bottom: 0;
 }
 .video_block_layout {
     padding: 15px 15px 0;
@@ -3144,6 +3146,16 @@ h4.gifts_section_header {
     display: block;
     text-overflow: ellipsis;
     margin-top: 2px;
+}
+.video_item_info .video_description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 4px;
+    color: var(--muted-text-color);
+    font-size: 12.5px;
+    line-height: 16px;
 }
 .video_item_info .video_item_add_info {
     white-space: nowrap;

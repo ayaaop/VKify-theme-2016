@@ -1,5 +1,5 @@
 {block content}
-    <div class="video_item scroll_node" data-unique>
+    <div class="video_item scroll_node{if $search ?? false} search_content{/if}" data-uniqueid="video-{$video->getVirtualId()}">
         <a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getPrettyId()}">
             <div class="video_item_thumb_wrap">
                 <img src="{$video->getThumbnailURL()}"
@@ -18,7 +18,7 @@
                     <div class="video_thumb_play">
                     </div>
                 </div>
-                <div class="video_thumb_actions" n:if="$thisUser->getId() === $video->getOwner()->getId()">
+                <div class="video_thumb_actions" n:if="isset($thisUser) && $thisUser->getId() === $video->getOwner()->getId()">
                     <div>
                         <a href="/video{$video->getPrettyId()}/edit" class="video_thumb_action_edit" title="{tr('edit')}">
                             <div class="icon"></div>
@@ -30,7 +30,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="video_thumb_actions" n:if="$thisUser->getId() != $video->getOwner()->getId()">
+                <div class="video_thumb_actions" n:if="!isset($thisUser) || $thisUser->getId() != $video->getOwner()->getId()">
                     <div>
                         <a href="javascript:reportVideo({$video->getId()})" class="video_thumb_action_delete" title="{tr('report')}">
                             <div class="icon"></div>
@@ -41,7 +41,7 @@
         </a>
         <div class="video_item_info">
             <a id="videoOpen" data-id="{$video->getPrettyId()}" class="video_item_title" href="/video{$video->getPrettyId()}">
-                <span>{$video->getName()}</span>
+                <span class="video_name">{$video->getName()}</span>
             </a>
             <a class="video_item_author" href="{$video->getOwner()->getUrl()}">{$video->getOwner()->getCanonicalName()}</a>
             <div class="video_item_add_info">

@@ -96,7 +96,8 @@
                     autocomplete => 'off'
                 }
                     <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv,
-                    $section == "audios_playlists" && $count > 0 ? playlistContainer'>
+                    $section == "audios_playlists" && $count > 0 ? playlistContainer,
+                    $section == "videos" && $count > 0 ? video_items_list'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='scroll_node search_row' data-uniqueid="user-{$dat->getId()}" n:foreach="$data as $dat">
@@ -238,19 +239,17 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'videos'}
-                                <div class="videos" style="margin-inline: -2px">
-                                    <span class='scroll_node search_content' data-uniqueid="video-{$dat->getVirtualId()}" n:foreach="$data as $dat">
-                                        {include "../components/video.latte", video => $dat}
-                                    </span>
+                                {foreach $data as $dat}
+                                    {include "../components/video.latte", video => $dat, search => true}
+                                {/foreach}
 
-                                    <script n:if='$count > 0 && !empty($query)'>
-                                        function __scrollHook(page) {
-                                            highlightText({$query}, '.page_search', ['text'])
-                                        }
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', [".video_name"])
+                                    }
 
-                                        __scrollHook()
-                                    </script>
-                                </div>
+                                    __scrollHook()
+                                </script>
                             {elseif $section === 'audios'}
                                 <div class='scroll_node search_content' data-uniqueid="audio-{$dat->getId()}" n:foreach="$data as $dat">
                                     {include "../Audio/player.latte", audio => $dat}

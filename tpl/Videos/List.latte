@@ -12,6 +12,19 @@
             ['title' => tr("videos"), 'count' => $count]
         ], extra => '<a class="button" href="javascript:showFastVideoUpload()">'.tr("upload_video").'</a>'
         }
+        {include "../components/search_bar.latte",
+            id => 'videos_search_header',
+            form_class => 'search_page_form',
+            placeholder => tr('header_search'),
+            action => '/search',
+            section => 'videos',
+            input_name => 'q',
+            input_title => tr('header_search'),
+            input_maxlength => '59',
+            autocomplete => 'off',
+            class => 'videos_search_header',
+            onsubmit => 'this.submit(); return false;'
+        }
         <div class="video_block_layout">
             {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
             {if sizeof($data) > 0}
