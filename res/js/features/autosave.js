@@ -12,7 +12,7 @@
         menu_aplikoj: '.my_apps',
         menu_doxc: '.my_docs',
         menu_feva: '.my_fave',
-        menu_ligiloj: '.custom_link, .left_menu_nav_wrap',
+        menu_ligiloj: '.custom_link',
         menu_standardo: '.ad_poster'
     };
 
