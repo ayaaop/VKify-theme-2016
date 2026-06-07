@@ -34,17 +34,6 @@
             </div>
             <div class="photos_album_intro_info">
                 <span class="photos_album_info">{tr("is_x_photos", $album->getPhotosCount())}</span>
-                {if $album->getPhotosCount() > 1}
-                    <span class="divider"></span>
-                    <a class="sort_link photos_album_info" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
-                        {if $sort == 'desc'}
-                            {_new_first}
-                        {else}
-                            {_old_first}
-                        {/if}
-                        <div n:class="sort_link_icon, $sort == 'desc' ? sort_link_icon_desc : sort_link_icon_asc"></div>
-                    </a>
-                {/if}
                 {if $canEdit}
                     <span class="divider"></span>
                     <a href="/album{$album->getPrettyId()}/edit" onclick="showEditAlbumModal(event, '/album{$album->getPrettyId()}/edit')" class="photos_album_info">{_edit_album}</a>
