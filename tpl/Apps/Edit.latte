@@ -9,7 +9,9 @@
 {/block}
 
 {block bodyScripts}
-    <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/autosave.js"></script>
+    {if !$create}
+        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/autosave.js"></script>
+    {/if}
 {/block}
 
 {block content}
@@ -34,9 +36,9 @@
         ]
     ]}
     {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="side_link" href="/app' . $id  . '">' . $name . '</a>'}
-    <div class="page_block">
-        <div class="form_group settings_padding label_end game_edit">
-            <form method="POST" enctype="multipart/form-data" data-autosave="true">
+    <div class="page_block page_padding">
+        <div class="form_group label_end game_edit">
+            <form method="POST" enctype="multipart/form-data"{if !$create} data-autosave="true"{/if}>
                 <div class="form_field">
                     <div class="form_label">{_name}</div>
                     <div class="form_data">
@@ -64,7 +66,7 @@
                 <div class="form_field">
                     <div class="form_label">URL</div>
                     <div class="form_data">
-                        <input type="text" name="url" value="{$url ?? ''}" />
+                        <input type="text" name="url" id="appUrlInput" value="{$url ?? ''}" />
                     </div>
                 </div>
                 <div class="form_field">
@@ -73,29 +75,49 @@
                         <label class="checkbox"><input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /><span>{_app_enabled}</span></label>
                     </div>
                 </div>
-                <input type="hidden" name="hash" value="{$csrfToken}" />
+                {if $create}
+                    <div class="settings_save_footer">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_create}" class="button" />
+                    </div>
+                {else}
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                {/if}
             </form>
-        </div>
-    </div>
-
-    <div class="page_block">
-        {include "../components/page_block_header.latte", title => "additional_information"}
-        <div class="form_group settings_padding">
-            <div class="form_field">
-                <ul style="color: unset;">
-                    {if $create}
-                        <li>{_app_creation_hint_url}</li>
-                        <li>{_app_creation_hint_iframe}</li>
-                    {else}
+            {if !$create}
+                <div class="information">
+                    <ul>
                         <li>{tr("app_balance", $coins)|noescape} (<a href="javascript:withdraw({$id})">{_app_withdrawal_q}</a>)</li>
                         <li>{tr("app_users", $users)|noescape}</li>
-                    {/if}
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            {/if}
         </div>
     </div>
 
     <script>
-        window.coins = {$coins}
+        window.coins = {$coins};
+
+        {if $create}
+        (function initAppUrlInfoTooltip() {
+            const urlInput = document.getElementById('appUrlInput');
+            if (!urlInput || urlInput.dataset.urlInfoBound) return;
+            urlInput.dataset.urlInfoBound = '1';
+
+            tippy(urlInput, {
+                theme: 'light vk',
+                placement: 'right-start',
+                trigger: 'focus',
+                interactive: true,
+                interactiveBorder: 8,
+                appendTo: 'parent',
+                animation: 'left_right',
+                duration: [100, 100],
+                offset: [0, 8],
+                allowHTML: true,
+                content: {=(json_encode(tr('app_creation_hint_url') . '<br><br>' . tr('app_creation_hint_iframe')))|noescape}
+            });
+        })();
+        {/if}
     </script>
 {/block}

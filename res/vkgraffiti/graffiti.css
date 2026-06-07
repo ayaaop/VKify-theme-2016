@@ -19,17 +19,27 @@
 
 #graffiti_topbar {
   display: block;
-  height: 17px;
+  height: 26px;
   margin-left: auto;
   margin-right: auto;
-  background-color: #fff;
-  text-align:left;
+  text-align: left;
   overflow: hidden;
-  padding: 15px 20px 0px 20px;
+  padding: 5px 15px;
   z-index: 10003;
-  border-bottom: 1px solid #DEDFE1;
+  box-sizing: border-box;
 }
 
+#graffiti_topbar a {
+  color: var(--link-color, #71aaeb);
+  text-decoration: none;
+  font-family: Tahoma, Arial, Verdana, Sans-Serif, Lucida Sans;
+  font-size: 11px;
+  margin-right: 15px;
+}
+
+#graffiti_topbar a:hover {
+  text-decoration: underline;
+}
 
 #graffiti_gwrap {
   display: block;
@@ -41,8 +51,6 @@
   z-index: 10003;
 }
 
-
-
 #graffiti_aligner {
   display: block;
   padding: 0;
@@ -50,18 +58,19 @@
   overflow: hidden;
   width: 586px;
   height: 350px;
-  border: 1px solid #CCC;
-  background-color: #fff;
+  border: 1px solid var(--border-color, #CCC);
+  border-top: none;
+  background-color: var(--background-color-white, #fff);
   z-index: 10003;
 }
 
 
 
 #graffiti_overlay {
- position: relative;
- top: -350px;
- z-index: 10012;
- display: block;
+  position: relative;
+  top: -350px;
+  z-index: 10012;
+  display: block;
 }
 
 #graffiti_common {
@@ -89,36 +98,36 @@
 
 
 #graffiti_controls {
-width: 586px;
+  width: 586px;
   margin: 0 auto;
 }
 
 #graffiti_cpwrap {
-   display: none;
-   opacity: 0;
-   margin: 0; 
-   position: relative;
-   top: -210px;
-   left: 62px;
-   padding-top: 7px;
-   padding-bottom: 6px;
-   padding-left: 7px;
-   padding-right: 7px;
-   width: 253px;
-   overflow: hidden;
-   background-color: #E5E5E5;
-   z-index: 10013;
-   box-shadow: 0 0 3px rgba(214,214,214,0.6);
-   -moz-box-shadow: 0 0 3px rgba(214,214,214,0.6); 
-   -webkit-box-shadow: 0 0 3px rgba(214,214,214,0.6);
+  display: none;
+  opacity: 0;
+  margin: 0;
+  position: relative;
+  top: -210px;
+  left: 62px;
+  padding-top: 7px;
+  padding-bottom: 6px;
+  padding-left: 7px;
+  padding-right: 7px;
+  width: 253px;
+  overflow: hidden;
+  background-color: #E5E5E5;
+  z-index: 10013;
+  box-shadow: 0 0 3px rgba(214, 214, 214, 0.6);
+  -moz-box-shadow: 0 0 3px rgba(214, 214, 214, 0.6);
+  -webkit-box-shadow: 0 0 3px rgba(214, 214, 214, 0.6);
 }
 
 #graffiti_rewrap {
-   width: 586px; 
-   height: 0;
-   display: block;
-   margin: 0 auto;
-   overflow: visible;
+  width: 586px;
+  height: 0;
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
 }
 
 

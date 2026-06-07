@@ -4,8 +4,11 @@
 {var $table_body_id = "reports"}
 
 {block tabs}{include "../NoSpam/Tabs.latte", mode => "reports"}{/block}
-{block rtabs}
+{block narrow}
     {include "./Tabs.latte", mode => $mode}
+    <div id="reports-loader" style="display: none; padding: 64px;">
+        <div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>
+    </div>
 {/block}
 
 {block title}{_list_of_reports}{/block}
@@ -51,10 +54,4 @@
     <br />
     <b>Другие жалобы на этот контент: <a href="/scumfeed?orig={$x->getId()}">{$x->getDuplicatesCount()} шт.</a></b>
     {/if}
-{/block}
-
-{block bottom}
-    <center id="reports-loader" style="display: none; padding: 64px;">
-        <div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>
-    </center>
 {/block}

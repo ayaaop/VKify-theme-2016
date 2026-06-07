@@ -8,7 +8,7 @@
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
             ['title' => tr("gifts"), 'count' => $count]
-        ]}
+        ], extra: '<a href="/gifts?act=pick&user='.$user->getId().'" class="button">'.tr('send_gift').'</a>'}
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
             <div class="scroll_node" n:foreach="$data as $x">

@@ -379,4 +379,20 @@ function showHttpWarning() {
 
 vkify.ready(() => {
     setTimeout(showHttpWarning, 500);
+
+    const musicKeysDown = [32, 37, 39, 107, 109];
+    const musicKeysUp = [87, 65, 83, 68, 82, 77];
+
+    const handleKeyPropagation = (e) => {
+        const target = e.target;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+            const keysToBlock = e.type === 'keydown' ? musicKeysDown : (e.type === 'keyup' ? musicKeysUp : []);
+            if (keysToBlock.includes(e.keyCode || e.which)) {
+                e.stopPropagation();
+            }
+        }
+    };
+
+    document.documentElement.addEventListener('keydown', handleKeyPropagation, false);
+    document.documentElement.addEventListener('keyup', handleKeyPropagation, false);
 });

@@ -4,14 +4,25 @@
     {_poll_voters_list}
 {/block}
 
-{block header}
-    {_poll_voters_list} »
-    {$option[1]}
+{block size}
+    {include "../components/page_crumb_header.latte", crumbs => [
+        ['href' => "/poll{$pollId}", 'title' => tr('poll')],
+        ['title' => $option[1], 'count' => $count]
+    ]}
 {/block}
 
 {block tabs}
-    <div n:foreach="$options as $optionId => $optionName" class="tab" id="{$optionId == $option[0] ? 'activetabs' : 'ki'}">
-        <a id="{$optionId == $option[0] ? 'act_tab_a' : ''}" href="/poll{$pollId}/voters?option={base_convert($optionId, 10, 32)}">{$optionName}</a>
+    <div class="page_block wall_posts_tabs">
+        {var $tabs = []}
+        {foreach $options as $optionId => $optionName}
+            {var $tabs[] = [
+                'url' => '/poll' . $pollId . '/voters?option=' . base_convert(''.$optionId, 10, 32),
+                'title' => $optionName,
+                'active' => $optionId == $option[0],
+                'translate' => false,
+            ]}
+        {/foreach}
+        {include "../components/page_tabs_header.latte", tabs => $tabs, white => true}
     </div>
 {/block}
 

@@ -1,9 +1,11 @@
 {extends "@layout.latte"}
 
 {block wrap}
+{ifset narrow}
 <div class="wide_column_left">
     <div class="wide_column_wrap">
         <div class="wide_column">
+{/ifset}
             <div class="page_block wall_posts_tabs">
                 {ifset specpage}
                     {include specpage, x => $dat}
@@ -71,22 +73,14 @@
                     {/if}
                 </div>
             {/ifset}
+{ifset narrow}
         </div>
     </div>
     <div class="narrow_column_wrap">
         <div class="narrow_column">
-            {ifset rtabs}
-                {include rtabs}
-            {/ifset}
-
-            {ifset before_content}
-                {include before_content, x => $dat}
-            {/ifset}
-
-            {ifset bottom}
-                {include bottom}
-            {/ifset}
+            {include narrow}
         </div>
     </div>
 </div>
+{/ifset}
 {/block}

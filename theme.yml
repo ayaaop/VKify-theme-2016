@@ -1,14 +1,14 @@
 id: vkify16
-version: "3.3.3.3"
+version: "3.3.3.5"
 openvk_version: 0
 enabled: 1
 override_templates: true
 inherits_master: false
 metadata:
-    name:
-        _: "VKify16 (unstable)"
-        en: "VKify16 (unstable)"
-        ru: "VKify16 (нестабильна)"
-        uk: "VKify16 (нестабільна)"
-    author: "VKify, VKify coRE: koke228 (ovk.to/koke228); Стили VK 2016: thejenja (thejenja.github.io); VKify16: ayato"
-    description: "ВК 2016-17 гг."
+  name:
+    _: "VKify16 (unstable)"
+    en: "VKify16 (unstable)"
+    ru: "VKify16 (нестабильна)"
+    uk: "VKify16 (нестабільна)"
+  author: "VKify, VKify coRE: koke228 (ovk.to/koke228); Стили VK 2016: thejenja (thejenja.github.io); VKify16: ayato"
+  description: "ВК 2016-17 гг."

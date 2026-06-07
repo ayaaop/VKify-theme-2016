@@ -356,7 +356,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="module topics_module page_list_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
+						<div class="module topics_module notes_module page_list_module" n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
 							<a href="/notes{$user->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
 									<span class="header_label fl_l">
@@ -369,9 +369,12 @@
 							</a>
 							<div class="module_body" style="padding-block: 10px;">
 								<div class="topic_row clear_fix" n:foreach="$notes as $note" style="padding-top: 0;">
-									<div class="topic_info">
-										<a class="topic_title" href="/note{$note->getPrettyId()}">
-											{$note->getName()|truncate:50}
+									<div class="topic_info_wrap">
+										<a href="/note{$note->getPrettyId()}">
+											<div class="topic_icon"></div>
+											<div class="topic_title">
+												{$note->getName()|truncate:50}
+											</div>
 										</a>
 										<div class="topic_info">
 											{$note->getPublicationTime()}

@@ -22,8 +22,7 @@
             input_title => tr('header_search'),
             input_maxlength => '59',
             autocomplete => 'off',
-            class => 'videos_search_header',
-            onsubmit => 'this.submit(); return false;'
+            class => 'videos_search_header'
         }
         <div class="video_block_layout">
             {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}

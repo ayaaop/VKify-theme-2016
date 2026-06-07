@@ -36,8 +36,7 @@
             placeholder => tr('search_by_groups'),
             action => '/search',
             section => 'groups',
-            class => 'groups_search_header',
-            onsubmit => 'this.submit(); return false;'
+            class => 'groups_search_header'
         }
     </div>
 {/block}
@@ -105,7 +104,7 @@
     </div>
 {/block}
 
-{block bottom}
+{block narrow}
     <div n:if="$user->getId() !== $thisUser->getId()" class="page_block ui_rmenu ui_rmenu_pr">
         <a class="ui_ownblock clear_fix" href="{$user->getURL()}">
             <img class="ui_ownblock_img" src="{$user->getAvatarUrl('miniscule')}">

@@ -417,13 +417,7 @@ window.router = new class Router {
             if (typeof window.__resetPaginatorState === 'function') {
                 window.__resetPaginatorState();
             }
-            if (window.__vkifyPaginatorObserver && typeof window.__vkifyPaginatorObserver.observe === 'function') {
-                try {
-                    window.__vkifyPaginatorObserver.observe(paginator);
-                } catch (e) {
-                    console.warn('Failed to observe paginator:', e);
-                }
-            }
+            window.__vkifySchedulePaginatorCheck?.();
         }
 
         const smallBlock = u(`div[class$="_small_block"]`).nodes[0];
@@ -438,15 +432,6 @@ window.router = new class Router {
     }
 
     _unlinkObservers() {
-        const paginator = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
-        if (paginator && window.__vkifyPaginatorObserver && typeof window.__vkifyPaginatorObserver.unobserve === 'function') {
-            try {
-                window.__vkifyPaginatorObserver.unobserve(paginator);
-            } catch (e) {
-                console.warn('Failed to unobserve paginator:', e);
-            }
-        }
-
         const smallBlock = u(`div[class$="_small_block"]`).nodes[0];
         if (smallBlock && typeof smallBlockObserver !== 'undefined') {
             smallBlockObserver.unobserve(smallBlock);

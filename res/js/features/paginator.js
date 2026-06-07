@@ -99,16 +99,115 @@ window.__resetPaginatorState = function() {
     window.__vkifyPaginatorExhausted = false;
 };
 
+const PAGINATOR_ROOT_MARGIN = 200;
+
+const isPaginatorNearViewport = (el) => {
+    if (!el) return false;
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight + PAGINATOR_ROOT_MARGIN && rect.bottom > -PAGINATOR_ROOT_MARGIN;
+};
+
+const getPaginatorElement = () => u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
+
+const getScrollContainer = (paginatorEl) => {
+    if (paginatorEl) {
+        const host = paginatorEl.closest('.scroll_container');
+        if (host) return host;
+        const scope = paginatorEl.closest('.page_padding, .page_block, #content, main');
+        const scoped = scope?.querySelector('.scroll_container');
+        if (scoped) return scoped;
+    }
+    return u('.scroll_container').nodes[0] || null;
+};
+
+const getPaginatorInsertAnchor = (containerEl, paginatorEl) => {
+    if (!containerEl || !paginatorEl || !containerEl.contains(paginatorEl)) return null;
+    return paginatorEl.closest('.clear_fix') || paginatorEl.parentElement;
+};
+
+const appendScrollNode = (containerEl, paginatorEl, node) => {
+    const uid = scrollNodeUid(node);
+    if (uid && scrollNodeExists(uid)) return;
+
+    const imported = document.importNode(node, true);
+    const anchor = getPaginatorInsertAnchor(containerEl, paginatorEl);
+    if (anchor) {
+        containerEl.insertBefore(imported, anchor);
+    } else {
+        containerEl.appendChild(imported);
+    }
+};
+
+const refreshAlbumMasonry = (containerEl) => {
+    const masonryContainer = containerEl?.classList?.contains('album-flex')
+        ? containerEl
+        : containerEl?.querySelector('.album-flex');
+    if (!masonryContainer || !window.Masonry) return;
+
+    if (window.Masonry.get?.(masonryContainer)) {
+        window.Masonry.refresh(masonryContainer);
+    } else {
+        window.Masonry.initAll('.album-flex', {
+            itemSelector: '.masonry-item',
+            columns: 3,
+            gap: 10,
+            breakpoints: { 600: 2, 450: 1 },
+        });
+    }
+
+    window.__vkifySchedulePaginatorCheck?.();
+};
+
+const isNearDocumentBottom = () => (
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - PAGINATOR_ROOT_MARGIN
+);
+
+const isPaginatorTriggerZone = (paginatorEl) => (
+    isPaginatorNearViewport(paginatorEl) || isNearDocumentBottom()
+);
+
+const getLastLoadedPage = (paginatorEl) => {
+    if (window.__vkifyPaginatorLastLoaded > 0) {
+        return window.__vkifyPaginatorLastLoaded;
+    }
+    return Number(paginatorEl?.dataset?.currentPage || 0);
+};
+
+const canLoadNextPage = (paginatorEl) => {
+    if (!paginatorEl || window.__vkifyPaginatorExhausted) return false;
+    const nextPage = getNextPageNumber(paginatorEl);
+    if (!nextPage || Number.isNaN(nextPage)) return false;
+    return nextPage > getLastLoadedPage(paginatorEl);
+};
+const shouldAllowAutoScroll = () => {
+    const autoScrollDisabled = Number(localStorage.getItem('ux.auto_scroll') ?? 1) === 0;
+    const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1
+        || window.openvk?.current_id === 0
+        || window.openvk?.disable_ajax === 1;
+
+    if (autoScrollDisabled || ajaxRoutingDisabled) return false;
+    if (window.__vkifyPaginatorLoading || window.__vkifyPaginatorExhausted) return false;
+    if (u('.scroll_container').length < 1) return false;
+
+    const currentUrl = new URL(location.href);
+    const pageParam = parseInt(currentUrl.searchParams.get('p'), 10);
+    if (!Number.isNaN(pageParam) && pageParam > 1) return false;
+
+    return true;
+};
+
 window.__processPaginatorNextPage = async function (page) {
         if (window.__vkifyPaginatorExhausted) return;
 
-        const paginatorEl = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
-        const lastLoaded = Number(window.__vkifyPaginatorLastLoaded || paginatorEl?.dataset?.currentPage || 0);
+        const paginatorEl = getPaginatorElement();
+        const lastLoaded = getLastLoadedPage(paginatorEl);
         if (page <= lastLoaded) return;
         if (checkExhaustion(paginatorEl, page)) return;
 
         try {
-            const container = u('.scroll_container');
+            const containerEl = getScrollContainer(paginatorEl);
+            if (!containerEl) return;
+
             const parser = new DOMParser();
 
             const replaceUrl = new URL(location.href);
@@ -119,23 +218,17 @@ window.__processPaginatorNextPage = async function (page) {
             const doc = parser.parseFromString(htmlText, 'text/html');
 
             const newNodes = doc.querySelectorAll('.scroll_node');
-            newNodes.forEach(node => {
-                const uid = scrollNodeUid(node);
-                if (uid && scrollNodeExists(uid)) {
-                    return;
-                }
-                container.append(node);
-            });
+            newNodes.forEach(node => appendScrollNode(containerEl, paginatorEl, node));
 
             const newPaginator = doc.querySelector('.vkify-paginator:not(.vkify-paginator-at-top)');
-            const currentPaginator = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
+            const currentPaginator = getPaginatorElement();
 
             if (newPaginator && currentPaginator) {
                 currentPaginator.innerHTML = newPaginator.innerHTML;
                 currentPaginator.dataset.currentPage = newPaginator.dataset.currentPage || '';
                 currentPaginator.dataset.totalPages = newPaginator.dataset.totalPages || '';
-            } else if (newPaginator && !currentPaginator && container.length > 0) {
-                container.nodes[0].append(newPaginator.parentNode ? newPaginator.parentNode : newPaginator);
+            } else if (newPaginator && !currentPaginator && containerEl) {
+                containerEl.appendChild(newPaginator.closest('.clear_fix') || newPaginator.parentElement || newPaginator);
             } else if (!newPaginator && currentPaginator) {
                 currentPaginator.remove();
                 window.__vkifyPaginatorLastLoaded = page;
@@ -147,11 +240,13 @@ window.__processPaginatorNextPage = async function (page) {
                 return;
             }
 
-            const updatedPaginator = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
-            const containerEl = container.nodes[0];
-            if (containerEl && updatedPaginator && containerEl.lastElementChild !== updatedPaginator) {
-                containerEl.appendChild(updatedPaginator);
+            const updatedPaginator = getPaginatorElement();
+            const paginatorWrap = updatedPaginator?.closest('.clear_fix') || updatedPaginator?.parentElement;
+            if (containerEl && paginatorWrap && paginatorWrap.parentElement === containerEl && containerEl.lastElementChild !== paginatorWrap) {
+                containerEl.appendChild(paginatorWrap);
             }
+
+            refreshAlbumMasonry(containerEl);
 
             if (updatedPaginator) {
                 const currentFromDom = Number(updatedPaginator.dataset.currentPage || 0);
@@ -175,18 +270,6 @@ window.__processPaginatorNextPage = async function (page) {
             if (window.player?.isAtAudiosPage?.() && window.player?.isAtCurrentContextPage?.()) {
                 window.player.loadContext(page);
                 window.player.__highlightActiveTrack();
-            }
-
-            if (window.__vkifyPaginatorObserver) {
-                try {
-                    window.__vkifyPaginatorObserver.disconnect();
-                    const target = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
-                    if (target) {
-                        window.__vkifyPaginatorObserver.observe(target);
-                    }
-                } catch (e) {
-                    console.warn('Failed to reconnect paginator observer:', e);
-                }
             }
 
             if (typeof __scrollHook !== 'undefined') {
@@ -230,6 +313,9 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
             const refreshedBtn = stillExists.find('.vkify-paginator-loader');
             setButtonLoadingState(refreshedBtn, false);
         }
+        if (!window.__vkifyPaginatorExhausted) {
+            window.__vkifySchedulePaginatorCheck?.();
+        }
     }
 };
 
@@ -242,41 +328,60 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
         } catch (e) { /* stock al_wall observer */ }
     }
 
-    const initObserver = () => {
-        if (typeof IntersectionObserver !== 'function') return;
-        if (window.__vkifyPaginatorObserver) {
-            window.__vkifyPaginatorObserver.disconnect();
-        }
+    let scrollCheckScheduled = false;
+    let scrollCheckTimer = null;
 
-        window.__vkifyPaginatorObserver = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
+    const checkPaginatorInView = () => {
+        const paginatorEl = getPaginatorElement();
+        if (!paginatorEl) return;
+        if (!isPaginatorTriggerZone(paginatorEl)) return;
+        if (!shouldAllowAutoScroll()) return;
+        if (!canLoadNextPage(paginatorEl)) return;
 
-                const autoScrollDisabled = Number(localStorage.getItem('ux.auto_scroll') ?? 1) === 0;
-                const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1 || window.openvk?.current_id === 0 || window.openvk?.disable_ajax === 1;
+        const btn = u(paginatorEl).find('.vkify-paginator-loader');
+        if (btn.length < 1) return;
 
-                if (autoScrollDisabled || ajaxRoutingDisabled) return;
-                if (window.__vkifyPaginatorLoading || window.__vkifyPaginatorExhausted) return;
-                if (u('.scroll_container').length < 1) return;
-
-                const target = u(entry.target);
-                if (target.length < 1 || target.hasClass('vkify-paginator-at-top')) return;
-
-                const currentUrl = new URL(location.href);
-                if (currentUrl.searchParams && !Number.isNaN(parseInt(currentUrl.searchParams.get('p'), 10))) return;
-
-                const btn = target.find('.vkify-paginator-loader');
-                if (btn.length < 1) return;
-
-                handlePaginationTrigger(target.nodes[0], btn.nodes[0]);
-            });
-        }, { root: null, rootMargin: '200px', threshold: 0 });
-
-        const paginatorEl = u('.vkify-paginator:not(.vkify-paginator-at-top)').nodes[0];
-        if (paginatorEl) {
-            window.__vkifyPaginatorObserver.observe(paginatorEl);
-        }
+        handlePaginationTrigger(paginatorEl, btn.nodes[0]);
     };
+
+    const schedulePaginatorCheck = () => {
+        if (scrollCheckTimer) {
+            clearTimeout(scrollCheckTimer);
+        }
+        scrollCheckTimer = setTimeout(() => {
+            scrollCheckTimer = null;
+            checkPaginatorInView();
+        }, 80);
+    };
+
+    const schedulePaginatorCheckBurst = () => {
+        schedulePaginatorCheck();
+        setTimeout(checkPaginatorInView, 250);
+        setTimeout(checkPaginatorInView, 600);
+    };
+
+    const schedulePaginatorCheckSoon = () => {
+        if (scrollCheckScheduled) return;
+        scrollCheckScheduled = true;
+        requestAnimationFrame(() => {
+            scrollCheckScheduled = false;
+            checkPaginatorInView();
+            schedulePaginatorCheck();
+        });
+    };
+
+    window.__vkifyPaginatorCheck = checkPaginatorInView;
+    window.__vkifySchedulePaginatorCheck = schedulePaginatorCheckBurst;
+
+    const initPaginatorAutoScroll = () => {
+        schedulePaginatorCheckSoon();
+    };
+
+    if (!window.__vkifyPaginatorScrollBound) {
+        window.__vkifyPaginatorScrollBound = true;
+        window.addEventListener('scroll', schedulePaginatorCheckSoon, { passive: true });
+        window.addEventListener('resize', schedulePaginatorCheckSoon, { passive: true });
+    }
 
     u(document).on('click', '.vkify-paginator-loader', async (e) => {
         const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1 || window.openvk?.current_id === 0 || window.openvk?.disable_ajax === 1;
@@ -290,7 +395,7 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
         await handlePaginationTrigger(paginatorEl, btn.nodes[0]);
     });
 
-    vkify.onPage(initObserver);
+    vkify.onPage(initPaginatorAutoScroll);
 }
 
 })();

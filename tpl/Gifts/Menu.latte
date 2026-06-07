@@ -6,6 +6,7 @@
 {block content}
     <div class="page_block">
         {include "../components/page_crumb_header.latte", crumbs: [
+            ['href' => 'javascript:false', 'title' => tr("send_gift")],
             ['href' => $user->getURL(), 'title' => $user->getCanonicalName()],
             ['title' => tr("collections"), 'count' => $count]
         ]}
@@ -19,7 +20,7 @@
                         {$x->getName(tr("__lang"))}
                     </h4>
                     <div class="gifts_section_description">
-                        {$x->getDescription(tr("__lang"))}
+                        {$x->getDescription(tr("__lang"))|truncate:200}
                     </div>
                     <div class="gifts_section_scroll">
                         <div class="gift_section_wrap">
