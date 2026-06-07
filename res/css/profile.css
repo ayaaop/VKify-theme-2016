@@ -761,6 +761,10 @@ div.avatar_block:hover .avatar_variants {
   width: 100%;
   height: 100%;
 }
+.button_wide .profile_gift_icon {
+	width: 16px;
+	height: 16px;
+}
 
 .button.profile_more_btn {
   background-image: url(/themepack/vkify16/3.3.3.5/resource/icons/more_icon.png);
