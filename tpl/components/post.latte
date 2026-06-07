@@ -52,7 +52,7 @@
                 <a class="author" href="{$author->getURL()}">
                     {$author->getCanonicalName()}
                 </a>
-                <a class="page_verified" n:if="$author->isVerified()" href="verify"></a>
+                <a class="page_verified" n:if="$author->isVerified()" href="/verify"></a>
                 <span class="explain" n:ifcontent>
                     {$post->isDeactivationMessage() ? 
                         ($author->isFemale() ? tr($deac . "_f") : 
