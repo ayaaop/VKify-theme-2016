@@ -176,13 +176,6 @@
                                         <a href="{if $userTainted}/setSID/unset?hash={rawurlencode($csrfToken)}{else}/logout?hash={urlencode($csrfToken)}{/if}">{_menu_logout}</a>
                                     </div>
                                 </div>
-                                <div n:if="$userTainted" id="taintedUserTooltip" class="tippy-content-template" style="display: none;">
-                                    <div class="popup">
-                                        <a href="javascript:void(0)" class="popup-close" aria-label="{_close}"></a>
-                                        <b>{_you_entered_as} {$thisUser->getCanonicalName()}</b>
-                                        <p>{_please_rights|firstUpper} {_click_on} <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">{_there}</a>, {_to_leave}.</p>
-                                    </div>
-                                </div>
                             {/if}
                         {else}
                             <div class="link">
@@ -455,6 +448,7 @@
                 </div>
             </div>
 
+        {include "components/tainted.latte"}
         {include "components/cookies.latte"}
 
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
@@ -537,6 +531,8 @@
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 100,
                 "current_id": {isset($thisUser) ? $thisUser->getId() : 0},
+                "status": {isset($thisUser) ? $thisUser->getStatus() : ""},
+                "broadcast_music": {isset($thisUser) ? $thisUser->isBroadcastEnabled() : false},
                 "disable_ajax": {isset($disable_ajax) ? $disable_ajax : 0},
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
                 "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
@@ -554,13 +550,6 @@
 
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/page.js"></script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/tooltips.js"></script>
-        <script n:if="isset($userTainted) && $userTainted">
-        DismissablePopup.create({
-            trigger: 'userMenuTrigger',
-            content: 'taintedUserTooltip',
-            id: 'tainted',
-        });
-        </script>
 
         {* Bundled themepack JS (see build.mjs for module order) *}
         <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/dist/vkify16.bundle.js"></script>

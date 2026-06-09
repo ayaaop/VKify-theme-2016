@@ -1,0 +1,8 @@
+<div n:if="isset($userTainted) && $userTainted" class="bottom-popup tainted-popup">
+    <div class="contanier">
+        <div class="text">
+            <b>{_you_entered_as} {$thisUser->getCanonicalName()}</b>.
+            {_please_rights|firstUpper} {_click_on} <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">{_there}</a>, {_to_leave}.
+        </div>
+    </div>
+</div>
