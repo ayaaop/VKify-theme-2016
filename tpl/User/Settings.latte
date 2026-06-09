@@ -493,6 +493,8 @@
                         {include "../components/page_block_header.latte", title => "interface"}
                         <div class="form_group clear_fix settings_padding">
                             <form action="/settings?act=interface" method="POST" enctype="multipart/form-data" data-autosave="true">
+                                <input type="hidden" name="style_avatar" value="{$user->getStyleAvatar()}" />
+                                <input type="hidden" name="microblog" value="{if $user->hasMicroblogEnabled()}1{else}0{/if}" />
                                 <div class="form_field">
                                     <div class="form_label">{_style}</div>
                                     <div class="form_data">
