@@ -140,6 +140,9 @@ body {
     --video-overlay-background: rgba(0, 0, 0, 0.5);
     --video-overlay-background-hover: rgba(0, 0, 0, 0.6);
 
+    --elevator-bg-color: #dce2e8;
+    --elevator-text-color: #466a94;
+
     --backdrop-dripper-shadow-59: color-mix(in srgb,
             var(--body-background-color) 59%,
             transparent);
@@ -407,8 +410,38 @@ textarea:focus {
 }
 
 .toTop {
-    background-color: var(--module-header-background-color);
-    color: var(--text-color);
+    background-color: var(--transparent);
+    color: var(--elevator-text-color);
+	width: 114px;
+    top: 0px;
+    padding-top: 60px;
+    font-weight: 700;
+    font-size: 12.5px;
+    z-index: 1;
+	opacity: 1;
+	padding-top: 13px;
+	transition: padding 500ms ease;
+}
+.toTop nobr {
+	padding: 0 24px;
+	background: url("/themepack/vkify16/3.3.3.5/resource/icons/dev_toplink.png") no-repeat;
+	margin-left: 7px;
+}
+.toTop #wrap {
+    opacity: 0;
+}
+body.scrolled .toTop {
+    padding-top: 60px;
+}
+body.scrolled .toTop:hover {
+    opacity: 1;
+    background-color: var(--elevator-bg-color);
+}
+body.scrolled .toTop #wrap {
+    opacity: 0.5;
+}
+body.scrolled .toTop:hover #wrap {
+    opacity: 1;
 }
 
 .error_block {
@@ -1568,10 +1601,6 @@ div.container_gray>form>table {
 .audiosContainer .loadMore:hover {
     background-color: var(--audio-background-color-2);
     text-decoration: none;
-}
-
-.toTop {
-    top: 42px;
 }
 
 .common_icon {
