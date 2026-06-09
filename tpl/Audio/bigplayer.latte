@@ -54,7 +54,7 @@
             <div class="deviceButton musicIcon" data-tip='simple-black' data-align="bottom-end" data-tiptitle="{_mute_tip} [M]"></div>
 			<form name="status_popup_form" style="display: none !important;">
 				<input type="text" name="status" size="50" value="{$thisUser->getStatus()}">
-				<input type="checkbox" name="broadcast">
+				<input type="checkbox" name="broadcast" n:attr="checked => $thisUser->isBroadcastEnabled()">
 				<input type="hidden" name="hash" value="{$csrfToken}">
 			</form>
 			<div class="statusButton musicIcon{if $thisUser->isBroadcastEnabled()} pressed{/if}" data-tip="simple-black" data-align="bottom-end" data-tiptitle="{_broadcast_audio}"></div>

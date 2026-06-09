@@ -630,6 +630,12 @@ async function initMusicPopupTippyOnce() {
         <div class="repeatButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('repeat_tip')}"></div>
         <div class="shuffleButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('shuffle_tip')}"></div>
         <div class="deviceButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('mute_tip')}"></div>
+        <form name="status_popup_form" style="display: none !important;">
+            <input type="text" name="status" size="50" value="${escapeHtml(window.openvk?.status || '')}">
+            <input type="checkbox" name="broadcast" ${window.openvk?.broadcast_music ? 'checked' : ''}>
+            <input type="hidden" name="hash" value="${vkify.getCsrf()}">
+        </form>
+        <div class="statusButton musicIcon${window.openvk?.broadcast_music ? ' pressed' : ''}" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('broadcast_audio')}"></div>
     </div>
 </div>
 </div>
@@ -976,6 +982,81 @@ vkify.bindOnce('playlistBookmark', () => {
                 }
             },
         });
+    }, true);
+});
+
+vkify.bindOnce('statusBroadcastToggle', () => {
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.bigPlayer .additionalButtons .statusButton');
+        if (!btn) return;
+
+        e.preventDefault();
+
+        const parent = btn.closest('.additionalButtons') || btn.closest('.bigPlayer');
+        if (!parent) return;
+
+        const form = parent.querySelector('form[name="status_popup_form"]');
+        if (!form) return;
+
+        const isPressed = btn.classList.contains('pressed');
+        const newBroadcastState = !isPressed;
+
+        // Toggle visual state immediately
+        btn.classList.toggle('pressed', newBroadcastState);
+
+        // Sync other statusButtons and checkboxes on the page
+        document.querySelectorAll('.bigPlayer .additionalButtons .statusButton').forEach(otherBtn => {
+            if (otherBtn !== btn) {
+                otherBtn.classList.toggle('pressed', newBroadcastState);
+            }
+        });
+        document.querySelectorAll('input[name="broadcast"]').forEach(checkbox => {
+            checkbox.checked = newBroadcastState;
+        });
+
+        const statusVal = form.querySelector('input[name="status"]')?.value || '';
+        const hashVal = form.querySelector('input[name="hash"]')?.value || '';
+
+        const formData = new FormData();
+        formData.append('status', statusVal);
+        formData.append('broadcast', Number(newBroadcastState));
+        formData.append('hash', hashVal);
+
+        try {
+            let ok = false;
+            if (window.ky) {
+                const response = await window.ky.post('/edit?act=status', { body: formData });
+                ok = response.ok;
+            } else {
+                const response = await fetch('/edit?act=status', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                ok = response.ok;
+            }
+
+            if (!ok) {
+                throw new Error('Server returned non-ok status');
+            }
+            if (window.openvk) {
+                window.openvk.broadcast_music = newBroadcastState;
+            }
+        } catch (err) {
+            console.error(err);
+            // Revert visual state if failed
+            btn.classList.toggle('pressed', isPressed);
+            document.querySelectorAll('.bigPlayer .additionalButtons .statusButton').forEach(otherBtn => {
+                if (otherBtn !== btn) {
+                    otherBtn.classList.toggle('pressed', isPressed);
+                }
+            });
+            document.querySelectorAll('input[name="broadcast"]').forEach(checkbox => {
+                checkbox.checked = isPressed;
+            });
+        }
     }, true);
 });
 

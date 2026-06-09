@@ -302,13 +302,3 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
         return listeners;
     }, 'replace');
 })();
-
-vkify.onPage(function() {
-    const p = window.player;
-    if (!p || p.__vkifyListenPingPatched || typeof p.__countListen !== 'function') return;
-
-    p.__vkifyListenPingPatched = true;
-    p.__countListen = function() {
-        return false;
-    };
-});

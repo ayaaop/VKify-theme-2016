@@ -1,29 +1,16 @@
 (function () {
 'use strict';
 
-let audioWasPlaying = false;
-let videoWasPlaying = null;
-
 function pauseAudioForVideo() {
     if (!window.player?.audioPlayer) return;
     if (!window.player.audioPlayer.paused) {
-        audioWasPlaying = true;
         window.player.pause();
-    }
-}
-
-function resumeAudioAfterVideo() {
-    if (!window.player?.audioPlayer) return;
-    if (audioWasPlaying) {
-        audioWasPlaying = false;
-        window.player.play();
     }
 }
 
 function pauseVideoForAudio() {
     const playing = document.querySelector('video:not([paused])');
     if (playing && !playing.paused) {
-        videoWasPlaying = playing;
         playing.pause();
     }
 }
@@ -33,8 +20,6 @@ function bindVideoListeners(video) {
     video.__vkifyAudioCoordBound = true;
 
     video.addEventListener('play', pauseAudioForVideo);
-    video.addEventListener('pause', resumeAudioAfterVideo);
-    video.addEventListener('ended', resumeAudioAfterVideo);
 }
 
 function initVideoAudioCoordination() {
