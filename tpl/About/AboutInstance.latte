@@ -28,7 +28,7 @@
                             <div class="line_cell clear_fix">
                                 <div class="thumb">
                                     <a href="{$admin->getURL()}">
-                                        <img class="cell_img" src="{$admin->getAvatarUrl()}" alt="{$admin->getCanonicalName()}">
+                                        <img class="cell_img" src="{if str_contains($admin->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$admin->getAvatarUrl()}{/if}" alt="{$admin->getCanonicalName()}">
                                     </a>
                                 </div>
                                 <div class="desc_info">

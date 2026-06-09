@@ -41,7 +41,7 @@
             <div class="search_row" n:foreach="$data as $x">
                 <div class="img">
                     <a href="/app{$x->getId()}">
-                        <img style="max-width: 80px;" src="{$x->getAvatarUrl()}" />
+                        <img style="max-width: 80px;" src="{if str_contains($x->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$x->getAvatarUrl()}{/if}" />
                     </a>
                 </div>
                 <div class="info">

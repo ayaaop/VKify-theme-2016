@@ -2,7 +2,7 @@
     <div class="search_row" style="padding: 0">
         <div class="img">
             <a href="/app{$app->getId()}">
-                <img src="{$app->getAvatarUrl()}" />
+                <img src="{if str_contains($app->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$app->getAvatarUrl()}{/if}" />
             </a>
         </div>
         <div class="info">
