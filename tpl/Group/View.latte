@@ -108,7 +108,7 @@
 								<div class="people_cell" n:foreach="$followerRow as $follower">
 									<a class="people_cell_ava" href="{$follower->getURL()}">
 										<div class="people_cell_img">
-											<img src="{$follower->getAvatarUrl('miniscule')}" width="50" height="50" alt="{$follower->getFirstName()}">
+											<img src="{if str_contains($follower->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$follower->getAvatarUrl('miniscule')}{/if}" width="50" height="50" alt="{$follower->getFirstName()}">
 										</div>
 									</a>
 									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
@@ -244,7 +244,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{$author->getAvatarUrl()}" />
+										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -272,7 +272,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{$author->getAvatarUrl()}" />
+										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -284,7 +284,7 @@
 								{var $user = $manager->getUser()}
 								<div class="thumb">
 									<a href="{$user->getURL()}">
-										<img class="cell_img" src="{$user->getAvatarUrl()}" />
+										<img class="cell_img" src="{if str_contains($user->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$user->getAvatarUrl()}{/if}">
 									</a>
 								</div>
 								<div n:class="empty($manager->getComment()) ? 'info' : 'desc_info'">
