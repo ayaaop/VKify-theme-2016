@@ -443,9 +443,11 @@
                     <div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div>
                 </div>
             </div>
-
-        {include "components/tainted.latte"}
-        {include "components/cookies.latte"}
+        <div class="bottom-popups" n:ifcontent>
+            {include "components/tainted.latte"}
+            {include "components/http_warn.latte"}
+            {include "components/cookies.latte"}
+        </div>
 
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
         {script "js/node_modules/soundjs/lib/soundjs.min.js"}

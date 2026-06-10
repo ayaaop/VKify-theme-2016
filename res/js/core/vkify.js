@@ -354,31 +354,29 @@
 
 })();
 
-function showHttpWarning() {
-    if (location.protocol !== 'http:' || location.host.includes('localhost')) return;
-    if (window.DismissablePopup?.isShownThisSession?.('http_warn')) return;
-
-    const isOpenvkXyz = location.host.includes('openvk.xyz');
-    const message = isOpenvkXyz
-        ? `You are using an insecure protocol: <b>http</b>. Please always use <b>https</b>.<br><a href='https://${location.host}/'>Switch to https »</a>`
-        : `This OpenVK instance uses the outdated <b>http</b> protocol.<br>Please, migrate to <b>https</b>.`;
-
-    const triggerEl = document.querySelector('.home_button');
-    if (!triggerEl) return;
-
-    window.DismissablePopup?.create?.({
-        trigger: triggerEl,
-        content: `<div class="popup-content" style="padding:12px 28px 12px 16px;max-width:280px;position:relative;">${message}<button class="popup-close" style="position:absolute;top:4px;right:4px;background:none;border:none;cursor:pointer;font-size:16px;line-height:1;">&times;</button></div>`,
-        id: 'http_warn',
-        placement: 'bottom-start',
-        theme: 'light vk dismissable',
-        autoShow: true,
-        hideOnTriggerClick: true
-    });
-}
+window.dismissHttpWarning = function() {
+    const warningEl = document.querySelector('.http-warning-popup');
+    if (warningEl) {
+        warningEl.style.display = 'none';
+    }
+    document.cookie = "vkify_popup_shown_http_warn=1;path=/;max-age=31536000;SameSite=Lax";
+    try {
+        localStorage.setItem('vkify_popup_shown_http_warn', '1');
+    } catch (e) {}
+};
 
 vkify.ready(() => {
-    setTimeout(showHttpWarning, 500);
+    const warningTextEl = document.getElementById('http-warning-text');
+    if (warningTextEl) {
+        setTimeout(() => {
+            const link = warningTextEl.querySelector('a');
+            if (link && (link.href.includes('{url}') || link.href.includes('%7Burl%7D'))) {
+                const targetHost = location.host.includes('openvk.xyz') ? 'openvk.org' : location.host;
+                link.href = link.href.replace('{url}', targetHost).replace('%7Burl%7D', targetHost);
+                link.innerHTML = link.innerHTML.replace('{url}', targetHost).replace('%7Burl%7D', targetHost);
+            }
+        }, 100);
+    }
 
     const musicKeysDown = [32, 37, 39, 107, 109];
     const musicKeysUp = [87, 65, 83, 68, 82, 77];
