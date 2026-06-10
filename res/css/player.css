@@ -4,6 +4,9 @@
 
 .bsdn-player {
     font-family: var(--font-family);
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .bsdn_player * {
@@ -394,4 +397,103 @@ time.bsdn_timeFull,
 :fullscreen .vkifySliderValueTip {
     font-size: 16px;
     line-height: 22px;
+}
+
+.bsdn-player .bsdn_teaser {
+    width: 100%;
+    height: 100%;
+    background: var(--post-image);
+    border-radius: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    box-sizing: border-box;
+}
+
+.video_item {
+    cursor: pointer;
+}
+.video_thumb_play {
+    transition: transform 0.12s ease-out, background-color 100ms linear, opacity 60ms ease !important;
+}
+
+.video_item:hover .video_thumb_play,
+.bsdn_teaser:hover .video_thumb_play {
+    transform: scale(1.08) !important;
+}
+
+.bsdn-player .bsdn_teaser .video_thumb_play {
+    opacity: 1 !important;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   LOADING INDICATOR
+   ========================================================= */
+
+.bsdn_loader {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 40px;
+    height: 40px;
+    z-index: 5;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.bsdn-player.bsdn_loading .bsdn_loader {
+    display: flex;
+}
+.bsdn-player.bsdn_loading .bsdn_controls {
+    z-index: 6;
+}
+
+
+.bsdn-player:fullscreen video,
+.bsdn-player:fullscreen .media {
+    max-height: none !important;
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: contain !important;
+}
+
+.bsdn-player:-webkit-full-screen video,
+.bsdn-player:-webkit-full-screen .media {
+    max-height: none !important;
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: contain !important;
+}
+
+.bsdn-player:-moz-full-screen video,
+.bsdn-player:-moz-full-screen .media {
+    max-height: none !important;
+    height: 100% !important;
+    width: 100% !important;
+    object-fit: contain !important;
+}
+
+.bsdn-player:-webkit-full-screen .bsdn_fullscreenIcon ._enter,
+.bsdn-player:-moz-full-screen .bsdn_fullscreenIcon ._enter {
+    display: none;
+}
+
+.bsdn-player:-webkit-full-screen .bsdn_fullscreenIcon ._exit,
+.bsdn-player:-moz-full-screen .bsdn_fullscreenIcon ._exit {
+    display: block;
+}
+
+.bsdn-player.bsdn_loading .bsdn_teaser .video_thumb_play {
+    opacity: 0 !important;
+    transform: scale(0.5) !important;
+    pointer-events: none !important;
 }

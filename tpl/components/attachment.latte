@@ -12,9 +12,10 @@
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
     {if $tilesCount <= 1}
+        <div class="video_item media-href" style="--post-image: url({$attachment->getThumbnailURL()|noescape})" data-id='{$attachment->getPrettyId()}'>
         {if $attachment->getType() === 0}
-            <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
-                <video class="media" src="{$attachment->getURL()}"></video>
+            <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}" data-duration="{$attachment->getFormattedLength()}">
+                <video class="media" data-src="{$attachment->getURL()}"></video>
             </div>
         {else}
             {var $driver = $attachment->getVideoDriver()}
@@ -24,10 +25,11 @@
                 {$driver->getEmbed("100%")|noescape}
             {/if}
         {/if}
-
-        <div class="video-wowzer">
-            <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getPrettyId()}">{$attachment->getName()}</a>
-            <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
+        </div>
+        <div class="video_item_info">
+            <a class="video_item_title" id="videoOpen" data-id="{$attachment->getPrettyId()}" href="/video{$attachment->getPrettyId()}">
+                <span class="video_name">{$attachment->getName()}</span>
+            </a>
         </div>
     {else}
         <a class="video_item media-href compact_video" style="--post-image: url({$attachment->getThumbnailURL()|noescape})" id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">

@@ -27,6 +27,7 @@ const modules = [
     'ui/loader-utils.js',
     'ui/textarea-autosize.js',
     'ui/message-box-overrides.js',
+    'ui/choice-labels.js',
 
     'ui/sidebar-affix.js',
     'ui/custom-select.js',
@@ -53,6 +54,7 @@ const modules = [
     'features/paginator.js',
     'features/album-photos-loader.js',
     'features/audio-upload.js',
+    'features/avatar-upload.js',
     'features/gif-autoplay.js',
     'features/video-audio-coord.js',
     'features/video-delete.js',

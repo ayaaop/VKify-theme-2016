@@ -1,9 +1,25 @@
+// Wrap bsdnInitElement to track the currently hydrating element
+if (window.bsdnInitElement) {
+    var originalBsdnInitElement = window.bsdnInitElement;
+    window.bsdnInitElement = function(el) {
+        window.__currentlyHydratingBsdnElement = el;
+        try {
+            originalBsdnInitElement(el);
+        } finally {
+            window.__currentlyHydratingBsdnElement = null;
+        }
+    };
+}
+
 vkify.hook(window, '_bsdnTpl', function(name, author) {
     name   = escapeHtml(name);
     author = escapeHtml(author);
     var vkifyTip = function(k, fallback) {
         return (window.vkifylang && window.vkifylang[k]) || fallback || k;
     };
+
+    var currentEl = window.__currentlyHydratingBsdnElement;
+    var duration = currentEl ? currentEl.dataset.duration : '';
 
     return `
         <div class="bsdn_contextMenu" style="display: none;">
@@ -52,9 +68,10 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
             <div class="bsdn_soundIcon" data-tip="simple-black" data-tiptitle="${tr('mute_tip')}" data-delay="1" data-align="top-center" data-tiptheme="vkify-player" data-tipoffset="0,0">
                 <svg class="bsdn_volumeIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <g fill="#fff" fill-rule="evenodd">
-                        <path class="_wave2" d="M12.980843 18.8227621c-.032051 1.2070086-.6704932 1.608931-1.8287519.6202507-1.7185995-1.4687545-3.60887471-3.1942931-4.24215929-3.7215065-.63217937-.528454-1.64491897-.6202511-3.07284859-.6202511-1.42682441 0-1.81505873-.6202511-1.81505873-1.2405016s-.01369327-1.8288162-.01369327-2.001246c0-.0549443.00464608-.085056.01369327-.1291845.01954957-.0953551-.05817756-.9728525 0-1.591076.08510106-.90556663.38823432-1.24050252 1.81505873-1.24050252 1.42792962 0 2.44066922-.09179716 3.07284859-.62025109.63328458-.52845393 2.52355979-2.25275186 4.24215929-3.72150644 1.1582587-.98868024 1.7967003-.58675756 1.8287514.62025106.0431031 1.60645033 5e-7 3.85020301 5e-7 6.68226949 0 2.8295855.0431032 5.3568042 0 6.9632545zm2.9004386-8.7040437c-.3417088-.34170872-.3417088-.89572808 0-1.23743683.3417087-.34170876.8957281-.34170876 1.2374368 0 .1762598.17625972.4111566.46988072.6409943.87209686C18.1429358 10.4240187 18.375 11.1782274 18.375 12s-.2320642 1.5759813-.6152873 2.2466216c-.2298377.4022161-.4647345.6958371-.6409943.8720968-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368.0737402-.0737403.2138434-.2488693.3590057-.5029032C16.4820642 12.9552687 16.625 12.4907274 16.625 12s-.1429358-.9552687-.3847127-1.3783784c-.1451623-.2540339-.2852655-.4291629-.3590057-.5029032zm3-1.99999997c-.3417088-.34170875-.3417088-.89572811 0-1.23743686.3417087-.34170876.8957281-.34170876 1.2374368 0 .2637116.26371158.6207023.73969919.9665078 1.43131016.5167785 1.03355701.842501 2.25503497.8892639 3.71655167-.0467629 1.4032299-.3724854 2.6247079-.8892639 3.6582649-.3458055.6916109-.7027962 1.1675985-.9665078 1.4313101-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368.1375896-.1375897.3825507-.4642045.638697-.9764971.4071252-.8142505.6673665-1.7901701.7054825-2.8756411-.038116-1.1437578-.2983573-2.11967743-.7054825-2.93392787-.2561463-.51229266-.5011074-.83890747-.638697-.9764971z"></path>
-                        <path class="_wave1" d="M12.980843 18.8227621c-.032051 1.2070086-.6704932 1.608931-1.8287519.6202507-1.7185995-1.4687545-3.60887471-3.1942931-4.24215929-3.7215065-.63217937-.528454-1.64491897-.6202511-3.07284859-.6202511-1.42682441 0-1.81505873-.6202511-1.81505873-1.2405016s-.01369327-1.8288162-.01369327-2.001246c0-.0549443.00464608-.085056.01369327-.1291845.01954957-.0953551-.05817756-.9728525 0-1.591076.08510106-.90556663.38823432-1.24050252 1.81505873-1.24050252 1.42792962 0 2.44066922-.09179716 3.07284859-.62025109.63328458-.52845393 2.52355979-2.25275186 4.24215929-3.72150644 1.1582587-.98868024 1.7967003-.58675756 1.8287514.62025106.0431031 1.60645033 5e-7 3.85020301 5e-7 6.68226949 0 2.8295855.0431032 5.3568042 0 6.9632545zm2.9004386-8.7040437c-.3417088-.34170872-.3417088-.89572808 0-1.23743683.3417087-.34170876.8957281-.34170876 1.2374368 0 .1762598.17625972.4111566.46988072.6409943.87209686C18.1429358 10.4240187 18.375 11.1782274 18.375 12s-.2320642 1.5759813-.6152873 2.2466216c-.2298377.4022161-.4647345.6958371-.6409943.8720968-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368.0737402-.0737403.2138434-.2488693.3590057-.5029032C16.4820642 12.9552687 16.625 12.4907274 16.625 12s-.1429358-.9552687-.3847127-1.3783784c-.1451623-.2540339-.2852655-.4291629-.3590057-.5029032z"></path>
-                        <path class="_cross" d="M20 10.7625631l2.3812816-2.38128153c.3417087-.34170876.8957281-.34170876 1.2374368 0 .3417088.34170875.3417088.89572811 0 1.23743686L21.2374369 12l2.3812815 2.3812816c.3417088.3417087.3417088.8957281 0 1.2374368-.3417087.3417088-.8957281.3417088-1.2374368 0L20 13.2374369l-2.3812816 2.3812815c-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368L18.7625631 12l-2.3812815-2.38128157c-.3417088-.34170875-.3417088-.89572811 0-1.23743686.3417087-.34170876.8957281-.34170876 1.2374368 0zm-7.019157 8.060199c-.032051 1.2070086-.6704932 1.608931-1.8287519.6202507-1.7185995-1.4687545-3.60887471-3.1942931-4.24215929-3.7215065-.63217937-.528454-1.64491897-.6202511-3.07284859-.6202511-1.42682441 0-1.81505873-.6202511-1.81505873-1.2405016s-.01369327-1.8288162-.01369327-2.001246c0-.0549443.00464608-.085056.01369327-.1291845.01954957-.0953551-.05817756-.9728525 0-1.591076.08510106-.90556663.38823432-1.24050252 1.81505873-1.24050252 1.42792962 0 2.44066922-.09179716 3.07284859-.62025109.63328458-.52845393 2.52355979-2.25275186 4.24215929-3.72150644 1.1582587-.98868024 1.7967003-.58675756 1.8287514.62025106.0431031 1.60645033 5e-7 3.85020301 5e-7 6.68226949 0 2.8295855.0431032 5.3568042 0 6.9632545z"></path>
+                        <path class="_speaker" d="M12.980843 18.8227621c-.032051 1.2070086-.6704932 1.608931-1.8287519.6202507-1.7185995-1.4687545-3.60887471-3.1942931-4.24215929-3.7215065-.63217937-.528454-1.64491897-.6202511-3.07284859-.6202511-1.42682441 0-1.81505873-.6202511-1.81505873-1.2405016s-.01369327-1.8288162-.01369327-2.001246c0-.0549443.00464608-.085056.01369327-.1291845.01954957-.0953551-.05817756-.9728525 0-1.591076.08510106-.90556663.38823432-1.24050252 1.81505873-1.24050252 1.42792962 0 2.44066922-.09179716 3.07284859-.62025109.63328458-.52845393 2.52355979-2.25275186 4.24215929-3.72150644 1.1582587-.98868024 1.7967003-.58675756 1.8287514.62025106.0431031 1.60645033 5e-7 3.85020301 5e-7 6.68226949 0 2.8295855.0431032 5.3568042 0 6.9632545z"></path>
+                        <path class="_wave1" d="M15.8812816 10.1187184c-.3417088-.34170872-.3417088-.89572808 0-1.23743683.3417087-.34170876.8957281-.34170876 1.2374368 0 .1762598.17625972.4111566.46988072.6409943.87209686C18.1429358 10.4240187 18.375 11.1782274 18.375 12s-.2320642 1.5759813-.6152873 2.2466216c-.2298377.4022161-.4647345.6958371-.6409943.8720968-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368.0737402-.0737403.2138434-.2488693.3590057-.5029032C16.4820642 12.9552687 16.625 12.4907274 16.625 12s-.1429358-.9552687-.3847127-1.3783784c-.1451623-.2540339-.2852655-.4291629-.3590057-.5029032z"></path>
+                        <path class="_wave2" d="M18.8812816 8.11871843c-.3417088-.34170875-.3417088-.89572811 0-1.23743686.3417087-.34170876.8957281-.34170876 1.2374368 0 .2637116.26371158.6207023.73969919.9665078 1.43131016.5167785 1.03355701.842501 2.25503497.8892639 3.71655167-.0467629 1.4032299-.3724854 2.6247079-.8892639 3.6582649-.3458055.6916109-.7027962 1.1675985-.9665078 1.4313101-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368.1375896-.1375897.3825507-.4642045.638697-.9764971.4071252-.8142505.6673665-1.7901701.7054825-2.8756411-.038116-1.1437578-.2983573-2.11967743-.7054825-2.93392787-.2561463-.51229266-.5011074-.83890747-.638697-.9764971z"></path>
+                        <path class="_cross" d="M20 10.7625631l2.3812816-2.38128153c.3417087-.34170876.8957281-.34170876 1.2374368 0 .3417088.34170875.3417088.89572811 0 1.23743686L21.2374369 12l2.3812815 2.3812816c.3417088.3417087.3417088.8957281 0 1.2374368-.3417087.3417088-.8957281.3417088-1.2374368 0L20 13.2374369l-2.3812816 2.3812815c-.3417087.3417088-.8957281.3417088-1.2374368 0-.3417088-.3417087-.3417088-.8957281 0-1.2374368L18.7625631 12l-2.3812815-2.38128157c-.3417088-.34170875-.3417088-.89572811 0-1.23743686.3417087-.34170876.8957281-.34170876 1.2374368 0z"></path>
                     </g>
                 </svg>
             </div>
@@ -83,18 +100,18 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
             </div>
         </div>
 
+        <div class="bsdn_loader">
+            <div class="pr pr_baw pr_medium">
+                <div class="pr_bt"></div>
+                <div class="pr_bt"></div>
+                <div class="pr_bt"></div>
+            </div>
+        </div>
+
         <div class="bsdn_teaserWrap">
             <div class="bsdn_teaser">
-                <div class="bsdn_teaserTitleBox">
-                    <b>${name}</b>
-                    <span>${author}</span>
-                </div>
-
-                <div class="bsdn_teaserButton">
-                    <svg class="bsdn_playIcon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path class="_play" d="m8.13340613 5.10548415 10.49681277 6.24354325c.3559987.2117494.472936.6720001.2611866 1.0279989-.0638111.1072809-.1533894.1969388-.2606135.2608453l-10.4968128 6.256187c-.35581027.2120659-.81616483.095538-1.02823068-.2602722-.06921066-.1161237-.10574852-.2487949-.10574852-.3839792v-12.49973035c0-.41421357.33578644-.75.75-.75.13495801 0 .26741554.03641567.38340613.1054073z" fill="#fff"></path>
-                    </svg>
-                </div>
+                <div class="video_thumb_play"></div>
+                ${duration ? `<div class="video_thumb_label">${escapeHtml(duration)}</div>` : ''}
             </div>
         </div>
     `;
@@ -118,6 +135,18 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
 
     vkify.hook(window, '_bsdnEventListenerFactory', function(el, v) {
         var listeners = originalFactory(el, v);
+
+        if (!v.__playWrapped) {
+            v.__playWrapped = true;
+            var originalPlay = v.play;
+            v.play = function() {
+                if (!v.src && v.dataset.src) {
+                    v.src = v.dataset.src;
+                    v.load();
+                }
+                return originalPlay.apply(this, arguments);
+            };
+        }
         var dragState = { mode: null };
         var dragTip = null;
         var dragTipHideTimer = null;
@@ -191,14 +220,35 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
             if (repeatButton._tippy) repeatButton._tippy.setContent(tipText);
         };
 
-        if (!el.__vkifySliderValueTipBound) {
-            el.__vkifySliderValueTipBound = true;
-            document.addEventListener('mouseup', function() {
-                if (!dragState.mode) return;
-                dragState.mode = null;
-                setVolumeHoverTipEnabled(true);
-                hideDragTip();
-            });
+        // Clean up conflicting original listeners
+        delete listeners[".bsdn_terebilkaLowerWrap"];
+        delete listeners[".bsdn_soundControlSubWrap"];
+
+        if (listeners[".bsdn_video > video"]) {
+            listeners[".bsdn_video > video"].volumechange = [
+                function() {
+                    var player = el.querySelector(".bsdn-player");
+                    player.dataset.muted = v.volume === 0 ? "true" : "false";
+                    player.dataset.volume = v.volume > 0.5 ? "high" : "low";
+
+                    var percents = v.volume * 100;
+                    el.querySelector(".bsdn_soundControlPlayed").style.width = percents + "%";
+                    el.querySelector(".bsdn_soundControlBrick").style.left = "calc(" + percents + "% - 6.5px)";
+                }
+            ];
+            listeners[".bsdn_video > video"].timeupdate = [
+                function() {
+                    el.querySelector(".bsdn_timeReal").textContent = formatTime(v.currentTime);
+                    var percents = (v.duration && Number.isFinite(v.duration)) ? Math.ceil(v.currentTime / (v.duration / 100)) : 0;
+                    el.querySelector(".bsdn_terebilkaPlayed").style.width = percents + "%";
+                    el.querySelector(".bsdn_terebilkaBrick").style.left = "calc(" + percents + "% - 6.5px)";
+                }
+            ];
+            listeners[".bsdn_video > video"].loadedmetadata = [
+                function() {
+                    el.querySelector(".bsdn_timeFull").textContent = formatTime(v.duration);
+                }
+            ];
         }
 
         listeners[".bsdn_video > video"].play = [
@@ -207,38 +257,69 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
                     el.querySelector(".bsdn-player").classList.add("bsdn-dirty");
                 el.querySelector(".bsdn-player").classList.add("_bsdn_playing");
                 el.querySelector(".bsdn-player").dataset.ended = "false";
-                el.querySelector(".bsdn_teaserWrap").style.display = "none";
             }
         ];
 
         listeners[".bsdn_video > video"].pause = [
             function() {
                 el.querySelector(".bsdn-player").classList.remove("_bsdn_playing");
+                el.querySelector(".bsdn-player").classList.remove("bsdn_loading");
                 el.querySelector(".bsdn_teaserWrap").style.display = "flex";
             }
         ];
 
-        listeners[".bsdn_video > video"].volumechange.push(function() {
-            var player = el.querySelector(".bsdn-player");
-            player.dataset.muted = v.volume === 0 ? "true" : "false";
-            player.dataset.volume = v.volume > 0.5 ? "high" : "low";
-        });
+        // Loading state management
+        listeners[".bsdn_video > video"].waiting = [function() {
+            el.querySelector(".bsdn-player").classList.add("bsdn_loading");
+        }];
+        listeners[".bsdn_video > video"].seeking = [function() {
+            el.querySelector(".bsdn-player").classList.add("bsdn_loading");
+        }];
+        listeners[".bsdn_video > video"].loadstart = [function() {
+            el.querySelector(".bsdn-player").classList.add("bsdn_loading");
+        }];
+        listeners[".bsdn_video > video"].playing = [function() {
+            el.querySelector(".bsdn-player").classList.remove("bsdn_loading");
+            el.querySelector(".bsdn_teaserWrap").style.display = "none";
+        }];
+        listeners[".bsdn_video > video"].seeked = [function() {
+            el.querySelector(".bsdn-player").classList.remove("bsdn_loading");
+        }];
+        listeners[".bsdn_video > video"].canplay = [function() {
+            el.querySelector(".bsdn-player").classList.remove("bsdn_loading");
+        }];
+        listeners[".bsdn_video > video"].error = [function() {
+            el.querySelector(".bsdn-player").classList.remove("bsdn_loading");
+        }];
+
+        // Teaser overlay click → play
+        listeners[".bsdn_teaser"] = {
+            click: [function() {
+                if (v.paused) v.play();
+                else v.pause();
+            }]
+        };
+
+        // Cross-browser fullscreen toggle
+        listeners[".bsdn_fullScreenButton"] = {
+            click: [function() {
+                var isFs = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement;
+                if (isFs) {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+                } else {
+                    var player = el.querySelector(".bsdn-player");
+                    if (player.requestFullscreen) player.requestFullscreen();
+                    else if (player.webkitRequestFullscreen) player.webkitRequestFullscreen();
+                    else if (player.mozRequestFullScreen) player.mozRequestFullScreen();
+                }
+            }]
+        };
 
         listeners[".bsdn_video > video"].ended = [function() {
             el.querySelector(".bsdn-player").dataset.ended = "true";
         }];
-
-        listeners[".bsdn_video > video"].timeupdate.push(function() {
-            var percents = Math.ceil(v.currentTime / (v.duration / 100));
-            el.querySelector(".bsdn_terebilkaPlayed").style.width = percents + "%";
-            el.querySelector(".bsdn_terebilkaBrick").style.left = "calc(" + percents + "% - 6.5px)";
-        });
-
-        listeners[".bsdn_video > video"].volumechange.push(function() {
-            var percents = v.volume * 100;
-            el.querySelector(".bsdn_soundControlPlayed").style.width = percents + "%";
-            el.querySelector(".bsdn_soundControlBrick").style.left = "calc(" + percents + "% - 6.5px)";
-        });
 
         var getPointerProgress = function(clientX, rect) {
             var usable = Math.max(1, rect.width - 1);
@@ -248,25 +329,24 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
         };
 
         var seekFromOuter = function(e) {
+            if (!v.src && v.dataset.src) {
+                v.src = v.dataset.src;
+                v.load();
+            }
+            var duration = v.duration;
+            if (!Number.isFinite(duration) || duration <= 0) {
+                return;
+            }
             var inner = el.querySelector(".bsdn_terebilkaLowerWrap");
             var rect = inner.getBoundingClientRect();
             var progress = getPointerProgress(e.clientX, rect);
             var percents = progress.percents;
-            v.currentTime = (v.duration / 100) * percents;
+            v.currentTime = (duration / 100) * percents;
 
             if (dragState.mode === 'seek') {
                 var x = rect.left + progress.offset;
                 showDragTip(formatTime(v.currentTime), x, rect.top - 6);
             }
-        };
-        listeners[".bsdn_terebilkaWrap"] = {
-            mousedown: [function(e) {
-                dragState.mode = 'seek';
-                seekFromOuter(e);
-            }],
-            mousemove: [function(e) {
-                if (e.buttons === 1) seekFromOuter(e);
-            }]
         };
 
         var volumeFromOuter = function(e) {
@@ -281,14 +361,42 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
                 showDragTip(Math.round(percents) + '%', x, rect.top - 6);
             }
         };
+
+        var handleDocumentMouseMove = function(e) {
+            if (!dragState.mode) return;
+            if (dragState.mode === 'seek') {
+                seekFromOuter(e);
+            } else if (dragState.mode === 'volume') {
+                volumeFromOuter(e);
+            }
+        };
+
+        var handleDocumentMouseUp = function() {
+            if (!dragState.mode) return;
+            dragState.mode = null;
+            setVolumeHoverTipEnabled(true);
+            hideDragTip();
+            document.removeEventListener('mousemove', handleDocumentMouseMove);
+            document.removeEventListener('mouseup', handleDocumentMouseUp);
+        };
+
+        listeners[".bsdn_terebilkaWrap"] = {
+            mousedown: [function(e) {
+                dragState.mode = 'seek';
+                setVolumeHoverTipEnabled(false);
+                seekFromOuter(e);
+                document.addEventListener('mousemove', handleDocumentMouseMove);
+                document.addEventListener('mouseup', handleDocumentMouseUp);
+            }]
+        };
+
         listeners[".bsdn_soundControl"] = {
             mousedown: [function(e) {
                 dragState.mode = 'volume';
                 setVolumeHoverTipEnabled(false);
                 volumeFromOuter(e);
-            }],
-            mousemove: [function(e) {
-                if (e.buttons === 1) volumeFromOuter(e);
+                document.addEventListener('mousemove', handleDocumentMouseMove);
+                document.addEventListener('mouseup', handleDocumentMouseUp);
             }]
         };
 
@@ -302,3 +410,18 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
         return listeners;
     }, 'replace');
 })();
+
+// Re-hydrate any players that were hydrated before this script loaded
+if (window.bsdnInitElement) {
+    document.querySelectorAll(".bsdn").forEach(function(el) {
+        var hydratedDiv = el.querySelector(".bdsn-hydrated");
+        if (hydratedDiv) {
+            var video = hydratedDiv.querySelector("video");
+            if (video) {
+                el.innerHTML = '';
+                el.appendChild(video);
+            }
+        }
+        bsdnInitElement(el);
+    });
+}

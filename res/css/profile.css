@@ -133,7 +133,6 @@
   float: right;
   font-size: 13.5px;
   opacity: 0.9;
-  filter: alpha(opacity=90);
   margin: -1px 0 0 5px;
 }
 
@@ -488,6 +487,9 @@ table.ugc-table * {
   background-position: 0px -44px;
   margin-top: 0px;
 }
+.audioStatus a {
+  font-weight: 400;
+}
 
 #basicInfo {
   padding-top: 10px;
@@ -576,25 +578,48 @@ table.ugc-table * {
   padding-bottom: 5px;
 }
 
+.avatar_controls .avatar_variants,.avatarDelete {
+  background-color: rgba(29,32,34,.6);
+}
+
+.avatar_controls .avatar_variants {
+	width: 200px;
+	margin-bottom: 0;
+	transform: translateY(100%);
+  transition: all 200ms ease-in-out
+}
+
 div.avatar_block:hover .avatar_variants {
-  margin-bottom: 0;
+	margin-bottom: 0;
+	transform: translateY(0);
 }
 
 .avatarDelete {
   right: 0;
+  padding: 5px;
+  height: unset;
+  width: unset;
+  border-radius: 0 2px 0 2px;
+}
+.avatarDelete:before {
+	display: block;
+	background: url(/themepack/vkify16/3.3.3.5/resource/icons/attach_icons.png) no-repeat 0 -40px;
+	opacity: 0.85;
+	width: 8px;
+	height: 8px;
+}
+.avatarDelete:hover:before {
+  opacity: 1;
 }
 
 .avatar_block {
   margin-bottom: 10px;
+  clip-path: inset(0 0 0 0)
 }
 
 .avatar_block_inner img {
   height: fit-content;
   width: 100%;
-}
-
-.avatar_controls .avatar_variants {
-  width: 200px;
 }
 
 .avatar_block .add_image_text {
@@ -689,7 +714,6 @@ div.avatar_block:hover .avatar_variants {
   padding: 6px;
   margin: 10px 6px;
   opacity: 0.6;
-  filter: alpha(opacity=60);
 }
 
 .profile_warning_hide_wrap:hover {

@@ -82,7 +82,7 @@ vkify.once('mediaModals', function () {
                         player_html = `
                     <div class="video-player-container" style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%;">
                         <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
-                            <video class='media' src='${video_object.player}' style="width: 100%; height: 100%; object-fit: contain;"></video>
+                            <video class='media' data-src='${video_object.player}' style="width: 100%; height: 100%; object-fit: contain;"></video>
                         </div>
                     </div>
                 `;

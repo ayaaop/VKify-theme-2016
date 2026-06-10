@@ -12,7 +12,7 @@
         <div class="video_block_layout" style="padding-top: 20px;">
             {if $video->getType() === 0}
                 <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
-                    <video src="{$video->getURL()}"></video>
+                    <video data-src="{$video->getURL()}"></video>
                 </div>
             {else}
                 {var $driver = $video->getVideoDriver()}
@@ -76,15 +76,7 @@
                 </div>
             </div>
             <div class="video_info_description" n:if="$video->getDescription()">
-                {var $videoDesc = $video->getDescription($html = false)}
-                {var $bigText = strlen($videoDesc) > 500}
-                {if $bigText}
-                    <span class="truncated_text">{$videoDesc|truncate:500|noescape}</span>
-                    <span class="full_text hidden">{$video->getDescription()}</span>
-                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                {else}
-                    {$video->getDescription()}
-                {/if}
+                {include "../components/truncated_text.latte", html => $video->getDescription(), limit => 500}
             </div>
         </div>
         <div class="clear_fix video_comments">
