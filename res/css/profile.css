@@ -106,7 +106,7 @@
 
 .page_album_title {
   font-size: 12.5px;
-  background: url(/themepack/vkify16/3.3.3.5/resource/album_top_shadow.png);
+  background: url(/themepack/vkify16/3.3.3.6/resource/album_top_shadow.png);
   color: var(--white);
   position: absolute;
   bottom: 0;
@@ -147,7 +147,7 @@
 
 .page_album_nocover {
   background: var(--album-background-color)
-    url(/themepack/vkify16/3.3.3.5/resource/camera_big.png) no-repeat 50% 45%;
+    url(/themepack/vkify16/3.3.3.6/resource/camera_big.png) no-repeat 50% 45%;
   width: 279px;
   height: 185px;
 }
@@ -238,7 +238,7 @@
   right: 0;
   background: var(--black);
   background: var(--video-overlay-background)
-    url(/themepack/vkify16/3.3.3.5/resource/video_play_small.png) 19px 13px
+    url(/themepack/vkify16/3.3.3.6/resource/video_play_small.png) 19px 13px
     no-repeat;
   margin: auto;
   width: 50px;
@@ -481,7 +481,7 @@ table.ugc-table * {
   margin: 0;
 }
 .audioStatus::before {
-  background-image: url("/themepack/vkify16/3.3.3.5/resource/icons/video_actions.png");
+  background-image: url("/themepack/vkify16/3.3.3.6/resource/icons/video_actions.png");
   width: 13px;
   height: 13px;
   background-position: 0px -44px;
@@ -603,7 +603,7 @@ div.avatar_block:hover .avatar_variants {
 }
 .avatarDelete:before {
 	display: block;
-	background: url(/themepack/vkify16/3.3.3.5/resource/icons/attach_icons.png) no-repeat 0 -40px;
+	background: url(/themepack/vkify16/3.3.3.6/resource/icons/attach_icons.png) no-repeat 0 -40px;
 	opacity: 0.85;
 	width: 8px;
 	height: 8px;
@@ -675,7 +675,7 @@ div.avatar_block:hover .avatar_variants {
   width: 21px;
   height: 21px;
   margin: 10px;
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/add_info_icons.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/add_info_icons.png)
     no-repeat 0 0;
 }
 
@@ -725,7 +725,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
   width: 9px;
   height: 9px;
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/attach_icons.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/attach_icons.png)
     no-repeat 0 0;
 }
 
@@ -778,7 +778,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/gift_icon.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/gift_icon.png)
     no-repeat;
   background-position: center;
   background-size: 11px;
@@ -791,7 +791,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .button.profile_more_btn {
-  background-image: url(/themepack/vkify16/3.3.3.5/resource/icons/more_icon.png);
+  background-image: url(/themepack/vkify16/3.3.3.6/resource/icons/more_icon.png);
   background-repeat: no-repeat;
   background-position: 100% 13px;
   width: 36px;
@@ -886,7 +886,7 @@ div.avatar_block:hover .avatar_variants {
   display: block;
   position: absolute;
   content: "";
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/group_info_cons.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/group_info_cons.png)
     no-repeat 0 0;
   height: 15px;
   width: 15px;
@@ -899,7 +899,7 @@ div.avatar_block:hover .avatar_variants {
   (-o-min-device-pixel-ratio: 2/1),
   (min-resolution: 192dpi) {
   .group_info_row:before {
-    background-image: url(/themepack/vkify16/3.3.3.5/resource/icons/group_info_cons_2x.png);
+    background-image: url(/themepack/vkify16/3.3.3.6/resource/icons/group_info_cons_2x.png);
     background-size: 15px 149px;
   }
 }
@@ -927,11 +927,11 @@ div.avatar_block:hover .avatar_variants {
   left: 0;
   width: 12px;
   height: 12px;
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/topic_icon.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/topic_icon.png)
     no-repeat 0 0;
 }
 .topics_module.notes_module .topic_icon {
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/post_icon.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/post_icon.png)
     no-repeat;
   background-position: -5px -244px;
   height: 16px;
@@ -997,7 +997,7 @@ div.avatar_block:hover .avatar_variants {
   cursor: pointer;
 }
 .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/group_icons.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/group_icons.png)
     no-repeat;
   position: absolute;
   display: block;
@@ -1011,7 +1011,7 @@ div.avatar_block:hover .avatar_variants {
   padding: 17px 13px 17px 47px;
 }
 .wide_column .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.5/resource/icons/group_icons_big.png)
+  background: url(/themepack/vkify16/3.3.3.6/resource/icons/group_icons_big.png)
     no-repeat;
   width: 25px;
   height: 27px;
