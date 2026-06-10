@@ -1750,6 +1750,12 @@ table, .video-wowzer {
     line-height: 1.462;
     word-wrap: break-word;
     resize: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color-2) var(--module-background-color)
+}
+
+.model_content_textarea textarea::-webkit-scrollbar {
+    width: 4px;
 }
 
 .model_content_textarea textarea.small-textarea:not(.expanded-textarea) {
@@ -1761,7 +1767,7 @@ table, .video-wowzer {
 
 .model_content_textarea.shown textarea {
     min-height: 80px;
-    max-height: none;
+    max-height: 200px;
 }
 
 .model_content_textarea:not(.shown) .post-buttons {
@@ -2786,7 +2792,7 @@ h4.gifts_section_header {
 }
 .reply_actions {
     height: 11px;
-    padding-top: 4px;
+    padding-top: 1px;
     position: absolute;
     right: 0;
     white-space: nowrap;

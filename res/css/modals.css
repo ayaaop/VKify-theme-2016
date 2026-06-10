@@ -46,7 +46,7 @@
   background: #222222;
   border-radius: 3px;
   min-height: 400px;
-  max-height: 90vh;
+  max-height: 95vh;
   overflow: hidden;
   position: relative;
   display: flex;
@@ -70,7 +70,6 @@
 .pv_photo img {
   margin: auto;
   width: auto;
-  max-height: 80vh;
   height: 100%;
   max-width: 100%;
   display: block;

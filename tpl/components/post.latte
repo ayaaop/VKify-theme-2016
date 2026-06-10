@@ -196,7 +196,7 @@
         </div>
     </div>
     <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" id="commentTextArea{$commentTextAreaId}" n:class="post-menu-s, ($commentsCount == 0 ? 'hidden')">
-        <a n:if="$commentsCount > 3" href="wall{$post->getPrettyId()}" class="button button_wide button_gray expand_button post_link">{_view_other_comments}</a>
+        <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}#replies" class="button button_wide button_gray expand_button post_link">{_view_other_comments}</a>
         <div n:ifcontent class="comments">
             {foreach $comments as $comment}
                 {include "comment.latte", comment => $comment, $compact => true}

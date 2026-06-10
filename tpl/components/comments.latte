@@ -1,5 +1,5 @@
 {if sizeof($comments) > 0}
-    <div class="page_block comments">
+    <div id="replies" class="page_block comments">
         {if isset($sort) && !is_null($sort) && $count > 5}
             <div class="post_replies_header">
             <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
