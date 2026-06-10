@@ -32,17 +32,23 @@ window.setTip = window.setTip || function (obj, text, interactive = false) {
 };
 
 window.expandText = function (item) {
-    const container = item.closest('.really_text') || item.parentElement;
-    if (!container) return;
-
-    const truncated = container.querySelector('.truncated_text');
-    const full = container.querySelector('.full_text');
+    const element = item.parentElement;
+    if (!element) return;
+    
+    const parentContainer = element.parentElement;
+    if (!parentContainer) return;
+    
+    const truncated = parentContainer.querySelector('.truncated_text');
+    const full = parentContainer.querySelector('.full_text');
     if (!truncated || !full) return;
-
-    const collapsed = full.classList.contains('hidden');
-    truncated.style.display = collapsed ? 'none' : 'inline';
-    full.classList.toggle('hidden', !collapsed);
-    item.textContent = tr(collapsed ? 'show_less' : 'show_more');
+    
+    if (element.classList.contains('truncated_text')) {
+        truncated.classList.add('hidden');
+        full.classList.remove('hidden');
+    } else {
+        full.classList.add('hidden');
+        truncated.classList.remove('hidden');
+    }
 };
 
 window.showBlueWarning = window.showBlueWarning || function (content) {

@@ -27,17 +27,7 @@
             </div>
             <div class="post-content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
-                    {var $commentText = $comment->getText($html = false)}
-                    {var $bigText = strlen($commentText) > 500}
-                    <div class="really_text">
-                        {if $bigText}
-                            <span class="truncated_text">{$commentText|truncate:500|noescape}</span>
-                            <span class="full_text hidden">{$comment->getText()|noescape}</span>
-                            <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                        {else}
-                            {$comment->getText()|noescape}
-                        {/if}
-                    </div>
+                    {include "truncated_text.latte", html => $comment->getText(), plain => $comment->getText(false), limit => 500}
 
                     {var $attachmentWidth = 180}
                     {var $attachmentsLayout = $comment->getChildrenWithLayout($attachmentWidth)}

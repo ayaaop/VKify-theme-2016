@@ -2268,7 +2268,6 @@ table, .video-wowzer {
     display: inline-block;
     color: var(--link-color);
     opacity: 0.8;
-    filter: alpha(opacity=80);
     font-weight: 500;
     -webkit-font-smoothing: subpixel-antialiased;
     -moz-osx-font-smoothing: auto;

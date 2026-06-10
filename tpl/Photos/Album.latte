@@ -22,15 +22,7 @@
         <div class="photos_album_intro">
             <h1>{$album->getName()}</h1>
             <div class="photos_album_intro_desc" n:if="$album->getDescription()">
-                {var $descPlain = $album->getDescription() ?? ''}
-                {var $bigText = strlen($descPlain) > 500}
-                {if $bigText}
-                    <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
-                    <span class="full_text hidden">{$descPlain|noescape}</span>
-                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                {else}
-                    {$album->getDescription()}
-                {/if}
+                {include "../components/truncated_text.latte", html => $album->getDescription(), limit => 500}
             </div>
             <div class="photos_album_intro_info">
                 <span class="photos_album_info">{tr("is_x_photos", $album->getPhotosCount())}</span>

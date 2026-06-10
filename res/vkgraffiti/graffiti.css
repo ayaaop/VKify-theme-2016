@@ -148,12 +148,9 @@
   cursor: s-resize;
 }
 
-
-
 #graffiti_save {
   width: 1px;
   height: 1px;
   position: absolute;
   opacity: 0;
-  filter: alpha(opacity=0);
 }

@@ -30,9 +30,10 @@
 {var $scrollNode = $scrollNode ?? true}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
-{var $bigText = mb_strlen($post->getText()) > 520 || substr_count($post->getText(), "\n") + 1 > 10}
+{var $threshold = $compact ? 520 : 1500}
+{var $lineThreshold = $compact ? 10 : 15}
 
-<div data-id="{$post->getPrettyId()}" n:attr="data-uniqueid => (!$compact && $scrollNode) ? $post->getPrettyId() : null" n:class="post, $post->isExplicit() ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
+<div data-id="{$post->getPrettyId()}" n:attr="data-uniqueid => (!$compact && $scrollNode) ? $post->getPrettyId() : null" n:class="post, ($post->isExplicit() && (!isset($thisUser) || $thisUser->getNsfwTolerance() < 2)) ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
     <div class="post_header">
         <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}{if in_array($onlinePlatform, ['android', 'iphone', 'mobile'])} mobile{/if}" href="{$author->getURL()}">
             {if $author instanceof \openvk\Web\Models\Entities\Club}
@@ -117,16 +118,7 @@
     </div>
     <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
         <div class="text wall_text" id="text{$post->getPrettyId()}">
-            <div data-text="{$post->getText(false)}" n:if="$post->getText(false)" class="really_text wall_post_text">
-                {var $plainText = $post->getText($html = false)}
-                {if $bigText}
-                    <span class="truncated_text">{$plainText|truncate:500}</span>
-                    <span class="full_text hidden">{$post->getText()|noescape}</span>
-                    <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                {else}
-                    {$post->getText()|noescape}
-                {/if}
-            </div>
+            {include "truncated_text.latte", html => $post->getText(), plain => $post->getText(false), limit => $threshold, lineLimit => $lineThreshold, textClass => 'wall_post_text'}
 
             {var $attachmentsCount = iterator_count($post->getChildren())}
             {var $width = $attachmentsCount > 1 ? 514 : 510}

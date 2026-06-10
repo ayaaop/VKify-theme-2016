@@ -191,6 +191,12 @@
   position: relative;
   margin: 0 15px 15px;
   line-height: 1.37em;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.pv_desc::-webkit-scrollbar {
+  display: none;
 }
 .pv_can_edit {
   display: block;
@@ -509,8 +515,6 @@
   height: 10px;
   width: 13px;
   opacity: 0.4;
-  filter: alpha(opacity=40);
-  -o-transition: opacity 0.2s ease;
   transition: opacity 0.2s ease;
 }
 @media (-webkit-min-device-pixel-ratio: 2),

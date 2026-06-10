@@ -739,7 +739,6 @@ body.mac .ui_tabs_fixed {
 .ui_box_header_cnt {
   font-size: 14px;
   opacity: 0.6;
-  filter: alpha(opacity=60);
   padding: 0 8px;
 }
 a.ui_box_header_link {
@@ -1199,7 +1198,6 @@ input.ui_search_field:focus::placeholder {
 .ui_search_field_empty .ui_search_reset {
   visibility: hidden;
   opacity: 0;
-  filter: alpha(opacity=0);
 }
 
 .ui_tab_plain {

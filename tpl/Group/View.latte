@@ -15,17 +15,17 @@
 					<div class="avatar_block" data-club="{$club->getId()}">
 						<div class="avatar_block_inner">
 							{if $canEdit}
-								<a {if $avatarPhoto}style="display:none"{/if} class="add_image_text" id="add_image">{_add_image}</a>
+								<a {if $avatarPhoto}style="display:none"{/if} class="add_image_text" id="vkify_add_image">{_add_image}</a>
 								<div {if !$avatarPhoto}style="display:none"{/if} class="avatar_controls">
 									<div class="avatarDelete hoverable"></div>
 									<div class="avatar_variants">
-										<a class="_add_image hoverable" id="add_image"><span>{_upload_new_picture}</span></a>
+										<a class="_add_image hoverable" id="vkify_add_image"><span>{_upload_new_picture}</span></a>
 									</div>
 								</div>
 							{/if}
 							{var $avatarSizes = $avatarPhoto ? $avatarPhoto->getSizes() : null}
 							{var $avatarNormal = $avatarSizes['normal'] ?? null}
-							<a href="{$avatarLink|nocheck}">
+							<a href="{$avatarLink|nocheck}" style="display: block; line-height: 0;">
 								<img src="{str_contains($club->getAvatarUrl('normal'), 'camera_200.png') ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' : $club->getAvatarUrl('normal')}"
 									id="bigAvatar"
 									width="{$avatarNormal ? $avatarNormal->width : 200}"
@@ -316,16 +316,9 @@
 							<div class="group_info_rows">
 								{var $descHtml = $club->getDescriptionHtml()}
 								{var $descPlain = $club->getDescription() ?? ''}
-								{var $bigText = strlen($descPlain) > 300}
 								<div class="group_info_row info">
 									{if $descHtml}
-										{if $bigText}
-											<span class="truncated_text">{$descPlain|truncate:300|noescape}</span>
-											<span class="full_text hidden">{$descHtml|noescape}</span>
-											<a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-										{else}
-											{$descHtml|noescape}
-										{/if}
+										{include "../components/truncated_text.latte", html => $descHtml, plain => $descPlain, limit => 300}
 									{elseif $canEdit}
 										<a href="/club{$club->getId()}/edit">{_desc_none|firstUpper}</a>
 									{else}

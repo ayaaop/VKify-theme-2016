@@ -83,32 +83,18 @@
             {if ($thisUser->getId() === $photo->getOwner()->getId()) || !empty($photo->getDescription())}
             {var $descPlain = $photo->getDescription($html = false) ?? ''}
             {var $descFull = $photo->getDescription() ?? ''}
-            {var $bigText = strlen($descPlain) > 500}
+            {var $bigText = mb_strlen($descPlain) > 500}
             <div class="pv_desc">
                 {if $thisUser->getId() === $photo->getOwner()->getId()}
                     {if !empty($descFull)}
-                        <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
-                            {if $bigText}
-                                <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
-                                <span class="full_text hidden">{$descFull|noescape}</span>
-                            {else}
-                                {$descFull|noescape}
-                            {/if}
-                        </a>
-                        {if $bigText}<a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>{/if}
+                        {include "../components/truncated_text.latte", html => $descFull, plain => $descPlain, limit => 500, isEditable => true, editUrl => "javascript:showEditPhotoModal('" . $photo->getPrettyId() . "')"}
                     {else}
                         <a class="pv_can_edit" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">
                             <span class="pv_no_description">{_no_description}</span>
                         </a>
                     {/if}
                 {else}
-                    {if $bigText}
-                        <span class="truncated_text">{$descPlain|truncate:500|noescape}</span>
-                        <span class="full_text hidden">{$descFull|noescape}</span>
-                        <a href="javascript:void(0)" class="collapse_button" onclick="javascript:expandText(this)">{_show_more}</a>
-                    {else}
-                        {$descFull|noescape}
-                    {/if}
+                    {include "../components/truncated_text.latte", html => $descFull, plain => $descPlain, limit => 500}
                 {/if}
             </div>
             {/if}
