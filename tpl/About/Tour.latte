@@ -1,0 +1,492 @@
+{extends "../@layout.latte"}
+{block title}{_tour_title}{/block}
+
+{block content}
+<style>
+  p.big {
+    font-size: 15px;
+    text-align: center;
+    margin: 10px 0;
+  }
+  #tour img {
+    margin: 15px auto;
+    display: block;
+  }
+  #tour table {
+    margin: 0 auto;
+  }
+</style>
+<div class="wide_column_left">
+    <div class="narrow_column_wrap">
+        <div class="narrow_column">
+            {var $menuItems = [
+            ['url' => '#start', 'title' => 'tour_section_1'],
+            ['url' => '#profile', 'title' => 'tour_section_2'],
+            ['url' => '#photos', 'title' => 'tour_section_3'],
+            ['url' => '#search', 'title' => 'tour_section_4'],
+            ['url' => '#videos', 'title' => 'tour_section_5'],
+            ['url' => '#audios', 'title' => 'tour_section_6'],
+            ['url' => '#news_', 'title' => 'tour_section_7'],
+            ['url' => '#news_global', 'title' => 'tour_section_8'],
+            ['url' => '#groups', 'title' => 'tour_section_9'],
+            ['url' => '#events', 'title' => 'tour_section_10'],
+            ['url' => '#themes', 'title' => 'tour_section_11'],
+            ['url' => '#customization', 'title' => 'tour_section_12'],
+            ['url' => '#vouchers', 'title' => 'tour_section_13'],
+            ['url' => '#mobile', 'title' => 'tour_section_14']
+            ]}
+            {include "../components/ui_rmenu.latte", items => $menuItems}
+
+            <div class="page_block module" n:if="!isset($thisUser)">
+                <div class="module_header">
+                    <h3 class="header_top clear_fix">
+                    <span class="header_label fl_l">{_reg_title|noescape}</span>
+                    </h3>
+                </div>
+                <div class="module_body">
+                    {_reg_text|noescape}
+                    <br><br>
+                    <strong>{_ifnotlike_title|noescape}</strong><br>
+                    {_ifnotlike_text|noescape}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="wide_column_wrap">
+        <div class="wide_column">
+            <div class="page_block">
+                {include "../components/page_block_header.latte", title => "tour_title"}
+                <div class="page_padding" id="tour">
+
+
+                    <div id="start" class="tabcontent">
+                        <h2>{_tour_section_1_title_1|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_1_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_1_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_1_text_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/reg.png" width="440">
+                        <p class="big">{_tour_section_1_bottom_text_1|noescape}</p>
+                    </div>
+
+                    <div id="profile" class="tabcontent">
+                        <h2>{_tour_section_2_title_1|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_2_text_1_1|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_1_2|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_1_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/profile.png" width="440">
+                        <p class="big">{_tour_section_2_bottom_text_1|noescape}</p>
+                        <h2>{_tour_section_2_title_2|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_2_text_2_1|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_2_2|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_2_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/privacy.png" width="440">
+
+                        <h2>{_tour_section_2_title_3|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_2_text_3_1|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_3_2|noescape}</span></li>
+                        </ul>
+                        <center><img src="assets/packages/static/openvk/img/tour/adres_ff.jpg"></center>
+                        <ul class="listing">
+
+                            <li><span>{_tour_section_2_text_3_3|noescape}</span></li>
+                            <li><span>{_tour_section_2_text_3_4|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/adres3.png" width="440">
+                        <center><img src="assets/packages/static/openvk/img/tour/adres_ff_tohru.jpg"></center>
+                        <br>
+                        <i><p class="big">{_tour_section_2_bottom_text_2|noescape}</p></i>
+
+                        <h2>{_tour_section_2_title_4|noescape}</h2>
+                        <img src="assets/packages/static/openvk/img/tour/wall.png" width="440">
+                    </div>
+
+                    <div id="photos" class="tabcontent">
+                        <h2>{_tour_section_3_title_1|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_3_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_3_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_3_text_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/photos.png" width="440">
+                        <img src="assets/packages/static/openvk/img/tour/photos2.png" width="440">
+                        <p class="big">{_tour_section_3_bottom_text_1|noescape}</p>
+                    </div>
+
+                    <div id="search" class="tabcontent">
+                        <h2>{_tour_section_4_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_4_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_4_text_2|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/search.png" width="440">
+                        <ul class="listing">
+                            <li><span>{_tour_section_4_text_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/search2.png" width="440">
+
+                        <h2>{_tour_section_4_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_4_text_4|noescape}</span></li>
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/search_h.png" width="440">
+                    </div>
+
+                    <div id="videos" class="tabcontent">
+                        <h2>{_tour_section_5_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_5_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_5_text_2|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/videos.png" width="440">
+                        <p class="big">{_tour_section_5_bottom_text_1|noescape}</p>
+                        <img src="assets/packages/static/openvk/img/tour/videos_a.png" width="440">
+                        <h2>{_tour_section_5_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_5_text_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/videos_y.png" width="440">
+
+
+                        <img src="assets/packages/static/openvk/img/tour/videos_w.png" width="440">
+
+                        <br>
+                    </div>
+
+                    <div id="audios" class="tabcontent">
+                        <h2>{_tour_section_6_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_6_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_6_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_6_text_3|noescape}</span></li>
+                            <img src="assets/packages/static/openvk/img/tour/audios.png" width="440">
+                        </ul>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_6_text_4|noescape}</span></li>
+                            <img src="assets/packages/static/openvk/img/tour/audios_search.png" width="440">
+                            <li><span>{_tour_section_6_text_5|noescape}</span></li>
+                            <img src="assets/packages/static/openvk/img/tour/audios_upload.png" width="440">
+                        </ul>
+
+                        <p class="big">{_tour_section_6_bottom_text_1|noescape}</p>
+
+                        <h2>{_tour_section_6_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_6_text_6|noescape}</span></li>
+                            <li><span>{_tour_section_6_text_7|noescape}</span></li>
+                            <img src="assets/packages/static/openvk/img/tour/audios_playlists.png" width="440">
+                        </ul>
+
+                        <br>
+                    </div>
+
+                    <div id="news_" class="tabcontent">
+                        <h2>{_tour_section_7_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_7_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_7_text_2|noescape}</span></li>
+
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/local_news.png" width="440">
+
+                        <p class="big">{_tour_section_7_bottom_text_1|noescape}</p>
+                    </div>
+
+                    <div id="news_global" class="tabcontent">
+                        <h2>{_tour_section_8_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_8_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_8_text_2|noescape}</span></li>
+
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/news_global.png" width="440">
+
+                        <p class="big">{_tour_section_8_bottom_text_1|noescape}</p>
+
+
+                        <img src="assets/packages/static/openvk/img/tour/poll.png" width="440">
+
+                        <p class="big">{_tour_section_8_bottom_text_2|noescape}</p>
+                    </div>
+
+                    <div id="groups" class="tabcontent">
+                        <h2>{_tour_section_9_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_9_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_9_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_9_text_3|noescape}</span></li>
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/groups.png" width="440">
+                        <p class="big">{_tour_section_9_bottom_text_1|noescape}</p>
+                        <img src="assets/packages/static/openvk/img/tour/groups_view.png" width="440">
+                        <p class="big">{_tour_section_9_bottom_text_2|noescape}</p>
+
+                        <h2>{_tour_section_9_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_9_text_2_1|noescape}</span></li>
+                            <li><span>{_tour_section_9_text_2_2|noescape}</span></li>
+                            <li><span>{_tour_section_9_text_2_3|noescape}</span></li>
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/groups_admin.png" width="440">
+
+                        <p class="big">{_tour_section_9_bottom_text_3|noescape}</p>
+                    </div>
+
+                    <div id="events" class="tabcontent">
+                        <h2>{_tour_section_10_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_10_text_1|noescape}</span></li>
+                        </ul>
+                    </div>
+
+                    <div id="themes" class="tabcontent">
+                        <h2>{_tour_section_11_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_11_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_11_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_11_text_3|noescape}</span></li>
+                        </ul>
+
+                        <center><img src="assets/packages/static/openvk/img/tour/theme_picker.png"></center>
+
+                        <p class="big">{_tour_section_11_bottom_text_1|noescape}</p><br>
+
+                        <img src="assets/packages/static/openvk/img/tour/theme3.png" width="460">
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/theme1.png" style="float:left;" width="220"></td>
+                                    <td><img src="assets/packages/static/openvk/img/tour/theme2.png" style="float:right;" width="220"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br>
+                        <center>{_tour_section_11_wordart|noescape}</center>
+                    </div>
+
+                    <div id="customization" class="tabcontent">
+                        <h2>{_tour_section_12_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_12_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_12_text_2|noescape}</span></li>
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/backdrop.png" width="440">
+
+                        <p class="big">{_tour_section_12_bottom_text_1|noescape}</p><br>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_12_text_3|noescape}</span></li>
+                        </ul>
+
+                        <br>
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex.png" width="440"></td>
+                                </tr>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex1.png" width="440"></td>
+                                </tr>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex2.png" width="440"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="big">{_tour_section_12_bottom_text_2|noescape}</p><br>
+
+                        <p class="big">{_tour_section_12_bottom_text_3|noescape}</p>
+
+                        <h2>{_tour_section_12_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_12_text_2_1|noescape}</span></li>
+                            <li><span>{_tour_section_12_text_2_2|noescape}</span></li>
+                        </ul>
+
+                        <center><img src="assets/packages/static/openvk/img/tour/avatar_picker.png"></center><br>
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/avatars_def.png" style="float:left;" width="220"></td>
+                                    <td><img src="assets/packages/static/openvk/img/tour/avatars_round.png" style="float:right;" width="220"></td>
+                                </tr>
+                            </tbody>
+                        </table><br>
+
+                        <img src="assets/packages/static/openvk/img/tour/avatars_quad.png" width="440">
+
+                        <h2>{_tour_section_12_title_3|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_12_text_3_1|noescape}</span></li>
+                            <li><span>{_tour_section_12_text_3_2|noescape}</span></li>
+                        </ul>
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/leftmenu.png" style="float:left;" width="220"></td>
+                                    <td><img src="assets/packages/static/openvk/img/tour/leftmenu2.png" style="float:right;" width="220"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h2>{_tour_section_12_title_4|noescape}</h2>
+                        <ul class="listing">
+                            <li><span>{_tour_section_12_text_4_1|noescape}</span></li>
+                            <li><span>{_tour_section_12_text_4_2|noescape}</span></li>
+                            <li><span>{_tour_section_12_text_4_3|noescape}</span></li>
+                        </ul>
+
+                        <center><img src="assets/packages/static/openvk/img/tour/wall_pick.png"></center><br>
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/wall_old.png" style="float:left;" width="220">
+                                        <br> <p class="big">{_tour_section_12_bottom_text_4|noescape}</p></td>
+                                    <td><img src="assets/packages/static/openvk/img/tour/wall_new.png" style="float:right;" width="220">
+                                        <br><p class="big">{_tour_section_12_bottom_text_5|noescape}</p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="vouchers" class="tabcontent">
+                        <h2>{_tour_section_13_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_13_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_13_text_2|noescape}</span></li>
+                        </ul>
+
+                        <img src="assets/packages/static/openvk/img/tour/vouchers.png" width="440">
+
+                        <img src="assets/packages/static/openvk/img/tour/vouchers_type.png" width="440">
+                        <p class="big">{_tour_section_13_bottom_text_1|noescape}</p><br>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_13_text_3|noescape}</span></li>
+                            <li><span>{_tour_section_13_text_4|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/vouchers_ok.png" width="440">
+
+                        <p class="big">{_tour_section_13_bottom_text_2|noescape}</p><br>
+
+                        <p class="big">{_tour_section_13_bottom_text_3|noescape}</p><br>
+                    </div>
+
+                    <div id="mobile" class="tabcontent">
+                        <h2>{_tour_section_14_title_1|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_14_text_1|noescape}</span></li>
+                            <li><span>{_tour_section_14_text_2|noescape}</span></li>
+                            <li><span>{_tour_section_14_text_3|noescape}</span></li>
+                        </ul>
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/app1.png" style="float:left;" width="210"></td>
+                                    <td><img src="assets/packages/static/openvk/img/tour/app2.png" style="float:right;" width="210"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                        <table cellspacing="5" border="0">
+                            <tbody>
+                                <tr>
+                                    <td><img src="assets/packages/static/openvk/img/tour/app3.png" width="425"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <p class="big">{_tour_section_14_bottom_text_1|noescape}</p><br>
+
+                        <h2>{_tour_section_14_title_2|noescape}</h2>
+
+                        <ul class="listing">
+                            <li><span>{_tour_section_14_text_2_1|noescape}</span></li>
+                            <li><span>{_tour_section_14_text_2_2|noescape}</span></li>
+                            <li><span>{_tour_section_14_text_2_3|noescape}</span></li>
+                        </ul>
+                        <img src="assets/packages/static/openvk/img/tour/app4.jpeg" width="440">
+
+                        <br>
+
+                        <p class="big" n:if="!isset($thisUser)">{_tour_section_14_bottom_text_2|noescape}</p><br>
+                        <p class="big" n:if="isset($thisUser)">{_tour_section_14_bottom_text_3|noescape}</p><br>
+
+                        <div style="margin-top:10px; padding-left:175px" n:if="!isset($thisUser)">
+
+                            <a class="button" href="/reg">{_tour_reg|noescape}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script n:syntax="off">
+    document.addEventListener('DOMContentLoaded', () => {
+    const rmenuLinks = document.querySelectorAll('.ui_rmenu_item');
+    rmenuLinks.forEach(link => {
+    link.addEventListener('click', e => {
+    const href = link.getAttribute('href');
+    if (href && href.startsWith('#')) {
+    e.preventDefault();
+    const step = href.substring(1);
+
+    document.querySelectorAll('.tabcontent').forEach(c => c.style.display = 'none');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    rmenuLinks.forEach(l => l.classList.remove('ui_rmenu_item_sel'));
+
+    const target = document.getElementById(step);
+    if (target) {
+    target.style.display = 'block';
+    link.classList.add('ui_rmenu_item_sel');
+    }
+    }
+    });
+    });
+
+    const defaultTab = document.querySelector('.ui_rmenu_item[href="#start"]');
+    if (defaultTab) {
+    defaultTab.click();
+    }
+    });
+</script>
+{/block}
