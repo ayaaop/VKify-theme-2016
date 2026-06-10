@@ -432,7 +432,12 @@
 												<span class="video_thumb_label_item">
 													{$video->getType() == \openvk\Web\Models\Entities\Video::TYPE_EMBED ? 'YouTube' : ''}
 												</span>
-												<div class="divider" n:if="$video->getFormattedLength() != '00:00'"></div>
+												{if $video->getFormattedLength() != '00:00'}
+													<div class="divider"></div>
+													{$video->getFormattedLength()}
+												{/if}
+											{else}
+												{$video->getFormattedLength()}
 											{/if}
 										</div>
 										<div class="page_video_play_icon"></div>
