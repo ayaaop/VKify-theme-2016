@@ -661,7 +661,7 @@ async function initMusicPopupTippyOnce() {
             <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
             <div class="ui_rmenu_sep"></div>
             <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/playlists${window.openvk?.current_id}" id="ki">${tr('my_playlists')}</a>
-            <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios/newPlaylist">${tr('new_playlist')}</a>
+            <a class="ui_rmenu_item" onclick="tippy.hideAll(); return showNewPlaylistModal(event);" href="/audios/newPlaylist">${tr('new_playlist')}</a>
             <div class="ui_rmenu_sep"></div>
         </div>
         <div class="friends_audio_list">${friendsHtml}</div>
@@ -939,6 +939,17 @@ function updatePlaylistBookmarkButton(el, wasUnbookmark) {
     const isBookmarked = !wasUnbookmark;
 
     el.setAttribute('id', isBookmarked ? 'unbookmarkPlaylist' : 'bookmarkPlaylist');
+
+    if (el.classList.contains('ActionButton--add')) {
+        el.classList.toggle('ActionButton--add--added', isBookmarked);
+        const textSpan = el.querySelector('.ActionButton--add__text');
+        if (textSpan) {
+            textSpan.innerHTML = isBookmarked ? tr('unbookmark') : tr('bookmark');
+        } else {
+            el.innerHTML = isBookmarked ? tr('unbookmark') : tr('bookmark');
+        }
+        return;
+    }
 
     const label = el.querySelector('.action_label');
     if (label) {

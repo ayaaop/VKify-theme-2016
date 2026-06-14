@@ -1,5 +1,4 @@
-(function () {
-'use strict';
+(() => {
 
 const Hb = window.Handlebars;
 
@@ -67,7 +66,7 @@ const audioFrameTpl = Hb.compile(
 );
 
 vkify.once("showAudioUploadPopup", () => {
-    window.showAudioUploadPopup = async function (options = {}) {
+    window.showAudioUploadPopup = async (options = {}) => {
         const ownerId = options.ownerId ?? window.openvk?.current_id ?? 0;
 
         const audioUploadPopup = new CMessageBox({
@@ -84,14 +83,14 @@ vkify.once("showAudioUploadPopup", () => {
         });
 
         const id3Src = '/assets/packages/static/openvk/js/node_modules/id3js/lib/id3.js';
-        try {
-            await window.router.loadScriptOnce(id3Src);
-        } catch (e) {
-            console.error('Failed to load id3js:', e);
-            return;
+        let id3 = window.id3;
+        if (!id3) {
+            try {
+                id3 = await import(id3Src);
+            } catch (e) {
+                console.error('Failed to load id3js via dynamic import:', e);
+            }
         }
-
-        const id3 = window.id3 || (await import(id3Src));
 
         window.__audio_upload_page = new class {
             files_list = [];
@@ -125,15 +124,17 @@ vkify.once("showAudioUploadPopup", () => {
                 };
 
                 let tags = null;
-                try {
-                    tags = await (id3.fromFile ? id3.fromFile(blob) : id3.default?.fromFile?.(blob));
-                } catch (e) {
-                    console.error(e);
+                if (id3) {
+                    try {
+                        tags = await (id3.fromFile ? id3.fromFile(blob) : id3.default?.fromFile?.(blob));
+                    } catch (e) {
+                        console.error(e);
+                    }
                 }
 
                 console.log(tags);
                 if (tags != null) {
-                    console.log("ID" + tags.kind + " detected, setting values...");
+                    console.log(`ID${tags.kind} detected, setting values...`);
                     if (tags.title) {
                         return_params.name = tags.title;
                     } else {
@@ -155,10 +156,10 @@ vkify.once("showAudioUploadPopup", () => {
                                 }
                             });
                         } else {
-                            if (window.openvk?.audio_genres?.indexOf(tags.genre) != -1) {
+                            if (window.openvk?.audio_genres?.indexOf(tags.genre) !== -1) {
                                 return_params.genre = tags.genre;
                             } else {
-                                console.warn("Unknown genre: " + tags.genre);
+                                console.warn(`Unknown genre: ${tags.genre}`);
                                 return_params.genre = 'Other';
                             }
                         }
@@ -188,7 +189,7 @@ vkify.once("showAudioUploadPopup", () => {
 
                 const genres = (window.openvk?.audio_genres || []).map(g => ({
                     value: g,
-                    selected: g == audio_element.info.genre
+                    selected: g === audio_element.info.genre
                 }));
 
                 const html = audioFrameTpl({
@@ -224,7 +225,7 @@ vkify.once("showAudioUploadPopup", () => {
                 }
 
                 window.__audio_upload_page.files_list.forEach(el => {
-                    if (el && file.name == el.file.name) {
+                    if (el && file.name === el.file.name) {
                         has_duplicates = true;
                     }
                 });
@@ -241,6 +242,7 @@ vkify.once("showAudioUploadPopup", () => {
                 ? `/player/upload?gid=${Math.abs(ownerId)}`
                 : '/player/upload';
             let endRedir = '';
+            let uploadedCount = 0;
 
             u('#lastStepButtons').addClass('lagged');
 
@@ -265,6 +267,7 @@ vkify.once("showAudioUploadPopup", () => {
 
                     if (result.success) {
                         endRedir = result.redirect_link;
+                        uploadedCount++;
                     } else {
                         makeError(escapeHtml(result.flash?.message || tr('error')));
                     }
@@ -278,12 +281,81 @@ vkify.once("showAudioUploadPopup", () => {
             }
 
             audioUploadPopup.close();
-            if (endRedir && window.router) {
+
+            if (uploadedCount > 0) {
+                const baseFetchUrl = ownerId < 0 ? `/audios-${Math.abs(ownerId)}` : `/audios${ownerId || window.openvk?.current_id || 0}`;
+                const separator = baseFetchUrl.includes('?') ? '&' : '?';
+                const fetchUrl = `${baseFetchUrl}${separator}_t=${Date.now()}`;
+                try {
+                    const doc = await window.ContentFetcher.fetchPageContent(fetchUrl, null);
+                    const newAudioEmbeds = Array.from(doc.querySelectorAll('.audioEmbed')).slice(0, uploadedCount);
+                    
+                    const playlistEditPage = document.querySelector('.PE_playlistEditPage');
+                    if (playlistEditPage) {
+                        const peAudios = playlistEditPage.querySelector('.PE_audios');
+                        if (peAudios) {
+                            newAudioEmbeds.reverse().forEach(audioEl => {
+                                const id = audioEl.getAttribute('data-realid') || audioEl.getAttribute('data-id');
+                                const itemHtml = `
+                                    <div class="vertical-attachment upload-item" draggable="true" data-id="${id}">
+                                        <div class="vertical-attachment-content" draggable="false">
+                                            ${audioEl.outerHTML}
+                                        </div>
+                                        <div class="vertical-attachment-remove">
+                                            <div id="small_remove_button"></div>
+                                        </div>
+                                    </div>
+                                `;
+                                u(peAudios).append(itemHtml);
+                            });
+                            if (window.updatePlaylistEmptyState) {
+                                window.updatePlaylistEmptyState();
+                            }
+                        }
+                    } else {
+                        const audiosContainer = document.querySelector('.audiosContainer');
+                        if (audiosContainer) {
+                            const emptyErr = audiosContainer.querySelector('.content_page_error');
+                            if (emptyErr) {
+                                emptyErr.remove();
+                            }
+
+                            let target = audiosContainer;
+                            let nodeClass = 'scroll_node';
+                            
+                            if (audiosContainer.classList.contains('audiosSideContainer')) {
+                                let scrollContainer = audiosContainer.querySelector('.scroll_container');
+                                if (!scrollContainer) {
+                                    audiosContainer.insertAdjacentHTML('beforeend', '<div class="scroll_container"></div>');
+                                    scrollContainer = audiosContainer.querySelector('.scroll_container');
+                                }
+                                target = scrollContainer;
+                            } else if (audiosContainer.classList.contains('AudioPlaylistSnippet__list')) {
+                                nodeClass = 'AudioPlaylistSnippet__audioRow scroll_node';
+                            }
+
+                            newAudioEmbeds.reverse().forEach(audioEl => {
+                                const wrapper = document.createElement('div');
+                                wrapper.className = nodeClass;
+                                wrapper.appendChild(audioEl);
+                                target.insertBefore(wrapper, target.firstChild);
+                            });
+                        } else if (endRedir && window.router) {
+                            window.router.route(endRedir);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Failed to post-process uploaded audio:', e);
+                    if (endRedir && window.router) {
+                        window.router.route(endRedir);
+                    }
+                }
+            } else if (endRedir && window.router) {
                 window.router.route(endRedir);
             }
         });
 
-        const actionEl = document.querySelector('.ovk-diag-action');
+        const actionEl = audioUploadPopup.getNode().find('.ovk-diag-action').nodes[0];
         if (actionEl) {
             actionEl.insertAdjacentHTML('afterbegin', `<a href="/search?section=audios" style="float: left;margin-top: 6px;margin-left: 5px;">${tr('audio_search')}</a>`);
         }

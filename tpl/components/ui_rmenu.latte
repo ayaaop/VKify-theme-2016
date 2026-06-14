@@ -46,7 +46,7 @@
 
     {if isset($ownblockData)}
         <a class="ui_ownblock clear_fix" href="{$ownblockData['url']}">
-            <img class="ui_ownblock_img" src="{if str_contains($ownblockData['img'], 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$thisUser->getAvatarUrl('miniscule')}{/if}" n:if="isset($ownblockData['img'])">
+            <img class="ui_ownblock_img" src="{if str_contains($ownblockData['img'], 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$ownblockData['img']}{/if}" n:if="isset($ownblockData['img'])">
             <div class="ui_ownblock_info">
                 {if isset($ownblockData['extraItem']) && (!isset($ownblockData['extraItem']['condition']) || $ownblockData['extraItem']['condition'])}
                     <span class="ui_rmenu_extra_item {$ownblockData['extraItem']['class']}"
@@ -73,7 +73,7 @@
                 </div>
             {else}
                 <div class="ui_rmenu_item_wrap">
-                    <a class="ui_rmenu_item {($item['active'] ?? false) ? 'ui_rmenu_item_sel' : ''} {$itemIsRich ? 'ui_ownblock' : ''}" href="{$item['url']}" n:attr="id => $itemId">
+                    <a class="ui_rmenu_item {($item['active'] ?? false) ? 'ui_rmenu_item_sel' : ''} {$itemIsRich ? 'ui_ownblock' : ''}" href="{$item['url']}" n:attr="id => $itemId, onclick => $item['onclick'] ?? null">
                         {if $itemIsRich}
                             <img class="ui_ownblock_img" src="{$item['avatar']}" />
                             <div class="ui_ownblock_info">

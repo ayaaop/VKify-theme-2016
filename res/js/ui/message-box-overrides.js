@@ -113,7 +113,10 @@ vkify.bindOnce('messageBoxOverrides', () => {
                     const prev = stack[myIndex - 1];
                     const prevNode = prev?.getNode?.();
                     if (prevNode?.length) {
-                        prevNode.removeClass('msgbox-hidden').attr('style', '');
+                        prevNode.removeClass('msgbox-hidden');
+                        if (prevNode.nodes[0]) {
+                            prevNode.nodes[0].style.display = '';
+                        }
                     }
                 }
                 origExitDialog.call(this);

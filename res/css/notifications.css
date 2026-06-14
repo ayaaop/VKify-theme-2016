@@ -31,7 +31,6 @@
 	display: block;
 	animation-name: notification_ballon_appears;
 	animation-duration: 0.5s;
-	cursor: pointer;
 	width: 320px;
 	border-radius: 4px;
 	box-shadow: 0 2px 3px rgba(0, 0, 0, .2);

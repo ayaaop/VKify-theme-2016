@@ -57,6 +57,11 @@ let locales = {
 		back_to_club_documents: "Back to group documents",
 		playlist_share_explain:
 			"OpenVK currently does not support sharing playlists as attachments. Therefore, this action will just create a new post with a link to the playlist appended.",
+		playlist_author_by: "Playlist by",
+		shuffle_all: "Shuffle all",
+		add_tracks: "Add tracks",
+		change_cover: "Change",
+		empty_playlist_desc: "No tracks here yet",
 		page_info_read_restricted:
 			"This user chose to hide main information about themselves.",
 		postremoved: "Message removed.",
@@ -136,6 +141,11 @@ let locales = {
 		back_to_club_documents: "Назад к документам сообщества",
 		playlist_share_explain:
 			"OpenVK в настоящее время не поддерживает отправку плейлистов в качестве вложений. Поэтому это действие просто создаст новую запись с прикреплённой ссылкой на плейлист.",
+		playlist_author_by: "Плейлист",
+		shuffle_all: "Перемешать все",
+		add_tracks: "Добавить аудиозаписи",
+		change_cover: "Изменить",
+		empty_playlist_desc: "Здесь пока нет аудиозаписей",
 		page_info_read_restricted:
 			"Пользователь предпочёл скрыть основную информацию о себе.",
 		postremoved: "Сообщение удалено.",
@@ -218,6 +228,11 @@ let locales = {
 		back_to_club_documents: "Назад до документів спільноти",
 		playlist_share_explain:
 			"OpenVK наразі не підтримує надсилання плейлистів як вкладень. Тому ця дія просто створить новий допис із доданим посиланням на плейлист.",
+		playlist_author_by: "Список відтворення",
+		shuffle_all: "Перемішати все",
+		add_tracks: "Додати аудіозаписи",
+		change_cover: "Змінити",
+		empty_playlist_desc: "Тут ще немає аудіозаписів",
 		page_info_read_restricted:
 			"Користувач вважав за краще приховати основну інформацію про себе.",
 		postremoved: "Повідомлення відалено.",
@@ -295,6 +310,11 @@ let locales = {
 		back_to_club_documents: "Бірлестік құжаттарына қайту",
 		playlist_share_explain:
 			"OpenVK қазіргі уақытта ойнату тізімдерін қосымша ретінде жіберуді қолдамайды. Сондықтан бұл әрекет жай ғана ойнату тізіміне сілтемесі бар жаңа жазба жасайды.",
+		playlist_author_by: "Әнтізім",
+		shuffle_all: "Барлығын араластыру",
+		add_tracks: "Әндерді қосу",
+		change_cover: "Өзгерту",
+		empty_playlist_desc: "Мұнда әлі әндер жоқ",
 		page_info_read_restricted:
 			"Пайдаланушы өзі туралы негізгі мәліметті жасыруды жөн көрген.",
 		postremoved: "Жазба өшірілді.",
@@ -324,7 +344,7 @@ window.vkifylocalize = function (langcode, fallback = "en") {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.3.6/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.3.7/resource/langs/${langcode}.json`)
 				.then((response) => {
 					if (!response.ok) {
 						patchpage(fallbackCode);
@@ -391,6 +411,8 @@ function patchpage(langcode) {
 
 vkify.ready(() => {
 	if (!window.vkifylang) return;
+
+	window.processVkifyLocTags();
 
 	const observer = new MutationObserver((mutations) => {
 		mutations.forEach((mutation) => {

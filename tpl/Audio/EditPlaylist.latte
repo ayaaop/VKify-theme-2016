@@ -2,6 +2,10 @@
 
 {block title}{_edit_playlist}{/block}
 
+{block headIncludes}
+    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/edit_playlist.css" data-vkify-route-style="edit_playlist" />
+{/block}
+
 {block content}
     <div class="page_block wall_posts_tabs">
         {include "../components/page_crumb_header.latte", crumbs: [
@@ -11,45 +15,100 @@
             ['title' => tr("edit_playlist")]
         ]}
     </div>
-    <div class='page_block page_padding PE_wrapper'>
-        <div class='PE_playlistEditPage'>
-            <div class="playlistCover">
-                <a onclick="document.querySelector(`input[name='cover']`).click()">
-                    <input type='file' name='cover' style='display:none;' accept=".jpg,.png">
-                    <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
-                </a>
+    <div class='page_block PE_wrapper'>
+        <div class="audio_pl_edit_box PE_playlistEditPage">
+            <!-- Header section containing cover & input fields -->
+            <div class="ape_header">
+                <div class="ape_cover" onclick="this.querySelector(`input[name='cover']`).click()">
+                    <input type='file' name='cover' style='display:none;' accept=".jpg,.png" onchange="if(this.files[0] && this.files[0].type.startsWith('image/')){ const img=(window.URL || window.webkitURL).createObjectURL(this.files[0]); this.parentNode.querySelector('.ape_cover_thumb').style.backgroundImage='url('+img+')'; }">
+                    <div class="ape_cover_thumb" style="background-image: url('{$playlist->getCoverURL('normal')|noescape}');"></div>
+                    <div class="ape_cover_icon_wrap">
+                        <svg aria-hidden="true" display="block" width="28" height="28" viewBox="0 0 28 28" style="margin: 0 auto 4px;">
+                            <g fill="none" fill-rule="evenodd">
+                                <path d="M0 0h28v28H0z"></path>
+                                <path fill="currentColor" fill-rule="nonzero" d="M14 4a1 1 0 0 1 1 1v8h8a1 1 0 0 1 0 2h-8v8a1 1 0 0 1-2 0v-8H5a1 1 0 0 1 0-2h8V5a1 1 0 0 1 1-1"></path>
+                            </g>
+                        </svg>
+                        <span class="ape_cover_title"><vkifyloc name="change_cover" fallback="Change cover"></vkifyloc></span>
+                    </div>
+                </div>
+
+                <div class="ape_pl_info">
+                    <div class="ape_pl_title">
+                        <input value='{$playlist->getName()}' type="text" class="dark ape_pl_input" name="title" placeholder="{_title}" maxlength="125" id="ape_pl_name" />
+                    </div>
+                    <div class="ape_pl_description">
+                        <textarea placeholder="{_description}" class="dark ape_pl_input" name="description" maxlength="2045" id="ape_pl_description">{$playlist->getDescription()}</textarea>
+                    </div>
+                    <div class="ape_pl_discover">
+                        <label class="checkbox">
+                            <input type='checkbox' name='is_unlisted' value='1' n:attr='checked => $playlist->isUnlisted()'>
+                            <span>{_playlist_hide_from_search}</span>
+                        </label>
+                    </div>
+                    <div class="ape_pl_stat">{tr("audios_count", count($audios))}</div>
+                </div>
             </div>
 
-            <div class="PE_playlistInfo">
-                <div>
-                    <input value='{$playlist->getName()}' type="text" name="title" placeholder="{_title}" maxlength="125" />
+            <!-- Button block to add tracks -->
+            <button class="ape_add_audios_btn" id="_vkifyPlaylistAppendTracks" type="button">
+                <span class="ape_add_audios_btn_plus_icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <g id="add_24__Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="add_24__add_24">
+                                <path id="add_24__Bounds" d="M0 0h24v24H0z"></path>
+                                <path d="M13 11h6.5a1 1 0 0 1 0 2H13v6.5a1 1 0 0 1-2 0V13H4.5a1 1 0 0 1 0-2H11V4.5a1 1 0 0 1 2 0V11Z" id="add_24__Mask" fill="currentColor"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+                <vkifyloc name="add_tracks" fallback="add_audio_verb"></vkifyloc>
+                <span class="ape_add_audios_btn_chevron_icon">
+                    <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
+                        <g id="chevron_24__Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="chevron_24__chevron_24">
+                                <path id="chevron_24__Bounds" d="M0 0h16v24H0z"></path>
+                                <path d="M4.7 7.7a1 1 0 0 1 0-1.4l.1-.1a1 1 0 0 1 1.4 0l5.1 5.1a1 1 0 0 1 0 1.4l-5.1 5.1a1 1 0 0 1-1.4 0l-.1-.1a1 1 0 0 1 0-1.4L9 12 4.7 7.7Z" id="chevron_24__Mask" fill="currentColor"></path>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+            </button>
+
+            <!-- Tracks list section -->
+            <div class="ape_item_list noselect PE_audios generic_audio_list" style="{if count($audios) == 0}display: none;{/if}">
+                <div n:foreach='$audios as $audio' class='vertical-attachment upload-item' data-id='{$audio->getId()}'>
+                    <div class='vertical-attachment-content'>
+                        {include 'player.latte', audio => $audio, hideButtons => true}
+                    </div>
+                    <div class="vertical-attachment-remove">
+                        <div id="small_remove_button"></div>
+                    </div>
                 </div>
-                <div class="moreInfo">
-                    <textarea placeholder="{_description}" name="description" maxlength="2045">{$playlist->getDescription()}</textarea>
-                </div>
-                <label class="checkbox">
-                    <input type='checkbox' name='is_unlisted' value='1' n:attr='checked => $playlist->isUnlisted()'>
-                    <span>{_playlist_hide_from_search}</span>
-                </label>
-                <a id='_vkifyPlaylistAppendTracks'>{_add_audio_verb}</a>
             </div>
-        </div>
-        <div class='PE_audios generic_audio_list'>
-            <div n:foreach='$audios as $audio' class='vertical-attachment upload-item' data-id='{$audio->getId()}'>
-                <div class='vertical-attachment-content'>
-                    {include 'player.latte', audio => $audio, hideButtons => true}
+            
+            <div class="ape_audios_empty_list" style="{if count($audios) >= 1}display: none;{else}display: flex;{/if}">
+                <div class="ape_audios_empty_list_icon">
+                    <svg width="56" height="56" viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+                        <g id="music_outline_56__music_outline_56" fill="none" fill-rule="evenodd">
+                            <path opacity=".4" d="M0 0h56v56H0z"></path>
+                            <path d="M45 33.93c0 4.55-1.94 7.97-5.07 9.62-2.84 1.5-6.24 1.22-8.22-.76-1.98-1.98-2.25-5.38-.76-8.22 1.65-3.13 5.07-5.07 9.62-5.07H42V18.84l-21 4.38v15.7c0 4.56-1.94 7.98-5.07 9.63-2.84 1.5-6.24 1.22-8.22-.76-1.98-1.98-2.25-5.38-.76-8.22 1.65-3.13 5.07-5.07 9.62-5.07H18V17.52c.02-1.5.15-2.36.5-3.2l.08-.19a5.55 5.55 0 0 1 1.84-2.26c.86-.62 1.72-.95 3.5-1.32l14.46-3.02A5.5 5.5 0 0 1 45 12.92v21ZM18 37.5h-1.43c-3.46 0-5.85 1.35-6.96 3.47-.92 1.74-.76 3.72.22 4.7s2.96 1.14 4.7.22c2.12-1.11 3.47-3.5 3.47-6.96V37.5Zm24-5h-1.43c-3.46 0-5.85 1.35-6.96 3.47-.92 1.74-.76 3.72.22 4.7s2.96 1.14 4.7.22c2.12-1.11 3.47-3.5 3.47-6.96V32.5Zm-.05-20.1a2.5 2.5 0 0 0-2.96-1.93L24.3 13.53c-1.06.23-1.54.4-1.94.65l-.18.12c-.39.28-.67.62-.86 1.06-.24.53-.32 1.04-.32 2.47v2.33l21-4.38v-2.86c0-.11 0-.23-.02-.34Z" fill="currentColor" fill-rule="nonzero"></path>
+                        </g>
+                    </svg>
                 </div>
-                <div class="vertical-attachment-remove">
-                    <div id="small_remove_button"></div>
+                <vkifyloc name="empty_playlist_desc" fallback="empty_playlist"></vkifyloc>
+            </div>
+
+            <!-- Bottom control buttons -->
+            <div class="box_controls_wrap PE_end">
+                <div class="box_controls">
+                    <div class="box_controls_buttons fl_r">
+                        <input class="button" type="button" id='playlist_edit' value="{_save}">
+                    </div>
+                    <div class="box_controls_text">
+                        <a id="_deletePlaylist" data-id="{$playlist->getId()}">{_delete_playlist}</a>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class='PE_end clear_fix'>
-            <div class="fl_l">
-                <a class="button button_light" id="__deletePlaylist" data-id="{$playlist->getId()}">{_delete_playlist}</a>
-            </div>
-            <div class="fl_r">
-                <input class="button" type="button" id='playlist_edit' value="{_save}">
             </div>
         </div>
     </div>

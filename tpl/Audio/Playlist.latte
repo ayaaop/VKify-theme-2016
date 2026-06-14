@@ -20,6 +20,7 @@
             "url": {$playlist->getURL()}
         }
     </script>
+    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/css/playlist.css" data-vkify-route-style="playlist" />
 {/block}
 
 {block content}
@@ -33,68 +34,165 @@
             page: {$page}
         }
     </script>
-    <div class="page_block">
+    <div class="_playlist_page_content_block">
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
             ['href' => "/playlists{$ownerId}", 'title' => tr("playlists")],
             ['title' => tr("playlist")]
-        ], extra => $canEdit ? '<a class="action_button video_edit_button" href="/playlist' . $playlist->getPrettyId() . '/edit"><i class="action_icon"></i><span class="action_label">' . tr('edit_playlist') . '</span></a>' : ''}
-        <div class="playlistBlock page_padding" style="margin-top: 0">
-            <div class="playlistCover">
-                <div class="playlistCoverImage">
+        ]}
+
+        <div class="AudioPlaylistSnippet">
+            <div class="AudioPlaylistSnippet__left">
+                <div class="AudioPlaylistSnippet__covers">
                     {if $cover}
-                    <a href="{$cover_url}" target="_blank">
-                        <img onclick="OpenMiniature(event, {$cover_url}, null, {$cover->getPrettyId()}, null)" src="{$cover_url}" alt="{_playlist_cover}">
-                    </a>
+                        <a href="{$cover_url}" target="_blank" onclick="OpenMiniature(event, {$cover_url}, null, {$cover->getPrettyId()}, null); return false;">
+                            <div class="AudioPlaylistSnippet__cover" style="background-image: url('{$cover_url}');"></div>
+                        </a>
                     {else}
-                        <img src="{$cover_url}" alt="{_playlist_cover}">
+                        <div class="AudioPlaylistSnippet__cover" style="background-image: url('{$cover_url}');"></div>
                     {/if}
+                    <div class="AudioPlaylistSnippet__play"></div>
+                    <div class="AudioPlaylistSnippet__stop"></div>
                 </div>
-                <div class="playlistCount">{tr("is_x_audio", $playlist->size())}</div>
+                <div class="AudioPlaylistSnippet__info">
+                    {tr("audios_count", $count)}
+                </div>
             </div>
 
-            <div class='playlistWrapper'>
-                <div class="playlistInfo">
-                    <div class="playlistTitle">
-                        <h4>{$playlist->getName()}</h4>
+            <div class="AudioPlaylistSnippet__right">
+                <div class="AudioPlaylistSnippet__header">
+                    <div class="AudioPlaylistSnippet__title">
+                        <h1 class="AudioPlaylistSnippet__title--main">{$playlist->getName()}</h1>
                     </div>
-                    <div class="playlistAuthor">
+                    <div class="AudioPlaylistSnippet__author">
                         <a href="{$playlist->getOwner()->getURL()}">{$playlist->getOwner()->getCanonicalName()}</a>
                     </div>
-
-                    <div class="moreInfo">
-                        <div class="playlistDesc">
-                            <span>{nl2br($playlist->getDescriptionHTML())|noescape}</span>
-                        </div>
-                        <div class="playlistMeta">
-                            {tr("listens_count", $playlist->getListens())} • {_created_playlist} {$playlist->getPublicationTime()}
-                        </div>
-                    </div>
-                    <div class="video_info_actions playlistActions clear_fix" n:if="isset($thisUser)">
-                        <a class="action_button video_upload_button" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit"><i class="action_icon"></i><span class="action_label">{_upload_audio}</span></a>
-                        <a class="action_button video_add_button" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked"><i class="action_icon"></i><span class="action_label">{_bookmark}</span></a>
-                        <a class="action_button video_delete_button" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked"><i class="action_icon"></i><span class="action_label">{_unbookmark}</span></a>
+                    <div class="AudioPlaylistSnippet__info">
+                        <span id='listensCount'>{tr("listens_count", $playlist->getListens())}</span>
+                        {if $playlist->getEditTime()}
+                            · {tr("updated_playlist")} {$playlist->getEditTime()}
+                        {else}
+                            · {tr("created_playlist")} {$playlist->getPublicationTime()}
+                        {/if}
                     </div>
                 </div>
-                <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">
-                    {if $count < 1}
-                        {include "../components/content_error.latte", icon => "no_music.svg", description => tr("empty_playlist")}
-                    {else}  
-                        <div class="scroll_node" n:foreach="$audios as $audio">
-                            {include "player.latte", audio => $audio}
-                        </div>
 
-                        {include "../components/paginator.latte", conf => (object) [
-                            "page"     => $page,
-                            "count"    => $count,
-                            "amount"   => sizeof($audios),
-                            "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
-                            "atBottom" => true,
-                            'tidy'     => true
-                        ]}
-                    {/if}
+                <div class="AudioPlaylistSnippet__description" n:if="$playlist->getDescription()">
+                    {nl2br($playlist->getDescriptionHTML())|noescape}
+                </div>
+
+                <div class="AudioPlaylistSnippet__actions">
+                    {ifset $thisUser}
+                        <button class="AudioPlaylistSnippet__actionButton ActionButton--add {if $isBookmarked}ActionButton--add--added{/if}" id="{if $isBookmarked}unbookmarkPlaylist{else}bookmarkPlaylist{/if}" data-id="{$playlist->getId()}">
+                            <span class="ActionButton--add__text">{if $isBookmarked}{_unbookmark}{else}{_bookmark}{/if}</span>
+                        </button>
+                        <button class="AudioPlaylistSnippet__actionButton ActionButton--share" onclick="shareAudioPlaylist(event, {$playlist->getOwner()->getId()}, {$playlist->getId()}); event.preventDefault(); event.stopPropagation(); return false;">
+                            <span class="ActionButton--share__text">{_share}</span>
+                        </button>
+                        <button class="AudioPlaylistSnippet__actionButton ActionButton--more" id="playlist_more_actions_trigger" data-tippy-content-id="playlist_more_actions_menu" data-tippy-placement="bottom-end" n:if="$canEdit">
+                            <span class="ActionButton--more__text">{_show_more}</span>
+                        </button>
+                        <div id="playlist_more_actions_menu" class="tippy-menu tippy-content-template" n:if="$canEdit">
+                            <a class="tippy-menu-item" href="/playlist{$playlist->getPrettyId()}/edit" onclick="return showEditPlaylistModal({$playlist->getPrettyId()}, event);">{_edit_playlist}</a>
+                            <a class="tippy-menu-item" href="/player/upload?playlist={$playlist->getId()}">{_upload_audio}</a>
+                            <a class="tippy-menu-item" id="_deletePlaylist" data-id="{$playlist->getId()}">{tr('delete_playlist', 'Delete playlist')}</a>
+                        </div>
+                    {/ifset}
+                </div>
+
+                <div class="AudioPlaylistSnippet__body">
+                    <button n:if="$count >= 1" class="AudioPlaylistSnippet__actionButton ActionButton--shuffle" id="playlistShuffleBtn">
+                        <span class="ActionButton--shuffle__text"><vkifyloc name="shuffle_all" fallback="shuffle_tip"></vkifyloc></span>
+                    </button>
+
+                    <div class="AudioPlaylistSnippet__list audiosContainer scroll_container infContainer">
+                        {if $count < 1}
+                            {include "../components/content_error.latte", icon => "no_music.svg", description => tr("empty_playlist")}
+                        {else}  
+                            <div class="AudioPlaylistSnippet__audioRow scroll_node" n:foreach="$audios as $audio">
+                                {include "player.latte", audio => $audio}
+                            </div>
+
+                            {include "../components/paginator.latte", conf => (object) [
+                                "page"     => $page,
+                                "count"    => $count,
+                                "amount"   => sizeof($audios),
+                                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                                "atBottom" => true,
+                                'tidy'     => true
+                            ]}
+                        {/if}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        (function() {
+            function updateCoversState() {
+                const covers = document.querySelector('.AudioPlaylistSnippet__covers');
+                if (!covers) return;
+                const isCurrentPlaylist = window.player && window.player.context && window.player.context.object &&
+                    (window.player.context.object.url === window.location.pathname || 
+                     window.player.context.object.id === window.__current_page_audio_context.entity_id);
+                const isPlaying = isCurrentPlaylist && window.player.audioPlayer && !window.player.audioPlayer.paused;
+                covers.classList.toggle('AudioPlaylistSnippet__covers--playing', isPlaying);
+            }
+
+            function bindPlayerEvents() {
+                if (window.player && window.player.audioPlayer) {
+                    window.player.audioPlayer.removeEventListener('play', updateCoversState);
+                    window.player.audioPlayer.removeEventListener('pause', updateCoversState);
+                    window.player.audioPlayer.addEventListener('play', updateCoversState);
+                    window.player.audioPlayer.addEventListener('pause', updateCoversState);
+                    updateCoversState();
+                } else {
+                    setTimeout(bindPlayerEvents, 500);
+                }
+            }
+
+            document.addEventListener('click', async function(e) {
+                if (e.target.closest('.AudioPlaylistSnippet__play')) {
+                    const isCurrentPlaylist = window.player && window.player.context && window.player.context.object &&
+                        (window.player.context.object.url === window.location.pathname || 
+                         window.player.context.object.id === window.__current_page_audio_context.entity_id);
+                    if (isCurrentPlaylist) {
+                        window.player.play();
+                    } else {
+                        const firstPlayBtn = document.querySelector('.audiosContainer .audioEmbed .playerButton .playIcon');
+                        if (firstPlayBtn) firstPlayBtn.click();
+                    }
+                    setTimeout(updateCoversState, 100);
+                }
+
+                if (e.target.closest('.AudioPlaylistSnippet__stop')) {
+                    if (window.player) window.player.pause();
+                    setTimeout(updateCoversState, 100);
+                }
+
+                if (e.target.closest('#playlistShuffleBtn')) {
+                    e.preventDefault();
+                    if (!window.player) return;
+                    const isCurrentPlaylist = window.player.context && window.player.context.object &&
+                        (window.player.context.object.url === window.location.pathname || 
+                         window.player.context.object.id === window.__current_page_audio_context.entity_id);
+                    if (isCurrentPlaylist) {
+                        await window.player.shuffle();
+                    } else {
+                        window.player.__renewContext();
+                        await window.player.loadContext(window.__current_page_audio_context.page ?? 1);
+                        await window.player.shuffle();
+                    }
+                    setTimeout(updateCoversState, 100);
+                }
+            });
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bindPlayerEvents);
+            } else {
+                bindPlayerEvents();
+            }
+        })();
+    </script>
 {/block}

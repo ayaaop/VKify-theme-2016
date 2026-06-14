@@ -1,0 +1,211 @@
+.PE_wrapper {
+    box-sizing: border-box;
+}
+
+.audio_pl_edit_box {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--module-background-color);
+    border-radius: var(--module-border-radius);
+    gap: 0;
+}
+
+.audio_pl_edit_box .ape_header {
+    background-color: var(--module-background-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.audio_pl_edit_box .ape_cover {
+    width: 135px;
+    height: 135px;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: var(--button-background-color--light);
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.audio_pl_edit_box .ape_cover_thumb {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: filter 0.15s ease;
+}
+
+.audio_pl_edit_box .ape_cover:hover .ape_cover_thumb {
+    filter: brightness(0.75);
+}
+
+.audio_pl_edit_box .ape_cover_icon_wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.audio_pl_edit_box .ape_cover:hover .ape_cover_icon_wrap {
+    opacity: 1;
+}
+
+.audio_pl_edit_box .ape_cover_title {
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.audio_pl_edit_box .ape_pl_info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.audio_pl_edit_box .ape_pl_title,
+.audio_pl_edit_box .ape_pl_description {
+    width: 100%;
+}
+
+.audio_pl_edit_box textarea.ape_pl_input {
+    height: 64px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.audio_pl_edit_box .ape_pl_stat {
+    font-size: 12px;
+    color: var(--muted-text-color);
+}
+
+.audio_pl_edit_box .ape_add_audios_btn {
+    box-sizing: border-box;
+    padding: 16px 40px 16px 65px;
+    cursor: pointer;
+    border: 0;
+    position: relative;
+    border-bottom: 1px solid var(--border-color);
+    display: block;
+    width: 100%;
+    font-size: 13px;
+    text-align: left;
+    font-weight: 500;
+    color: var(--accent-color-2);
+    line-height: 19px;
+    background-color: var(--module-background-color);
+}
+
+.audio_pl_edit_box .ape_add_audios_btn:hover {
+    background-color: var(--audio-background-color-2);
+    text-decoration: none;
+}
+
+.audio_pl_edit_box .ape_add_audios_btn .ape_add_audios_btn_plus_icon {
+    display: inline-block;
+    position: absolute;
+    left: 29px;
+    top: 13px;
+    color: var(--accent-color-2);
+}
+
+.audio_pl_edit_box .ape_add_audios_btn .ape_add_audios_btn_chevron_icon {
+    display: inline-block;
+    position: absolute;
+    right: 20px;
+    top: 13px;
+    color: var(--border-color-2);
+}
+
+.audio_pl_edit_box .ape_item_list {
+    box-sizing: border-box;
+    padding: 10px 20px;
+    height: 400px;
+    display: block;
+    background-color: var(--module-background-color);
+}
+
+.audio_pl_edit_box .ape_audios_empty_list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: var(--muted-text-color);
+    font-size: 13px;
+    padding: 40px 20px;
+    text-align: center;
+    height: 400px;
+    box-sizing: border-box;
+}
+
+.audio_pl_edit_box .ape_audios_empty_list .ape_audios_empty_list_icon {
+    margin-bottom: 12px;
+    color: var(--border-color-2);
+}
+
+/* Control buttons wrap */
+.audio_pl_edit_box .box_controls_wrap.PE_end {
+    margin: 0;
+}
+.audio_pl_edit_box .box_controls {
+    height: 32px;
+    background-color: var(--module-header-background-color);
+    border-top: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-bottom-left-radius: var(--module-border-radius);
+    border-bottom-right-radius: var(--module-border-radius);
+    text-align: left;
+}
+
+.audio_pl_edit_box .box_controls_buttons {
+    display: inline-block;
+}
+
+.audio_pl_edit_box .box_controls_text {
+	padding: 7px 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Track list modifications */
+.PE_audios .vertical-attachment-remove {
+    height: 100%;
+}
+.PE_audios #small_remove_button {
+    margin: 0 auto;
+	height: 100%;
+}
+
+.PE_audios .vertical-attachment-remove:hover {
+    opacity: 1;
+}
+
+/* Modal-specific overrides */
+.ovk-diag-body .audio_pl_edit_box .ape_cover,
+.ovk-diag-body .audio_pl_edit_box .ape_cover_thumb {
+    width: 100px;
+    height: 100px;
+}
+.ovk-diag-body .audio_pl_edit_box .ape_item_list,.ovk-diag-body .audio_pl_edit_box .ape_audios_empty_list {
+    overflow: auto;
+    max-height: clamp(150px, 35vh, 400px);
+}
+.ovk-diag-body .audio_pl_edit_box .box_controls_text {
+    padding: 5px 0;
+}

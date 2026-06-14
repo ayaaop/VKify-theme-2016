@@ -1,45 +1,127 @@
-<div class='verticalGrayTabsWrapper'>
-    <div class="verticalGrayTabs">
-        <div class='with_padding'>
-			<div class="myaudiotab" n:attr="id => $mode === 'list' && $isMy ? 'mymussel' : ''">
-				<a class="addAudioSmall" onclick="showAudioUploadPopup(); return false;" href="/player/upload"><div class="addIcon"></div></a>
-				<a n:if="isset($thisUser)" n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
-			</div>
-            <a n:attr="id => $mode === 'uploaded' ? 'used' : 'ki'" href="/audios/uploaded">{_my_audios_small_uploaded}</a>
-            {* TODO: show upload link as and plusick (little plus) in button up, добавлено хех*}
-            {* <a n:if="isset($thisUser)" href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}">{_upload_audio}</a> *}
-            <a n:if="isset($thisUser)" n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/search?section=audios">{_audio_new}</a>
-            <a n:if="isset($thisUser)" n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/search?section=audios&order=listens">{_audio_popular}</a>
+{var $tabMenuItems = []}
 
-            <hr n:if="isset($thisUser)">
+{* Own user tabs *}
+{if isset($thisUser)}
 
-            <a n:attr="id => $mode === 'playlists' && $ownerId == $thisUser->getId() ? 'used' : 'ki'" href="/playlists{$thisUser->getId()}" n:if="isset($thisUser)">{_my_playlists}</a>
+    {var $tabMenuItems[] = [
+        'url'       => '/audios' . $thisUser->getId(),
+        'title'     => 'my_music',
+        'count'     => $audiosCount ?? 0,
+        'active'    => $mode === 'list' && $isMy,
+        'id'        => $mode === 'list' && $isMy ? 'mymussel' : null,
+        'extraItem' => [
+            'url'     => '/player/upload',
+            'class'   => 'addAudioSmall',
+            'content' => '<div class="addIcon"></div>',
+            'onclick' => 'showAudioUploadPopup(); return false;'
+        ]
+    ]}
 
-            <a n:if="isset($thisUser)" href="/audios/newPlaylist">{_new_playlist}</a>
+    {var $tabMenuItems[] = [
+        'url'    => '/audios/uploaded',
+        'title'  => 'my_audios_small_uploaded',
+        'active' => $mode === 'uploaded',
+        'id'     => $mode === 'uploaded' ? 'used' : null
+    ]}
 
-            {if !$isMy && $mode !== 'popular' && $mode !== 'new' && $mode != 'alone_audio' && $mode != 'uploaded'}
-                <hr>
-                
-                <a n:if="!$isMy" n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
-                <a href="/player/upload?gid={abs($ownerId)}" onclick="showAudioUploadPopup({ ownerId: {$ownerId} }); return false;" n:if="isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser)">{_upload_audio}</a>
-                <a n:attr="id => $mode === 'playlists' && $ownerId != $thisUser->getId() ? 'used' : 'ki'" class='noOverflow' href="/playlists{$ownerId}"  n:if="isset($thisUser) && isset($ownerId) && !$isMy">{if $ownerId > 0}{_playlists_user}{else}{_playlists_club}{/if}</a>
-                <a href="/audios/newPlaylist{if $isMyClub}?gid={abs($ownerId)}{/if}" n:if="isset($thisUser) && $isMyClub">{_new_playlist}</a>
-            {/if}
-        </div>
+    {var $tabMenuItems[] = [
+        'url'    => '/search?section=audios',
+        'title'  => 'audio_new',
+        'active' => $mode === 'new',
+        'id'     => $mode === 'new' ? 'used' : null
+    ]}
 
-        {if $friendsAudios}
-            <div class="friendsAudiosList">
-                <a href="/audios{$friend->getRealId()}" n:foreach="$friendsAudios as $friend">
-                    <div class="elem">
-                        <img src="{$friend->getAvatarURL()}" />
+    {var $tabMenuItems[] = [
+        'url'    => '/search?section=audios&order=listens',
+        'title'  => 'audio_popular',
+        'active' => $mode === 'popular',
+        'id'     => $mode === 'popular' ? 'used' : null
+    ]}
 
-                        <div class="additionalInfo">
-                            <span class="name noOverflow">{$friend->getCanonicalName()}</span>
-                            <span class="desc">{$audioStatus ? $audioStatus->getName() : tr("audios_count", $friend->getAudiosCollectionSize())}</span>
-                        </div>
-                    </div>
-                </a>
-            </div>
+    {var $tabMenuItems[] = ['isSeparator' => true]}
+
+    {var $tabMenuItems[] = [
+        'url'    => '/playlists' . $thisUser->getId(),
+        'title'  => 'my_playlists',
+        'active' => $mode === 'playlists' && $ownerId == $thisUser->getId(),
+        'id'     => ($mode === 'playlists' && $ownerId == $thisUser->getId()) ? 'used' : null
+    ]}
+
+    {var $tabMenuItems[] = [
+        'url'    => '/audios/newPlaylist',
+        'title'  => 'new_playlist',
+        'active' => false,
+        'onclick' => 'return showNewPlaylistModal(event);'
+    ]}
+
+{/if}
+
+{* Other user/club tabs *}
+{if !$isMy && !in_array($mode, ['popular', 'new', 'alone_audio', 'uploaded'])}
+
+    {var $tabMenuItems[] = ['isSeparator' => true]}
+
+    {var $tabMenuItems[] = [
+        'url'       => '/audios' . $ownerId,
+        'title'     => $ownerId > 0 ? 'music_user' : 'music_club',
+        'active'    => $mode === 'list',
+        'id'        => $mode === 'list' ? 'used' : null,
+        'extraItem' => (isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser))
+            ? [
+                'url'     => '/player/upload?gid=' . abs($ownerId),
+                'class'   => 'addAudioSmall',
+                'content' => '<div class="addIcon"></div>',
+                'onclick' => 'showAudioUploadPopup({ ownerId: ' . $ownerId . ' }); return false;'
+            ]
+            : null
+    ]}
+
+    {if isset($thisUser) && $ownerId != $thisUser->getId()}
+        {var $tabMenuItems[] = [
+            'url'    => '/playlists' . $ownerId,
+            'title'  => $ownerId > 0 ? 'playlists_user' : 'playlists_club',
+            'active' => $mode === 'playlists',
+            'id'     => $mode === 'playlists' ? 'used' : null
+        ]}
+    {/if}
+
+    {if $isMyClub}
+        {var $tabMenuItems[] = [
+            'url'    => '/audios/newPlaylist?gid=' . abs($ownerId),
+            'title'  => 'new_playlist',
+            'active' => false,
+            'onclick' => 'return showNewPlaylistModal(event, ' . abs($ownerId) . ');'
+        ]}
+    {/if}
+
+{/if}
+
+{include "../components/ui_rmenu.latte",
+    items => $tabMenuItems,
+    additionalCssClass => 'audio_tabs',
+    id => 'audio_tabs'
+}
+
+{* Friends audios *}
+{if $friendsAudios}
+    {var $friendsMenuItems = []}
+
+    {foreach $friendsAudios as $friend}
+        {if $iterator->counter <= 5}
+            {var $friendsMenuItems[] = [
+                'url'            => '/audios' . $friend->getRealId(),
+                'title'          => $friend->getCanonicalName(),
+                'translate'      => false,
+                'avatar'         => $friend->getAvatarURL(),
+                'additionalInfo' => ($audioStatus ?? null) ? $audioStatus->getName() : tr('audios_count', $friend->getAudiosCollectionSize()),
+                'isRich'         => true
+            ]}
         {/if}
-    </div>
-</div>
+    {/foreach}
+
+    {include "../components/ui_rmenu.latte",
+        items => $friendsMenuItems,
+        additionalCssClass => 'friends_audio_list',
+        id => 'friends_audio_list'
+    }
+{/if}

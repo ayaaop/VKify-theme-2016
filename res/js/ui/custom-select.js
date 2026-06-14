@@ -1,12 +1,12 @@
-(function () {
-'use strict';
+(() => {
+
 
 vkify.bindOnce('dropdownHandlers', () => {
     let vkdropdownJustClosed = false;
     let currentOutsideClick = null;
 
     const removeDropdown = () => {
-        document.querySelectorAll('.vkdropdown').forEach(el => el.remove());
+        document.querySelectorAll('.vkdropdown').forEach(el => { el.remove(); });
         if (currentOutsideClick) {
             document.removeEventListener('click', currentOutsideClick, true);
             currentOutsideClick = null;
@@ -21,15 +21,15 @@ vkify.bindOnce('dropdownHandlers', () => {
         const menu = document.createElement('div');
         menu.className = 'vkdropdown';
         menu.style.position = 'absolute';
-        menu.style.left = (rect.left + window.scrollX - 1) + 'px';
-        menu.style.top = (rect.bottom + window.scrollY - 2) + 'px';
-        menu.style.width = rect.width + 'px';
+        menu.style.left = `${rect.left + window.scrollX - 1}px`;
+        menu.style.top = `${rect.bottom + window.scrollY - 2}px`;
+        menu.style.width = `${rect.width}px`;
         menu.dataset.selectVkifyId = selectEl.dataset.vkifySelectId || '';
         document.body.appendChild(menu);
 
         Array.from(selectEl.options || []).forEach((opt) => {
             const item = document.createElement('div');
-            item.className = 'vkdropopt' + (opt.selected ? ' selected' : '');
+            item.className = `vkdropopt${opt.selected ? ' selected' : ''}`;
             item.textContent = opt.textContent || '';
             menu.appendChild(item);
         });
@@ -40,7 +40,7 @@ vkify.bindOnce('dropdownHandlers', () => {
         }
 
         menu.addEventListener('click', (e) => {
-            const item = e.target && e.target.closest ? e.target.closest('.vkdropopt') : null;
+            const item = e.target?.closest ? e.target.closest('.vkdropopt') : null;
             if (!item) return;
             const index = Array.from(menu.querySelectorAll('.vkdropopt')).indexOf(item);
             if (index >= 0 && selectEl.options && selectEl.options[index]) {
@@ -107,6 +107,17 @@ vkify.bindOnce('dropdownHandlers', () => {
     document.addEventListener('click', onSelectClick, true);
 
     vkify.hook(vkify, 'onPageReady', removeDropdown, 'after');
+
+    vkify.observeDOM((mutations) => {
+        for (const m of mutations) {
+            for (const node of m.removedNodes) {
+                if (node.nodeType === 1 && (node.classList?.contains('ovk-msg-all') || node.querySelector?.('.ovk-msg-all'))) {
+                    removeDropdown();
+                    return;
+                }
+            }
+        }
+    });
 });
 
 })();

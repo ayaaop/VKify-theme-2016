@@ -1,5 +1,4 @@
-(function() {
-'use strict';
+(() => {
 
 const tr = window.tr;
 const LoaderUtils = window.LoaderUtils;
@@ -101,6 +100,7 @@ const appendVertical = (form, { type, id, html, undeletable }, playlistMode = fa
     `);
 };
 
+// biome-ignore lint/correctness/noUnusedVariables: helper
 const removeAttachment = (form, type, id, playlistMode = false) => {
     if (playlistMode) {
         form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove();
@@ -647,7 +647,7 @@ class PhotoMainView {
             node.on('click', '.picker-upload-btn', () => node.find('.picker-upload-input').nodes[0]?.click());
             node.on('change', '.picker-upload-input', (e) => {
                 if (e.target.files?.length) {
-                    Array.from(e.target.files).forEach(f => window.__uploadToTextarea?.(f, this.picker.form));
+                    Array.from(e.target.files).forEach(f => { window.__uploadToTextarea?.(f, this.picker.form); });
                     this.picker.close();
                 }
             });
@@ -714,7 +714,7 @@ class PhotoMainView {
             const current = getAttachedCount(this.picker.form);
             const allowed = Math.max(0, MAX_ATTACHMENTS - current);
             if (!allowed) { canAttach(this.picker.form, 1); return; }
-            files.slice(0, allowed).forEach(f => window.__uploadToTextarea?.(f, this.picker.form));
+            files.slice(0, allowed).forEach(f => { window.__uploadToTextarea?.(f, this.picker.form); });
             this.picker.close();
         });
     }
@@ -893,6 +893,7 @@ const VideoAdapter = {
     emptyMessage: tr('no_videos'),
     rowsClass: 'video_block_layout',
 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: interface
     buildBody(picker, preRendered) {
         const { itemsHTML, emptyHTML } = getPreRenderedHTML(preRendered, VideoAdapter.emptyMessage, 'video_block_layout');
         return `<div class='attachment_selector'>
@@ -932,6 +933,7 @@ const VideoAdapter = {
         });
     },
 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: interface
     async fetch(picker, signal) {
         const params = {
             extended: 1,
@@ -1038,6 +1040,7 @@ const AudioAdapter = {
         });
     },
 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: interface
     async fetch(picker, signal) {
         const PlayersSearcher = window.playersSearcher || (typeof playersSearcher !== 'undefined' ? playersSearcher : null);
         if (!PlayersSearcher) throw new Error('playersSearcher not available');
@@ -1180,6 +1183,7 @@ const NoteAdapter = {
     callbacks: (picker) => [() => picker.close()],
     rowsClass: '',
 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: interface
     buildBody(picker, preRendered) {
         const { itemsHTML, emptyHTML } = getPreRenderedHTML(preRendered, NoteAdapter.emptyMessage);
         return `<div class='attachment_selector'>
@@ -1200,6 +1204,7 @@ const NoteAdapter = {
         });
     },
 
+    // biome-ignore lint/correctness/noUnusedFunctionParameters: interface
     async fetch(picker, signal) {
         const notes = await window.OVKAPI.call('notes.get', {
             user_id: window.openvk.current_id,
@@ -1350,24 +1355,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
             const uploadBtn = thisMsg?.getNode().find('.ovk-diag-action button').nodes[0];
 
             switch (current_tab) {
-                default:
-                case 'file':
-                    const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0];
-                    if (!video_file?.files.length) return;
-
-                    form_data.append('ajax', '1');
-                    form_data.append('name', video_name);
-                    form_data.append('desc', video_desc);
-                    form_data.append('blob', video_file.files[0]);
-                    form_data.append('unlisted', formNode ? 1 : 0);
-                    form_data.append('hash', vkify.getCsrf());
-
-                    uploadBtn?.classList.add('lagged');
-                    const res = await fetch('/videos/upload', { method: 'POST', body: form_data });
-                    append_result = await res.json();
-                    break;
-
-                case 'youtube':
+                case 'youtube': {
                     const video_link = u(`#_fast_video_upload input[name='link']`).nodes[0]?.value;
                     if (!video_link?.length) {
                         u(`#_fast_video_upload input[name='link']`).nodes[0]?.focus();
@@ -1385,6 +1373,24 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
                     const ytRes = await fetch('/videos/upload', { method: 'POST', body: form_data });
                     append_result = await ytRes.json();
                     break;
+                }
+
+                default: {
+                    const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0];
+                    if (!video_file?.files.length) return;
+
+                    form_data.append('ajax', '1');
+                    form_data.append('name', video_name);
+                    form_data.append('desc', video_desc);
+                    form_data.append('blob', video_file.files[0]);
+                    form_data.append('unlisted', formNode ? 1 : 0);
+                    form_data.append('hash', vkify.getCsrf());
+
+                    uploadBtn?.classList.add('lagged');
+                    const res = await fetch('/videos/upload', { method: 'POST', body: form_data });
+                    append_result = await res.json();
+                    break;
+                }
             }
 
             if (append_result?.payload) {
@@ -1393,10 +1399,10 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
                     appendHorizontal(formNode, {
                         type: 'video',
                         preview: payload.image[0]?.url,
-                        id: payload.owner_id + '_' + payload.id,
+                        id: `${payload.owner_id}_${payload.id}`,
                     });
                 }
-                window.messagebox_stack.forEach(m => m.close());
+                window.messagebox_stack.forEach(m => { m.close(); });
                 if (!formNode) vkify.navigate(location.href);
             } else {
                 fastError(append_result?.flash?.message || tr('error'));

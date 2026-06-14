@@ -104,7 +104,7 @@ body.dark-mode {
 	--profile-button-border-color: #71aaeb;
 }
 
-body.dark-mode .sidebar_inner .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .post_like_icon, body.dark-mode .post_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {
+body.dark-mode .sidebar_inner .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .action_like_icon, body.dark-mode .action_share_icon, body.dark-mode .home_navigation .top_nav_btn_icon {
 	filter: brightness(140%);
 }
 body.dark-mode .home_navigation .top_nav_btn_icon {
@@ -114,7 +114,7 @@ body.dark-mode #liked {
     filter: brightness(120%);
 }
 
-body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.post_like,.button_light) i,.bigPlayer .playButtons .playButton .playIcon, [src*="/icons/no_music.svg"] {
+body.dark-mode .button .profile_gift_icon,body.dark-mode .button:not(.action_like,.button_light) i,.bigPlayer .playButtons .playButton .playIcon, [src*="/icons/no_music.svg"] {
 	filter: invert(1)!important
 }
 

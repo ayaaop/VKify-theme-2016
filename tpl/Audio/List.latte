@@ -64,131 +64,7 @@
         <div class="narrow_column_wrap">
             <div class="narrow_column">
 
-                {var $tabMenuItems = []}
-
-                {* Own user tabs *}
-                {if isset($thisUser)}
-
-                    {var $tabMenuItems[] = [
-                        'url'       => '/audios' . $thisUser->getId(),
-                        'title'     => 'my_music',
-                        'count'     => $audiosCount ?? 0,
-                        'active'    => $mode === 'list' && $isMy,
-                        'id'        => $mode === 'list' && $isMy ? 'mymussel' : null,
-                        'extraItem' => [
-                            'url'     => '/player/upload',
-                            'class'   => 'addAudioSmall',
-                            'content' => '<div class="addIcon"></div>',
-                            'onclick' => 'showAudioUploadPopup(); return false;'
-                        ]
-                    ]}
-
-                    {var $tabMenuItems[] = [
-                        'url'    => '/audios/uploaded',
-                        'title'  => 'my_audios_small_uploaded',
-                        'active' => $mode === 'uploaded',
-                        'id'     => $mode === 'uploaded' ? 'used' : null
-                    ]}
-
-                    {var $tabMenuItems[] = [
-                        'url'    => '/search?section=audios',
-                        'title'  => 'audio_new',
-                        'active' => $mode === 'new',
-                        'id'     => $mode === 'new' ? 'used' : null
-                    ]}
-
-                    {var $tabMenuItems[] = [
-                        'url'    => '/search?section=audios&order=listens',
-                        'title'  => 'audio_popular',
-                        'active' => $mode === 'popular',
-                        'id'     => $mode === 'popular' ? 'used' : null
-                    ]}
-
-                    {var $tabMenuItems[] = ['isSeparator' => true]}
-
-                    {var $tabMenuItems[] = [
-                        'url'    => '/playlists' . $thisUser->getId(),
-                        'title'  => 'my_playlists',
-                        'active' => $mode === 'playlists' && $ownerId == $thisUser->getId(),
-                        'id'     => ($mode === 'playlists' && $ownerId == $thisUser->getId()) ? 'used' : null
-                    ]}
-
-                    {var $tabMenuItems[] = [
-                        'url'    => '/audios/newPlaylist',
-                        'title'  => 'new_playlist',
-                        'active' => false
-                    ]}
-
-                {/if}
-
-                {* Other user/club tabs *}
-                {if !$isMy && !in_array($mode, ['popular', 'new', 'alone_audio', 'uploaded'])}
-
-                    {var $tabMenuItems[] = ['isSeparator' => true]}
-
-                    {var $tabMenuItems[] = [
-                        'url'       => '/audios' . $ownerId,
-                        'title'     => $ownerId > 0 ? 'music_user' : 'music_club',
-                        'active'    => $mode === 'list',
-                        'id'        => $mode === 'list' ? 'used' : null,
-                        'extraItem' => (isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser))
-                            ? [
-                                'url'     => '/player/upload?gid=' . abs($ownerId),
-                                'class'   => 'addAudioSmall',
-                                'content' => '<div class="addIcon"></div>',
-                                'onclick' => 'showAudioUploadPopup({ ownerId: ' . $ownerId . ' }); return false;'
-                            ]
-                            : null
-                    ]}
-
-                    {if isset($thisUser) && $ownerId != $thisUser->getId()}
-                        {var $tabMenuItems[] = [
-                            'url'    => '/playlists' . $ownerId,
-                            'title'  => $ownerId > 0 ? 'playlists_user' : 'playlists_club',
-                            'active' => $mode === 'playlists',
-                            'id'     => $mode === 'playlists' ? 'used' : null
-                        ]}
-                    {/if}
-
-                    {if $isMyClub}
-                        {var $tabMenuItems[] = [
-                            'url'    => '/audios/newPlaylist?gid=' . abs($ownerId),
-                            'title'  => 'new_playlist',
-                            'active' => false
-                        ]}
-                    {/if}
-
-                {/if}
-
-                {include "../components/ui_rmenu.latte",
-                    items => $tabMenuItems,
-                    additionalCssClass => 'audio_tabs',
-                    id => 'audio_tabs'
-                }
-
-                {* Friends audios *}
-                {if $friendsAudios}
-                    {var $friendsMenuItems = []}
-
-                    {foreach $friendsAudios as $friend}
-                        {if $iterator->counter <= 5}
-                            {var $friendsMenuItems[] = [
-                                'url'            => '/audios' . $friend->getRealId(),
-                                'title'          => $friend->getCanonicalName(),
-                                'translate'      => false,
-                                'avatar'         => $friend->getAvatarURL(),
-                                'additionalInfo' => ($audioStatus ?? null) ? $audioStatus->getName() : tr('audios_count', $friend->getAudiosCollectionSize()),
-                                'isRich'         => true
-                            ]}
-                        {/if}
-                    {/foreach}
-
-                    {include "../components/ui_rmenu.latte",
-                        items => $friendsMenuItems,
-                        additionalCssClass => 'friends_audio_list',
-                        id => 'friends_audio_list'
-                    }
-                {/if}
+                {include "tabs.latte"}
 
             </div>
         </div>
@@ -199,7 +75,15 @@
                 </div>
                 
                 <div class="page_block">
-                    {include "../components/page_block_header.latte", title => $pageTitle, count => $audioHeaderCount, translate => false}
+                    {if !$isMy && $mode != 'new' && $mode != 'popular' && $mode != 'alone_audio' && $mode != 'uploaded'}
+                        {var $crumbs = [
+                            ['title' => $ownerId > 0 ? $owner->getCanonicalName() : $club->getName(), 'href' => $ownerId > 0 ? $owner->getURL() : $club->getURL()],
+                            ['title' => $mode == 'playlists' ? tr('playlists') : tr('audios'), 'count' => $audioHeaderCount]
+                        ]}
+                        {include "../components/page_crumb_header.latte", crumbs => $crumbs}
+                    {else}
+                        {include "../components/page_block_header.latte", title => $pageTitle, count => $audioHeaderCount, translate => false}
+                    {/if}
                     {include "../components/search_bar.latte",
                         id => 'audios_search_header',
                         form_class => 'search_page_form',
