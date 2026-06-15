@@ -21,7 +21,7 @@ let locales = {
 		graffiti_normal_size: "Normal size",
 		ovkhat: `Use OpenVK branding`,
 		httpwarn: `This OpenVK instance uses the outdated <b>http</b> protocol.<br>Please, migrate to <b>https</b>.`,
-		httpwarnovk: `You are using an insecure protocol: <b>http</b>. Please always use <b>https</b>.<br><a href='https://{url}/'>Switch to https »</a>`,
+		httpwarnovk: `You are using an insecure protocol: <b>http</b>. Please always use <b>https</b>.<br><a href='https://$1/'>Switch to https »</a>`,
 		loginPromo: `OpenVK for mobile devices`,
 		loginPromoInfo: `Install the official OpenVK app and stay up to date with your friends' news, wherever you are.`,
 		loginPromoAndroid: "For Android",
@@ -105,7 +105,7 @@ let locales = {
 		graffiti_normal_size: "Обычный размер",
 		ovkhat: `Использовать брендинг OpenVK`,
 		httpwarn: `Этот инстанс OpenVK использует устаревший протокол <b>http</b>.<br>Пожалуйста, смените его на <b>https</b>.`,
-		httpwarnovk: `Вы используете небезопасный протокол <b>http</b>. Пожалуйста, всегда используйте <b>https</b>.<br><a href='https://{url}/'>Перейти на https »</a>`,
+		httpwarnovk: `Вы используете небезопасный протокол <b>http</b>. Пожалуйста, всегда используйте <b>https</b>.<br><a href='https://$1/'>Перейти на https »</a>`,
 		loginPromo: `OpenVK для мобильных устройств`,
 		loginPromoInfo: `Установите официальное приложение OpenVK и оставайтесь в курсе новостей друзей, где бы вы ни находились.`,
 		loginPromoAndroid: "Для Android",
@@ -191,7 +191,7 @@ let locales = {
 		httpwarn:
 			"Цей інстанс OpenVK використовує застарілий протокол <b>HTTP</b>.<br>Будь ласка, перейдіть на <b>HTTPS</b>.",
 		httpwarnovk:
-			"Ви використовуєте незахищений протокол <b>HTTP</b>. Завжди використовуйте <b>HTTPS</b>.<br><a href='https://{url}/'>Перейти на HTTPS »</a>",
+			"Ви використовуєте незахищений протокол <b>HTTP</b>. Завжди використовуйте <b>HTTPS</b>.<br><a href='https://$1/'>Перейти на HTTPS »</a>",
 		loginPromo: "OpenVK для мобільних пристроїв",
 		loginPromoInfo:
 			"Встановіть офіційний застосунок OpenVK і залишайтеся в курсі новин друзів, де б ви не були.",
@@ -274,7 +274,7 @@ let locales = {
 		graffiti_normal_size: "Қалыпты өлшем",
 		ovkhat: `OpenVK брендингін қолдану`,
 		httpwarn: `Бұл OpenVK инстансы ескірген <b>http</b> хаттамасын қолданады.<br>Оны <b>https</b> нұсқасына ауыстыруыңызды сұраймыз.`,
-		httpwarnovk: `Сіз қауіпсіз емес <b>http</b> хаттамасын қолданып отырсыз. Әрқашан <b>https</b> қолданыңыз.<br><a href='https://{url}/'>https-ке өту »</a>`,
+		httpwarnovk: `Сіз қауіпсіз емес <b>http</b> хаттамасын қолданып отырсыз. Әрқашан <b>https</b> қолданыңыз.<br><a href='https://$1/'>https-ке өту »</a>`,
 		loginPromo: `Ұялы құрылғыларға арналған OpenVK`,
 		loginPromoInfo: `OpenVK ресми қолданбасын орнатып, қай жерде болсаңыз да достарыңыздың жаңалықтарынан хабардар болыңыз.`,
 		loginPromoAndroid: "Android үшін",

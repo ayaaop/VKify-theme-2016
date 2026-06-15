@@ -359,24 +359,23 @@ window.dismissHttpWarning = function() {
     if (warningEl) {
         warningEl.style.display = 'none';
     }
-    document.cookie = "vkify_popup_shown_http_warn=1;path=/;max-age=31536000;SameSite=Lax";
-    try {
-        localStorage.setItem('vkify_popup_shown_http_warn', '1');
-    } catch (e) {}
+    vkify.setCookie('vkify_popup_shown_http_warn', '1', 36500);
 };
 
 vkify.ready(() => {
-    const warningTextEl = document.getElementById('http-warning-text');
-    if (warningTextEl) {
-        setTimeout(() => {
-            const link = warningTextEl.querySelector('a');
-            if (link && (link.href.includes('{url}') || link.href.includes('%7Burl%7D'))) {
-                const targetHost = location.host.includes('openvk.xyz') ? 'openvk.org' : location.host;
-                link.href = link.href.replace('{url}', targetHost).replace('%7Burl%7D', targetHost);
-                link.innerHTML = link.innerHTML.replace('{url}', targetHost).replace('%7Burl%7D', targetHost);
-            }
-        }, 100);
+    const warningEl = document.querySelector('.http-warning-popup');
+    if (warningEl) {
+        const isHttp = location.protocol === 'http:' && !location.host.includes('localhost') && !location.host.includes('127.0.0.1');
+        const isDismissed = vkify.getCookie('vkify_popup_shown_http_warn') === '1';
+        
+        if (isHttp && !isDismissed) {
+            warningEl.style.display = 'block';
+        } else {
+            warningEl.style.display = 'none';
+        }
     }
+
+
 
     const musicKeysDown = [32, 37, 39, 107, 109];
     const musicKeysUp = [87, 65, 83, 68, 82, 77];
