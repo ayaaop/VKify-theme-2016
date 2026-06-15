@@ -369,6 +369,8 @@ table * {
   line-height: 0;
   transition: opacity 350ms linear;
   text-align: center;
+  vertical-align: middle;
+  display: inline-block;
 }
 .pr_bt {
   display: inline-block;

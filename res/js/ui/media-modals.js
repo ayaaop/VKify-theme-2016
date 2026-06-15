@@ -387,7 +387,6 @@ vkify.once('mediaModals', function () {
         }
 
         try {
-            let photoOriginalUrl = photo;
             let photoOwnerId = parseInt(photo_id.split('_')[0]);
             let photoRealId = parseInt(photo_id.split('_')[1]);
             const currentUserId = window.openvk?.current_id || 0;
@@ -417,29 +416,6 @@ vkify.once('mediaModals', function () {
             </div>
         </div>`;
 
-            function buildPhotoActions(ownerId, photoId, realId, originalUrl) {
-                const isOwner = currentUserId === ownerId;
-                const csrfToken = vkify.getCsrf();
-                let html = '';
-
-                if (isOwner) {
-                    html += `<a id="_photoDelete" href="/photo${photoId}/delete?hash=${encodeURIComponent(csrfToken)}">${tr('delete')}</a>`;
-                    html += `<span class="divider"></span>`;
-                }
-
-                html += `<span class="pv_actions_more" role="button" data-tippy-content-id="pv_actions_more_menu_${realId}" data-tippy-theme="dark vk">${tr('show_more')}</span>`;
-                html += `<div id="pv_actions_more_menu_${realId}" class="tippy-menu tippy-content-template">`;
-                if (isOwner) {
-                    html += `<a href="javascript:showEditPhotoModal('${photoId}')">${tr('edit')}</a>`;
-                }
-                html += `<a href="${originalUrl}" target="_blank">${tr('open_original')}</a>`;
-                if (!isOwner) {
-                    html += `<a href="javascript:reportPhoto(${realId})">${tr('report')}</a>`;
-                }
-                html += `</div>`;
-
-                return html;
-            }
 
             const msgbox = CF.createModal({
                 type: 'photo',
@@ -553,7 +529,7 @@ vkify.once('mediaModals', function () {
                 if (!nextPhoto) return;
 
                 currentImageid = nextPhoto.id;
-                const photoURL = json?.body?.[currentImageid]?.url || photoOriginalUrl;
+                const photoURL = json?.body?.[currentImageid]?.url || photo;
 
                 msgbox.getNode().find('#pv_photo_img').attr('src', photoURL);
 
@@ -652,14 +628,9 @@ vkify.once('mediaModals', function () {
                 LoaderUtils.show('#pv_right_loader', { size: 'medium' });
 
                 u('#pv_actions_loader').html('');
-                LoaderUtils.show('#pv_actions_loader', { theme: 'baw' });
 
-                const ownerId = parseInt(photoId.split('_')[0]);
-                const realId = parseInt(photoId.split('_')[1]);
-                const photoUrl = json?.body?.[photoId]?.url || photoOriginalUrl;
-
-                const actionsHtml = buildPhotoActions(ownerId, photoId, realId, photoUrl);
-                msgbox.getNode().find('.pv_bottom_actions').html(actionsHtml);
+                msgbox.getNode().find('.pv_bottom_actions').html('<div id="pv_bottom_actions_loader" style="height: 18px"></div>');
+                LoaderUtils.show('#pv_bottom_actions_loader', { theme: 'baw', size: 'small' });
 
                 try {
                     const body = await CF.fetchPageContent(`/photo${photoId}`, null, { ajaxQuery: false });
@@ -672,6 +643,9 @@ vkify.once('mediaModals', function () {
 
                     const pvAlbumName = body.querySelector('.pv_album_name');
                     msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
+
+                    const pvActions = body.querySelector('.pv_bottom_actions');
+                    msgbox.getNode().find('.pv_bottom_actions').html(pvActions ? pvActions.innerHTML : '');
 
                     msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
                 } catch (e) {
