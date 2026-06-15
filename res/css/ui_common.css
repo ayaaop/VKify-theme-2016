@@ -531,6 +531,9 @@ input[type="submit"].button_green:hover {
   flex-wrap: wrap;
   justify-content: center;
 }
+.form_data .buttons_row {
+  justify-content: flex-start;
+}
 .buttons_row .button:not(:last-child),
 #lastStepButtons .button:not(:last-child) {
   margin-right: 10px;
@@ -1845,6 +1848,17 @@ select:focus {
 #_addAudioAdditional #_tabs {
   margin-inline: 0;
   margin-bottom: 0;
+}
+
+/* knowledgebase typography */
+.knowledgeBaseArticle {
+  line-height: 1.462;
+}
+.knowledgeBaseArticle h2 {
+  margin: 10px 0;
+}
+.knowledgeBaseArticle h2:first-child {
+  margin-top: 0;
 }
 
 .settings_saved_label {
