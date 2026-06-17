@@ -29,11 +29,11 @@ vkify.bindOnce('statusEditorOverrides', () => {
                     LoaderUtils.showInButton(submitBtn, { theme: 'baw' });
                 }
 
-                const status = form.status?.value || '';
+                const status = (form.status && form.status.value) ? form.status.value : '';
                 const formData = new FormData();
                 formData.append('status', status);
-                formData.append('broadcast', Number(Boolean(form.broadcast?.checked)));
-                formData.append('hash', form.hash?.value || '');
+                formData.append('broadcast', Number(Boolean(form.broadcast && form.broadcast.checked)));
+                formData.append('hash', (form.hash && form.hash.value) ? form.hash.value : '');
 
                 try {
                     const response = await ky.post('/edit?act=status', { body: formData });

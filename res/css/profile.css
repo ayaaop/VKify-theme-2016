@@ -614,8 +614,8 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .avatar_block_inner img {
-  height: fit-content;
   width: 100%;
+  height: inherit
 }
 
 .avatar_block .add_image_text {
@@ -733,15 +733,6 @@ div.avatar_block:hover .avatar_variants {
   padding: 8px 0;
 }
 
-.page_info + div:has(.profile_info) {
-  box-shadow: none;
-  border: 1px solid var(--shadow-outline-color);
-  border-top: 0;
-  border-bottom: 1px solid var(--profile-border-color);
-  padding-top: 0;
-  margin: -20px -1px 0;
-}
-
 .frenMenu .button {
   width: 100%;
 }
@@ -815,15 +806,6 @@ div.avatar_block:hover .avatar_variants {
 }
 .search_row .profile_actions_split .profile_link_form {
   flex: 0;
-}
-
-.content_title_expanded + .page_info,
-.page_info + div:has(.profile_info) {
-  margin-top: -15px;
-}
-
-.content_divider [class^="content_title_"] {
-  margin: 0;
 }
 
 .profile_info_block {

@@ -49,7 +49,7 @@ function cloneTooltipContent(triggerElement, contentId) {
     const escapedId = escapeCssId(contentId);
 
     let templateElement = null;
-    for (let scope = triggerElement?.parentElement; scope; scope = scope.parentElement) {
+    for (let scope = triggerElement ? triggerElement.parentElement : null; scope; scope = scope.parentElement) {
         const matches = scope.querySelectorAll(`#${escapedId}`);
         templateElement = pickClosestTemplate(triggerElement, matches);
         if (templateElement) {
@@ -81,7 +81,7 @@ function findTemplateNode(triggerElement, contentId) {
     const escapedId = escapeCssId(contentId);
 
     let templateElement = null;
-    for (let scope = triggerElement?.parentElement; scope; scope = scope.parentElement) {
+    for (let scope = triggerElement ? triggerElement.parentElement : null; scope; scope = scope.parentElement) {
         const matches = scope.querySelectorAll(`#${escapedId}`);
         templateElement = pickClosestTemplate(triggerElement, matches);
         if (templateElement) {
@@ -104,7 +104,7 @@ function takeTemplateNode(triggerElement, contentId) {
     }
 
     const info = templateRegistry.get(templateElement);
-    if (info?.inUse) {
+    if (info && info.inUse) {
         return null;
     }
 
@@ -172,25 +172,30 @@ function initializeTooltip(triggerElement) {
     const placement = triggerElement.getAttribute('data-tippy-placement') || defaultTippyConfig.placement;
     
     try {
-        tippy(triggerElement, {
-            ...defaultTippyConfig,
+        tippy(triggerElement, Object.assign({}, defaultTippyConfig, {
             placement,
             content: clonedContent,
             onShow(instance) {
                 triggerElement.setAttribute('aria-expanded', 'true');
-                defaultTippyConfig.onShow?.(instance);
+                if (instance.popper) {
+                    const tippyContent = instance.popper.querySelector('.tippy-content');
+                    if (tippyContent && tippyContent.querySelector('.tippy-menu')) {
+                        tippyContent.classList.add('has-tippy-menu');
+                    }
+                }
+                if (defaultTippyConfig.onShow) defaultTippyConfig.onShow(instance);
             },
             onHide(instance) {
                 triggerElement.setAttribute('aria-expanded', 'false');
-                defaultTippyConfig.onHide?.(instance);
+                if (defaultTippyConfig.onHide) defaultTippyConfig.onHide(instance);
             },
             onDestroy() {
                 if (movedContent) {
                     restoreTemplateNode(movedContent);
                 }
-                defaultTippyConfig.onDestroy?.();
+                if (defaultTippyConfig.onDestroy) defaultTippyConfig.onDestroy();
             }
-        });
+        }));
         return true;
     } catch (error) {
         console.error('[Tooltips] Error creating Tippy instance:', error);
@@ -199,7 +204,7 @@ function initializeTooltip(triggerElement) {
 }
 
 function discoverTooltips(container = document) {
-    if (!container?.querySelectorAll) return 0;
+    if (!container || !container.querySelectorAll) return 0;
     
     let triggers;
     try {
@@ -209,7 +214,7 @@ function discoverTooltips(container = document) {
         return 0;
     }
     
-    if (!triggers?.length) return 0;
+    if (!triggers || !triggers.length) return 0;
     
     let successCount = 0;
     triggers.forEach(trigger => {
@@ -220,7 +225,7 @@ function discoverTooltips(container = document) {
 }
 
 function destroyTooltips(container = document) {
-    if (!container?.querySelectorAll) return 0;
+    if (!container || !container.querySelectorAll) return 0;
     
     let triggers;
     try {
@@ -275,25 +280,7 @@ window.Tooltips = {
     cleanupTooltips
 };
 
-// Backward-compatible helper used by router patches (ported from old tippys.js)
-window.initializeTippys = function initializeTippys() {
-    const userMenuTrigger = ge('userMenuTrigger');
-    if (!userMenuTrigger?._tippy) return;
 
-    const tippyInstance = userMenuTrigger._tippy;
-    const { onShow: originalOnShow, onHide: originalOnHide } = tippyInstance.props;
-
-    tippyInstance.setProps({
-        onShow: (instance) => {
-            originalOnShow?.(instance);
-            instance.reference.classList.add('shown');
-        },
-        onHide: (instance) => {
-            originalOnHide?.(instance);
-            instance.reference.classList.remove('shown');
-        }
-    });
-};
 
 function setupTooltipObserver() {
     return vkify.observeDOM((mutations) => {
@@ -303,8 +290,8 @@ function setupTooltipObserver() {
             if (shouldDiscoverTooltips) break;
             for (const node of mutation.addedNodes) {
                 if (node.nodeType === Node.ELEMENT_NODE) {
-                    if (node.hasAttribute?.('data-tippy-content-id') || 
-                        node.querySelector?.('[data-tippy-content-id]')) {
+                    if ((node.hasAttribute && node.hasAttribute('data-tippy-content-id')) || 
+                        (node.querySelector && node.querySelector('[data-tippy-content-id]'))) {
                         shouldDiscoverTooltips = true;
                         break;
                     }
@@ -441,30 +428,34 @@ function createDismissablePopup(options) {
         dismissed: false,
 
         show() {
-            this.tippyInstance?.show();
+            if (this.tippyInstance) this.tippyInstance.show();
         },
 
         hide() {
-            this.tippyInstance?.hide();
+            if (this.tippyInstance) this.tippyInstance.hide();
         },
 
         dismiss() {
             if (this.dismissed) return;
             this.dismissed = true;
-            this.tippyInstance?.destroy();
-            this.tippyInstance = null;
+            if (this.tippyInstance) {
+                this.tippyInstance.destroy();
+                this.tippyInstance = null;
+            }
             anchor.remove();
             if (id) {
                 markPopupShownThisSession(id);
                 if (persistDismiss) setPopupDismissed(id, persistDays);
                 dismissablePopupInstances.delete(id);
             }
-            onDismiss?.();
+            if (onDismiss) onDismiss();
         },
 
         destroy() {
-            this.tippyInstance?.destroy();
-            this.tippyInstance = null;
+            if (this.tippyInstance) {
+                this.tippyInstance.destroy();
+                this.tippyInstance = null;
+            }
             anchor.remove();
             if (id && dismissablePopupInstances.has(id)) {
                 dismissablePopupInstances.delete(id);
@@ -498,16 +489,16 @@ function createDismissablePopup(options) {
                     instance.dismiss();
                 };
             }
-            onShow?.(instance);
+            if (onShow) onShow(instance);
         },
         onHide() {
-            onHide?.(instance);
+            if (onHide) onHide(instance);
         }
     });
 
     if (hideOnTriggerClick) {
         triggerEl.addEventListener('click', () => {
-            if (instance.tippyInstance?.state.isVisible && !instance.dismissed) {
+            if (instance.tippyInstance && instance.tippyInstance.state.isVisible && !instance.dismissed) {
                 instance.dismiss();
             }
         });
@@ -561,7 +552,7 @@ window.DismissablePopup = {
 };
 
 vkify.hook(vkify, 'onPageReady', (container) => {
-    window.reinitializeTooltips?.(container);
+    if (window.reinitializeTooltips) window.reinitializeTooltips(container);
     discoverDismissablePopups(container || document);
 }, 'after');
 
@@ -583,7 +574,8 @@ document.addEventListener('click', (event) => {
     const tooltipBox = link.closest('.tippy-box');
     if (!tooltipBox) return;
 
-    const themeTokens = (tooltipBox.dataset.theme?.trim() ?? '').split(/\s+/);
+    const themeStr = tooltipBox.dataset && tooltipBox.dataset.theme ? tooltipBox.dataset.theme : '';
+    const themeTokens = themeStr.trim().split(/\s+/);
     const persistentThemes = ['musicpopup', 'dismissable'];
     if (!persistentThemes.some(t => themeTokens.includes(t))) {
         tippy.hideAll({ duration: 0.25 });

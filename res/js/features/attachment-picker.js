@@ -2,8 +2,8 @@
 
 const tr = window.tr;
 const LoaderUtils = window.LoaderUtils;
-const MAX_ATTACHMENTS = window.openvk?.max_attachments || 10;
-const DEFAULT_PER_PAGE = window.openvk?.default_per_page || 10;
+const MAX_ATTACHMENTS = (window.openvk && window.openvk.max_attachments) ? window.openvk.max_attachments : 10;
+const DEFAULT_PER_PAGE = (window.openvk && window.openvk.default_per_page) ? window.openvk.default_per_page : 10;
 
 const formatRelativeTime = (timestamp) => {
     if (!timestamp) return '';
@@ -52,16 +52,16 @@ vkify.bindOnce('composerAttachmentHandlers', () => {
 });
 
 const getAttachedCount = (form, playlistMode = false) => {
-    if (playlistMode) return form?.find('.PE_audios .vertical-attachment').length || 0;
-    return form?.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length || 0;
+    if (playlistMode) return form ? form.find('.PE_audios .vertical-attachment').length : 0;
+    return form ? form.find('.post-horizontal > a, .post-vertical > .vertical-attachment').length : 0;
 };
 
 const isAttached = (form, type, id, playlistMode = false) => {
     if (playlistMode) {
-        return form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0;
+        return form ? form.find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0 : false;
     }
-    if (type === 'photo' || type === 'video') return form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).length > 0;
-    return form?.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).length > 0;
+    if (type === 'photo' || type === 'video') return form ? form.find(`.upload-item[data-type='${type}'][data-id='${id}']`).length > 0 : false;
+    return form ? form.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).length > 0 : false;
 };
 
 const canAttach = (form, count = 1, playlistMode = false) => {
@@ -74,7 +74,7 @@ const canAttach = (form, count = 1, playlistMode = false) => {
 };
 
 const appendHorizontal = (form, { type, id, preview, fullsize_url }) => {
-    if (!form?.length || !type || !id) return;
+    if (!form || !form.length || !type || !id) return;
     const isVideo = type === 'video';
     form.find('.post-horizontal').append(`
         <a ${isVideo ? 'id="videoOpen"' : ''} ${type === 'photo' ? `onclick="if(!event.target.closest('.upload-delete'))OpenMiniature(event,'${fullsize_url}',null,'${id}',null)"` : ''} 
@@ -87,7 +87,7 @@ const appendHorizontal = (form, { type, id, preview, fullsize_url }) => {
 };
 
 const appendVertical = (form, { type, id, html, undeletable }, playlistMode = false) => {
-    if (!form?.length || !type || !id) return;
+    if (!form || !form.length || !type || !id) return;
     const target = playlistMode ? '.PE_audios' : '.post-vertical';
     const dataTypeAttr = playlistMode ? '' : ` data-type='${type}'`;
     form.find(target).append(`
@@ -103,20 +103,20 @@ const appendVertical = (form, { type, id, html, undeletable }, playlistMode = fa
 // biome-ignore lint/correctness/noUnusedVariables: helper
 const removeAttachment = (form, type, id, playlistMode = false) => {
     if (playlistMode) {
-        form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove();
+        if (form) form.find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove();
         return;
     }
     if (type === 'photo' || type === 'video') {
-        form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).remove();
+        if (form) form.find(`.upload-item[data-type='${type}'][data-id='${id}']`).remove();
     } else {
-        form?.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).remove();
+        if (form) form.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).remove();
     }
 };
 
 const CACHE_TTL_MS = 60000;
 
 const getPreRenderedHTML = (preRendered, emptyMessage, rowsClass = '') => {
-    const itemsHTML = preRendered?.renderedHTML || '';
+    const itemsHTML = (preRendered && preRendered.renderedHTML) ? preRendered.renderedHTML : '';
     const itemsWithWrapper = itemsHTML && rowsClass ? `<div class="${rowsClass}">${itemsHTML}</div>` : itemsHTML;
     const emptyHTML = !itemsHTML && preRendered ? `<div class="information">${emptyMessage}</div>` : '';
     return { itemsHTML: itemsWithWrapper, emptyHTML };
@@ -178,15 +178,15 @@ class AttachmentPickerBase {
     }
 
     close() {
-        this.msgbox?.close();
+        if (this.msgbox) this.msgbox.close();
         this.msgbox = null;
     }
 
     addClubToggleLink() {
         const header = this.msgbox.getNode().find('.ovk-diag-head');
         if (!header.length) return;
-        const existingTitle = header.nodes[0]?.firstChild;
-        if (existingTitle?.nodeType === Node.TEXT_NODE) {
+        const existingTitle = header.nodes[0] ? header.nodes[0].firstChild : null;
+        if (existingTitle && existingTitle.nodeType === Node.TEXT_NODE) {
             const titleSpan = document.createElement('span');
             titleSpan.className = 'picker-title-text';
             titleSpan.textContent = existingTitle.textContent;
@@ -196,7 +196,7 @@ class AttachmentPickerBase {
         const labelKey = this.viewingUser ? `back_to_club_${this.type}s` : `choose_from_my_${this.type}s`;
         header.append(`<span id="${linkId}"><span class="divider">|</span><a href="#" class="tab_link picker-toggle-link">
             <vkifyloc name="${labelKey}"></vkifyloc></a></span>`);
-        window.processVkifyLocTags?.();
+        if (window.processVkifyLocTags) window.processVkifyLocTags();
     }
 
     updateAttachButton() {
@@ -212,7 +212,7 @@ class AttachmentPickerBase {
     }
 
     _getItemData(row, id) {
-        return this.adapter?.getItemData?.(row, id) || { type: this.type, id };
+        return (this.adapter && this.adapter.getItemData) ? this.adapter.getItemData(row, id) : { type: this.type, id };
     }
 
     handleItemSelect(row, id) {
@@ -300,7 +300,7 @@ class AttachmentPicker extends AttachmentPickerBase {
 
     _getContainer(forUser = this.viewingUser) {
         const key = forUser ? 'user' : 'group';
-        return this.msgbox?.getNode().find(`.picker-items--${key}`);
+        return this.msgbox ? this.msgbox.getNode().find(`.picker-items--${key}`) : null;
     }
 
     _switchContainer(toUser) {
@@ -357,12 +357,12 @@ class AttachmentPicker extends AttachmentPickerBase {
             body: this.adapter.buildBody(this, preRendered),
             close_on_buttons: false,
             buttons: this.adapter.buttons || [],
-            callbacks: this.adapter.callbacks?.(this) || []
+            callbacks: (this.adapter && this.adapter.callbacks) ? this.adapter.callbacks(this) : []
         });
 
         this.applyWidth();
         this.setupCommonHandlers();
-        this.adapter.setupHandlers?.(this);
+        if (this.adapter && this.adapter.setupHandlers) this.adapter.setupHandlers(this);
 
         if (this.club !== 0 && this.adapter.supportsClubToggle) {
             this.addClubToggleLink();
@@ -382,20 +382,20 @@ class AttachmentPicker extends AttachmentPickerBase {
         this._initialData = null;
         this._preRendered = null;
         this.updateAttachButton();
-        this.adapter.afterLoad?.(this, preRendered);
+        if (this.adapter && this.adapter.afterLoad) this.adapter.afterLoad(this, preRendered);
     }
 
     _preRenderInitialData() {
         const result = this._initialData;
-        if (!result?.items?.length) return result;
+        if (!result || !result.items || !result.items.length) return result;
         result.renderedHTML = result.items.map(item => this.adapter.renderItem(this, item)).join('');
         return result;
     }
 
     applyWidth() {
         if (!this.adapter.width) return;
-        const node = this.msgbox.getNode()?.nodes?.[0];
-        if (node?.style) node.style.width = this.adapter.width;
+        const node = this.msgbox.getNode() ? (this.msgbox.getNode().nodes ? this.msgbox.getNode().nodes[0] : null) : null;
+        if (node && node.style) node.style.width = this.adapter.width;
     }
 
     updateToggleLink() {
@@ -403,7 +403,7 @@ class AttachmentPicker extends AttachmentPickerBase {
         if (!linkEl.length) return;
         const key = this.viewingUser ? `back_to_club_${this.type}s` : `choose_from_my_${this.type}s`;
         linkEl.html(`<vkifyloc name="${key}"></vkifyloc>`);
-        window.processVkifyLocTags?.();
+        if (window.processVkifyLocTags) window.processVkifyLocTags();
     }
 
     setupCommonHandlers() {
@@ -480,7 +480,7 @@ class AttachmentPicker extends AttachmentPickerBase {
     async load(append = false, useInitial = false) {
         const generation = ++this._loadGeneration;
         this.loading = true;
-        this.abortController?.abort();
+        if (this.abortController) this.abortController.abort();
         this.abortController = new AbortController();
 
         const cache = this._getCache();
@@ -512,12 +512,12 @@ class AttachmentPicker extends AttachmentPickerBase {
 
             if (!append) targetContainer.html('');
 
-            if (!result.items?.length && !append) {
+            if (!(result.items && result.items.length) && !append) {
                 container.html(`<div class="information">${this.adapter.emptyMessage || tr('no_results')}</div>`);
                 cache.loaded = true;
                 cache.hasMore = false;
                 this._markCacheFresh();
-                this.adapter.afterLoad?.(this, result);
+                if (this.adapter && this.adapter.afterLoad) this.adapter.afterLoad(this, result);
                 return;
             }
 
@@ -536,7 +536,7 @@ class AttachmentPicker extends AttachmentPickerBase {
             }
 
             this.updateAttachButton();
-            this.adapter.afterLoad?.(this, result);
+            if (this.adapter && this.adapter.afterLoad) this.adapter.afterLoad(this, result);
         } catch (err) {
             if (isStale() || err.name === 'AbortError') return;
             console.error(`[AttachmentPicker] Load error:`, err);
@@ -550,7 +550,7 @@ class AttachmentPicker extends AttachmentPickerBase {
     }
 
     close() {
-        this.abortController?.abort();
+        if (this.abortController) this.abortController.abort();
         super.close();
     }
 }
@@ -560,9 +560,9 @@ const ALBUMS_PER_PAGE = 2;
 
 const renderPhotoItem = (photo, isSelected) => {
     const id = `${photo.owner_id}_${photo.id}`;
-    const thumb = photo.sizes[1]?.url || photo.sizes[0]?.url;
-    const preview = photo.sizes[1]?.url || photo.sizes[0]?.url;
-    const fullsize = photo.sizes[9]?.url || photo.sizes[photo.sizes.length - 1]?.url;
+    const thumb = (photo.sizes[1] && photo.sizes[1].url) ? photo.sizes[1].url : ((photo.sizes[0] && photo.sizes[0].url) ? photo.sizes[0].url : null);
+    const preview = (photo.sizes[1] && photo.sizes[1].url) ? photo.sizes[1].url : ((photo.sizes[0] && photo.sizes[0].url) ? photo.sizes[0].url : null);
+    const fullsize = (photo.sizes[9] && photo.sizes[9].url) ? photo.sizes[9].url : ((photo.sizes[photo.sizes.length - 1] && photo.sizes[photo.sizes.length - 1].url) ? photo.sizes[photo.sizes.length - 1].url : null);
     return `<a class="photos_choose_row picker-item-attach ${isSelected ? 'selected' : ''}" href="javascript:void(0)" 
                data-picker-id="${id}" data-preview="${preview}" data-fullsize="${fullsize}">
         <div class="photo_row_img" style="background-image: url('${thumb}')"></div>
@@ -572,14 +572,14 @@ const renderPhotoItem = (photo, isSelected) => {
 };
 
 const renderPhotosGrid = (photos, picker, hasMore, page) => {
-    if (!photos?.length) return `<div class="information">${tr('is_x_photos_zero')}</div>`;
+    if (!photos || !photos.length) return `<div class="information">${tr('is_x_photos_zero')}</div>`;
     const itemsHtml = photos.map(p => renderPhotoItem(p, picker.isSelected(`${p.owner_id}_${p.id}`))).join('');
     const showMoreHtml = hasMore ? `<div class="show_more button button_gray picker-show-more" data-page="${page + 1}">${tr('show_more')}</div>` : '';
     return `<div class="photos_choose_rows">${itemsHtml}</div>${showMoreHtml}`;
 };
 
 const renderAlbumsGrid = (albums, hasMore) => {
-    if (!albums?.items?.length) return `<div class="information">${tr('albums_zero')}</div>`;
+    if (!albums || !albums.items || !albums.items.length) return `<div class="information">${tr('albums_zero')}</div>`;
     const itemsHtml = albums.items.map(renderAlbumHTML).join('');
     const showMoreHtml = hasMore ? `<div class="show_more button button_gray picker-albums-more">${tr('show_more')}</div>` : '';
     return `<div class="photos_choose_album_rows">${itemsHtml}</div>${showMoreHtml}`;
@@ -631,7 +631,7 @@ class PhotoMainView {
 
     buildBody() {
         const albumsHtml = renderAlbumsGrid(this.albums, this.albums && (this.albumsPage + 1) * ALBUMS_PER_PAGE < this.albums.count);
-        const photosHtml = this.showRecentPhotos ? renderPhotosGrid(this.photos?.items, this.picker, this.photos?.hasMore, this.photosPage) : '';
+        const photosHtml = this.showRecentPhotos ? renderPhotosGrid(this.photos ? this.photos.items : null, this.picker, this.photos ? this.photos.hasMore : false, this.photosPage) : '';
         return `<div class='attachment_selector'>
             <input type="file" multiple accept="image/*" class="picker-upload-input" style="display:none">
             ${this.showRecentPhotos ? buildUploadButton() : ''}
@@ -644,10 +644,10 @@ class PhotoMainView {
 
     setupHandlers(node) {
         if (this.showRecentPhotos) {
-            node.on('click', '.picker-upload-btn', () => node.find('.picker-upload-input').nodes[0]?.click());
+            node.on('click', '.picker-upload-btn', () => { var n = node.find('.picker-upload-input').nodes[0]; if (n) n.click(); });
             node.on('change', '.picker-upload-input', (e) => {
-                if (e.target.files?.length) {
-                    Array.from(e.target.files).forEach(f => { window.__uploadToTextarea?.(f, this.picker.form); });
+                if (e.target.files && e.target.files.length) {
+                    Array.from(e.target.files).forEach(f => { if (window.__uploadToTextarea) window.__uploadToTextarea(f, this.picker.form); });
                     this.picker.close();
                 }
             });
@@ -658,7 +658,8 @@ class PhotoMainView {
             e.preventDefault();
             const albumEl = u(e.currentTarget);
             const albumId = Number(albumEl.attr('data-album-id'));
-            const title = albumEl.find('.page_album_title_text').nodes[0]?.textContent?.trim() || tr('select_photo');
+            var tNode = albumEl.find('.page_album_title_text').nodes[0];
+            const title = (tNode && tNode.textContent) ? tNode.textContent.trim() : tr('select_photo');
             await this.picker.switchToAlbumView(albumId, title);
         });
 
@@ -699,8 +700,8 @@ class PhotoMainView {
         const dropTarget = node.find('.attachment_selector').nodes[0];
         if (!dropTarget) return;
         let dragDepth = 0;
-        const isFileDrag = (e) => e?.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
-        const getImageFiles = (e) => Array.from(e?.dataTransfer?.files || []).filter(f => f && (f.type?.startsWith('image/') || /\.(jpe?g|png|gif|webp)$/i.test(f.name)));
+        const isFileDrag = (e) => e && e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files');
+        const getImageFiles = (e) => Array.from((e && e.dataTransfer && e.dataTransfer.files) ? e.dataTransfer.files : []).filter(f => f && ( (f.type && f.type.startsWith('image/')) || /\.(jpe?g|png|gif|webp)$/i.test(f.name)));
         const setDragState = (on) => node[on ? 'addClass' : 'removeClass']('ovk-photo-dragover');
 
         dropTarget.addEventListener('dragenter', (e) => { if (isFileDrag(e)) { e.preventDefault(); e.stopPropagation(); dragDepth++; setDragState(true); } });
@@ -714,7 +715,7 @@ class PhotoMainView {
             const current = getAttachedCount(this.picker.form);
             const allowed = Math.max(0, MAX_ATTACHMENTS - current);
             if (!allowed) { canAttach(this.picker.form, 1); return; }
-            files.slice(0, allowed).forEach(f => { window.__uploadToTextarea?.(f, this.picker.form); });
+            files.slice(0, allowed).forEach(f => { if (window.__uploadToTextarea) window.__uploadToTextarea(f, this.picker.form); });
             this.picker.close();
         });
     }
@@ -744,7 +745,7 @@ class PhotoAlbumView {
     }
 
     buildBody() {
-        const photosHtml = renderPhotosGrid(this.photos?.items, this.picker, this.photos?.hasMore, this.page);
+        const photosHtml = renderPhotosGrid(this.photos ? this.photos.items : null, this.picker, this.photos ? this.photos.hasMore : false, this.page);
         return `<div class='attachment_selector'>
             <div id='attachment_insert' style='height: unset; padding: 0'>
                 <div id='photos_content'>${photosHtml}</div>
@@ -912,7 +913,7 @@ const VideoAdapter = {
 
         node.on('click', '.picker-upload-btn', () => {
             picker.close();
-            window.showFastVideoUpload?.(picker.form);
+            if (window.showFastVideoUpload) window.showFastVideoUpload(picker.form);
         });
 
         node.on('click', '.video_item__thumb_link', (e) => {
@@ -956,8 +957,8 @@ const VideoAdapter = {
     renderItem(picker, video) {
         const id = `${video.owner_id}_${video.id}`;
         const selected = picker.ensureSelected(id);
-        const thumb = video.image?.[0]?.url || '';
-        const author = window.find_author?.(video.owner_id, video._profiles, video._groups);
+        const thumb = (video.image && video.image[0] && video.image[0].url) ? video.image[0].url : '';
+        const author = window.find_author ? window.find_author(video.owner_id, video._profiles, video._groups) : null;
         const authorName = author ? (author.first_name ? `${author.first_name} ${author.last_name}` : author.name) : 'Unknown';
         const authorUrl = author ? (video.owner_id > 0 ? `/${author.id}` : `/club${Math.abs(video.owner_id)}`) : '#';
         const platform = video.platform || (video.type && video.type !== 0 && video.type !== 'video' ? 'External' : '');
@@ -1030,7 +1031,7 @@ const AudioAdapter = {
 
         node.on('click', '.picker-upload-btn', () => {
             picker.close();
-            window.showAudioUploadPopup?.({ ownerId: picker.getOwnerId() });
+            if (window.showAudioUploadPopup) window.showAudioUploadPopup({ ownerId: picker.getOwnerId() });
         });
 
         node.on('change', '.picker-search-type', (e) => {
@@ -1055,8 +1056,10 @@ const AudioAdapter = {
 
             searcher.successCallback = (response, ctx) => {
                 const doc = new DOMParser().parseFromString(response, "text/html");
-                const pagesCount = Number(doc.querySelector("input[name='pagesCount']")?.value || 0);
-                const count = Number(doc.querySelector("input[name='count']")?.value || 0);
+                var pageCountNode = doc.querySelector("input[name='pagesCount']");
+                const pagesCount = Number(pageCountNode ? pageCountNode.value : 0);
+                var countNode = doc.querySelector("input[name='count']");
+                const count = Number(countNode ? countNode.value : 0);
 
                 resolve({
                     items: Array.from(doc.querySelectorAll(".audioEmbed")),
@@ -1120,22 +1123,24 @@ const DocumentAdapter = {
         node.on('click', '.picker-upload-btn', () => {
             picker.close();
             const clubId = picker.club !== 0 && !picker.viewingUser ? Math.abs(picker.club) : NaN;
-            window.showDocumentUploadDialog?.("search", clubId, () => {});
+            if (window.showDocumentUploadDialog) window.showDocumentUploadDialog("search", clubId, () => {});
         });
     },
 
     async fetch(picker, signal) {
         const fd = new FormData();
         fd.append("context", picker.query ? "search" : "list");
-        fd.append("hash", window.router?.csrf || u("meta[name=csrf]").attr("value"));
+        fd.append("hash", (window.router && window.router.csrf) ? window.router.csrf : u("meta[name=csrf]").attr("value"));
         if (picker.query) fd.append("ctx_query", picker.query);
 
         const sourceArg = picker.viewingUser ? "" : (picker.club !== 0 ? picker.club : "");
         const response = await fetch(`/docs${sourceArg}?picker=1&p=${picker.page + 1}`, { method: "POST", body: fd, signal });
         const doc = new DOMParser().parseFromString(await response.text(), "text/html");
 
-        const pagesCount = Number(doc.querySelector("input[name='pagesCount']")?.value || 0);
-        const count = Number(doc.querySelector("input[name='count']")?.value || 0);
+        var pageCountNode = doc.querySelector("input[name='pagesCount']");
+        const pagesCount = Number(pageCountNode ? pageCountNode.value : 0);
+        var countNode = doc.querySelector("input[name='count']");
+        const count = Number(countNode ? countNode.value : 0);
 
         return {
             items: Array.from(doc.querySelectorAll("._content")),
@@ -1270,7 +1275,7 @@ async function openPicker(type, form, club = 0, options = {}) {
     } catch (err) {
         console.error(`[AttachmentPicker] Error opening ${type} picker:`, err);
         ajloader.hide();
-        NewNotification(tr('error'), err?.message || tr('error'), null, () => {}, 5000, false);
+        NewNotification(tr('error'), (err && err.message) ? err.message : tr('error'), null, () => {}, 5000, false);
     }
     return picker;
 }
@@ -1298,7 +1303,7 @@ function setupVideoTitleAutofill(container, fileSelector, linkSelector, nameSele
     if (!$container.length) return;
 
     $container.on('change', fileSelector, (e) => {
-        const file = e.target.files?.[0];
+        const file = (e.target.files && e.target.files.length) ? e.target.files[0] : null;
         if (!file) return;
         const nameInput = $container.find(nameSelector).nodes[0];
         if (nameInput && !nameInput.value.trim()) {
@@ -1341,24 +1346,28 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
         `,
         buttons: [tr('upload_button'), tr('close')],
         callbacks: [async () => {
-            const video_name = u(`#_fast_video_upload input[name='name']`).nodes[0]?.value;
-            const video_desc = u(`#_fast_video_upload textarea[name='desc']`).nodes[0]?.value || '';
+            var vnNode = u(`#_fast_video_upload input[name='name']`).nodes[0];
+            const video_name = vnNode ? vnNode.value : null;
+            var vdNode = u(`#_fast_video_upload textarea[name='desc']`).nodes[0];
+            const video_desc = vdNode ? vdNode.value : '';
             let append_result = null;
 
-            if (!video_name?.length) {
-                u(`#_fast_video_upload input[name='name']`).nodes[0]?.focus();
+            if (!video_name || !video_name.length) {
+                var vnNodeFocus = u(`#_fast_video_upload input[name='name']`).nodes[0];
+                if (vnNodeFocus) vnNodeFocus.focus();
                 return;
             }
 
             const form_data = new FormData();
             const thisMsg = window.messagebox_stack[window.messagebox_stack.length - 1];
-            const uploadBtn = thisMsg?.getNode().find('.ovk-diag-action button').nodes[0];
+            const uploadBtn = thisMsg ? thisMsg.getNode().find('.ovk-diag-action button').nodes[0] : null;
 
             switch (current_tab) {
                 case 'youtube': {
-                    const video_link = u(`#_fast_video_upload input[name='link']`).nodes[0]?.value;
-                    if (!video_link?.length) {
-                        u(`#_fast_video_upload input[name='link']`).nodes[0]?.focus();
+                    var vlNode = u(`#_fast_video_upload input[name='link']`).nodes[0];
+                    const video_link = vlNode ? vlNode.value : null;
+                    if (!video_link || !video_link.length) {
+                        if (vlNode) vlNode.focus();
                         return;
                     }
 
@@ -1369,7 +1378,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
                     form_data.append('unlisted', formNode ? 1 : 0);
                     form_data.append('hash', vkify.getCsrf());
 
-                    uploadBtn?.classList.add('lagged');
+                    if (uploadBtn) uploadBtn.classList.add('lagged');
                     const ytRes = await fetch('/videos/upload', { method: 'POST', body: form_data });
                     append_result = await ytRes.json();
                     break;
@@ -1377,7 +1386,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
 
                 default: {
                     const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0];
-                    if (!video_file?.files.length) return;
+                    if (!video_file || !video_file.files || !video_file.files.length) return;
 
                     form_data.append('ajax', '1');
                     form_data.append('name', video_name);
@@ -1386,26 +1395,26 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
                     form_data.append('unlisted', formNode ? 1 : 0);
                     form_data.append('hash', vkify.getCsrf());
 
-                    uploadBtn?.classList.add('lagged');
+                    if (uploadBtn) uploadBtn.classList.add('lagged');
                     const res = await fetch('/videos/upload', { method: 'POST', body: form_data });
                     append_result = await res.json();
                     break;
                 }
             }
 
-            if (append_result?.payload) {
+            if (append_result && append_result.payload) {
                 const payload = append_result.payload;
                 if (formNode) {
                     appendHorizontal(formNode, {
                         type: 'video',
-                        preview: payload.image[0]?.url,
+                        preview: (payload.image && payload.image[0]) ? payload.image[0].url : null,
                         id: `${payload.owner_id}_${payload.id}`,
                     });
                 }
                 window.messagebox_stack.forEach(m => { m.close(); });
                 if (!formNode) vkify.navigate(location.href);
             } else {
-                fastError(append_result?.flash?.message || tr('error'));
+                fastError((append_result && append_result.flash && append_result.flash.message) ? append_result.flash.message : tr('error'));
                 msg.close();
             }
         }, () => msg.close()]
@@ -1433,17 +1442,18 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
             </div></div>
         `;
         msg.getNode().find('#__content').html(content);
-        window.__vkifyInitTabSliderSafe?.();
+        if (window.__vkifyInitTabSliderSafe) window.__vkifyInitTabSliderSafe();
     }
 
     u('#_fast_video_upload').on('click', '.ui_tab', (e) => {
-        const name = u(e.target).closest('.ui_tab').nodes[0]?.dataset?.name;
+        var nNode = u(e.target).closest('.ui_tab').nodes[0];
+        const name = (nNode && nNode.dataset) ? nNode.dataset.name : null;
         if (name) switchTab(name);
     });
 
     switchTab('file');
     initVideoTitleAutofill('#_fast_video_upload');
-    window.__vkifyInitTabSliderSafe?.();
+    if (window.__vkifyInitTabSliderSafe) window.__vkifyInitTabSliderSafe();
 }, 'replace');
 
 function initVideoTitleAutofill(container) {
@@ -1466,7 +1476,7 @@ vkify.bindOnce('pickerButtons', () => {
     u(document).on('click', '#__vkifyPhotoAttachment', async (e) => {
         if (e.__vkifyHandled) return;
         e.__vkifyHandled = true;
-        const club = Number(e.currentTarget.dataset.club ?? 0);
+        const club = Number((e.currentTarget.dataset.club !== undefined && e.currentTarget.dataset.club !== null) ? e.currentTarget.dataset.club : 0);
         const picker = new PhotoPicker({ form: getForm(e), club });
         await picker.open();
     });
@@ -1480,7 +1490,7 @@ vkify.bindOnce('pickerButtons', () => {
     u(document).on('click', '#__vkifyAudioAttachment', async (e) => {
         if (e.__vkifyHandled) return;
         e.__vkifyHandled = true;
-        const club = Number(e.currentTarget.dataset.club ?? 0);
+        const club = Number((e.currentTarget.dataset.club !== undefined && e.currentTarget.dataset.club !== null) ? e.currentTarget.dataset.club : 0);
         await openPicker('audio', getForm(e), club);
     });
 
@@ -1497,7 +1507,7 @@ vkify.bindOnce('pickerButtons', () => {
         const docBtn = e.target.closest('#__vkifyDocumentAttachment, .attach_document');
         if (!docBtn || e.__vkifyHandled) return;
         e.__vkifyHandled = true;
-        const club = Number(docBtn.dataset.club ?? 0);
+        const club = Number((docBtn.dataset.club !== undefined && docBtn.dataset.club !== null) ? docBtn.dataset.club : 0);
         const form = u(docBtn).closest('form').length ? u(docBtn).closest('form') : u(e.target).closest('form');
         openPicker('document', form, club);
     }, true);

@@ -2,7 +2,7 @@
 'use strict';
 
 function pauseAudioForVideo() {
-    if (!window.player?.audioPlayer) return;
+    if (!window.player || !window.player.audioPlayer) return;
     if (!window.player.audioPlayer.paused) {
         window.player.pause();
     }
@@ -38,13 +38,13 @@ vkify.bindOnce('videoAudioCoord', () => {
     if (typeof origBsdnInit === 'function') {
         window.bsdnInitElement = function(el) {
             origBsdnInit.apply(this, arguments);
-            const video = el?.querySelector?.('video');
+            const video = (el && el.querySelector) ? el.querySelector('video') : null;
             if (video) bindVideoListeners(video);
         };
     }
 
     vkify.ready(() => {
-        if (window.player?.play) {
+        if (window.player && window.player.play) {
             vkify.hook(window.player, 'play', pauseVideoForAudio, 'before');
         }
     });

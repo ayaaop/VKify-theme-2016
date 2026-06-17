@@ -22,10 +22,8 @@ vkify.bindOnce('dropdownHandlers', () => {
         menu.className = 'vkdropdown';
         menu.style.position = 'absolute';
         menu.style.left = `${rect.left + window.scrollX - 1}px`;
-        menu.style.top = `${rect.bottom + window.scrollY - 2}px`;
         menu.style.width = `${rect.width}px`;
         menu.dataset.selectVkifyId = selectEl.dataset.vkifySelectId || '';
-        document.body.appendChild(menu);
 
         Array.from(selectEl.options || []).forEach((opt) => {
             const item = document.createElement('div');
@@ -34,13 +32,26 @@ vkify.bindOnce('dropdownHandlers', () => {
             menu.appendChild(item);
         });
 
+        document.body.appendChild(menu);
+
+        const menuHeight = menu.offsetHeight;
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+
+        if (spaceBelow < menuHeight && spaceAbove > spaceBelow) {
+            menu.style.top = `${rect.top + window.scrollY - menuHeight + 1}px`;
+            menu.classList.add('vkdropdown-top');
+        } else {
+            menu.style.top = `${rect.bottom + window.scrollY - 2}px`;
+        }
+
         const selectedItem = menu.querySelector('.vkdropopt.selected');
         if (selectedItem && menu.scrollHeight > menu.clientHeight) {
             selectedItem.scrollIntoView({ block: 'nearest' });
         }
 
         menu.addEventListener('click', (e) => {
-            const item = e.target?.closest ? e.target.closest('.vkdropopt') : null;
+            const item = e.target && e.target.closest ? e.target.closest('.vkdropopt') : null;
             if (!item) return;
             const index = Array.from(menu.querySelectorAll('.vkdropopt')).indexOf(item);
             if (index >= 0 && selectEl.options && selectEl.options[index]) {
@@ -111,7 +122,7 @@ vkify.bindOnce('dropdownHandlers', () => {
     vkify.observeDOM((mutations) => {
         for (const m of mutations) {
             for (const node of m.removedNodes) {
-                if (node.nodeType === 1 && (node.classList?.contains('ovk-msg-all') || node.querySelector?.('.ovk-msg-all'))) {
+                if (node.nodeType === 1 && ((node.classList && node.classList.contains('ovk-msg-all')) || (node.querySelector && node.querySelector('.ovk-msg-all')))) {
                     removeDropdown();
                     return;
                 }

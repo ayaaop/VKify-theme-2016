@@ -34,7 +34,8 @@ vkify.once("initAlbumPhotosLoader", () => {
 
         photosSection.dataset.initialized = 'true';
 
-        const ownerId = parseInt(document.querySelector('[data-owner-id]')?.dataset.ownerId);
+        var dqNode = document.querySelector('[data-owner-id]');
+        const ownerId = parseInt(dqNode ? dqNode.dataset.ownerId : 0);
         if (!ownerId) return;
 
         const CONFIG = {
@@ -156,7 +157,7 @@ vkify.once("initAlbumPhotosLoader", () => {
         };
 
         const initMasonry = () => {
-            window.Masonry?.initAll('.album-flex', {
+            if (window.Masonry && window.Masonry.initAll) window.Masonry.initAll('.album-flex', {
                 itemSelector: '.masonry-item',
                 columns: 3,
                 gap: 10,
@@ -188,7 +189,7 @@ vkify.once("initAlbumPhotosLoader", () => {
                 state.totalPhotos = photos.count;
                 elements.loading.style.display = 'none';
 
-                if (state.totalPhotos === 0 || !photos.items?.length) {
+                if (state.totalPhotos === 0 || !photos || !photos.items || !photos.items.length) {
                     showEmptyState();
                     return;
                 }
@@ -199,7 +200,7 @@ vkify.once("initAlbumPhotosLoader", () => {
                 updateHeaderCount(state.totalPhotos);
             }
 
-            if (photos.items?.length > 0) {
+            if (photos && photos.items && photos.items.length > 0) {
                 const photosByYear = groupPhotosByYear(photos.items);
                 renderPhotos(photosByYear);
                 state.photosLoaded += photos.items.length;
@@ -326,7 +327,7 @@ vkify.once("initAlbumPhotosLoader", () => {
             }
         };
 
-        elements.showMoreBtn?.addEventListener('click', () => handleLoadMore(elements.showMoreBtn));
+        if (elements.showMoreBtn) elements.showMoreBtn.addEventListener('click', () => handleLoadMore(elements.showMoreBtn));
 
         init();
     };

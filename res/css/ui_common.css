@@ -126,25 +126,29 @@ input[type="radio"] {
 label.field {
   display: block;
   line-height: 18px;
+  margin-top: 10px;
 }
 
-label.field:only-child {
+label.field:only-child, label.field:first-child {
   margin-top: 0;
 }
 
 label.checkbox,
 label.radio {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
+  display: block;
+  position: relative;
+  padding-left: 24px;
   line-height: 1.4;
-  padding-block: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 label.checkbox > input[type="checkbox"],
 label.radio > input[type="radio"] {
-  margin: 2px 0 0;
+  position: absolute;
+  left: 0;
+  top: 7px;
+  margin: 0;
 }
 
 label.checkbox > span,
@@ -154,15 +158,18 @@ label.radio > span {
   text-align: left;
 }
 
-[id^="poll_editor"] label.checkbox:has(> span > select) {
+[id^="poll_editor"] label.checkbox.has-select {
   align-items: center;
 }
 
-[id^="poll_editor"] label.checkbox > span:has(select) {
+[id^="poll_editor"] label.checkbox > span.has-select {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+}
+
+[id^="poll_editor"] label.checkbox > span.has-select select {
+  margin-left: 4px;
 }
 
 [id^="poll_editor"] label.checkbox > span select {
@@ -332,7 +339,7 @@ table * {
 }
 .page_padding,
 .audios_padding {
-  padding: 20px !important;
+  padding: 20px;
 }
 .page_block .page_block {
   background: none;
@@ -429,12 +436,15 @@ input[class="button"],
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   padding: 7px 16px 8px;
   font-size: 12.5px;
   font-family: var(--font-family);
   border: 0;
   min-height: 30px;
+}
+.button > *:not(:last-child),
+input[class="button"] > *:not(:last-child) {
+  margin-right: 8px;
 }
 .button:not(.profile_more_btn):active,
 input[class="button"]:active {
@@ -628,8 +638,10 @@ body.dimmed > .dimmer #clickable {
   border-radius: 50%;
 }
 .entity_vertical_list .entity_vertical_list_item .first_column {
-  gap: 10px;
   align-items: center;
+}
+.entity_vertical_list .entity_vertical_list_item .first_column > *:not(:last-child) {
+  margin-right: 10px;
 }
 .entity_vertical_list .entity_vertical_list_item .avatar {
   height: 35px;
@@ -641,6 +653,7 @@ body.dimmed > .dimmer #clickable {
 }
 #_feed_settings_container #__content {
   height: fit-content;
+  padding: 20px;
 }
 
 .ovk-diag-head-close {
@@ -1040,7 +1053,6 @@ h2.page_block_h2 {
 .page_block_header {
   display: flex;
   align-items: center;
-  gap: 10px;
   background: var(--module-header-background-color);
   border-bottom: 1px solid var(--border-color);
   padding: 0 20px;
@@ -1049,6 +1061,10 @@ h2.page_block_h2 {
   border-radius: var(--module-border-radius) var(--module-border-radius) 0 0;
   font-size: 16px;
   outline: none;
+}
+
+.page_block_header > *:not(:last-child) {
+  margin-right: 10px;
 }
 
 .page_block_header .settings_saved_label {
@@ -1423,6 +1439,10 @@ input.ui_search_field:focus::placeholder {
   z-index: 1024;
 }
 
+.vkdropdown.vkdropdown-top {
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .vkdropopt {
   color: var(--text-color);
   padding: 7px 0 9px 9px;
@@ -1504,7 +1524,7 @@ select:focus {
   padding: 0;
 }
 
-.tippy-content:has(.tippy-menu) {
+.tippy-content.has-tippy-menu {
   padding: 4px 0;
 }
 
@@ -1529,11 +1549,14 @@ select:focus {
   line-height: 30px;
   padding: 0 13px;
   display: flex;
-  gap: 6px;
   font-weight: 400;
   align-items: center;
   font-size: inherit;
   color: var(--link-color);
+}
+.tippy-menu a > *:not(:last-child),
+#ctx_menu a > *:not(:last-child) {
+  margin-right: 6px;
 }
 
 .tippy-menu a:hover,
@@ -1543,7 +1566,8 @@ select:focus {
 }
 
 .tippy-menu label {
-  padding-inline: 13px;
+  margin: 0;
+  padding: 0 13px;
   width: auto;
 }
 .tippy-menu label + .separator {
@@ -1846,7 +1870,7 @@ select:focus {
 
 .page_info_wrap .msg,
 #_addAudioAdditional #_tabs {
-  margin-inline: 0;
+  margin: 0;
   margin-bottom: 0;
 }
 

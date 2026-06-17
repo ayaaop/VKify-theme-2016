@@ -25,16 +25,15 @@ vkify.once('uiSearch', function () {
             if (!searchContainer) return;
 
             const elementId = this.getElementId(searchContainer);
-            this.customConfigs.set(elementId, {
+            this.customConfigs.set(elementId, Object.assign({
                 onInput: config.onInput || null,
                 onChange: config.onChange || null,
                 onReset: config.onReset || null,
                 onSubmit: config.onSubmit || null,
                 onButtonClick: config.onButtonClick || null,
                 timeout: config.timeout || 0,
-                processQuery: config.processQuery || null,
-                ...config
-            });
+                processQuery: config.processQuery || null
+            }, config));
 
             const input = searchContainer.querySelector('.ui_search_field');
             if (input && input.value && input.value.trim() !== '') {

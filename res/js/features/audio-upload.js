@@ -67,7 +67,7 @@ const audioFrameTpl = Hb.compile(
 
 vkify.once("showAudioUploadPopup", () => {
     window.showAudioUploadPopup = async (options = {}) => {
-        const ownerId = options.ownerId ?? window.openvk?.current_id ?? 0;
+        const ownerId = (options.ownerId !== undefined && options.ownerId !== null) ? options.ownerId : ((window.openvk && window.openvk.current_id !== undefined && window.openvk.current_id !== null) ? window.openvk.current_id : 0);
 
         const audioUploadPopup = new CMessageBox({
             title: tr('upload_audio'),
@@ -86,9 +86,16 @@ vkify.once("showAudioUploadPopup", () => {
         let id3 = window.id3;
         if (!id3) {
             try {
-                id3 = await import(id3Src);
+                await new Promise(function(resolve, reject) {
+                    var s = document.createElement("script");
+                    s.src = id3Src;
+                    s.onload = resolve;
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+                id3 = window.id3;
             } catch (e) {
-                console.error('Failed to load id3js via dynamic import:', e);
+                console.error('Failed to load id3js via script tag:', e);
             }
         }
 
@@ -126,7 +133,7 @@ vkify.once("showAudioUploadPopup", () => {
                 let tags = null;
                 if (id3) {
                     try {
-                        tags = await (id3.fromFile ? id3.fromFile(blob) : id3.default?.fromFile?.(blob));
+                        tags = await (id3.fromFile ? id3.fromFile(blob) : (id3.default && id3.default.fromFile ? id3.default.fromFile(blob) : null));
                     } catch (e) {
                         console.error(e);
                     }
@@ -151,12 +158,12 @@ vkify.once("showAudioUploadPopup", () => {
                         if (tags.genre.split(', ').length > 1) {
                             const genres = tags.genre.split(', ');
                             genres.forEach(genre => {
-                                if (window.openvk?.audio_genres?.[genre]) {
+                                if (window.openvk && window.openvk.audio_genres && window.openvk.audio_genres[genre]) {
                                     return_params.genre = genre;
                                 }
                             });
                         } else {
-                            if (window.openvk?.audio_genres?.indexOf(tags.genre) !== -1) {
+                            if (window.openvk && window.openvk.audio_genres && window.openvk.audio_genres.indexOf(tags.genre) !== -1) {
                                 return_params.genre = tags.genre;
                             } else {
                                 console.warn(`Unknown genre: ${tags.genre}`);
@@ -187,7 +194,7 @@ vkify.once("showAudioUploadPopup", () => {
                 const audio_element = this.files_list[audio_index];
                 if (!audio_element) return;
 
-                const genres = (window.openvk?.audio_genres || []).map(g => ({
+                const genres = ((window.openvk && window.openvk.audio_genres) ? window.openvk.audio_genres : []).map(g => ({
                     value: g,
                     selected: g === audio_element.info.genre
                 }));
@@ -259,7 +266,7 @@ vkify.once("showAudioUploadPopup", () => {
                 const fd = typeof serializeForm === 'function' ? serializeForm(elem) : new FormData(elem);
                 fd.append('blob', file.file);
                 fd.append('ajax', 1);
-                fd.append('hash', window.router?.csrf || u('meta[name=csrf]').attr('value'));
+                fd.append('hash', (window.router && window.router.csrf) ? window.router.csrf : u('meta[name=csrf]').attr('value'));
 
                 try {
                     const res = await fetch(uploadPage, { method: 'POST', body: fd });
@@ -269,7 +276,7 @@ vkify.once("showAudioUploadPopup", () => {
                         endRedir = result.redirect_link;
                         uploadedCount++;
                     } else {
-                        makeError(escapeHtml(result.flash?.message || tr('error')));
+                        makeError(escapeHtml((result.flash && result.flash.message) ? result.flash.message : tr('error')));
                     }
                 } catch (e) {
                     console.error(e);
@@ -283,7 +290,7 @@ vkify.once("showAudioUploadPopup", () => {
             audioUploadPopup.close();
 
             if (uploadedCount > 0) {
-                const baseFetchUrl = ownerId < 0 ? `/audios-${Math.abs(ownerId)}` : `/audios${ownerId || window.openvk?.current_id || 0}`;
+                const baseFetchUrl = ownerId < 0 ? `/audios-${Math.abs(ownerId)}` : `/audios${ownerId || ((window.openvk && window.openvk.current_id) ? window.openvk.current_id : 0)}`;
                 const separator = baseFetchUrl.includes('?') ? '&' : '?';
                 const fetchUrl = `${baseFetchUrl}${separator}_t=${Date.now()}`;
                 try {

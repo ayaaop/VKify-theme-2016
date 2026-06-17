@@ -77,13 +77,14 @@ const SimpleFormModal = vkify.once('SimpleFormModal', () => {
         const modal = new CMessageBox({
             title, body,
             buttons: [submitText, cancelText],
-            callbacks: [() => onSubmit?.(modal), () => modal.close()],
+            callbacks: [() => { if (onSubmit) onSubmit(modal); }, () => modal.close()],
             close_on_buttons: false,
             warn_on_exit: false
         });
 
         setTimeout(() => {
-            const firstEl = ge(focusFieldId || fields.find(f => f.id && f.type !== 'hidden' && f.type !== 'html')?.id);
+            var foundField = fields.find(f => f.id && f.type !== 'hidden' && f.type !== 'html');
+            const firstEl = ge(focusFieldId || (foundField ? foundField.id : null));
             if (firstEl) firstEl.focus();
 
             if (enableEnterHandler && modal.getNode) {
@@ -92,13 +93,18 @@ const SimpleFormModal = vkify.once('SimpleFormModal', () => {
                     modal.getNode().on('keydown', `#${id}`, e => {
                         if (e.keyCode === 13 && !e.shiftKey) {
                             e.preventDefault();
-                            i === textIds.length - 1 ? onSubmit?.(modal) : ge(textIds[i + 1])?.focus();
+                            if (i === textIds.length - 1) {
+                                if (onSubmit) onSubmit(modal);
+                            } else {
+                                var nextEl = ge(textIds[i + 1]);
+                                if (nextEl) nextEl.focus();
+                            }
                         }
                     });
                 });
             }
 
-            onReady?.(modal);
+            if (onReady) onReady(modal);
         }, 100);
         return modal;
     };
@@ -130,21 +136,24 @@ const SimpleFormModal = vkify.once('SimpleFormModal', () => {
         if (fileInputs) {
             fileInputs.forEach(({ id, name }) => {
                 const el = ge(id);
-                if (el?.files?.[0]) fd.append(name, el.files[0]);
+                if (el && el.files && el.files[0]) fd.append(name, el.files[0]);
             });
         }
 
         if (checkboxInputs) {
             checkboxInputs.forEach(({ id, name }) => {
                 const el = ge(id);
-                if (el?.checked) fd.append(name, 'on');
+                if (el && el.checked) fd.append(name, 'on');
             });
         }
 
         try {
             const res = await fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' });
             CMessageBox.toggleLoader();
-            window.messagebox_stack?.at(-1)?.close();
+            if (window.messagebox_stack && window.messagebox_stack.length > 0) {
+                var lastMsg = window.messagebox_stack[window.messagebox_stack.length - 1];
+                if (lastMsg && lastMsg.close) lastMsg.close();
+            }
             if (noNavigate) {
                 if (onSuccess) onSuccess();
             } else {
@@ -188,7 +197,7 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
     const onModalSuccess = onSuccess || window._currentMediaModalRefresh;
     const noNav = noNavigate != null ? noNavigate : !!window._currentMediaModalRefresh;
 
-    const loader = window.ContentFetcher?.createLoader();
+    const loader = window.ContentFetcher ? window.ContentFetcher.createLoader() : null;
     if (loader && !loader.isShown()) loader.show();
 
     let doc, formGroup;
@@ -200,12 +209,12 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
         }
         if (!formGroup) throw new Error('Form not found on page');
     } catch (e) {
-        loader?.hide();
+        if (loader) loader.hide();
         console.error('Failed to load form', url, e);
         NewNotification(tr('error'), 'Failed to load form', null);
         return;
     }
-    loader?.hide();
+    if (loader) loader.hide();
 
     // Add 'vertical' class for narrow modal layout
     formGroup.classList.add('vertical');
@@ -270,7 +279,10 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
 
             CMessageBox.toggleLoader();
             loaderShown = false;
-            window.messagebox_stack?.at(-1)?.close();
+            if (window.messagebox_stack && window.messagebox_stack.length > 0) {
+                var lastMsgBox = window.messagebox_stack[window.messagebox_stack.length - 1];
+                if (lastMsgBox && lastMsgBox.close) lastMsgBox.close();
+            }
 
             if (noNav) {
                 if (onModalSuccess) onModalSuccess();
@@ -310,7 +322,7 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
         });
 
         const firstInput = form.querySelector('input[type=text], input:not([type]), textarea');
-        firstInput?.focus();
+        if (firstInput) firstInput.focus();
 
         // Submit on Enter in single-line text inputs
         node.addEventListener('keydown', (e) => {
@@ -321,14 +333,11 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
             }
         });
 
-        onReady?.(modal, form);
+        if (onReady) onReady(modal, form);
     }, 100);
 
     return modal;
 });
-
-// Backwards-compatible alias
-window.showEditFormModal = window.showFormModal;
 
 // === Per-type wrappers ===
 window.showEditPhotoModal = (photoId) => window.showFormModal(`/photo${photoId}/edit`, {
@@ -358,7 +367,7 @@ window.showEditAppModal = (appId) => window.showFormModal(`/editapp?app=${encode
 });
 
 window.showCreateGroupModal = (e) => {
-    e?.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     window.showFormModal('/groups_create', {
         requiredField: 'name',
         requiredError: tr('error_no_group_name'),
@@ -376,7 +385,7 @@ window.showCreateAlbumModal = (createUrl) => window.showFormModal(createUrl || '
 });
 
 window.showCreateTopicModal = (e, clubId) => {
-    e?.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     window.showFormModal(`/board${clubId}/create`, {
         requiredField: 'title',
         requiredError: tr('error_segmentation'),
@@ -399,12 +408,12 @@ window.showCreateTopicModal = (e, clubId) => {
 
             const updateStatus = () => {
                 const files = [];
-                if (picInput?.files?.[0]) files.push(picInput.files[0].name);
-                if (vidInput?.files?.[0]) files.push(vidInput.files[0].name);
+                if (picInput && picInput.files && picInput.files[0]) files.push(picInput.files[0].name);
+                if (vidInput && vidInput.files && vidInput.files[0]) files.push(vidInput.files[0].name);
                 statusSpan.textContent = files.length ? files.join(', ') : tr('none') || '(unknown)';
             };
-            picInput?.addEventListener('change', updateStatus);
-            vidInput?.addEventListener('change', updateStatus);
+            if (picInput) picInput.addEventListener('change', updateStatus);
+            if (vidInput) vidInput.addEventListener('change', updateStatus);
         }
     });
     return false;
@@ -417,7 +426,7 @@ window.showEditPlaylistModal = async (playlistId, e) => {
     }
 
     const url = `/playlist${playlistId}/edit`;
-    const loader = window.ContentFetcher?.createLoader();
+    const loader = window.ContentFetcher ? window.ContentFetcher.createLoader() : null;
     if (loader && !loader.isShown()) loader.show();
 
     try {
@@ -425,7 +434,7 @@ window.showEditPlaylistModal = async (playlistId, e) => {
         const editBox = doc.querySelector('.audio_pl_edit_box');
         if (!editBox) throw new Error('Edit box not found');
 
-        loader?.hide();
+        if (loader) loader.hide();
 
         // Dynamically load the edit_playlist.css styles
         vkify.loadStyle(null, 'vkify_style_edit_playlist', vkify.resourceUrl('/css/edit_playlist.css'));
@@ -469,7 +478,7 @@ window.showEditPlaylistModal = async (playlistId, e) => {
             };
 
             // Listen to player's audio element events
-            if (window.player?.audioPlayer) {
+            if (window.player && window.player.audioPlayer) {
                 window.player.audioPlayer.addEventListener('play', updateModalPlayerStates);
                 window.player.audioPlayer.addEventListener('pause', updateModalPlayerStates);
                 window.player.audioPlayer.addEventListener('timeupdate', updateModalPlayerStates);
@@ -521,7 +530,7 @@ window.showEditPlaylistModal = async (playlistId, e) => {
             // Hook close behavior to unload styles when closed
             const originalClose = modal.close;
             modal.close = function(...args) {
-                if (window.player?.audioPlayer) {
+                if (window.player && window.player.audioPlayer) {
                     window.player.audioPlayer.removeEventListener('play', updateModalPlayerStates);
                     window.player.audioPlayer.removeEventListener('pause', updateModalPlayerStates);
                     window.player.audioPlayer.removeEventListener('timeupdate', updateModalPlayerStates);
@@ -532,12 +541,12 @@ window.showEditPlaylistModal = async (playlistId, e) => {
 
             // Focus the title input
             const firstInput = node.querySelector('#ape_pl_name');
-            firstInput?.focus();
+            if (firstInput) firstInput.focus();
         }, 50);
 
         return modal;
     } catch (err) {
-        loader?.hide();
+        if (loader) loader.hide();
         console.error('Failed to load edit playlist modal:', err);
         NewNotification(tr('error'), 'Failed to load edit playlist form', null);
     }
@@ -555,7 +564,7 @@ window.showNewPlaylistModal = async (e, gid = null) => {
     if (gid) {
         url += `?gid=${gid}`;
     }
-    const loader = window.ContentFetcher?.createLoader();
+    const loader = window.ContentFetcher ? window.ContentFetcher.createLoader() : null;
     if (loader && !loader.isShown()) loader.show();
 
     try {
@@ -563,7 +572,7 @@ window.showNewPlaylistModal = async (e, gid = null) => {
         const editBox = doc.querySelector('.audio_pl_edit_box');
         if (!editBox) throw new Error('Edit box not found');
 
-        loader?.hide();
+        if (loader) loader.hide();
 
         // Dynamically load the edit_playlist.css styles
         vkify.loadStyle(null, 'vkify_style_edit_playlist', vkify.resourceUrl('/css/edit_playlist.css'));
@@ -638,12 +647,12 @@ window.showNewPlaylistModal = async (e, gid = null) => {
 
             // Focus the title input
             const firstInput = node.querySelector('#ape_pl_name');
-            firstInput?.focus();
+            if (firstInput) firstInput.focus();
         }, 50);
 
         return modal;
     } catch (err) {
-        loader?.hide();
+        if (loader) loader.hide();
         console.error('Failed to load new playlist modal:', err);
         NewNotification(tr('error'), 'Failed to load new playlist form', null);
     }
@@ -654,7 +663,7 @@ window.showNewPlaylistModal = async (e, gid = null) => {
 const updatePlaylistEmptyState = () => {
     document.querySelectorAll('.PE_audios').forEach(container => {
         const emptyPlaceholder = container.nextElementSibling;
-        if (!emptyPlaceholder?.classList?.contains('ape_audios_empty_list')) return;
+        if (!emptyPlaceholder || !emptyPlaceholder.classList || !emptyPlaceholder.classList.contains('ape_audios_empty_list')) return;
 
         const hasTracks = container.querySelectorAll('.vertical-attachment').length > 0;
         if (hasTracks) {

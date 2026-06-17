@@ -2,7 +2,7 @@
 
 {block title}
     {tr("search_for_$section")}
-    {if $_REQUEST['q']}
+    {if !empty($_REQUEST['q'])}
         - {$_REQUEST['q']}
     {/if}
 {/block}
@@ -71,10 +71,10 @@
                             'name': 'classic_search_context',
                             'order': {$order},
                             'query': {$query},
-                            'genre': {$_REQUEST['genre']},
+                            'genre': {$_REQUEST['genre'] ?? null},
                             'invert': {$invert ? 1 : 0},
-                            'only_performers': {$_REQUEST['only_performers'] ? 1 : 0},
-                            'with_lyrics': {$_REQUEST['with_lyrics'] ? 1 : 0},
+                            'only_performers': {!empty($_REQUEST['only_performers']) ? 1 : 0},
+                            'with_lyrics': {!empty($_REQUEST['with_lyrics']) ? 1 : 0},
                             'page': {$page}
                         }
                     </script>
@@ -90,16 +90,14 @@
                     placeholder => tr('header_search'),
                     action => '/search',
                     input_name => 'q',
-                    input_value => $_REQUEST['q'],
+                    input_value => $_REQUEST['q'] ?? '',
                     input_title => tr('header_search'),
                     input_maxlength => '59',
                     autocomplete => 'off'
                 }
-                    <div n:class='$section !== "posts" ? list_view, scroll_container, $section == "audios" && $count > 0 ? audiosDiv,
-                    $section == "audios_playlists" && $count > 0 ? playlistContainer,
-                    $section == "videos" && $count > 0 ? video_items_list'>
                         {if $count > 0}
                             {if $section === 'users'}
+                                <div class="list_view scroll_container">
                                 <div class='scroll_node search_row' data-uniqueid="user-{$dat->getId()}" n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{if str_contains($dat->getAvatarUrl('tiny'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$dat->getAvatarUrl('tiny')}{/if}" 
@@ -141,6 +139,7 @@
                                         {/if}
                                     </div>
                                 </div>
+                                </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
@@ -150,7 +149,8 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'groups'}
-                                <div class='scroll_node search_row' data-uniqueid="group-{$dat->getId()}" n:foreach="$data as $dat">
+                                <div class="list_view scroll_container">
+                                    <div class='scroll_node search_row' data-uniqueid="group-{$dat->getId()}" n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
                                         <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
                                             ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' 
@@ -188,6 +188,7 @@
                                         {/if}
                                     </div>
                                 </div>
+                                </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
@@ -197,7 +198,8 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'apps'}
-                                <div class='scroll_node search_row' data-uniqueid="app-{$dat->getId()}" n:foreach="$data as $dat">
+                                <div class="list_view scroll_container">
+                                    <div class='scroll_node search_row' data-uniqueid="app-{$dat->getId()}" n:foreach="$data as $dat">
                                     <a href="/app{$dat->getId()}" class="img">
                                         <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
                                     </a>
@@ -212,6 +214,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
@@ -221,7 +224,8 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'posts'}
-                                {foreach $data as $dat}
+                                <div class="scroll_container">
+                                    {foreach $data as $dat}
                                     {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
                                         <div class="page_block page_padding">
                                             <div class="closedWallPost">{_closed_group_post}.</div>
@@ -230,6 +234,7 @@
                                         {include "../components/post.latte", post => $dat, commentSection => true, onWallOf => true}
                                     {/if}
                                 {/foreach}
+                                </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
@@ -239,9 +244,13 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'videos'}
-                                {foreach $data as $dat}
-                                    {include "../components/video.latte", video => $dat, search => true}
-                                {/foreach}
+                            <div class="video_block_layout">
+                                <div class="video_items_list scroll_container">
+                                    {foreach $data as $dat}
+                                        {include "../components/video.latte", video => $dat, search => true}
+                                    {/foreach}
+                                </div>
+                            </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
                                     function __scrollHook(page) {
@@ -251,8 +260,10 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'audios'}
-                                <div class='scroll_node search_content' data-uniqueid="audio-{$dat->getId()}" n:foreach="$data as $dat">
-                                    {include "../Audio/player.latte", audio => $dat}
+                                <div class="list_view scroll_container audiosDiv">
+                                    <div class='scroll_node search_content' data-uniqueid="audio-{$dat->getId()}" n:foreach="$data as $dat">
+                                        {include "../Audio/player.latte", audio => $dat}
+                                    </div>
                                 </div>
                                 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
@@ -263,9 +274,11 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'audios_playlists'}
-                                {foreach $data as $dat}
-                                    {include "../Audio/playlistListView.latte", playlist => $dat}
-                                {/foreach}
+                                <div class="list_view scroll_container playlistContainer">
+                                    {foreach $data as $dat}
+                                        {include "../Audio/playlistListView.latte", playlist => $dat}
+                                    {/foreach}
+                                </div>
 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
                                     function __scrollHook(page) {
@@ -275,9 +288,11 @@
                                     __scrollHook()
                                 </script>
                             {elseif $section === 'docs'}
-                                {foreach $data as $dat}
-                                    {include "../Documents/components/doc.latte", doc => $dat, copyImportance => true, scroll_ocntext => true}
-                                {/foreach}
+                                <div class="list_view scroll_container">
+                                    {foreach $data as $dat}
+                                        {include "../Documents/components/doc.latte", doc => $dat, copyImportance => true, scroll_ocntext => true}
+                                    {/foreach}
+                                </div>
 
                                 <script n:if="$count > 0 && !empty($query)">
                                     function __scrollHook(page) {
@@ -292,7 +307,6 @@
                                 {include "../components/content_error.latte", icon => false, description => tr("no_results_by_this_query")}
                             </div>
                         {/if}
-                    </div>
                     {if $paginatorConf->pageCount > 1}
                         {include "../components/paginator.latte", conf => $extendedPaginatorConf}
                     {/if}
@@ -330,7 +344,7 @@
             </select>
 
             <label n:if="$order != 'rating'" class="checkbox">
-                <input type="checkbox" name="invert" value="1" form="real_search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
+                <input type="checkbox" name="invert" value="1" form="real_search_form" n:attr="checked => ($_REQUEST['invert'] ?? null) == '1'">
                 <span>{_s_order_invert}</span>
             </label>
         </div>
@@ -341,11 +355,11 @@
             {_main}
         </div>
         <div class="search_option_content">
-            <input type="text" n:attr="value => $_REQUEST['city']" form="real_search_form" placeholder="{_city}" name="city">
-            <input type="text" n:attr="value => $_REQUEST['hometown']" form="real_search_form" placeholder="{_hometown}" name="hometown">
+            <input type="text" n:attr="value => $_REQUEST['city'] ?? ''" form="real_search_form" placeholder="{_city}" name="city">
+            <input type="text" n:attr="value => $_REQUEST['hometown'] ?? ''" form="real_search_form" placeholder="{_hometown}" name="hometown">
             
             <label class="checkbox">
-                <input name="is_online" type="checkbox" n:attr="checked => $_REQUEST['is_online'] == '1'" form="real_search_form" value="1">
+                <input name="is_online" type="checkbox" n:attr="checked => ($_REQUEST['is_online'] ?? null) == '1'" form="real_search_form" value="1">
                 <span>{_s_now_on_site}</span>
             </label>
         </div>
@@ -356,10 +370,10 @@
             {_pronouns}
         </div>
         <div class="search_option_content">
-            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 0" name="gender" value="0"><span>{_male}</span></label>
-            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 1" name="gender" value="1"><span>{_female}</span></label>
-            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => $_REQUEST['gender'] == 2" name="gender" value="2"><span>{_neutral}</span></label>
-            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => is_null($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3"><span>{_s_any}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => ($_REQUEST['gender'] ?? -1) == 0" name="gender" value="0"><span>{_male}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => ($_REQUEST['gender'] ?? -1) == 1" name="gender" value="1"><span>{_female}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => ($_REQUEST['gender'] ?? -1) == 2" name="gender" value="2"><span>{_neutral}</span></label>
+            <label class="radio"><input type="radio" form="real_search_form" n:attr="checked => !isset($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3"><span>{_s_any}</span></label>
         </div>
     </div>
     <div n:if="$section == 'users'" n:class="search_option, !isset($_REQUEST['polit_views']) && !isset($_REQUEST['marital_status']) ? search_option_hidden">
@@ -370,7 +384,7 @@
             <label class="field">
                 {_politViews}
                 <select name="polit_views" form="real_search_form" data-default='0'>
-                    <option n:foreach="range(0, 9) as $i" value="{$i}" n:attr="selected => $_REQUEST['polit_views'] == $i">
+                    <option n:foreach="range(0, 9) as $i" value="{$i}" n:attr="selected => ($_REQUEST['polit_views'] ?? -1) == $i">
                         {tr("politViews_".$i)}
                     </option>
                 </select>
@@ -378,7 +392,7 @@
             <label class="field">
                 {_relationship}
                 <select name="marital_status" form="real_search_form" data-default='0'>
-                    <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['marital_status'] == $i">
+                    <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => ($_REQUEST['marital_status'] ?? -1) == $i">
                         {tr("relationship_".$i)}
                     </option>
                 </select>
@@ -401,7 +415,7 @@
         </div>
         <div class="search_option_content">
             <select name="type" form="real_search_form" data-default='0'>
-                <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['type'] == $i">
+                <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => ($_REQUEST['type'] ?? -1) == $i">
                     {tr("document_type_".$i)}
                 </option>
             </select>
@@ -422,7 +436,7 @@
                 {_genre}
                 <select name='genre' form="real_search_form" data-default='any'>
                     <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>
-                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $_REQUEST['genre'] == $genre" value="{$genre}">
+                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: ($_REQUEST['genre'] ?? '') == $genre" value="{$genre}">
                         {$genre}
                     </option>
                 </select>

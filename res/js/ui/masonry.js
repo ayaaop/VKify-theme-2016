@@ -58,14 +58,14 @@ vkify.once('masonry', () => {
             });
 
             container.style.height = Math.max(...colHeights) - gap + 'px';
-            window.__vkifySchedulePaginatorCheck?.();
+            if (window.__vkifySchedulePaginatorCheck) window.__vkifySchedulePaginatorCheck();
         }
 
         function init(container, userOptions = {}) {
             if (typeof container === 'string') container = document.querySelector(container);
             if (!container) return null;
 
-            const options = { ...defaultOptions, ...userOptions };
+            const options = Object.assign({}, defaultOptions, userOptions);
 
             const existing = instances.get(container);
             if (existing) {
@@ -131,7 +131,8 @@ vkify.once('masonry', () => {
 
         function get(container) {
             if (typeof container === 'string') container = document.querySelector(container);
-            return instances.get(container)?.instance || null;
+            var inst = instances.get(container);
+            return inst ? inst.instance : null;
         }
 
         function refresh(container) {
@@ -155,7 +156,7 @@ vkify.once('masonry', () => {
 function initAlbumMasonry() {
     if (document.querySelector('.album-flex')) {
         Masonry.initAll('.album-flex', { itemSelector: '.masonry-item', columns: 3, gap: 10, breakpoints: { 600: 2, 450: 1 } });
-        requestAnimationFrame(() => window.__vkifySchedulePaginatorCheck?.());
+        requestAnimationFrame(() => { if (window.__vkifySchedulePaginatorCheck) window.__vkifySchedulePaginatorCheck(); });
     }
 }
 

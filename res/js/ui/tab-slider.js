@@ -2,7 +2,7 @@
 'use strict';
 
 function moveTabSlider(container, tabAnchor, animate = true) {
-    const slider = container?.querySelector('.ui_tabs_slider');
+    const slider = container ? container.querySelector('.ui_tabs_slider') : null;
     if (!slider || !tabAnchor) return;
 
     tabAnchor.offsetHeight;

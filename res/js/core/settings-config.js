@@ -76,7 +76,7 @@
             cb.onchange = function() {
                 vkify.setSetting(settingKey, this.checked);
                 if (applyFn) applyFn(this.checked);
-                window.vkifyShowSavedLabel?.(this);
+                if (window.vkifyShowSavedLabel) window.vkifyShowSavedLabel(this);
             };
         };
         bindToggle('theme_mode', 'darkMode', window.toggleDarkMode);
@@ -85,5 +85,5 @@
         bindToggle('ovkhat', 'ovkHat', window.toggleOvkHat);
     }
 
-    vkify.hook(vkify, 'onPageReady', bindSettingsToggles, 'after');
+    vkify.onPage(bindSettingsToggles);
 })();

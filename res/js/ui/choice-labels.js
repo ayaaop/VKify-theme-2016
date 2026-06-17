@@ -59,7 +59,7 @@ function normalizeChoiceLabel(label) {
         span.appendChild(child);
     }
 
-    while (span.firstChild?.nodeType === Node.TEXT_NODE && !span.firstChild.textContent.trim()) {
+    while (span.firstChild && span.firstChild.nodeType === Node.TEXT_NODE && !span.firstChild.textContent.trim()) {
         span.removeChild(span.firstChild);
     }
 

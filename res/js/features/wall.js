@@ -33,16 +33,16 @@ function syncGlobalWallCheckboxState(state) {
 }
 
 function resolveWallFormContext(el) {
-    return el?.closest?.('form') || document.querySelector('#write form') || null;
+    return (el && el.closest) ? el.closest('form') : document.querySelector('#write form') || null;
 }
 
 function getActiveTippyBox(el) {
-    return el?.closest?.('.tippy-box') || document.querySelector('.tippy-box') || null;
+    return (el && el.closest) ? el.closest('.tippy-box') : document.querySelector('.tippy-box') || null;
 }
 
 function queryInActiveTippyBox(el, selector) {
     const tippyBox = getActiveTippyBox(el);
-    return tippyBox?.querySelector(selector) || null;
+    return tippyBox ? tippyBox.querySelector(selector) : null;
 }
 
 function renderEditMenuLayout(apiPost, type, postId) {
@@ -152,7 +152,7 @@ function renderRepostBottomLayout() {
 }
 
 function getWallCheckboxState(formOrEl) {
-    const form = formOrEl?.tagName === 'FORM' ? formOrEl : resolveWallFormContext(formOrEl);
+    const form = (formOrEl && formOrEl.tagName === 'FORM') ? formOrEl : resolveWallFormContext(formOrEl);
     if (!form) {
         return window.wallCheckboxStates;
     }
@@ -209,25 +209,26 @@ function syncWallCheckboxHiddenInputs(form) {
 }
 
 function setWallSourceContext(node) {
-    const form = node?.closest?.('form');
+    const form = (node && node.closest) ? node.closest('form') : null;
     if (!form) return;
     window.vkifyWallSourceContext = u(form);
 }
 
 function getWallSourceContext(sourceBtn) {
-    const directForm = sourceBtn?.closest?.('form');
+    const directForm = (sourceBtn && sourceBtn.closest) ? sourceBtn.closest('form') : null;
     if (directForm) return u(directForm);
 
-    const tippyId = sourceBtn?.closest?.('.tippy-box')?.id;
+    var tippyBox = (sourceBtn && sourceBtn.closest) ? sourceBtn.closest('.tippy-box') : null;
+    const tippyId = tippyBox ? tippyBox.id : null;
     if (tippyId) {
-        const escapedId = window.CSS?.escape ? window.CSS.escape(tippyId) : tippyId.replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, '\\$&');
+        const escapedId = (window.CSS && window.CSS.escape) ? window.CSS.escape(tippyId) : tippyId.replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, '\\$&');
         const trigger = document.querySelector(`[aria-describedby="${escapedId}"]`);
-        const triggerForm = trigger?.closest?.('form');
+        const triggerForm = (trigger && trigger.closest) ? trigger.closest('form') : null;
         if (triggerForm) return u(triggerForm);
     }
 
     const stored = window.vkifyWallSourceContext;
-    if (stored?.length) return stored;
+    if (stored && stored.length) return stored;
 
     const fallbackForm = document.querySelector('#write form, form#write, #write');
     return fallbackForm ? u(fallbackForm) : null;
@@ -252,12 +253,12 @@ function bindSourceAttacherOnce() {
         if (!sourceBtn || e.__vkifyHandled) return;
 
         const nearestTextarea = getWallSourceContext(sourceBtn);
-        if (!nearestTextarea?.length) return;
+        if (!nearestTextarea || !nearestTextarea.length) return;
 
         e.__vkifyHandled = true;
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation?.();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
 
         const sourceOutput = nearestTextarea.find(`input[name='source']`);
         if (!sourceOutput.length) return;
@@ -274,10 +275,12 @@ function bindSourceAttacherOnce() {
             buttons: [tr('set_source'), tr('cancel')],
             callbacks: [async () => {
                 const sourceInput = u(`#source_flex_kunteynir input[type='text']`);
-                const sourceValue = sourceInput.nodes[0]?.value?.trim() ?? '';
+                var sn = sourceInput.nodes[0];
+                const sourceValue = (sn && sn.value) ? sn.value.trim() : '';
                 if (sourceValue.length < 1) return;
 
-                const submitBtn = u('.ovk-diag-action button').first()?.nodes?.[0];
+                var fNode = u('.ovk-diag-action button').first();
+                const submitBtn = fNode ? fNode.nodes[0] : null;
                 if (submitBtn) submitBtn.classList.add('lagged');
 
                 const checkRes = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(sourceValue)}`);
@@ -316,7 +319,7 @@ function bindSourceAttacherOnce() {
 
         u('.ovk-diag-body').attr('style', 'padding:8px;');
         u('.ovk-diag-cont').attr('style', 'width: 325px;');
-        u('#source_flex_kunteynir input').nodes[0]?.focus();
+        if (u('#source_flex_kunteynir input').nodes[0]) u('#source_flex_kunteynir input').nodes[0].focus();
     }, true);
 }
 
@@ -331,14 +334,14 @@ function setupTooltipCheckboxListeners() {
         if (e.target.checked) {
             state.anon = false;
             const formContext = resolveWallFormContext(e.target);
-            const anonCheckbox = formContext?.querySelector('input[name="anon"]') || null;
+            const anonCheckbox = formContext ? formContext.querySelector('input[name="anon"]') : null;
             if (anonCheckbox) {
                 anonCheckbox.checked = false;
             }
         } else {
             state.force_sign = false;
             const formContext = resolveWallFormContext(e.target);
-            const forceSignCheckbox = formContext?.querySelector('input[name="force_sign"]') || null;
+            const forceSignCheckbox = formContext ? formContext.querySelector('input[name="force_sign"]') : null;
             if (forceSignCheckbox) {
                 forceSignCheckbox.checked = false;
             }
@@ -361,13 +364,13 @@ function setupTooltipCheckboxListeners() {
         if (e.target.checked) {
             state.as_group = false;
             const formContext = resolveWallFormContext(e.target);
-            const asGroupCheckbox = formContext?.querySelector('input[name="as_group"]') || null;
+            const asGroupCheckbox = formContext ? formContext.querySelector('input[name="as_group"]') : null;
             if (asGroupCheckbox) {
                 asGroupCheckbox.checked = false;
             }
 
             const form = resolveWallFormContext(e.target);
-            if (form?.dataset.originalAction) {
+            if (form && form.dataset.originalAction) {
                 form.action = form.dataset.originalAction;
             }
         }
@@ -462,7 +465,7 @@ window.handleWallAsGroupClick = window.handleWallAsGroupClick || ((el) => {
                 form.dataset.originalAction = form.action;
             }
 
-            const isCommentForm = form.dataset.originalAction?.includes('/al_comments/create/');
+            const isCommentForm = form.dataset.originalAction && form.dataset.originalAction.includes('/al_comments/create/');
 
             if (!isCommentForm) {
                 const currentUrl = window.location.pathname;
@@ -600,8 +603,9 @@ vkify.once('initTextareaInteraction', () => {
         if (!vkify.bindOnce('textareaInteraction', window.initTextareaInteraction)) return;
 
         const showComposer = (target) => {
-            if (target.tagName === 'TEXTAREA' || target.classList?.contains('submit_post_field')) {
-                target.closest('.model_content_textarea')?.classList.add('shown');
+            if (target.tagName === 'TEXTAREA' || (target.classList && target.classList.contains('submit_post_field'))) {
+                var tc = target.closest('.model_content_textarea');
+                if (tc) tc.classList.add('shown');
             }
         };
 
@@ -613,7 +617,7 @@ vkify.once('initTextareaInteraction', () => {
             document.querySelectorAll('.model_content_textarea').forEach(box => {
                 const horizontal = box.querySelector('.post-horizontal');
                 const vertical = box.querySelector('.post-vertical');
-                if ((horizontal?.children.length || vertical?.children.length)) {
+                if (((horizontal && horizontal.children.length) || (vertical && vertical.children.length))) {
                     box.classList.add('shown');
                 }
             });
@@ -639,7 +643,7 @@ if (document.readyState === 'loading') {
 }
 
 function getSuggestionPostNode(el) {
-    return el?.closest('.post') || el?.closest('table') || null;
+    return (el && el.closest) ? (el.closest('.post') || el.closest('table') || null) : null;
 }
 
 function getClubPageUrl() {
@@ -649,7 +653,8 @@ function getClubPageUrl() {
 
 function setWallTabSelected(tabId, animate = true) {
     const container = document.getElementById('wall_top_tabs');
-    const targetTab = document.getElementById(tabId)?.querySelector('.ui_tab');
+    var gId = document.getElementById(tabId);
+    const targetTab = gId ? gId.querySelector('.ui_tab') : null;
     if (!container || !targetTab) return;
 
     document.querySelectorAll('#wall_top_tabs > li').forEach((li) => {
@@ -658,12 +663,12 @@ function setWallTabSelected(tabId, animate = true) {
         tab.classList.toggle('ui_tab_sel', li.id === tabId);
     });
 
-    window.__vkifyMoveTabSlider?.(container, targetTab, animate);
+    if (window.__vkifyMoveTabSlider) window.__vkifyMoveTabSlider(container, targetTab, animate);
 }
 
 function isAjaxWallOpen() {
     const insertThere = document.querySelector('.wall_module .insertThere');
-    return insertThere?.style.display === 'block';
+    return insertThere && insertThere.style.display === 'block';
 }
 
 function showAjaxWallContent(tabId) {
@@ -763,11 +768,12 @@ function updateSuggestionCounts(newCount) {
 
     if (newCount < 1) {
         const insertThere = document.querySelector('.wall_module .insertThere');
-        if (isAjaxWallOpen() && insertThere?.dataset?.loadedTab === 'wall_tab_suggested') {
+        if (isAjaxWallOpen() && insertThere && insertThere.dataset && insertThere.dataset.loadedTab === 'wall_tab_suggested') {
             hideAjaxWallContent();
         }
-        document.getElementById('wall_tab_suggested')?.remove();
-        if (insertThere?.dataset?.loadedTab === 'wall_tab_suggested') {
+        var ts = document.getElementById('wall_tab_suggested');
+        if (ts) ts.remove();
+        if (insertThere && insertThere.dataset && insertThere.dataset.loadedTab === 'wall_tab_suggested') {
             setWallTabSelected('wall_tab_all', false);
         }
     }
@@ -839,7 +845,8 @@ function initSuggestionsAdapterOnce() {
     window.loadMoreSuggestedPosts = loadMoreSuggestedPostsVkify;
 
     window.__vkifyOnWallTabSwitch = (tab) => {
-        const tabId = tab.closest('li')?.id;
+        var cl = tab.closest('li');
+        const tabId = cl ? cl.id : null;
         if (tabId === 'wall_tab_suggested' || tabId === 'wall_tab_owners') {
             showAjaxWallContent(tabId);
             return true;
@@ -887,7 +894,8 @@ function initSuggestionsAdapterOnce() {
         e.stopImmediatePropagation();
 
         const post = getSuggestionPostNode(publishBtn);
-        const sourceText = post?.querySelector('.really_text')?.dataset?.text || '';
+        var rt = post ? post.querySelector('.really_text') : null;
+        const sourceText = (rt && rt.dataset && rt.dataset.text) ? rt.dataset.text : '';
         const body = `
             <textarea id="pooblish" style="max-height:500px;resize:vertical;min-height:54px;"></textarea>
             <label class="checkbox"><input type="checkbox" id="signatr" checked><span>${tr('add_signature')}</span></label>
@@ -897,8 +905,8 @@ function initSuggestionsAdapterOnce() {
             async () => {
                 const formData = new FormData();
                 formData.append('id', publishBtn.dataset.id);
-                formData.append('sign', document.getElementById('signatr')?.checked ? 1 : 0);
-                formData.append('new_content', document.getElementById('pooblish')?.value || '');
+                formData.append('sign', (document.getElementById('signatr') && document.getElementById('signatr').checked) ? 1 : 0);
+                formData.append('new_content', (document.getElementById('pooblish') && document.getElementById('pooblish').value) ? document.getElementById('pooblish').value : '');
                 formData.append('hash', u('meta[name=csrf]').attr('value'));
 
                 publishBtn.classList.add('lagged');
@@ -946,7 +954,7 @@ vkify.once('reportPost', () => {
         MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
             async () => {
                 const reasonInput = document.querySelector('#uReportMsgInput');
-                const reason = reasonInput?.value?.trim() ?? '';
+                const reason = (reasonInput && reasonInput.value) ? reasonInput.value.trim() : '';
 
                 try {
                     const params = new URLSearchParams({ reason, type: 'post' });
@@ -975,7 +983,7 @@ function bindPostDeleteConfirmOnce() {
         if (!deleteLink || deleteLink.dataset.deleting) return;
 
         const href = deleteLink.getAttribute('href');
-        if (!href?.includes('/wall')) return;
+        if (!href || !href.includes('/wall')) return;
 
         e.preventDefault();
         e.stopPropagation();
@@ -984,7 +992,7 @@ function bindPostDeleteConfirmOnce() {
         let postElement = deleteLink.closest('.post');
         if (!postElement) {
             const match = href.match(/wall(-?\d+_\d+)/);
-            if (match?.[1]) {
+            if (match && match[1]) {
                 postElement = document.querySelector(`.post[data-id="${match[1]}"]`);
             }
         }
@@ -1104,7 +1112,7 @@ function bindPostDeleteConfirmOnce() {
 bindPostDeleteConfirmOnce();
 
 vkify.hook(vkify, 'onPageReady', () => {
-    if (!window.postPopupManager?.currentModal) {
+    if (!window.postPopupManager || !window.postPopupManager.currentModal) {
         window.postPopupManager.checkInitialUrl();
         bindPostDeleteConfirmOnce();
     }
@@ -1158,14 +1166,14 @@ function bindPostEditOnce() {
                     });
                 }
 
-                if (api_post.copy_history?.length > 0) {
+                if (api_post.copy_history && api_post.copy_history.length > 0) {
                     edit_place.find('.post-repost').html(`<span>${tr('has_repost')}.</span>`);
                 }
 
                 api_post.attachments.forEach(att => {
                     const attType = att.type;
                     let aid = `${att[attType].owner_id}_${att[attType].id}`;
-                    if (att[attType]?.access_key) aid += `_${att[attType].access_key}`;
+                    if (att[attType] && att[attType].access_key) aid += `_${att[attType].access_key}`;
 
                     if (attType === 'video' || attType === 'photo') {
                         const preview = attType === 'photo' ? att[attType].sizes[1].url : att[attType].image[0].url;
@@ -1227,7 +1235,7 @@ function bindPostEditOnce() {
 
         post.addClass('editing');
         const ta = edit_place.find('textarea').first();
-        if (ta) window.vkifyTextareaAutosize?.apply?.(ta);
+        if (ta && window.vkifyTextareaAutosize && window.vkifyTextareaAutosize.apply) window.vkifyTextareaAutosize.apply(ta);
     }, true);
 }
 
@@ -1284,11 +1292,13 @@ vkify.once('shareAudioPlaylist', () => {
         u('.ovk-diag-body').attr('style', 'padding: 20px 25px;');
 
         const updateAttachClub = () => {
-            const type = node.find("input[name='repost_type']:checked").nodes[0]?.value;
+            var typeNode = node.find("input[name='repost_type']:checked").nodes[0];
+            const type = typeNode ? typeNode.value : null;
             let clubId = 0;
             if (type === 'group') {
                 try {
-                    clubId = parseInt(node.find("select[name='selected_repost_club']").nodes[0]?.value, 10) || 0;
+                    var clubIdNode = node.find("select[name='selected_repost_club']").nodes[0];
+                    clubId = parseInt(clubIdNode ? clubIdNode.value : 0, 10) || 0;
                 } catch(_e) {}
             }
             node.find('#wallAttachmentMenu a').attr('data-club', clubId);
@@ -1331,8 +1341,10 @@ vkify.once('shareAudioPlaylist', () => {
                 club_id = parseInt(node.find("select[name='selected_repost_club']").nodes[0].selectedOptions[0].value, 10);
             } catch(_e) {}
 
-            const as_group = node.find('#__vkifyRepostOptsTooltip input[name="asGroup"]').nodes[0]?.checked;
-            const signed = node.find('#__vkifyRepostOptsTooltip input[name="signed"]').nodes[0]?.checked;
+            var asGroupNode = node.find('#__vkifyRepostOptsTooltip input[name="asGroup"]').nodes[0];
+            const as_group = asGroupNode ? asGroupNode.checked : false;
+            var signedNode = node.find('#__vkifyRepostOptsTooltip input[name="signed"]').nodes[0];
+            const signed = signedNode ? signedNode.checked : false;
             const attachments = collect_attachments(node.find('.post-buttons')).join(',');
 
             const playlistUrl = `${window.location.origin}/playlist${owner_id}_${playlist_id}`;
@@ -1380,7 +1392,7 @@ vkify.once('shareAudioPlaylist', () => {
 
         // Initialize Tippy tooltips for the opts trigger
         setTimeout(() => {
-            window.reinitializeTooltips?.(node.nodes[0]);
+            if (window.reinitializeTooltips) window.reinitializeTooltips(node.nodes[0]);
         }, 0);
     };
 });
@@ -1390,7 +1402,8 @@ function bindWallSearchOnce() {
 
     const toggleSearchFieldEmptyState = (input) => {
         if (!input) return;
-        input.closest('.ui_search')?.classList.toggle('ui_search_field_empty', input.value.length === 0);
+        var closestSearch = input.closest('.ui_search');
+        if (closestSearch && closestSearch.classList) closestSearch.classList.toggle('ui_search_field_empty', input.value.length === 0);
     };
 
     document.addEventListener('click', (e) => {
@@ -1485,7 +1498,7 @@ vkify.once('repostModalLayout', () => {
         });
 
         setTimeout(() => {
-            window.reinitializeTooltips?.(dialogBody.nodes[0]);
+            if (window.reinitializeTooltips) window.reinitializeTooltips(dialogBody.nodes[0]);
         }, 0);
     }, 'then');
 });
@@ -1531,10 +1544,10 @@ function vkifyTplPost(post) {
     return postTpl({
         pretty_id: post.pretty_id || '',
         owner: {
-            name: post.owner?.name || '',
-            domain: post.owner?.domain || '',
-            photo_50: post.owner?.photo_50 || '',
-            verified: !!post.owner?.verified
+            name: (post.owner && post.owner.name) ? post.owner.name : '',
+            domain: (post.owner && post.owner.domain) ? post.owner.domain : '',
+            photo_50: (post.owner && post.owner.photo_50) ? post.owner.photo_50 : '',
+            verified: !!(post.owner && post.owner.verified)
         },
         url: post.url || '',
         created: post.created || '',
@@ -1694,7 +1707,7 @@ vkify.bindOnce('ignoreFeedFix', () => {
             // template nodes out of the DOM into a registry when creating a
             // tooltip; destroying triggers onDestroy → restoreTemplateNode,
             // which reinserts the template so our serialization captures it.
-            window.Tooltips?.destroyTooltips?.(post);
+            if (window.Tooltips && window.Tooltips.destroyTooltips) window.Tooltips.destroyTooltips(post);
             // Stash the original markup so we can restore on unignore.
             const originalHTML = post.innerHTML;
             const originalCls  = post.className;
@@ -1703,7 +1716,7 @@ vkify.bindOnce('ignoreFeedFix', () => {
             await morphPostContents(post, newHTML, `${originalCls} post-hidden`);
         } else {
             const originalHTML = post.dataset.preIgnoreHtml ? decodeURIComponent(post.dataset.preIgnoreHtml) : '';
-            const originalCls  = post.dataset.preIgnoreClassName ?? post.className.replace(/\bpost-hidden\b/g, '').trim();
+            const originalCls  = (post.dataset.preIgnoreClassName !== undefined && post.dataset.preIgnoreClassName !== null) ? post.dataset.preIgnoreClassName : post.className.replace(/\bpost-hidden\b/g, '').trim();
             delete post.dataset.preIgnoreHtml;
             delete post.dataset.preIgnoreClassName;
             if (!originalHTML) {
@@ -1726,7 +1739,7 @@ vkify.bindOnce('ignoreFeedFix', () => {
                 el.removeAttribute('aria-describedby');
                 el.removeAttribute('aria-expanded');
             });
-            window.Tooltips?.reinitializeTooltips?.(post);
+            if (window.Tooltips && window.Tooltips.reinitializeTooltips) window.Tooltips.reinitializeTooltips(post);
         }
     }, true);
 });

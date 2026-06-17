@@ -387,7 +387,7 @@ window.processVkifyLocElement = function (element) {
 				const placeholder = "$" + (index + 1);
 				translatedText = translatedText.replace(
 					new RegExp("\\" + placeholder, "g"),
-					arg,
+					arg
 				);
 			});
 		}
@@ -441,7 +441,7 @@ vkify.ready(() => {
 	vkify.hook(
 		vkify,
 		"onPageReady",
-		() => window.processVkifyLocTags?.(),
-		"after",
+		() => { if (window.processVkifyLocTags) window.processVkifyLocTags(); },
+		"after"
 	);
 });

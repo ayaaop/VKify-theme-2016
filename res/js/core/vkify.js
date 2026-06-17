@@ -1,4 +1,9 @@
 (function () {
+    window.queueMicrotask = window.queueMicrotask || function(callback) {
+        Promise.resolve().then(callback).catch(function(e) {
+            setTimeout(function() { throw e; });
+        });
+    };
     if (window.vkify) {
         return;
     }
@@ -231,7 +236,9 @@
     }
 
     function getCsrf() {
-        return window.router?.csrf ?? document.querySelector('meta[name="csrf"]')?.getAttribute('value') ?? '';
+        if (window.router && window.router.csrf != null) return window.router.csrf;
+        var meta = document.querySelector('meta[name="csrf"]');
+        return meta && meta.getAttribute('value') != null ? meta.getAttribute('value') : '';
     }
 
     function debounce(fn, ms) {
@@ -392,4 +399,22 @@ vkify.ready(() => {
 
     document.documentElement.addEventListener('keydown', handleKeyPropagation, false);
     document.documentElement.addEventListener('keyup', handleKeyPropagation, false);
+
+    vkify.observeDOM(document.body, () => {
+        const pollEditors = document.querySelectorAll('[id^="poll_editor"]');
+        if (pollEditors.length) {
+            pollEditors.forEach(editor => {
+                editor.querySelectorAll('label.checkbox').forEach(label => {
+                    const span = label.querySelector(':scope > span');
+                    if (span && span.querySelector('select')) {
+                        label.classList.add('has-select');
+                        span.classList.add('has-select');
+                    } else {
+                        label.classList.remove('has-select');
+                        if (span) span.classList.remove('has-select');
+                    }
+                });
+            });
+        }
+    });
 });

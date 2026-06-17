@@ -1,7 +1,7 @@
 window.router = new class Router {
     constructor() {
-        window.__vkifyResourceBase = window.vkify?.resourceBase || window.__vkifyResourceBase;
-        window.__vkifyThemeBase = window.vkify?.themeBase || window.__vkifyThemeBase;
+        window.__vkifyResourceBase = (window.vkify && window.vkify.resourceBase) || window.__vkifyResourceBase;
+        window.__vkifyThemeBase = (window.vkify && window.vkify.themeBase) || window.__vkifyThemeBase;
 
         this.navigationState = {
             isNavigating: false,
@@ -57,7 +57,7 @@ window.router = new class Router {
     }
 
     setNavigationTimeout(fallbackCallback, duration = null) {
-        const timeoutDuration = duration ?? this.navigationState.timeoutDuration;
+        const timeoutDuration = (duration !== undefined && duration !== null) ? duration : this.navigationState.timeoutDuration;
         this.navigationState.navigationTimeout = setTimeout(() => {
             console.log('ROUTER | Navigation timeout reached, showing notification');
             
@@ -233,7 +233,7 @@ window.router = new class Router {
                         ${script.textContent}
                     } catch (error) {
                         console.warn('Script execution failed during AJAX transition:', error);
-                        if (error.message?.includes("can't access property")) {
+                        if (error.message && error.message.includes("can't access property")) {
                             console.warn('DOM access error detected, this page may not be compatible with AJAX routing');
                         }
                     }
@@ -254,7 +254,7 @@ window.router = new class Router {
     }
 
     _closeMsgs() {
-        window.messagebox_stack?.forEach(msg => {
+        if (window.messagebox_stack) window.messagebox_stack.forEach(msg => {
             if (!msg.hidden) {
                 msg.close();
             }
@@ -294,7 +294,8 @@ window.router = new class Router {
 
         for (const key of this.managedStyleLinks.keys()) {
             if (!desiredKeys.has(key)) {
-                this.managedStyleLinks.get(key)?.remove();
+                var sl = this.managedStyleLinks.get(key);
+                if (sl) sl.remove();
                 this.managedStyleLinks.delete(key);
             }
         }
@@ -377,13 +378,13 @@ window.router = new class Router {
     }
 
     _handleVKifyContentUpdate() {
-        if (window.vkify?.onPageReady) {
-            vkify.onPageReady();
+        if (window.vkify && window.vkify.onPageReady) {
+            window.vkify.onPageReady();
             return;
         }
 
-        window.processVkifyLocTags?.();
-        window.reinitializeTooltips?.();
+        if (window.processVkifyLocTags) window.processVkifyLocTags();
+        if (window.reinitializeTooltips) window.reinitializeTooltips();
 
         if (location.pathname === '/search') {
             window.initializeSearchOptions;
@@ -391,10 +392,11 @@ window.router = new class Router {
         }
 
         window.initializeSearchFastTips;
-        window.hideSearchFastTips?.();
+        if (window.hideSearchFastTips) window.hideSearchFastTips();
         setTimeout(window.initTabSlider, 150);
 
-        if (location.pathname.includes('/albums') && !ge('photos-section')?.dataset.initialized) {
+        var ps = ge('photos-section');
+        if (location.pathname.includes('/albums') && !(ps && ps.dataset && ps.dataset.initialized)) {
             setTimeout(window.initAlbumPhotosLoader, 100);
         }
 
@@ -417,7 +419,7 @@ window.router = new class Router {
             if (typeof window.__resetPaginatorState === 'function') {
                 window.__resetPaginatorState();
             }
-            window.__vkifySchedulePaginatorCheck?.();
+            if (window.__vkifySchedulePaginatorCheck) window.__vkifySchedulePaginatorCheck();
         }
 
         const smallBlock = u(`div[class$="_small_block"]`).nodes[0];
@@ -439,8 +441,9 @@ window.router = new class Router {
     }
 
     checkUrl(url) {
-        if (window.openvk?.disable_ajax === 1) return false;
-        if (parseInt(localStorage.getItem('ux.disable_ajax_routing') ?? '0', 10) === 1 || window.openvk?.current_id === 0) return false;
+        if (window.openvk && window.openvk.disable_ajax === 1) return false;
+        var disableRoutingStr = localStorage.getItem('ux.disable_ajax_routing');
+        if (parseInt(disableRoutingStr !== null ? disableRoutingStr : '0', 10) === 1 || (window.openvk && window.openvk.current_id === 0)) return false;
         if (!url) return false;
 
         try {
@@ -470,7 +473,7 @@ window.router = new class Router {
     }
 
     _validateHistoryState(event) {
-        const state = event.state ?? history.state;
+        const state = event.state !== null && event.state !== undefined ? event.state : history.state;
         if (!state || typeof state !== 'object' || typeof state.from_router !== 'number') {
             console.warn('ROUTER | Invalid history state');
             return false;
@@ -510,7 +513,7 @@ window.router = new class Router {
             this.prev_page_html = null;
         }
 
-        const pushState = params.push_state ?? true;
+        const pushState = (params.push_state !== undefined && params.push_state !== null) ? params.push_state : true;
         if (pushState) {
             history.pushState({ from_router: 1 }, '', url);
         } else {
@@ -530,6 +533,7 @@ window.router = new class Router {
             const response = await fetch(resolvedUrl, {
                 method: 'AJAX',
                 referrer: oldUrl,
+                credentials: 'same-origin',
                 headers: {
                     'X-OpenVK-Ajax-Query': '1',
                 }
@@ -555,7 +559,7 @@ window.router = new class Router {
             console.error('AJAX routing failed:', e);
             this.cancelPendingNavigation();
 
-            if (e.message?.includes("can't access property") || e.message?.includes("Missing required elements")) {
+            if ((e.message && e.message.includes("can't access property")) || (e.message && e.message.includes("Missing required elements"))) {
                 console.warn('Page structure incompatible with AJAX routing, falling back to regular navigation');
             }
 
@@ -621,8 +625,9 @@ u(document).on('submit', 'form', async (e) => {
         return;
     }
 
-    if (window.openvk?.disable_ajax === 1) return;
-    if (parseInt(localStorage.getItem('ux.disable_ajax_routing') ?? '0', 10) === 1 || window.openvk?.current_id === 0) return;
+    if (window.openvk && window.openvk.disable_ajax === 1) return;
+    var disableRoutingStr2 = localStorage.getItem('ux.disable_ajax_routing');
+    if (parseInt(disableRoutingStr2 !== null ? disableRoutingStr2 : '0', 10) === 1 || (window.openvk && window.openvk.current_id === 0)) return;
 
     const target = u(e.target);
     if (target.closest('#write') && typeof collect_attachments_node === 'function') {
@@ -636,7 +641,7 @@ u(document).on('submit', 'form', async (e) => {
     u('#ajloader').addClass('shown');
 
     const form = e.target;
-    const method = form.method?.toUpperCase() ?? 'GET';
+    const method = form.method && typeof form.method === 'string' ? form.method.toUpperCase() : 'GET';
     const action = form.action;
     if (form.onsubmit || action.includes('/settings?act=interface')) {
         u('#ajloader').removeClass('shown');
@@ -651,7 +656,7 @@ u(document).on('submit', 'form', async (e) => {
 
         if (method === 'GET') {
             for (const [key, value] of formData.entries()) {
-                if (value?.trim()) {
+                if (value && value.trim && value.trim()) {
                     urlObj.searchParams.append(key, value);
                 }
             }
@@ -659,6 +664,7 @@ u(document).on('submit', 'form', async (e) => {
 
         const request = {
             method,
+            credentials: 'same-origin',
             headers: { 'X-OpenVK-Ajax-Query': '1' }
         };
 
@@ -744,7 +750,7 @@ window.reinitializeTooltips = function (container = document) {
         }
     });
 
-    if (window.tippy?.instances) {
+    if (window.tippy && window.tippy.instances) {
         window.tippy.instances = window.tippy.instances.filter(instance => {
             if (!instance.reference.isConnected) {
                 instance.destroy();
@@ -754,19 +760,11 @@ window.reinitializeTooltips = function (container = document) {
         });
     }
 
-    if (window.Tooltips?.reinitializeTooltips) {
+    if (window.Tooltips && window.Tooltips.reinitializeTooltips) {
         try {
             window.Tooltips.reinitializeTooltips(container);
         } catch (error) {
             console.warn('Error reinitializing declarative tooltips:', error);
-        }
-    }
-
-    if (window.initializeTippys) {
-        try {
-            window.initializeTippys();
-        } catch (error) {
-            console.warn('Error reinitializing tooltips:', error);
         }
     }
 };
@@ -782,7 +780,7 @@ window.destroyTooltipsInContainer = function (container) {
         }
     });
 
-    if (window.Tooltips?.cleanupTooltips) {
+    if (window.Tooltips && window.Tooltips.cleanupTooltips) {
         try {
             window.Tooltips.cleanupTooltips(container, false);
         } catch (error) {
@@ -794,7 +792,7 @@ window.destroyTooltipsInContainer = function (container) {
 window.cleanupModalTooltips = function (modalContainer) {
     if (!modalContainer) return;
 
-    if (window.Tooltips?.cleanupTooltips) {
+    if (window.Tooltips && window.Tooltips.cleanupTooltips) {
         try {
             window.Tooltips.cleanupTooltips(modalContainer, false);
         } catch (error) {
@@ -811,7 +809,7 @@ window.cleanupModalTooltips = function (modalContainer) {
         }
     });
 
-    if (window.tippy?.instances) {
+    if (window.tippy && window.tippy.instances) {
         window.tippy.instances = window.tippy.instances.filter(instance => instance.reference.isConnected);
     }
 
@@ -852,7 +850,7 @@ window.initializeSearchOptions = function () {
         const formData = new FormData(searchForm);
         const searchParams = new URLSearchParams();
         for (const [key, value] of formData.entries()) {
-            if (value?.trim()) {
+            if (value && value.trim && value.trim()) {
                 searchParams.append(key, value);
             }
         }
@@ -922,7 +920,7 @@ window.initializeSearchOptionToggle = function () {
         nameElement.removeEventListener('click', nameElement._toggleHandler);
         nameElement._toggleHandler = () => {
             const searchOption = nameElement.closest('.search_option');
-            const searchOptionContent = searchOption?.querySelector('.search_option_content');
+            const searchOptionContent = searchOption ? searchOption.querySelector('.search_option_content') : null;
             if (searchOptionContent) {
                 $(searchOptionContent).slideToggle(250, "swing");
             }
@@ -942,7 +940,7 @@ vkify.ready(function () {
     }
 
     setTimeout(() => {
-        window.router?._handleVKifyContentUpdate();
+        if (window.router && window.router._handleVKifyContentUpdate) window.router._handleVKifyContentUpdate();
     }, 100);
 
     const observer = new MutationObserver(mutations => {
@@ -955,14 +953,14 @@ vkify.ready(function () {
                     if (node.tagName === 'VKIFYLOC' || node.querySelector('vkifyloc')) {
                         shouldProcessLoc = true;
                     }
-                    if (node.classList?.contains('scroll_node') || node.querySelector('.post_actions_icon')) {
+                    if ((node.classList && node.classList.contains('scroll_node')) || node.querySelector('.post_actions_icon')) {
                         shouldReinitTooltips = true;
                     }
                 }
             });
         });
 
-        if (shouldProcessLoc) window.processVkifyLocTags?.();
+        if (shouldProcessLoc && window.processVkifyLocTags) window.processVkifyLocTags();
         if (shouldReinitTooltips) setTimeout(window.reinitializeTooltips, 100);
     });
 
@@ -971,7 +969,7 @@ vkify.ready(function () {
 
 vkify.hook(vkify, 'onPageReady', () => {
     if (window.location.pathname === '/search') {
-        window.initializeSearchOptions?.();
-        window.initializeSearchOptionToggle?.();
+        if (window.initializeSearchOptions) window.initializeSearchOptions();
+        if (window.initializeSearchOptionToggle) window.initializeSearchOptionToggle();
     }
 }, 'after');

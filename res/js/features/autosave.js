@@ -32,7 +32,7 @@
 
     function getLabel(el) {
         const pageBlock = el.closest('.page_block');
-        return pageBlock?.querySelector('.settings_saved_label') || null;
+        return pageBlock ? pageBlock.querySelector('.settings_saved_label') : null;
     }
 
     function showLoader(el) {
@@ -78,7 +78,7 @@
 
     function showSavedLabel(el) {
         const label = getLabel(el);
-        const message = window.tr?.('changes_saved') || 'Changes saved.';
+        const message = (window.tr) ? window.tr('changes_saved') : 'Changes saved.';
 
         if (!label) {
             const form = el.closest('form');
@@ -128,11 +128,11 @@
         if (msg) {
             clearTimeout(msg._hideTimer);
             $(msg).stop(true, true);
-            msg.textContent = window.vkifylang?.error_saving || 'Error saving settings.';
+            msg.textContent = (window.vkifylang && window.vkifylang.error_saving) ? window.vkifylang.error_saving : 'Error saving settings.';
         } else {
             msg = document.createElement('div');
             msg.className = 'msg msg_yellow settings_error_msg';
-            msg.textContent = window.vkifylang?.error_saving || 'Error saving settings.';
+            msg.textContent = (window.vkifylang && window.vkifylang.error_saving) ? window.vkifylang.error_saving : 'Error saving settings.';
             form.insertBefore(msg, form.firstChild);
             animateShow($(msg));
         }
@@ -205,6 +205,11 @@
                 const el = e.target;
                 if (el.type === 'hidden' || el.type === 'file') return;
                 if (el.dataset.act === 'localstorage_item' || el.closest('#vkifySettings')) {
+                    if (el.dataset.act === 'localstorage_item') {
+                        const val = el.checked;
+                        const toSave = el.dataset.inverse ? (val ? 0 : 1) : (val ? 1 : 0);
+                        localStorage.setItem(el.name, toSave);
+                    }
                     showSavedLabel(el);
                     return;
                 }

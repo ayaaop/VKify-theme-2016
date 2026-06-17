@@ -147,7 +147,8 @@ label.checkbox .nobold {
 /* payments */
 
 .settings_padding {
-    padding-block: 20px
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .voucher_form {
@@ -176,7 +177,7 @@ label.checkbox .nobold {
 /* vertical */
 .form_group.vertical {
     width: fit-content;
-    margin-inline: auto;
+    margin: 0 auto;
 }
 .form_group.vertical .form_field,.form_field.vertical {
     flex-direction: column;
@@ -193,10 +194,10 @@ label.checkbox .nobold {
     margin-left: 0;
 }
 
-.form_field:not(:has(.form_label)) .form_data {
+.form_field > .form_data:first-child {
     margin: 0;
 }
-.form_field:not(:has(.form_label)) .form_data *:not([type="submit"], [type="checkbox"], [type="radio"]) {
+.form_field > .form_data:first-child *:not([type="submit"], [type="checkbox"], [type="radio"]) {
     width: 100%;
 }
 
@@ -207,6 +208,7 @@ label.checkbox .nobold {
 .outline_table {
     border-color: var(--border-color)
 }
+
 .page_block .knowledgebase_block .page_block_h2 {
     display: none;
 }

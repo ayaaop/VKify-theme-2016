@@ -81,7 +81,7 @@ window.allLangsPopup = window.allLangsPopup || async function () {
         setTimeout(() => {
             $('.ovk-msg-all[data-id]').css('width', '700px');
             $('.ovk-diag-body')[0].style.setProperty('padding', '20px 0 20px 30px', 'important');
-            window.reinitializeTooltips?.();
+            if (window.reinitializeTooltips) window.reinitializeTooltips();
         }, 0);
     } catch (e) {
         loader.hide();
@@ -116,8 +116,10 @@ window.changeLangPopup = window.changeLangPopup || function () {
         callbacks: [() => { langPopup.close(); }]
     });
 
-    langPopup.getNode().nodes[0]?.style.setProperty('width', '320px');
-    langPopup.getNode().find('.ovk-diag-body').nodes[0]?.style.setProperty('padding', '15px 20px', 'important');
+    var node0 = langPopup.getNode().nodes[0];
+    if (node0) node0.style.setProperty('width', '320px');
+    var node0Find = langPopup.getNode().find('.ovk-diag-body').nodes[0];
+    if (node0Find) node0Find.style.setProperty('padding', '15px 20px', 'important');
 };
 
 window.reportNote = window.reportNote || function (noteId) {
@@ -127,7 +129,8 @@ window.reportNote = window.reportNote || function (noteId) {
 
     MessageBox(tr('report_question'), uReportMsgTxt, [tr('confirm_m'), tr('cancel')], [
         (function () {
-            const res = document.querySelector('#uReportMsgInput')?.value || '';
+            var q = document.querySelector('#uReportMsgInput');
+            const res = q ? q.value : '';
             const xhr = new XMLHttpRequest();
             xhr.open('GET', '/report/' + noteId + '?reason=' + encodeURIComponent(res) + '&type=note', true);
             xhr.onload = (function () {
@@ -170,11 +173,11 @@ vkify.onPage(initLocalStorageCheckboxes);
 
 // Orchestrator: trigger per-page initializers provided by extracted modules.
 vkify.hook(vkify, 'onPageReady', () => {
-    window.initializeSearchFastTips?.();
-    window.hideSearchFastTips?.();
+    if (window.initializeSearchFastTips) window.initializeSearchFastTips();
+    if (window.hideSearchFastTips) window.hideSearchFastTips();
     setTimeout(window.initTabSlider, 150);
 
-    if (window.location.pathname.includes('/albums') && !ge('photos-section')?.dataset?.initialized) {
+    if (window.location.pathname.includes('/albums') && !(ge('photos-section') && ge('photos-section').dataset && ge('photos-section').dataset.initialized)) {
         setTimeout(window.initAlbumPhotosLoader, 100);
     }
 

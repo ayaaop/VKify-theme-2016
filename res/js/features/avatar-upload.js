@@ -57,10 +57,12 @@
                 modal: true,
                 viewMode: 2,
                 cropstart() {
-                    document.querySelector(".cropper-container")?.classList.add("moving");
+                    var cc = document.querySelector(".cropper-container");
+                    if (cc) cc.classList.add("moving");
                 },
                 cropend() {
-                    document.querySelector(".cropper-container")?.classList.remove("moving");
+                    var cc2 = document.querySelector(".cropper-container");
+                    if (cc2) cc2.classList.remove("moving");
                 },
             });
 
@@ -86,22 +88,22 @@
                         processData: false,
                         contentType: false,
                         error: (xhr) => {
-                            document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                            if (document.querySelector("#_uploadImg")) document.querySelector("#_uploadImg").classList.remove("lagged");
                             let errorMsg = "Upload failed";
                             try {
                                 const res = JSON.parse(xhr.responseText);
-                                errorMsg = res.flash?.message || res.message || errorMsg;
+                                errorMsg = (res.flash && res.flash.message) ? res.flash.message : (res.message || errorMsg);
                             } catch (e) {}
                             fastError(errorMsg);
                         },
                         success: (response) => {
-                            document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                            if (document.querySelector("#_uploadImg")) document.querySelector("#_uploadImg").classList.remove("lagged");
                             u("body").removeClass("dimmed");
                             document.querySelector("html").style.overflowY = "scroll";
                             u(".ovk-diag-cont").remove();
 
                             if (!response.success) {
-                                fastError(response.flash?.message || "Upload failed");
+                                fastError((response.flash && response.flash.message) ? response.flash.message : "Upload failed");
                                 return;
                             }
 
@@ -130,7 +132,7 @@
                             }
 
                             // 4. Update post/comment/list avatars for this entity, verifying they are actual avatars
-                            const entityUrl = isGroup ? `/club${clubId}` : `/id${window.openvk?.current_id}`;
+                            const entityUrl = isGroup ? `/club${clubId}` : `/id${(window.openvk && window.openvk.current_id) ? window.openvk.current_id : ''}`;
                             const links = document.querySelectorAll(`a[href="${entityUrl}"], a[href="/${entityUrl.substring(1)}"]`);
                             links.forEach(link => {
                                 const img = link.querySelector('img');

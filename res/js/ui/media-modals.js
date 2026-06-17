@@ -39,7 +39,7 @@ vkify.once('mediaModals', function () {
                 }
             }
 
-            const video_object = video_api?.items?.[0];
+            const video_object = video_api && video_api.items ? video_api.items[0] : null;
             if (!video_object) {
                 loader.hide();
                 fastError(tr('access_denied'));
@@ -56,7 +56,7 @@ vkify.once('mediaModals', function () {
                 CF.clearUrlParam('z');
             }
 
-            const author = findAuthor(video_object.owner_id, video_api?.profiles, video_api?.groups);
+            const author = findAuthor(video_object.owner_id, video_api ? video_api.profiles : null, video_api ? video_api.groups : null);
 
             let player_html = '';
             if (init_player) {
@@ -177,7 +177,7 @@ vkify.once('mediaModals', function () {
             CF.setupCleanup(msgbox, () => {
                 CF.unregisterModal(msgbox);
                 clearVideoUrl();
-                window.cleanupModalTooltips?.(msgbox.getNode().nodes[0]);
+                if (window.cleanupModalTooltips) window.cleanupModalTooltips(msgbox.getNode().nodes[0]);
                 window._currentMediaModalRefresh = null;
             });
 
@@ -217,7 +217,7 @@ vkify.once('mediaModals', function () {
                     left: 20,
                     bottom: 20
                 };
-                const settings = { ...defaultSettings, ...savedSettings };
+                const settings = Object.assign({}, defaultSettings, savedSettings);
 
                 miniplayer.attr('style', `position: fixed; left: ${settings.left}px; bottom: ${settings.bottom}px; z-index: 9999; width: ${settings.width}px; height: ${settings.height}px;`);
 
@@ -389,7 +389,7 @@ vkify.once('mediaModals', function () {
         try {
             let photoOwnerId = parseInt(photo_id.split('_')[0]);
             let photoRealId = parseInt(photo_id.split('_')[1]);
-            const currentUserId = window.openvk?.current_id || 0;
+            const currentUserId = window.openvk && window.openvk.current_id ? window.openvk.current_id : 0;
 
             const content = `
         <div class="pv_wrapper">
@@ -529,7 +529,7 @@ vkify.once('mediaModals', function () {
                 if (!nextPhoto) return;
 
                 currentImageid = nextPhoto.id;
-                const photoURL = json?.body?.[currentImageid]?.url || photo;
+                const photoURL = json && json.body && json.body[currentImageid] ? json.body[currentImageid].url : photo;
 
                 msgbox.getNode().find('#pv_photo_img').attr('src', photoURL);
 
@@ -608,6 +608,11 @@ vkify.once('mediaModals', function () {
                 slidePhoto(1);
             });
 
+            msgbox.getNode().find('#pv_nav_left .pv_nav_arrow').on('mouseenter', () => msgbox.getNode().find('#pv_nav_left').addClass('hovered-arrow'));
+            msgbox.getNode().find('#pv_nav_left .pv_nav_arrow').on('mouseleave', () => msgbox.getNode().find('#pv_nav_left').removeClass('hovered-arrow'));
+            msgbox.getNode().find('#pv_nav_right .pv_nav_arrow').on('mouseenter', () => msgbox.getNode().find('#pv_nav_right').addClass('hovered-arrow'));
+            msgbox.getNode().find('#pv_nav_right .pv_nav_arrow').on('mouseleave', () => msgbox.getNode().find('#pv_nav_right').removeClass('hovered-arrow'));
+
             initializeNavigation();
 
             CF.setupKeyboardNav(msgbox, {
@@ -619,7 +624,7 @@ vkify.once('mediaModals', function () {
             CF.setupCleanup(msgbox, () => {
                 CF.unregisterModal(msgbox);
                 clearPhotoUrl();
-                window.cleanupModalTooltips?.(msgbox.getNode().nodes[0]);
+                if (window.cleanupModalTooltips) window.cleanupModalTooltips(msgbox.getNode().nodes[0]);
                 window._currentMediaModalRefresh = null;
             });
 
@@ -628,6 +633,8 @@ vkify.once('mediaModals', function () {
                 LoaderUtils.show('#pv_right_loader', { size: 'medium' });
 
                 u('#pv_actions_loader').html('');
+
+                msgbox.getNode().find('.pv_left').removeClass('has-empty-right');
 
                 msgbox.getNode().find('.pv_bottom_actions').html('<div id="pv_bottom_actions_loader" style="height: 18px"></div>');
                 LoaderUtils.show('#pv_bottom_actions_loader', { theme: 'baw', size: 'small' });
@@ -640,6 +647,11 @@ vkify.once('mediaModals', function () {
 
                     msgbox.getNode().find('.ovk-photo-view-window').removeClass('private');
                     msgbox.getNode().find('.pv_right').html(pvRight.innerHTML);
+                    if (pvRight.innerHTML.trim() === '') {
+                        msgbox.getNode().find('.pv_left').addClass('has-empty-right');
+                    } else {
+                        msgbox.getNode().find('.pv_left').removeClass('has-empty-right');
+                    }
 
                     const pvAlbumName = body.querySelector('.pv_album_name');
                     msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
@@ -651,6 +663,7 @@ vkify.once('mediaModals', function () {
                 } catch (e) {
                     msgbox.getNode().find('.ovk-photo-view-window').addClass('private');
                     msgbox.getNode().find('.pv_right').html('');
+                    msgbox.getNode().find('.pv_left').addClass('has-empty-right');
                     msgbox.getNode().find('.pv_album_name').html('');
                 }
 
@@ -1048,7 +1061,7 @@ vkify.once('mediaModals', function () {
                 entries.forEach(async x => {
                     if (x.isIntersecting) {
 
-                        if (Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
+                        if (Number(localStorage.getItem('ux.auto_scroll') !== null ? localStorage.getItem('ux.auto_scroll') : 1) == 0) {
                             return;
                         }
 

@@ -71,9 +71,9 @@ vkify.bindOnce('messageBoxOverrides', () => {
             document.addEventListener('click', (e) => {
                 const t = e.target;
                 if (!t) return;
-                if (document.body?.classList.contains('dimmed') && t.classList?.contains('dimmer')) {
+                if (document.body && document.body.classList.contains('dimmed') && t.classList && t.classList.contains('dimmer')) {
                     e.stopImmediatePropagation();
-                    window.__vkifyCloseDialog?.();
+                    if (window.__vkifyCloseDialog) window.__vkifyCloseDialog();
                 }
             }, true);
         });
@@ -81,8 +81,8 @@ vkify.bindOnce('messageBoxOverrides', () => {
         vkify.bindOnce("escClose", () => {
             document.addEventListener('keyup', (e) => {
                 if (e.key === 'Escape' || e.keyCode === 27) {
-                    if (window.messagebox_stack?.length) {
-                        window.__vkifyCloseDialog?.();
+                    if (window.messagebox_stack && window.messagebox_stack.length) {
+                        if (window.__vkifyCloseDialog) window.__vkifyCloseDialog();
                     }
                 }
             }, true);
@@ -108,11 +108,15 @@ vkify.bindOnce('messageBoxOverrides', () => {
             const origExitDialog = proto.__exitDialog;
             proto.__exitDialog = function () {
                 const stack = window.messagebox_stack;
-                const myIndex = stack?.findIndex(m => m.id === this.id) ?? -1;
+                var myIndex = -1;
+                if (stack && typeof stack.findIndex === 'function') {
+                    myIndex = stack.findIndex(m => m.id === this.id);
+                }
+                if (myIndex === -1) myIndex = -1; // Fallback
                 if (myIndex > 0) {
                     const prev = stack[myIndex - 1];
-                    const prevNode = prev?.getNode?.();
-                    if (prevNode?.length) {
+                    const prevNode = prev && typeof prev.getNode === 'function' ? prev.getNode() : null;
+                    if (prevNode && prevNode.length) {
                         prevNode.removeClass('msgbox-hidden');
                         if (prevNode.nodes[0]) {
                             prevNode.nodes[0].style.display = '';
@@ -126,14 +130,14 @@ vkify.bindOnce('messageBoxOverrides', () => {
                 const observer = new MutationObserver((mutations) => {
                     for (const m of mutations) {
                         for (const node of m.addedNodes) {
-                            if (node.nodeType === 1 && node.classList?.contains('ovk-msg-all')) {
-                                window.tippy?.hideAll?.();
+                            if (node.nodeType === 1 && node.classList && node.classList.contains('ovk-msg-all')) {
+                                if (window.tippy && window.tippy.hideAll) window.tippy.hideAll();
                                 updateDialogVisibility();
                                 return;
                             }
                         }
                         for (const node of m.removedNodes) {
-                            if (node.nodeType === 1 && node.classList?.contains('ovk-msg-all')) {
+                            if (node.nodeType === 1 && node.classList && node.classList.contains('ovk-msg-all')) {
                                 updateDialogVisibility();
                                 return;
                             }
@@ -177,7 +181,13 @@ function replaceMbTabs(mbTabs) {
     mbTabs.style.display = 'none';
     mbTabs.parentNode.insertBefore(header, mbTabs);
 
-    let currentTab = tabs.find(t => t.active)?.name ?? tabs[0]?.name;
+    let currentTab = null;
+    var foundTab = tabs.find(t => t.active);
+    if (foundTab && foundTab.name) {
+        currentTab = foundTab.name;
+    } else if (tabs[0] && tabs[0].name) {
+        currentTab = tabs[0].name;
+    }
 
     function positionSlider(tabEl) {
         if (!tabEl) return;
@@ -205,7 +215,8 @@ function replaceMbTabs(mbTabs) {
         e.preventDefault();
         const name = u(e.target).closest('.ui_tab').attr('data-name');
         activate(name);
-        mbTabs.querySelector(`.mb_tab[data-name='${name}'] a`)?.click();
+        var tabLink = mbTabs.querySelector(`.mb_tab[data-name='${name}'] a`);
+        if (tabLink) tabLink.click();
     });
 
     // Stock dialogs sometimes inject extra <input type=button> into .mb_tabs
@@ -232,7 +243,7 @@ vkify.onPage(() => {
                     if (node.classList.contains('mb_tabs')) {
                         replaceMbTabs(node);
                     } else {
-                        node.querySelectorAll?.('.mb_tabs').forEach(replaceMbTabs);
+                        if (node.querySelectorAll) node.querySelectorAll('.mb_tabs').forEach(replaceMbTabs);
                     }
                 }
             }
@@ -247,7 +258,8 @@ vkify.onPage(() => {
             if (action && action.children.length >= 2) {
                 action.insertBefore(action.children[1], action.children[0]);
             }
-            document.getElementById('_content')?.classList.add('page_padding');
+            var contentEl = document.getElementById('_content');
+            if (contentEl) contentEl.classList.add('page_padding');
         }, 'then');
     });
 
@@ -255,12 +267,10 @@ vkify.onPage(() => {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#__feed_settings_link')) return;
 
-            u('.ovk-diag-cont').last().setAttribute('style', 'width:500px');
             u('.ovk-diag-body').attr('style', 'padding:0px !important; min-height: 290px; overflow: hidden;');
 
             const content = document.getElementById('__content');
             if (!content) return;
-            content.classList.add('page_padding');
 
             // Stock renders a <table> into #__content for the 'main' tab and
             // an entity_vertical_list of checkboxes for the 'ignored' tab.
@@ -276,10 +286,11 @@ vkify.onPage(() => {
                 const applyBtn = table.querySelector("input[type='button']");
                 if (!pageSelect || !pageNumber || !showIgnored || !applyBtn) return;
 
-                const showIgnoredLabel = table.querySelector(`label[for='showIgnored']`)?.textContent ?? '';
+                var showIgnoredLabelEl = table.querySelector(`label[for='showIgnored']`);
+                const showIgnoredLabel = showIgnoredLabelEl && showIgnoredLabelEl.textContent ? showIgnoredLabelEl.textContent : '';
                 const labels = table.querySelectorAll('.nobold');
-                const perPageLabel = labels[0]?.textContent ?? '';
-                const startFromLabel = labels[1]?.textContent ?? '';
+                const perPageLabel = labels[0] && labels[0].textContent ? labels[0].textContent : '';
+                const startFromLabel = labels[1] && labels[1].textContent ? labels[1].textContent : '';
 
                 const form = u(`
                     <div class="form_group">
@@ -319,7 +330,8 @@ vkify.onPage(() => {
                 item.__vkifyRebuilt = true;
 
                 const id = item.dataset.id;
-                item.querySelector('.third_column')?.remove();
+                var thirdCol = item.querySelector('.third_column');
+                if (thirdCol) thirdCol.remove();
 
                 const slot = u(`
                     <div class="third_column" style="display: grid; align-items: center;">

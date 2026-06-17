@@ -26,7 +26,7 @@ function updateFaviconFromPlayerState() {
         return;
     }
 
-    if (window.player?.audioPlayer?.paused === false) {
+    if (window.player && window.player.audioPlayer && window.player.audioPlayer.paused === false) {
         setFaviconUrl(__vkifyFavicon.play);
     } else {
         setFaviconUrl(__vkifyFavicon.pause);
@@ -76,15 +76,15 @@ function formatTime(seconds) {
 }
 
 function hasMorePages() {
-    const ctx = window.player?.context;
-    if (!ctx?.playedPages?.length || !ctx.pagesCount) {
+    const ctx = window.player ? window.player.context : null;
+    if (!ctx || !ctx.playedPages || !ctx.playedPages.length || !ctx.pagesCount) {
         return false;
     }
     return Math.max(...ctx.playedPages) < ctx.pagesCount;
 }
 
 function renderMusicPopupTracks(container) {
-    if (!container || !window.player?.tracks?.length) return;
+    if (!container || !window.player || !window.player.tracks || !window.player.tracks.length) return;
 
     const html = window.player.tracks
         .filter(track => track && track.id)
@@ -147,7 +147,7 @@ function renderMusicPopupTracks(container) {
         .join('');
 
     const loadMoreNode = hasMorePages()
-        ? `<div class="scroll_node loadMore_node"><a class="loadMore">${window.vkifylang?.loadmore || 'Load more'}</a></div>`
+        ? `<div class="scroll_node loadMore_node"><a class="loadMore">${(window.vkifylang && window.vkifylang.loadmore) ? window.vkifylang.loadmore : 'Load more'}</a></div>`
         : '';
 
     container.innerHTML = `
@@ -157,10 +157,10 @@ function renderMusicPopupTracks(container) {
 }
 
 async function loadMoreAudio() {
-    if (!window.player?.context?.playedPages?.length) return;
+    if (!window.player || !window.player.context || !window.player.context.playedPages || !window.player.context.playedPages.length) return;
 
     const nextPage = Number(Math.max(...window.player.context.playedPages)) + 1;
-    const loadMoreBtn = window.musHtml?.querySelector('.audiosContainer .loadMore');
+    const loadMoreBtn = window.musHtml ? window.musHtml.querySelector('.audiosContainer .loadMore') : null;
     if (loadMoreBtn) {
         loadMoreBtn.innerHTML = `<div class="pr"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`;
     }
@@ -171,12 +171,12 @@ async function loadMoreAudio() {
         console.error(e);
     }
 
-    const placeholder = window.musHtml?.querySelector('.vkifytracksplaceholder');
+    const placeholder = window.musHtml ? window.musHtml.querySelector('.vkifytracksplaceholder') : null;
     if (placeholder) {
         renderMusicPopupTracks(placeholder);
     }
 
-    const btn = window.musHtml?.querySelector('.loadMore');
+    const btn = window.musHtml ? window.musHtml.querySelector('.loadMore') : null;
     if (btn) {
         btn.onclick = async function (e) {
             e.preventDefault();
@@ -184,7 +184,7 @@ async function loadMoreAudio() {
         };
     }
 
-    if (typeof window.u === 'function' && window.player?.current_track_id) {
+    if (typeof window.u === 'function' && window.player && window.player.current_track_id) {
         u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
         u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying');
     }
@@ -193,14 +193,14 @@ async function loadMoreAudio() {
 async function updateCurrentlyPlayingInfo(container) {
     if (!container) return;
 
-    const contextUrl = window.player?.context?.object?.url;
+    const contextUrl = window.player && window.player.context && window.player.context.object ? window.player.context.object.url : null;
     if (!contextUrl) {
         container.innerHTML = '';
         return;
     }
 
     const playingNowLnk = contextUrl.replace(/^\//, '');
-    const currentlyPlayingText = window.vkifylang?.currentlyplaying || 'Currently playing: ';
+    const currentlyPlayingText = (window.vkifylang && window.vkifylang.currentlyplaying) ? window.vkifylang.currentlyplaying : 'Currently playing: ';
 
     if (!window.OVKAPI?.call) {
         container.innerHTML = '';
@@ -209,14 +209,15 @@ async function updateCurrentlyPlayingInfo(container) {
 
     try {
         if (/^(audios-?\d+)(\?.*)?$/.test(playingNowLnk)) {
-            const userId = Number(playingNowLnk.match(/[^\d]*(\d+)/)?.[1]);
+            var match = playingNowLnk.match(/[^\d]*(\d+)/);
+            const userId = Number(match ? match[1] : null);
             if (!userId) {
                 container.innerHTML = '';
                 return;
             }
 
             const userData = await window.OVKAPI.call("users.get", { user_ids: userId, fields: "first_name" });
-            const userName = userData?.[0]?.first_name;
+            const userName = userData && userData[0] ? userData[0].first_name : null;
             if (userName) {
                 container.innerHTML = `${currentlyPlayingText}<a onclick="tippy.hideAll();" href="${escapeHtml(playingNowLnk)}">${tr('audios')} <b>${escapeHtml(userName)}</b></a>`;
             } else {
@@ -234,9 +235,9 @@ async function updateCurrentlyPlayingInfo(container) {
 
             const [, ownerId, playlistId] = matches.map(Number);
             const albumsData = await window.OVKAPI.call("audio.getAlbums", { owner_id: ownerId });
-            const playlist = albumsData?.items?.find(item => item?.id === playlistId);
+            const playlist = albumsData && albumsData.items ? albumsData.items.find(item => item && item.id === playlistId) : null;
 
-            if (playlist?.title) {
+            if (playlist && playlist.title) {
                 container.innerHTML = `${currentlyPlayingText}<a onclick="tippy.hideAll();" href="${escapeHtml(playingNowLnk)}">${tr('playlist')} <b>${escapeHtml(playlist.title)}</b></a>`;
             } else {
                 container.innerHTML = '';
@@ -353,7 +354,7 @@ function patchPlayerInitEventsOnce() {
             }
         };
 
-        const initialSeekLength = Number(this.currentTrack?.length || this.audioPlayer.duration || 0);
+        const initialSeekLength = Number((this.currentTrack && this.currentTrack.length) ? this.currentTrack.length : (this.audioPlayer.duration || 0));
         const initialSeekTimeRaw = Number(this.audioPlayer.currentTime || 0);
         const initialTimeLabel = String(this.uiPlayer.find('.time').html() || '').replace(/\s+/g, '').trim();
         const initialLabelIsZero = initialTimeLabel === '00:00' || initialTimeLabel === '0:00';
@@ -386,7 +387,7 @@ function patchPlayerInitEventsOnce() {
         };
 
         const bindOuterTrack = (scope, selector, callback, flag) => {
-            if (!scope?.find) return;
+            if (!scope || !scope.find) return;
             const node = scope.find(selector)[0];
             if (!node || node[flag]) return;
             node[flag] = true;
@@ -401,7 +402,7 @@ function patchPlayerInitEventsOnce() {
         };
 
         bindOuterTrack(this.uiPlayer, '.trackPanel .track .selectableTrack', ps => {
-            const len = Number(this.currentTrack?.length || this.audioPlayer.duration || 0);
+            const len = Number((this.currentTrack && this.currentTrack.length) ? this.currentTrack.length : (this.audioPlayer.duration || 0));
             if (len > 0) this.audioPlayer.currentTime = (len * ps) / 100;
         }, '__vkifyOuterSeekBound');
 
@@ -410,7 +411,7 @@ function patchPlayerInitEventsOnce() {
         }, '__vkifyOuterVolumeBound');
 
         bindOuterTrack(this.linkedInlinePlayer, '.subTracks .lengthTrackWrapper .selectableTrack', ps => {
-            const len = Number(this.currentTrack?.length || this.audioPlayer.duration || 0);
+            const len = Number((this.currentTrack && this.currentTrack.length) ? this.currentTrack.length : (this.audioPlayer.duration || 0));
             if (len > 0) this.audioPlayer.currentTime = (len * ps) / 100;
         }, '__vkifyOuterInlineSeekBound');
 
@@ -472,7 +473,7 @@ function initTopPlayerOnce() {
 
     topPlayerPlay.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (!window.player?.audioPlayer) {
+        if (!window.player || !window.player.audioPlayer) {
             return;
         }
         if (window.player.audioPlayer.paused) {
@@ -485,19 +486,19 @@ function initTopPlayerOnce() {
 
     topPlayerPrev.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (window.player?.currentTrack) {
+        if (window.player && window.player.currentTrack) {
             window.player.playPreviousTrack();
         }
     });
 
     topPlayerNext.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (window.player?.currentTrack) {
+        if (window.player && window.player.currentTrack) {
             window.player.playNextTrack();
         }
     });
 
-    if (window.player?.audioPlayer) {
+    if (window.player && window.player.audioPlayer) {
         window.player.audioPlayer.addEventListener('play', updateTopPlayer);
         window.player.audioPlayer.addEventListener('pause', updateTopPlayer);
     }
@@ -545,10 +546,10 @@ async function getFriendsHtml() {
                 count: 100
             });
 
-            const items = friendsd?.items || [];
+            const items = (friendsd && friendsd.items) ? friendsd.items : [];
             friendsHtmlCache = items
                 .filter(item => item && item.id && item.id > 0 && !item.deactivated)
-                .slice(0, Math.min(items.length, friendsd?.count || items.length))
+                .slice(0, Math.min(items.length, (friendsd && friendsd.count) ? friendsd.count : items.length))
                 .map(item => {
                     return `
 <a class="ui_rmenu_item ui_ownblock" onclick="tippy.hideAll();" href="/audios${item.id}">
@@ -631,11 +632,11 @@ async function initMusicPopupTippyOnce() {
         <div class="shuffleButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('shuffle_tip')}"></div>
         <div class="deviceButton musicIcon" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('mute_tip')}"></div>
         <form name="status_popup_form" style="display: none !important;">
-            <input type="text" name="status" size="50" value="${escapeHtml(window.openvk?.status || '')}">
-            <input type="checkbox" name="broadcast" ${window.openvk?.broadcast_music ? 'checked' : ''}>
+            <input type="text" name="status" size="50" value="${escapeHtml((window.openvk && window.openvk.status) ? window.openvk.status : '')}">
+            <input type="checkbox" name="broadcast" ${(window.openvk && window.openvk.broadcast_music) ? 'checked' : ''}>
             <input type="hidden" name="hash" value="${vkify.getCsrf()}">
         </form>
-        <div class="statusButton musicIcon${window.openvk?.broadcast_music ? ' pressed' : ''}" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('broadcast_audio')}"></div>
+        <div class="statusButton musicIcon${(window.openvk && window.openvk.broadcast_music) ? ' pressed' : ''}" data-tip="simple-black" data-align="bottom-end" data-tiptitle="${tr('broadcast_audio')}"></div>
     </div>
 </div>
 </div>
@@ -652,7 +653,7 @@ async function initMusicPopupTippyOnce() {
 <div class="narrow_column_wrap">
     <div class="narrow_column">
         <div class="ui_rmenu ui_rmenu_pr audio_tabs">
-            <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios${window.openvk?.current_id}">
+            <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/audios${(window.openvk && window.openvk.current_id) ? window.openvk.current_id : ''}">
                 <span>${tr('my_music')}</span>
                 <span class="ui_rmenu_extra_item addAudioSmall" onclick="tippy.hideAll(); showAudioUploadPopup(); return false;" data-href="/player/upload"><div class="addIcon"></div></span>
             </a>
@@ -660,7 +661,7 @@ async function initMusicPopupTippyOnce() {
             <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios" id="ki">${tr('audio_new')}</a>
             <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/search?section=audios&order=listens" id="ki">${tr('audio_popular')}</a>
             <div class="ui_rmenu_sep"></div>
-            <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/playlists${window.openvk?.current_id}" id="ki">${tr('my_playlists')}</a>
+            <a class="ui_rmenu_item" onclick="tippy.hideAll();" href="/playlists${(window.openvk && window.openvk.current_id) ? window.openvk.current_id : ''}" id="ki">${tr('my_playlists')}</a>
             <a class="ui_rmenu_item" onclick="tippy.hideAll(); return showNewPlaylistModal(event);" href="/audios/newPlaylist">${tr('new_playlist')}</a>
             <div class="ui_rmenu_sep"></div>
         </div>
@@ -708,14 +709,16 @@ async function initMusicPopupTippyOnce() {
         popperOptions: { modifiers: [{ name: 'offset', options: { offset: [0, 0] } }] },
         onHidden() {
             window.musHtml = undefined;
-            document.querySelector('.top_audio_player')?.classList.remove('audio_top_btn_active');
+            var topAudioPlayerNode = document.querySelector('.top_audio_player');
+            if (topAudioPlayerNode) topAudioPlayerNode.classList.remove('audio_top_btn_active');
         },
         onShow() {
             if (!window.player || !window.player.tracks || window.player.tracks.length === 0) {
-                vkify.navigate(`/audios${window.openvk?.current_id}`);
+                vkify.navigate(`/audios${(window.openvk && window.openvk.current_id) ? window.openvk.current_id : ''}`);
                 return false;
             }
-            document.querySelector('.top_audio_player')?.classList.add('audio_top_btn_active');
+            var topAudioPlayerNode = document.querySelector('.top_audio_player');
+            if (topAudioPlayerNode) topAudioPlayerNode.classList.add('audio_top_btn_active');
         },
         async onMount(instance) {
             window.musHtml = instance.popper;
@@ -733,19 +736,19 @@ async function initMusicPopupTippyOnce() {
                 }
             }
 
-            if (typeof window.u === 'function' && window.player?.current_track_id) {
+            if (typeof window.u === 'function' && window.player && window.player.current_track_id) {
                 u(`.audiosContainer .audioEmbed .audioEntry, .audios_padding .audioEmbed`).removeClass('nowPlaying');
                 u(`.audiosContainer .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${window.player.current_track_id}'] .audioEntry`).addClass('nowPlaying');
             }
 
             try {
-                window.player?.__updateFace?.();
-                window.player?.audioPlayer?.onvolumechange?.();
+                if (window.player && window.player.__updateFace) window.player.__updateFace();
+                if (window.player && window.player.audioPlayer && window.player.audioPlayer.onvolumechange) window.player.audioPlayer.onvolumechange();
             } catch (e) {
             }
 
             const acont = instance.popper.querySelector('.audiosContainer.audiosSideContainer.audiosPaddingContainer');
-            const aplaying = acont?.querySelector('.audioEntry.nowPlaying');
+            const aplaying = acont ? acont.querySelector('.audioEntry.nowPlaying') : null;
             if (acont && aplaying) {
                 const aplayingRect = aplaying.getBoundingClientRect();
                 const acontRect = acont.getBoundingClientRect();
@@ -775,7 +778,7 @@ function defaultPlayerContext() {
 }
 
 function ensurePlayerContext(player) {
-    if (!player?.context) {
+    if (!player || !player.context) {
         player.context = defaultPlayerContext();
     }
 }
@@ -786,18 +789,18 @@ function patchPlayerContextCheckOnce() {
 
     const original = window.player.isAtCurrentContextPage;
     window.player.isAtCurrentContextPage = function() {
-        if (!this.context?.object?.url) return false;
+        if (!this.context || !this.context.object || !this.context.object.url) return false;
         return original.call(this);
     };
 
     window.player.hasContext = function() {
         ensurePlayerContext(this);
-        return Boolean(this.context.object?.url);
+        return Boolean(this.context.object && this.context.object.url);
     };
 
     if (typeof window.player.loadDump === 'function') {
         vkify.hook(window.player, 'loadDump', function(dump_object) {
-            if (!dump_object?.context) {
+            if (!dump_object || !dump_object.context) {
                 dump_object.context = defaultPlayerContext();
             }
         }, 'before');
@@ -810,14 +813,14 @@ function bindAjCloseOnce() {
     if (typeof window.u === 'function') {
         u(document).on('click', '#ajclosebtn', function (e) {
             e.preventDefault();
-            window.player?.ajClose?.();
+            if (window.player && window.player.ajClose) window.player.ajClose();
         });
     } else {
         document.addEventListener('click', function (e) {
             const t = e.target;
             if (t && t.id === 'ajclosebtn') {
                 e.preventDefault();
-                window.player?.ajClose?.();
+                if (window.player && window.player.ajClose) window.player.ajClose();
             }
         });
     }
@@ -838,10 +841,10 @@ function bindSliderTipPositionFixOnce() {
     ];
 
     const handleSeekTooltip = e => {
-        const track = e.target?.closest?.(seekSelectors.join(', '));
+        const track = e.target && e.target.closest ? e.target.closest(seekSelectors.join(', ')) : null;
         if (!track) return;
-        if (!window.player?.currentTrack) return;
-        if (window.player.isAtAudiosPage?.() && window.player.current_track_id === 0) return;
+        if (!window.player || !window.player.currentTrack) return;
+        if (window.player.isAtAudiosPage && window.player.isAtAudiosPage() && window.player.current_track_id === 0) return;
         if (document.querySelector('.ui-draggable-dragging')) return;
 
         e.stopImmediatePropagation();
@@ -875,9 +878,9 @@ function bindSliderTipPositionFixOnce() {
     };
 
     const handleVolumeTooltip = e => {
-        const track = e.target?.closest?.(volumeSelectors.join(', '));
+        const track = e.target && e.target.closest ? e.target.closest(volumeSelectors.join(', ')) : null;
         if (!track) return;
-        if (window.player?.isAtAudiosPage?.() && window.player.current_track_id === 0) return;
+        if (window.player && window.player.isAtAudiosPage && window.player.isAtAudiosPage() && window.player.current_track_id === 0) return;
         if (document.querySelector('.ui-draggable-dragging')) return;
 
         e.stopImmediatePropagation();
@@ -908,9 +911,9 @@ function bindSliderTipPositionFixOnce() {
     };
 
     const handleMouseout = e => {
-        const track = e.target?.closest?.('.selectableTrack');
+        const track = e.target && e.target.closest ? e.target.closest('.selectableTrack') : null;
         if (!track) return;
-        const tip = track.parentElement?.querySelector('.tip_result');
+        const tip = track.parentElement ? track.parentElement.querySelector('.tip_result') : null;
         if (tip) tip.remove();
     };
 
@@ -1025,8 +1028,10 @@ vkify.bindOnce('statusBroadcastToggle', () => {
             checkbox.checked = newBroadcastState;
         });
 
-        const statusVal = form.querySelector('input[name="status"]')?.value || '';
-        const hashVal = form.querySelector('input[name="hash"]')?.value || '';
+        const statusInput = form.querySelector('input[name="status"]');
+        const statusVal = statusInput ? statusInput.value : '';
+        const hashInput = form.querySelector('input[name="hash"]');
+        const hashVal = hashInput ? hashInput.value : '';
 
         const formData = new FormData();
         formData.append('status', statusVal);

@@ -56,8 +56,8 @@ vkify.bindOnce('pinGroupHandler', () => {
                 listNode.append(newLink);
             }
 
-            if (listNode.children[0]?.className !== 'menu_divider' || listNode.children.length === 1) {
-                listNode.children[0]?.remove();
+            if ((listNode.children[0] && listNode.children[0].className !== 'menu_divider') || listNode.children.length === 1) {
+                if (listNode.children[0]) listNode.children[0].remove();
             }
         } catch (err) {
             NewNotification(tr('error'), tr('error_1'), null);

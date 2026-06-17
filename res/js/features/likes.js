@@ -70,7 +70,8 @@ vkify.bindOnce('likeHandlers', () => {
         counter.text(nextLikes || '');
         if (isPost) btn.toggleClass('my_like', !isLiked);
 
-        const tip = hasLikesTooltip && btn.first()?._tippy;
+        var bf = btn.first();
+        const tip = hasLikesTooltip && bf ? bf._tippy : null;
         if (tip) nextLikes <= 0 ? (tip.hide(), tip.destroy()) : tip.enable();
 
         const cacheKey = btn.attr('data-type') && btn.attr('data-id')
@@ -127,7 +128,7 @@ vkify.bindOnce('likesTooltip', () => {
             } catch (e) { }
         },
         onShow: function (that) {
-            const likesNow = that.reference?.getAttribute('data-likes');
+            const likesNow = that.reference ? that.reference.getAttribute('data-likes') : null;
             if (!likesNow || likesNow === '0') return false;
         },
         onMount: async function (that) {

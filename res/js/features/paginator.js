@@ -17,13 +17,13 @@ const setButtonLoadingState = (btn, isLoading) => {
                 LoaderUtils.showInButton(btn);
             }
         } else {
-            btn.classList?.add('lagged');
-            if (!btn.dataset?.vkifyPaginatorOriginalClass) {
+            if (btn && btn.classList) btn.classList.add('lagged');
+            if (btn && (!btn.dataset || !btn.dataset.vkifyPaginatorOriginalClass)) {
                 btn.dataset.vkifyPaginatorOriginalClass = btn.className || '';
             }
         }
     } else {
-        const orig = isUmbrella ? btn.attr('data-paginator-original-class') : btn?.dataset?.vkifyPaginatorOriginalClass;
+        const orig = isUmbrella ? btn.attr('data-paginator-original-class') : (btn && btn.dataset && btn.dataset.vkifyPaginatorOriginalClass) ? btn.dataset.vkifyPaginatorOriginalClass : null;
         LoaderUtils.restoreButton(isUmbrella ? btn : u(btn));
         if (typeof orig === 'string') {
             if (isUmbrella) {
@@ -39,7 +39,7 @@ const setButtonLoadingState = (btn, isLoading) => {
         if (isUmbrella) {
             btn.removeClass('lagged');
         } else {
-            btn.classList?.remove('lagged');
+            if (btn && btn.classList) btn.classList.remove('lagged');
         }
     }
 };
@@ -67,7 +67,7 @@ const getNextPageNumber = (paginatorEl) => {
     return null;
 };
 
-const scrollNodeUid = (node) => node?.dataset?.uniqueid || node?.dataset?.id || null;
+const scrollNodeUid = (node) => (node && node.dataset && node.dataset.uniqueid) ? node.dataset.uniqueid : ((node && node.dataset && node.dataset.id) ? node.dataset.id : null);
 
 const scrollNodeExists = (uid) => {
     if (!uid) return false;
@@ -78,8 +78,8 @@ const scrollNodeExists = (uid) => {
 const checkExhaustion = (paginatorEl, pageToCheck) => {
     if (!paginatorEl) return false;
 
-    const current = Number(paginatorEl.dataset?.currentPage || 0);
-    const total = Number(paginatorEl.dataset?.totalPages || 0);
+    const current = Number((paginatorEl.dataset && paginatorEl.dataset.currentPage) ? paginatorEl.dataset.currentPage : 0);
+    const total = Number((paginatorEl.dataset && paginatorEl.dataset.totalPages) ? paginatorEl.dataset.totalPages : 0);
     if ((total && pageToCheck > total) || (total && current >= total)) {
         const containerEl = getScrollContainer(paginatorEl);
         if (containerEl) containerEl.dataset.paginatorExhausted = 'true';
@@ -118,7 +118,7 @@ const getScrollContainer = (paginatorEl) => {
         const host = paginatorEl.closest('.scroll_container');
         if (host) return host;
         const scope = paginatorEl.closest('.page_padding, .page_block, #content, main');
-        const scoped = scope?.querySelector('.scroll_container');
+        const scoped = scope ? scope.querySelector('.scroll_container') : null;
         if (scoped) return scoped;
     }
     return u('.scroll_container').nodes[0] || null;
@@ -143,12 +143,12 @@ const appendScrollNode = (containerEl, paginatorEl, node) => {
 };
 
 const refreshAlbumMasonry = (containerEl) => {
-    const masonryContainer = containerEl?.classList?.contains('album-flex')
+    const masonryContainer = (containerEl && containerEl.classList && containerEl.classList.contains('album-flex'))
         ? containerEl
-        : containerEl?.querySelector('.album-flex');
+        : (containerEl ? containerEl.querySelector('.album-flex') : null);
     if (!masonryContainer || !window.Masonry) return;
 
-    if (window.Masonry.get?.(masonryContainer)) {
+    if (window.Masonry && window.Masonry.get && window.Masonry.get(masonryContainer)) {
         window.Masonry.refresh(masonryContainer);
     } else {
         window.Masonry.initAll('.album-flex', {
@@ -159,7 +159,7 @@ const refreshAlbumMasonry = (containerEl) => {
         });
     }
 
-    window.__vkifySchedulePaginatorCheck?.();
+    if (window.__vkifySchedulePaginatorCheck) window.__vkifySchedulePaginatorCheck();
 };
 
 const isNearDocumentBottom = () => (
@@ -174,7 +174,7 @@ const getLastLoadedPage = (paginatorEl, containerEl) => {
     if (containerEl && containerEl.dataset.paginatorLastLoaded) {
         return Number(containerEl.dataset.paginatorLastLoaded);
     }
-    return Number(paginatorEl?.dataset?.currentPage || 0);
+    return Number((paginatorEl && paginatorEl.dataset && paginatorEl.dataset.currentPage) ? paginatorEl.dataset.currentPage : 0);
 };
 
 const canLoadNextPage = (paginatorEl) => {
@@ -188,10 +188,12 @@ const canLoadNextPage = (paginatorEl) => {
 };
 
 const shouldAllowAutoScroll = () => {
-    const autoScrollDisabled = Number(localStorage.getItem('ux.auto_scroll') ?? 0) === 0;
-    const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1
-        || window.openvk?.current_id === 0
-        || window.openvk?.disable_ajax === 1;
+    const autoScrollVal = localStorage.getItem('ux.auto_scroll');
+    const autoScrollDisabled = Number(autoScrollVal !== null ? autoScrollVal : 0) === 0;
+    const ajaxRoutingVal = localStorage.getItem('ux.disable_ajax_routing');
+    const ajaxRoutingDisabled = Number(ajaxRoutingVal !== null ? ajaxRoutingVal : 0) === 1
+        || (window.openvk && window.openvk.current_id === 0)
+        || (window.openvk && window.openvk.disable_ajax === 1);
 
     if (autoScrollDisabled || ajaxRoutingDisabled) return false;
     if (u('.scroll_container').length < 1) return false;
@@ -263,7 +265,7 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
             }
 
             const updatedPaginator = currentPaginator || getPaginatorElement();
-            const paginatorWrap = updatedPaginator?.closest('.clear_fix') || updatedPaginator?.parentElement;
+            const paginatorWrap = (updatedPaginator && updatedPaginator.closest) ? updatedPaginator.closest('.clear_fix') : (updatedPaginator ? updatedPaginator.parentElement : null);
             if (containerEl && paginatorWrap && paginatorWrap.parentElement === containerEl && containerEl.lastElementChild !== paginatorWrap) {
                 containerEl.appendChild(paginatorWrap);
             }
@@ -289,7 +291,7 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
                 }
             }
 
-            if (window.player?.isAtAudiosPage?.() && window.player?.isAtCurrentContextPage?.()) {
+            if (window.player && window.player.isAtAudiosPage && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage && window.player.isAtCurrentContextPage()) {
                 window.player.loadContext(page);
                 window.player.__highlightActiveTrack();
             }
@@ -337,7 +339,7 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
             setButtonLoadingState(refreshedBtn, false);
         }
         if (!containerEl || !containerEl.dataset.paginatorExhausted) {
-            window.__vkifySchedulePaginatorCheck?.();
+            if (window.__vkifySchedulePaginatorCheck) window.__vkifySchedulePaginatorCheck();
         }
     }
 };
@@ -407,7 +409,8 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
     }
 
     u(document).on('click', '.vkify-paginator-loader', async (e) => {
-        const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1 || window.openvk?.current_id === 0 || window.openvk?.disable_ajax === 1;
+        const ajaxRoutingVal = localStorage.getItem('ux.disable_ajax_routing');
+        const ajaxRoutingDisabled = Number(ajaxRoutingVal !== null ? ajaxRoutingVal : 0) === 1 || (window.openvk && window.openvk.current_id === 0) || (window.openvk && window.openvk.disable_ajax === 1);
         if (ajaxRoutingDisabled) {
             return;
         }

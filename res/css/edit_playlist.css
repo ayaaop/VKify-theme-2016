@@ -7,7 +7,6 @@
     flex-direction: column;
     background-color: var(--module-background-color);
     border-radius: var(--module-border-radius);
-    gap: 0;
 }
 
 .audio_pl_edit_box .ape_header {
@@ -16,7 +15,6 @@
     padding: 20px 24px;
     display: flex;
     flex-direction: row;
-    gap: 20px;
     align-items: flex-start;
 }
 
@@ -76,7 +74,10 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    margin-left: 20px;
+}
+.audio_pl_edit_box .ape_pl_info > *:not(:last-child) {
+    margin-bottom: 12px;
 }
 
 .audio_pl_edit_box .ape_pl_title,
@@ -204,7 +205,9 @@
 }
 .ovk-diag-body .audio_pl_edit_box .ape_item_list,.ovk-diag-body .audio_pl_edit_box .ape_audios_empty_list {
     overflow: auto;
-    max-height: clamp(150px, 35vh, 400px);
+    max-height: 400px;
+    max-height: 35vh;
+    min-height: 150px;
 }
 .ovk-diag-body .audio_pl_edit_box .box_controls_text {
     padding: 5px 0;

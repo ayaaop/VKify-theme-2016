@@ -37,7 +37,7 @@ vkify.bindOnce('videoDeleteAjax', () => {
                 if (videoItem) {
                     videoItem.remove();
                 } else {
-                    vkify.navigate(response.url || '/videos' + window.openvk?.current_id);
+                    vkify.navigate(response.url || '/videos' + ((window.openvk && window.openvk.current_id) ? window.openvk.current_id : ''));
                 }
             } else {
                 throw new Error('Delete failed');

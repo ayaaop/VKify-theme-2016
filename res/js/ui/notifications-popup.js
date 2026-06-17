@@ -79,11 +79,14 @@ vkify.once("initNotificationsPopup", () => {
                 }]
             },
             onHidden() {
-                document.querySelector('#top_notify_btn')?.classList.remove('top_nav_btn_active');
+                var btn = document.querySelector('#top_notify_btn');
+                if (btn) btn.classList.remove('top_nav_btn_active');
             },
             async onShow(instance) {
-                document.querySelector('#top_notify_btn')?.classList.add('top_nav_btn_active');
-                document.querySelector('#top_notify_btn')?.classList.remove('has_notify');
+                var btn1 = document.querySelector('#top_notify_btn');
+                if (btn1) btn1.classList.add('top_nav_btn_active');
+                var btn2 = document.querySelector('#top_notify_btn');
+                if (btn2) btn2.classList.remove('has_notify');
                 instance.setContent(loadingContent);
                 const freshNotificationsContent = await fetchNotificationsContent();
                 instance.setContent(freshNotificationsContent);

@@ -108,7 +108,6 @@
     border: 0;
     height: 45px;
     padding: 0;
-    gap: 0;
 }
 
 /* gradient overlay */
@@ -212,8 +211,12 @@ button.bsdn_playButton:hover, .bsdn_soundIcon:hover, .bsdn_fullScreenButton:hove
 .bsdn_controls .bsdn_timeWrap {
     display: flex;
     align-items: center;
-    gap: 4px;
     font-size: 13px;
+}
+.bsdn_controls .bsdn_timeWrap > *:not(:last-child) {
+    margin-right: 4px;
+}
+.bsdn_controls .bsdn_timeWrap {
     font-weight: 600;
     padding: 0 8px;
     color: #fff;

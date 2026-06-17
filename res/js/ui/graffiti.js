@@ -134,13 +134,13 @@ vkify.once("graffiti", function () {
 
   function graffitiDispatcher(event) {
     try {
-      if (window.vkify?.getSetting("vkGraffiti")) {
+      if (window.vkify && window.vkify.getSetting("vkGraffiti")) {
         openVKGraffiti(event);
       } else {
         openStockGraffiti(event);
       }
     } catch (e) {
-      vkify.error?.("graffitiDispatcher:", e);
+      if (vkify.error) vkify.error("graffitiDispatcher:", e);
     }
   }
 
@@ -164,14 +164,14 @@ vkify.once("graffiti", function () {
 
   function getThemeAsset(path) {
     return (
-      window.vkify?.themeUrl?.(path) ||
+      (window.vkify && window.vkify.themeUrl ? window.vkify.themeUrl(path) : null) ||
       (window.__vkifyThemeBase ? window.__vkifyThemeBase + path : path)
     );
   }
 
   function getResourceAsset(path) {
     return (
-      window.vkify?.resourceUrl?.(path) ||
+      (window.vkify && window.vkify.resourceUrl ? window.vkify.resourceUrl(path) : null) ||
       (window.__vkifyResourceBase ? window.__vkifyResourceBase + path : path)
     );
   }
@@ -360,7 +360,7 @@ vkify.once("graffiti", function () {
           ? { target: window.graffitiWriteContext.nodes[0] }
           : e;
 
-      if (window.vkify?.getSetting("vkGraffiti")) {
+      if (window.vkify && window.vkify.getSetting("vkGraffiti")) {
         openVKGraffiti(contextToUse);
       } else {
         openStockGraffiti(contextToUse);

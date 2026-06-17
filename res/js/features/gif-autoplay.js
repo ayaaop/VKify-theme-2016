@@ -4,7 +4,8 @@
 let gifObserver = null;
 
 function initGifAutoplay() {
-    if (Number(localStorage.getItem('ux.gif_autoplay') ?? 0) !== 1) return;
+    const gifVal = localStorage.getItem('ux.gif_autoplay');
+    if (Number(gifVal !== null ? gifVal : 0) !== 1) return;
 
     if (!gifObserver) {
         gifObserver = new IntersectionObserver((entries) => {
