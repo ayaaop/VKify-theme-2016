@@ -21,7 +21,7 @@
       <li{if isset($tab['id'])} id="{$tab['id']}"{/if}>
         <a class="ui_tab{if !empty($tab['active'])} ui_tab_sel{/if}" href="{$tab['url']}"{if isset($tab['attrs'])} {foreach $tab['attrs'] as $attr => $val}{$attr}="{$val}" {/foreach}{/if}>
           {if isset($tab['icon'])}<img src="{$tab['icon']}" class="ui_tab_icon" /> {/if}
-          {if isset($tab['translate']) && $tab['translate'] === false}{$tab['title']}{else}{tr($tab['title'])}{/if}
+          {if isset($tab['translate']) && $tab['translate'] === false}{$tab['title']}{else}{tr($tab['title'])|firstUpper}{/if}
           {if isset($tab['count']) && $tab['count'] > 0}<span class="ui_tab_count">{$tab['count']}</span>{/if}
           {if isset($tab['extra'])}{$tab['extra']|noescape}{/if}
         </a>

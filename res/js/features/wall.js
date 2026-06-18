@@ -630,12 +630,51 @@ setupTooltipCheckboxListeners();
 bindComposerSubmitOnce();
 bindSourceAttacherOnce();
 
+let _groupInfoTabsInitialized = false;
+function initGroupInfoTabs() {
+    if (_groupInfoTabsInitialized) return;
+    _groupInfoTabsInitialized = true;
+
+    document.addEventListener('click', (e) => {
+        const container = e.target.closest('#group_info_tabs');
+        if (!container) return;
+
+        const tabLink = e.target.closest('.ui_tab');
+        if (!tabLink) return;
+        
+        e.preventDefault();
+        
+        const tabLi = tabLink.closest('li');
+        if (!tabLi) return;
+        const tabId = tabLi.id;
+        
+        container.querySelectorAll('li').forEach(li => {
+            const tab = li.querySelector('.ui_tab');
+            if (tab) tab.classList.toggle('ui_tab_sel', li.id === tabId);
+        });
+        window.__vkifyMoveTabSlider?.(container, tabLink, true);
+        
+        const infoContent = document.getElementById('group_tab_info_content');
+        const pinnedContent = document.getElementById('group_tab_pinned_content');
+        
+        if (tabId === 'group_tab_info') {
+            if (infoContent) infoContent.style.display = '';
+            if (pinnedContent) pinnedContent.style.display = 'none';
+        } else if (tabId === 'group_tab_pinned') {
+            if (infoContent) infoContent.style.display = 'none';
+            if (pinnedContent) pinnedContent.style.display = '';
+        }
+    });
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         window.initTextareaInteraction();
+        initGroupInfoTabs();
     });
 } else {
     window.initTextareaInteraction();
+    initGroupInfoTabs();
 }
 
 function getSuggestionPostNode(el) {

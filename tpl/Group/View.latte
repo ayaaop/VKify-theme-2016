@@ -306,35 +306,72 @@
 							<a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>
 						</h2>
 					</div>
-					<h2 class="page_block_h2 page_info_header_tabs">
-						<ul class="ui_tabs clear_fix page_info_tabs">
-							<li class="ui_tab_default"><div class="ui_tab_plain" href="/club{$club->getId()}">{_information}</div></li>
-						</ul>
-					</h2>	
-					<div class="page_padding info">
-						<div class="group_info_block info">
-							<div class="group_info_rows">
-								{var $descHtml = $club->getDescriptionHtml()}
-								{var $descPlain = $club->getDescription() ?? ''}
-								<div class="group_info_row info">
-									{if $descHtml}
-										{include "../components/truncated_text.latte", html => $descHtml, plain => $descPlain, limit => 300}
-									{elseif $canEdit}
-										<a href="/club{$club->getId()}/edit">{_desc_none|firstUpper}</a>
-									{else}
-										<span class="nobold">{_desc_none|firstUpper}</span>
-									{/if}
-								</div>
-								<div n:if="$club->getWebsite() || $canEdit" class="group_info_row site">
-									{if $club->getWebsite()}
-										<div class="line_value"><a n:if="$club->getWebsite()" href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>
-									{elseif $canEdit}
-										<a href="/club{$club->getId()}/edit">{_admin_banned_link_not_specified}</a>
-									{/if}
+					{var $pinnedPost = (new \openvk\Web\Models\Repositories\Posts())->getPinnedPost($club->getId() * -1)}
+					
+					{if $pinnedPost}
+						{var $infoTabs = [
+							[
+								'url' => "javascript:void(0)",
+								'title' => 'pinned',
+								'active' => true,
+								'id' => 'group_tab_pinned'
+							],
+							[
+								'url' => "javascript:void(0)",
+								'title' => 'information',
+								'active' => false,
+								'id' => 'group_tab_info'
+							]
+						]}
+
+						<div class="page_info_header_tabs">
+							{include "../components/page_tabs_header.latte", tabs => $infoTabs, id => 'group_info_tabs', white => true}
+						</div>	
+					{else}
+						<h2 class="page_block_h2 page_info_header_tabs">
+							<ul class="ui_tabs clear_fix page_info_tabs">
+								<li class="ui_tab_default"><div class="ui_tab_plain" href="/club{$club->getId()}">{_information}</div></li>
+							</ul>
+						</h2>	
+					{/if}
+					
+                    <div id="group_info_content">
+					<div id="group_tab_info_content" style="{if $pinnedPost}display: none;{/if}">
+						<div class="page_padding info">
+							<div class="group_info_block info">
+								<div class="group_info_rows">
+									{var $descHtml = $club->getDescriptionHtml()}
+									{var $descPlain = $club->getDescription() ?? ''}
+									<div class="group_info_row info">
+										{if $descHtml}
+											{include "../components/truncated_text.latte", html => $descHtml, plain => $descPlain, limit => 300}
+										{elseif $canEdit}
+											<a href="/club{$club->getId()}/edit">{_desc_none|firstUpper}</a>
+										{else}
+											<span class="nobold">{_desc_none|firstUpper}</span>
+										{/if}
+									</div>
+									<div n:if="$club->getWebsite() || $canEdit" class="group_info_row site">
+										{if $club->getWebsite()}
+											<div class="line_value"><a n:if="$club->getWebsite()" href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>
+										{elseif $canEdit}
+											<a href="/club{$club->getId()}/edit">{_admin_banned_link_not_specified}</a>
+										{/if}
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+					{if $pinnedPost}
+					<div id="group_tab_pinned_content">
+						<div id="underHeader">
+							<div class="wall_posts content scroll_container">
+								{include "../components/post.latte", post => $pinnedPost, commentSection => false, onWallOf => true}
+							</div>
+						</div>
+					</div>
+					{/if}
+                    </div>
 				</div>
 				<div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || $canEdit) && $club->isDisplayTopicsAboveWallEnabled()"
 				class="page_block module topics_module">

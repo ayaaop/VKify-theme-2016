@@ -59,16 +59,12 @@
 
 {block infotable}
     <div class="labeled name">
-        <a href="{$x->getURL()}">{$x->getName()}</a>
+        <a href="{$x->getURL()}" {if mb_strlen($x->getName()) > 100}title="{$x->getName()}"{/if}>{$x->getName()|truncate:100}</a>
         <a class="page_verified" n:if="$x->isVerified()" href="/verify"></a>
     </div>
     <div class="labeled">
          <a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
     </div>
-{/block}
-
-{block description}
-    {$x->getDescription()}
 {/block}
 
 {block actions}

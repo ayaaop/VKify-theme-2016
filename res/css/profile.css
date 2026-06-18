@@ -1039,3 +1039,7 @@ a.page_module_upload:hover .page_upload_label,
 .wide_column .page_upload_label.page_photos_upload {
   background-position: 0px -32px;
 }
+
+#group_tab_pinned_content .post .wall_fixed_label {
+  display: none
+}
