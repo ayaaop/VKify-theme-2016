@@ -4765,3 +4765,8 @@ hr {
 #small_remove_button:hover {
     opacity: 1;
 }
+
+body.banned {
+    --layout-width: 795px;
+    --page-width: 795px;
+}

@@ -609,7 +609,6 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .avatar_block {
-  margin-bottom: 10px;
   clip-path: inset(0 0 0 0)
 }
 
@@ -744,6 +743,10 @@ div.avatar_block:hover .avatar_variants {
 
 .frenMenu .button {
   width: 100%;
+}
+
+.profile_actions {
+  padding-top: 10px;
 }
 
 .profile_msg_split .cut_left,

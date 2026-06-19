@@ -334,12 +334,7 @@ table * {
 .audios_padding {
   padding: 20px !important;
 }
-.page_block .page_block {
-  background: none;
-  box-shadow: none;
-  padding: 0 !important;
-  margin: 0 !important;
-}
+
 /* loader */
 #ajloader.shown {
   width: 100px;

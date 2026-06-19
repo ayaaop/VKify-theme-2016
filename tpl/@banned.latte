@@ -2,44 +2,69 @@
 {block title}{_banned_title}{/block}
 
 {block content}
-<div class="page_block">
-    {include "../components/page_block_header.latte", title => "caution"}
+<style>
+    .banned_container {
+        padding: 30px;
+    }
+    .banned_header {
+        font-size: 20px;
+        font-weight: 400;
+        color: var(--heading-color);
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 25px;
+    }
+    .banned_content {
+        font-size: 13px;
+        line-height: 160%;
+        color: var(--text-color);
+    }
+    .banned_actions {
+        padding: 30px;
+        text-align: center;
+    }
+    .banned_actions .button {
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="page_block banned_container">
+    <div class="banned_header">
+        {_banned_header}
+    </div>
     
-    <div class="page_padding">
-        <img src="/assets/packages/static/openvk/img/oof.apng" width="110" height="110">
-
-        <div style="padding-left: 115px; margin-top: -100px;">
-            <h4 style="font-size: 14px; margin-bottom: 8px;">{_banned_header}</h4>
-            <div>
-                {var $ban = $thisUser->getBanReason("banned")}
-                {if is_string($ban)}
-                    {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
-                    {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
-                {else}
-                    {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}
-                    <div>
-                        Эта страница была заморожена {$ban[0]|noescape}
-                        {if $ban[1] !== "app"}
-                            {include "Report/ViewContent.latte", type => $ban[1], object => $ban[2]}
-                        {/if}
-                    </div>
-                {/if}
-
-                {if !$thisUser->getUnbanTime()}
-                    {_banned_perm}
-                {else}
-                    {tr("banned_until_time", $thisUser->getUnbanTime())|noescape}
+    <div class="banned_content">
+        {var $ban = $thisUser->getBanReason("banned")}
+        {if is_string($ban)}
+            {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
+            {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
+        {else}
+            {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}
+            <div style="margin-top: 10px;">
+                Эта страница была заморожена {$ban[0]|noescape}
+                {if $ban[1] !== "app"}
+                    {include "Report/ViewContent.latte", type => $ban[1], object => $ban[2]}
                 {/if}
             </div>
-            <br><br>
-            {if $thisUser->canUnbanThemself()}
-                <a href="/unban.php" class="button">{_banned_unban_myself}</a>
+        {/if}
+
+        <div style="margin-top: 10px;">
+            {if !$thisUser->getUnbanTime()}
+                {_banned_perm}
+            {else}
+                {tr("banned_until_time", $thisUser->getUnbanTime())|noescape}
             {/if}
-            <br><br>
-            <div>
-                {tr("banned_3", urlencode($csrfToken))|noescape}
-            </div>
         </div>
+    </div>
+</div>
+
+<div class="page_block banned_actions">
+    {if $thisUser->canUnbanThemself()}
+        <a href="/unban.php" class="button">{_banned_unban_myself}</a>
+        <br/>
+    {/if}
+    <div>
+        {tr("banned_3", urlencode($csrfToken))|noescape}
     </div>
 </div>
 {/block}

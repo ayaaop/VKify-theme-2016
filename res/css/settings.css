@@ -207,9 +207,15 @@ label.checkbox .nobold {
 .outline_table {
     border-color: var(--border-color)
 }
+.page_block .knowledgebase_block {
+    padding: 0!important;
+    margin: 0!important;
+    box-shadow: none;
+    background: none;
+}
 .page_block .knowledgebase_block .page_block_h2 {
     display: none;
 }
 .page_block .knowledgebase_block .page_padding {
-    padding: 0;
+    padding: 0!important;
 }

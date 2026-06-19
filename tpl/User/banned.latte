@@ -1,37 +1,66 @@
-<div class="page_block wall_posts_tabs">
-    {include "../components/page_block_header.latte", title => $user->getCanonicalName(), translate => false}
-</div>
-<div class="page_block page_padding">
-    <center>
-        <img src="/assets/packages/static/openvk/img/oof.apng" alt="Пользователь заблокирован." style="width: 20%;" />
-        <p>
-            {tr("user_banned", htmlentities($user->getFirstName()))|noescape}<br/>
-            {_user_banned_comment} <b>{$user->getBanReason()}</b>.<br/>
-            {_user_is_blocked}
-            <span n:if="$user->getUnbanTime() !== NULL">{_before}: <b>{$user->getUnbanTime()}</b></span>
-            <span n:if="$user->getUnbanTime() === NULL"><b>{_forever}</b></span>
-        </p>
-        {if isset($thisUser)}
-            <p n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) || $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
-                <br />
-                <a n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" href="javascript:unbanUser()" class="button">{_unban_user_action}</a>
-                <a n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)" href="javascript:toggleBanInSupport()" class="button">
-                    {if $user->isBannedInSupport()}
-                        {_unban_in_support_user_action}
-                    {else}
-                        {_ban_in_support_user_action}
-                    {/if}
-                </a>
-            </p>
-        {/if}
-    </center>
+    <div class="wide_column_right">
+        <div class="narrow_column_wrap">
+            <div class="narrow_column">
+                <div class="page_block photo_block">
+                    <div class="avatar_block">
+                        <div class="avatar_block_inner">
+                            <img src="/themepack/vkify16/{$theme->getVersion()}/resource/deactivated_200.png"
+                                alt="{$user->getCanonicalName()}"
+                                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                        </div>
+                    </div>
+                    <div class="profile_actions clear_fix" n:if="isset($thisUser)" n:ifcontent>
+                        {var $subStatus = $user->getSubscriptionStatus($thisUser)}
+                        {var $actions = [
+                            2 => ['act' => 'rem', 'label' => tr('friends_reject')],
+                            3 => ['act' => 'rem', 'label' => tr('friends_delete')]
+                        ]}
+                        {if isset($actions[$subStatus])}
+                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
+                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                                <input type="hidden" name="id"  value="{$user->getId()}" />
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide button_gray" />
+                            </form>
+                        {/if}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="wide_column_wrap">
+        <div class="wide_column">
+            <div class="page_block page_info_wrap">
+                <div class="accountInfo clearFix">
+                    <div class="page_top">
+                        <h2 class="page_name">{$user->getFullName()}
+                            <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a>
+                        </h2>
+                        <div class="page_status profile_deleted">{_user_is_blocked}</div>
+                    </div>
+                </div>
+                <div class="profile_deleted_text">
+                    {tr("user_banned", htmlentities($user->getFirstName()))|noescape}<br/>
+                    {_user_banned_comment} <b>{$user->getBanReason()}</b>.<br/>
+                    {_user_is_blocked}
+                    <span n:if="$user->getUnbanTime() !== NULL">{_before}: <b>{$user->getUnbanTime()}</b></span>
+                    <span n:if="$user->getUnbanTime() === NULL"><b>{_forever}</b></span>
+                </div>
+                <div class="profile_deleted_actions buttons_row" n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
+                    <a class="button button_gray" n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" href="javascript:unbanUser()">{_unban_user_action}</a>
+                    <a class="button button_gray" n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)" href="javascript:toggleBanInSupport()">
+                    {if $user->isBannedInSupport()}{_unban_in_support_user_action}{else}{_ban_in_support_user_action}{/if}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {if isset($thisUser)}
     <script n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
         function unbanUser() {
             uUnbanMsgTxt  = "Вы собираетесь разбанить пользователя " + {$user->getCanonicalName()} + ".";
             uUnbanMsgTxt += "<br/>Сейчас он заблокирован по причине: <strong>" + {$user->getBanReason()} + "</strong>.";
-            
             MessageBox("Разбанить " + {$user->getFirstName()}, uUnbanMsgTxt, ["Подтвердить", "Отмена"], [
                 (function() {
                     xhr = new XMLHttpRequest();
@@ -48,13 +77,13 @@
             ]);
         }
     </script>
-
-    <script n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+{/if}
+{if isset($thisUser)}
+    <script n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\\Web\\Models\\Entities\\TicketReply')->whichBelongsTo(0)">
         {if $user->isBannedInSupport()}
             function toggleBanInSupport() {
                 uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
-
                 MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
                         xhr = new XMLHttpRequest();
@@ -74,7 +103,6 @@
             function toggleBanInSupport() {
                 uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
-
                 MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
                         res = document.querySelector("#uBanMsgInput").value;

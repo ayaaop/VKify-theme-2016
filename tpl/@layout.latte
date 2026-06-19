@@ -2,6 +2,7 @@
 {var $darkModeEnabled = ($_COOKIE['vkify16_darkmode'] ?? '0') === '1'}
 {var $mode2018Enabled = ($_COOKIE['vkify16_2018mode'] ?? '0') === '1'}
 {var $ovkHatEnabled = ($_COOKIE['ovkhat'] ?? '0') === '1'}
+{var $hideSidebar = $_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '/reg' || $_SERVER['REQUEST_URI'] === '/login' || (isset($thisUser) && $thisUser->isBanned())}
 {if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
 <html>
@@ -56,7 +57,7 @@
             {include headIncludes}
         {/ifset}
     </head>
-    <body {if isset($thisUser)}data-themepack="{$thisUser->getStyle()}"{/if}{var $hideSidebar = $_SERVER['REQUEST_URI'] === '/' || $_SERVER['REQUEST_URI'] === '/reg' || $_SERVER['REQUEST_URI'] === '/login'} n:class="$hideSidebar ? no-sidebar, $darkModeEnabled ? dark-mode, $ovkHatEnabled ? ovkhat">
+    <body {if isset($thisUser)}data-themepack="{$thisUser->getStyle()}"{/if} n:class="$hideSidebar ? no-sidebar, isset($thisUser) && $thisUser->isBanned() ? banned, $darkModeEnabled ? dark-mode, $ovkHatEnabled ? ovkhat">
         <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
 
         <div class="notifications_global_wrap"></div>
@@ -101,7 +102,7 @@
                         <span class="home_button_bg"></span>
                         <span n:if="$instance_name != \OPENVK_DEFAULT_INSTANCE_NAME && !$ovkHatEnabled" class="instance_name">{$instance_name}</span>
                     </a>
-                    {if (isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true)}
+                    {if !isset($thisUser) || (!$thisUser->isBanned() && $thisUser->isActivated())}
                         <div class="home_search" id="search_box">
                             <div id="search_box_fr">
                                 <form id="search_form" action="/search" method="get">
@@ -140,6 +141,9 @@
                                 </div>
                             {/if}
                         </div>
+                    {/if}
+
+                    {if !isset($thisUser) || $thisUser->isActivated() || $thisUser->isBanned() || $thisUser->isDeactivated()}
                         <div class="end_navigation">
                         {ifset $thisUser}
                             {if $thisUser->isDeactivated()}
@@ -156,13 +160,18 @@
                                 </div>
                                 <div id="userMenuTooltip" class="tippy-content-template">
                                     <div class="tippy-menu">
-                                        <a href="/id{$thisUser->getId()}">{_my_page}</a>
-                                        <div class="separator"></div>
-                                        <a href="/edit">{_edit}</a>
-                                        <a href="/settings">{_menu_settings}</a>
-                                        <a href="/support">{_menu_help}</a>
-                                        <div class="separator"></div>
-                                        <a href="{if $userTainted}/setSID/unset?hash={rawurlencode($csrfToken)}{else}/logout?hash={urlencode($csrfToken)}{/if}">{_menu_logout}</a>
+                                        {if $thisUser->isBanned()}
+                                            <a href="/support">{_menu_help}</a>
+                                            <a href="{if $userTainted}/setSID/unset?hash={rawurlencode($csrfToken)}{else}/logout?hash={urlencode($csrfToken)}{/if}">{_menu_logout}</a>
+                                        {else}
+                                            <a href="/id{$thisUser->getId()}">{_my_page}</a>
+                                            <div class="separator"></div>
+                                            <a href="/edit">{_edit}</a>
+                                            <a href="/settings">{_menu_settings}</a>
+                                            <a href="/support">{_menu_help}</a>
+                                            <div class="separator"></div>
+                                            <a href="{if $userTainted}/setSID/unset?hash={rawurlencode($csrfToken)}{else}/logout?hash={urlencode($csrfToken)}{/if}">{_menu_logout}</a>
+                                        {/if}
                                     </div>
                                 </div>
                             {/if}
@@ -176,7 +185,7 @@
                 </div>
             </div>
 
-            <div class="sidebar" n:if="!$hideSidebar">
+            <div class="sidebar" {if $hideSidebar}style="display: none;"{/if}>
                 <div class="sidebar_inner">
                     {ifset $thisUser}
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
@@ -335,14 +344,7 @@
                                 </div>
                             </div>
                         {elseif !$thisUser->isActivated()}
-                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
-                        {else}
-                            <a href="/support" class="link">{_menu_support}
-                                {if $ticketAnsweredCount > 0}
-                                    (<b>{$ticketAnsweredCount}</b>)
-                                {/if}
-                            </a>
-                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
+                            <a href="/logout?hash={urlencode($csrfToken)}" class="link"><span>{_menu_logout}</span></a>
                         {/if}
                     {else}
                         <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">

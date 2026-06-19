@@ -19,8 +19,9 @@
                     </div>
                 </div>
                 <div id="ban-reason" class="page_padding" style="display: none">
+                    {var $ban = $ticket->getUser()->getBanReason("banned")}
                     <div class="msg msg_yellow">
-                        <strong>{_admin_banreason}</strong>. Так пользователь видит экран с информацией о блокировке：
+                        Так пользователь видит экран с информацией о блокировке：
                         <div class="wall_post_text">
                             {if is_string($ban)}
                                 {tr("banned_1", htmlentities($ticket->getUser()->getCanonicalName()))|noescape}<br/>
@@ -29,7 +30,7 @@
                                 {tr("banned_1", htmlentities($ticket->getUser()->getCanonicalName()))|noescape}
                                 <div>
                                     Эта страница была заморожена {$ban[0]|noescape}
-                                    {if $ban[1] !== "app"}
+                                    {if $ban[1] !== "app"} 
                                         {include "../Report/ViewContent.latte", type => $ban[1], object => $ban[2]}
                                     {/if}
                                 </div>
