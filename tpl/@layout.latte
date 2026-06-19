@@ -345,6 +345,11 @@
                             </div>
                         {elseif !$thisUser->isActivated()}
                             <a href="/logout?hash={urlencode($csrfToken)}" class="link"><span>{_menu_logout}</span></a>
+                        {elseif $thisUser->isDeleted()}
+                            <div class="deactivated">
+                                {_profile_deactivated_status}.
+                                <a href="/settings/reactivate"><vkifyloc name="restore" />.</a>    
+                            </div>
                         {/if}
                     {else}
                         <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">

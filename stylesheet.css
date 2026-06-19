@@ -1531,6 +1531,13 @@ body.scrolled .toTop:hover #wrap {
     width: 100%;
 }
 
+.deactivated {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    color: var(--muted-text-color-2)
+}
+
 .sidebar_inner {
     z-index: 2;
 }

@@ -167,6 +167,7 @@ let locales = {
 		feed_user_ignored: "Пользователь скрыт из ленты.",
 		feed_club_ignored: "Сообщество скрыто из ленты.",
 		feed_unignore: "Отменить",
+		restore: "Восстановить",
 	},
 	uk: {
 		language: "Мова",
@@ -252,6 +253,7 @@ let locales = {
 		feed_user_ignored: "Користувача приховано з стрічки.",
 		feed_club_ignored: "Спільноту приховано з стрічки.",
 		feed_unignore: "Скасувати",
+		restore: "Відновити",
 	},
 	kk: {
 		language: "Тіл",
@@ -336,6 +338,7 @@ let locales = {
 		feed_user_ignored: "Пайдаланушы таспадан жасырылды.",
 		feed_club_ignored: "Бірлестік таспадан жасырылды.",
 		feed_unignore: "Болдырмау",
+		restore: "Қалпына келтіру",
 	},
 };
 
