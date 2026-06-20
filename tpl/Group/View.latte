@@ -5,13 +5,81 @@
 {block title}{$club->getName()}{/block} 
 
 {block content}
+	{var $bannerBase64 = @file_get_contents("http://localhost:3000/banner/" . $club->getId())}
+	{var $avatarPhoto = $club->getAvatarPhoto()}
+	{var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
     {var $topics = iterator_to_array($topics)}
+        {if $bannerBase64}
+            <div class="page_block">
+                <div class="page_cover" style="background-image: url('{$bannerBase64|noescape}')"></div>
+                <div class="page_cover_info clear_fix">
+                    <div class="profile_actions clear_fix">
+                        {ifset $thisUser}
+                            {var $subStatus = $club->getSubscriptionStatus($thisUser)}
+                            <div class="profile_actions_split">
+                                {var $actions = [
+                                    0 => ['act' => 'add', 'label' => tr('join_community')],
+                                    1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
+                                ]}
+                                {if isset($actions[$subStatus ? 1 : 0])}
+                                    <form action="/setSub/club" method="post" class="profile_link_form fl_l">
+                                        <input type="hidden" name="act" value="{$actions[$subStatus ? 1 : 0]['act']}" />
+                                        <input type="hidden" name="id"  value="{$club->getId()}" />
+                                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                                        <input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
+                                    </form>
+                                {/if}
+                                <button class="button button_gray profile_more_btn fl_r" id="profile_more_btn_banner" data-tippy-content-id="profile_actions_tooltip_banner" data-tippy-placement="bottom-end" data-tippy-trigger="click"><span class="clear_fix">&nbsp;</span></button>
+                                <div id="profile_actions_tooltip_banner" class="tippy-content-template">
+                                    <div class="tippy-menu">
+                                        {if $canEdit}
+                                            <a href="/club{$club->getId()}/edit">{_edit_group}</a>
+                                            <a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
+                                            {var $clubPinned = $thisUser->isClubPinned($club)}
+                                            <a href="/groups_pin?club={$club->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup_banner" data-group-name="{$club->getName()}" data-group-url="{$club->getUrl()}">
+                                                {if $clubPinned}
+                                                    {_remove_from_left_menu}
+                                                {else}
+                                                    {_add_to_left_menu}
+                                                {/if}
+                                            </a>
+                                            <div class="separator"></div>
+                                        {/if}
+                                        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                                            <a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
+                                            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
+                                            <div class="separator"></div>
+                                        {/if}
+                                        <a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone_banner" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+                                            {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
+                                        </a>
+                                        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+                                        <a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {else}
+                            <div class="guest_actions">
+                                <vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+                            </div>
+                        {/ifset}
+                    </div>
+                    <a class="page_cover_image" href="{$avatarLink|nocheck}">
+                        {include '../components/avatar.latte', author => $club, size => 'miniscule', class => ''}
+                    </a>
+                    <div class="page_top">
+                        <h2 class="page_name">{$club->getName()}
+                            <a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>
+                        </h2>
+                        <div class="page_current_info" id="page_current_info"><span class="current_text">{if $club->getWallType() == 0}{_group_type_open}{elseif $club->getWallType() == 1}{_group_type_suggested}{else}{_group_type_closed}{/if}</span></div>
+                    </div>
+                </div>
+            </div>
+        {/if}
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
-			    {var $avatarPhoto = $club->getAvatarPhoto()}
-    			{var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
-				<div class="page_block photo_block">
+				<div class="page_block photo_block" {if $bannerBase64}style="display: none;"{/if}>
 					<div class="avatar_block" data-club="{$club->getId()}">
 						<div class="avatar_block_inner">
 							{if $canEdit}
@@ -26,15 +94,7 @@
 							{var $avatarSizes = $avatarPhoto ? $avatarPhoto->getSizes() : null}
 							{var $avatarNormal = $avatarSizes['normal'] ?? null}
 							<a href="{$avatarLink|nocheck}" style="display: block; line-height: 0;">
-								<img src="{str_contains($club->getAvatarUrl('normal'), 'camera_200.png') ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' : $club->getAvatarUrl('normal')}"
-									id="bigAvatar"
-									width="{$avatarNormal ? $avatarNormal->width : 200}"
-									height="{$avatarNormal ? $avatarNormal->height : 200}"
-									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
-									{if $avatarPhoto}
-									onclick="OpenMiniature(event, {$club->getAvatarUrl('normal')}, null, {$avatarPhoto->getPrettyId()}, null)"
-									{/if}
-									/>
+								{include '../components/avatar.latte', author => $club, size => 'normal', id => 'bigAvatar', width => ($avatarNormal ? $avatarNormal->width : 200), height => ($avatarNormal ? $avatarNormal->height : 200), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;', onclick => ($avatarPhoto ? "event.preventDefault(); OpenMiniature(event, '{$club->getAvatarUrl('normal')}', null, '{$avatarPhoto->getPrettyId()}', null);" : null), class => ''}
 							</a>
 						</div>
 					</div>
@@ -108,7 +168,7 @@
 								<div class="people_cell" n:foreach="$followerRow as $follower">
 									<a class="people_cell_ava" href="{$follower->getURL()}">
 										<div class="people_cell_img">
-											<img src="{if str_contains($follower->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$follower->getAvatarUrl('miniscule')}{/if}" width="50" height="50" alt="{$follower->getFirstName()}">
+											{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName()}
 										</div>
 									</a>
 									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
@@ -244,7 +304,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $author, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -272,7 +332,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $author, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -284,7 +344,7 @@
 								{var $user = $manager->getUser()}
 								<div class="thumb">
 									<a href="{$user->getURL()}">
-										<img class="cell_img" src="{if str_contains($user->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$user->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $user, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($manager->getComment()) ? 'info' : 'desc_info'">
@@ -300,7 +360,7 @@
 		<div class="wide_column_wrap">
 			<div class="wide_column">
 				<div n:if="!is_null($alert = $club->getAlert())" class="msg msg_yellow">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
-				<div class="page_block">
+				<div class="page_block" {if $bannerBase64}style="display: none;"{/if}>
 					<div class="page_top">
 						<h2 class="page_name">{$club->getName()}
 							<a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>

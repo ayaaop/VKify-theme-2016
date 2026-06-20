@@ -76,6 +76,107 @@
                                 <input type="hidden" name="ava" value="" />
                                 <div class="form_separator"></div>
                                 <div class="form_field">
+                                    <div class="form_label">Banner</div>
+                                    <div class="form_data">
+                                        {var $proxySecret = "openvk_proxy_secret_123"}
+                                        {var $date = date('Y-m-d')}
+                                        {var $uploadToken = hash('sha256', $club->getId() . $date . $proxySecret)}
+                                        <button type="button" class="button button_gray" onclick="openBannerUploadModal()">Upload Banner</button>
+                                        <div id="bannerUploadStatus" style="margin-top: 8px; color: #818c99;"></div>
+                                        <script>
+                                            function openBannerUploadModal() {
+                                                var body = `
+                                                <div id="bannerUpload">
+                                                    <p>Upload a banner for this group.</p>
+                                                    <p>The image should be at least 1590x400 pixels.</p><br>
+                                                    <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">
+                                                        Browse
+                                                        <input accept="image/*" type="file" id="_bannerInput" hidden style="display: none;">
+                                                    </label>
+                                                    <br><br>
+                                                </div>
+                                                `;
+
+                                                var msg = MessageBox('Upload Banner', body, ['Cancel'], [function() {}]);
+                                                msg.attr("style", "width: 600px;");
+                                                document.querySelector(".ovk-diag-body").style.padding = "13px";
+
+                                                $("#bannerUpload input").on("change", function(ev) {
+                                                    var image = URL.createObjectURL(ev.currentTarget.files[0]);
+                                                    $(".ovk-diag-body")[0].innerHTML = `
+                                                        <span>Select the visible area for the banner</span>
+                                                        <div class="cropper-image-cont" style="max-height: 274px;">
+                                                            <img src="` + image + `" id="temp_bannerUploadPic" style="max-width: 100%;">
+                                                        </div>
+                                                    `;
+
+                                                    document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
+                                                        <button class="button" style="margin-left: 4px;" id="_uploadBannerImg">Upload</button>
+                                                    `);
+
+                                                    var imageDiv = document.getElementById('temp_bannerUploadPic');
+                                                    var cropper = new Cropper(imageDiv, {
+                                                        aspectRatio: 1590 / 400,
+                                                        zoomable: true,
+                                                        minCropBoxWidth: 159,
+                                                        minCropBoxHeight: 40,
+                                                        dragMode: 'move',
+                                                        background: false,
+                                                        center: false,
+                                                        guides: false,
+                                                        modal: true,
+                                                        viewMode: 2,
+                                                        cropstart: function() {
+                                                            var container = document.querySelector(".cropper-container");
+                                                            if (container) container.classList.add("moving");
+                                                        },
+                                                        cropend: function() {
+                                                            var container = document.querySelector(".cropper-container");
+                                                            if (container) container.classList.remove("moving");
+                                                        }
+                                                    });
+
+                                                    msg.attr("style", "width: 487px;");
+
+                                                    document.querySelector("#_uploadBannerImg").onclick = function() {
+                                                        document.querySelector("#_uploadBannerImg").classList.add("lagged");
+                                                        cropper.getCroppedCanvas({
+                                                            width: 1590,
+                                                            height: 400,
+                                                            fillColor: '#fff',
+                                                            imageSmoothingEnabled: false,
+                                                            imageSmoothingQuality: 'high'
+                                                        }).toBlob(function(blob) {
+                                                            var formdata = new FormData();
+                                                            formdata.append("banner", blob);
+                                                            formdata.append("token", {$uploadToken});
+
+                                                            fetch('http://localhost:3000/upload/' + {$club->getId()}, {
+                                                                method: 'POST',
+                                                                body: formdata
+                                                            }).then(function(r) { return r.json(); }).then(function(res) {
+                                                                u(".ovk-diag-cont").remove();
+                                                                u("body").removeClass("dimmed");
+                                                                var status = document.getElementById('bannerUploadStatus');
+                                                                if (res.success) {
+                                                                    status.innerText = 'Banner uploaded successfully!';
+                                                                } else {
+                                                                    status.innerText = 'Error: ' + res.error;
+                                                                }
+                                                            }).catch(function(err) {
+                                                                u(".ovk-diag-cont").remove();
+                                                                u("body").removeClass("dimmed");
+                                                                document.getElementById('bannerUploadStatus').innerText = 'Error: ' + err;
+                                                            });
+                                                        }, 'image/jpeg', 0.9);
+                                                    };
+                                                });
+                                            }
+                                        </script>
+                                    </div>
+                                </div>
+                                <div class="form_separator"></div>
+                                <div class="form_field">
                                     <div class="form_label">{_wall}</div>
                                     <div class="form_data">
                                         <select name="wall">
