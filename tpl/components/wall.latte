@@ -64,7 +64,7 @@
     </div>
     <div class="insertThere" id="postz"></div>
     <div id="underHeader">
-        <div class="wall_posts content scroll_container">
+        <div id="all_posts" class="wall_posts content scroll_container">
             {if sizeof($posts) > 0}
                 {foreach $posts as $post}
                     {continueIf isset($club) && $post->isPinned()}
@@ -78,4 +78,4 @@
             {/if}
         </div>
     </div>
-</div>
+</div> 

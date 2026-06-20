@@ -134,8 +134,10 @@
 
 button.bsdn_playButton {
     height: 100%;
-    padding: 4px 8px 0 16px;
-    align-content: center;
+    padding: 0 8px 0 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: fit-content;
     transition: opacity 0.2s;
     will-change: opacity;
@@ -143,8 +145,10 @@ button.bsdn_playButton {
 
 .bsdn_soundIcon {
     height: 100%;
-    padding: 4px 10px 0 8px;
-    align-content: center;
+    padding: 0 10px 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: opacity 0.2s;
     will-change: opacity;
 }
@@ -152,8 +156,10 @@ button.bsdn_playButton {
 .bsdn_fullScreenButton,
 .bsdn_repeatButton {
     height: 100%;
-    padding: 4px 8px 0;
-    align-content: center;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     transition: opacity 0.2s;
     will-change: opacity;
 }
@@ -200,7 +206,7 @@ button.bsdn_playButton {
     opacity: 1;
 }
 
-button.bsdn_playButton:hover, .bsdn_soundIcon:hover, .bsdn_fullScreenButton:hover, .bsdn_repeatButton:hover, .bsdn_fullScreenButton:hover {
+button.bsdn_playButton:hover, .bsdn_soundIcon:hover, .bsdn_fullScreenButton:hover, .bsdn_repeat:hover {
     opacity: .8;
 }
 
@@ -459,36 +465,22 @@ time.bsdn_timeFull,
 
 
 .bsdn-player:fullscreen video,
-.bsdn-player:fullscreen .media {
+.bsdn-player:fullscreen .media,
+.bsdn-fullscreen video,
+.bsdn-fullscreen .media {
     max-height: none !important;
     height: 100% !important;
     width: 100% !important;
     object-fit: contain !important;
 }
 
-.bsdn-player:-webkit-full-screen video,
-.bsdn-player:-webkit-full-screen .media {
-    max-height: none !important;
-    height: 100% !important;
-    width: 100% !important;
-    object-fit: contain !important;
-}
-
-.bsdn-player:-moz-full-screen video,
-.bsdn-player:-moz-full-screen .media {
-    max-height: none !important;
-    height: 100% !important;
-    width: 100% !important;
-    object-fit: contain !important;
-}
-
-.bsdn-player:-webkit-full-screen .bsdn_fullscreenIcon ._enter,
-.bsdn-player:-moz-full-screen .bsdn_fullscreenIcon ._enter {
+.bsdn-player:fullscreen .bsdn_fullscreenIcon ._enter,
+.bsdn-fullscreen .bsdn_fullscreenIcon ._enter {
     display: none;
 }
 
-.bsdn-player:-webkit-full-screen .bsdn_fullscreenIcon ._exit,
-.bsdn-player:-moz-full-screen .bsdn_fullscreenIcon ._exit {
+.bsdn-player:fullscreen .bsdn_fullscreenIcon ._exit,
+.bsdn-fullscreen .bsdn_fullscreenIcon ._exit {
     display: block;
 }
 
@@ -496,4 +488,47 @@ time.bsdn_timeFull,
     opacity: 0 !important;
     transform: scale(0.5) !important;
     pointer-events: none !important;
+}
+
+.bsdn_titleBar {
+    display: none;
+    opacity: 1;
+    transition: opacity 0.25s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 2;
+    pointer-events: none;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    font-family: inherit;
+}
+
+.bsdn-player:fullscreen .bsdn_controls,
+.bsdn-fullscreen .bsdn_controls {
+    height: 55px;
+}
+
+.bsdn-player:fullscreen .bsdn_titleBar,
+.bsdn-fullscreen .bsdn_titleBar {
+    display: block;
+}
+
+.bsdn-player._bsdn_playing .bsdn_titleBar {
+    opacity: 0;
+    pointer-events: none;
+    transition: 1s opacity ease-in-out;
+    transition-delay: 2s;
+}
+
+.bsdn-player._bsdn_playing:hover .bsdn_titleBar {
+    opacity: 1;
+    pointer-events: none;
+    transition: .2s opacity ease-in-out;
+    transition-delay: 0;
 }

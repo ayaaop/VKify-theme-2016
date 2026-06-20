@@ -40,7 +40,7 @@
                 </div>
                 <a href="/topic{$x->getPrettyId()}#_comment{$lastComment->getId()}" n:if="$lastComment" class="controls blist_last">
                     <div class="avatar">
-                        <img class="ava" src="{$lastComment->getOwner()->getAvatarUrl()}" />
+                        {include '../components/avatar.latte', author => $lastComment->getOwner(), size => 'miniscule', class => 'ava'}
                     </div>
                     <div class="info">
                         <div class="labeled name">{$lastComment->getOwner()->getCanonicalName()}</div>

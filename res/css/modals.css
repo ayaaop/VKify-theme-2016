@@ -30,10 +30,8 @@
 .photo_top_button:hover {
   opacity: 1;
 }
-.photo_close_icon,
-.photo_minimize_icon,
-.photo_toggle_sideblock_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_icon.png)
+.photo_close_icon {
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_icon.png)
     no-repeat;
 }
 .photo_close_icon {
@@ -111,9 +109,7 @@
 .pv_left .pv_bottom_actions > a:hover,
 .pv_left .pv_bottom_actions > span:hover,
 .pv_left .pv_bottom_actions > .pv_actions_more:hover,
-.pv_left .pv_bottom_actions span[aria-expanded="true"],
-.pv_left .pv_bottom_actions > span.pv_more_shown,
-.pv_left .pv_bottom_actions > .pv_actions_more.pv_more_shown {
+.pv_left .pv_bottom_actions span[aria-expanded="true"] {
   opacity: 1;
   text-decoration: none;
 }
@@ -137,7 +133,7 @@
 .pv_left .pv_bottom_actions .pv_actions_more::after {
   content: " ";
   display: inline-block;
-  background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/white_arrow.png);
+  background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/white_arrow.png);
   width: 8px;
   height: 6px;
   margin-left: 5px;
@@ -247,7 +243,7 @@
   --nav_btn_icon_margin: calc(var(--nav_btn_icon_height) * -1/2);
   height: var(--nav_btn_icon_height);
   width: 20px;
-  background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/pv_layer_controls.png);
+  background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/pv_layer_controls.png);
   background-position: 0-25px;
   position: absolute;
   top: 50%;
@@ -413,9 +409,8 @@
   opacity: 1;
 }
 .video_close_icon,
-.video_minimize_icon,
-.video_toggle_sideblock_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_icon.png)
+.video_minimize_icon {
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_icon.png)
     no-repeat;
 }
 .video_close_icon {
@@ -486,15 +481,10 @@
   margin-top: 15px;
   line-height: 1.46em;
 }
-.video_like_wrap:hover .video_like_icon,
 .video_like_wrap.my_like .video_like_button .action_icon {
   opacity: 1;
   -webkit-filter: none;
   filter: none;
-}
-.video_like_wrap.no_likes .video_like_button .action_count {
-  position: absolute;
-  visibility: hidden;
 }
 .video_like_button .action_count {
   margin: 0;
@@ -503,12 +493,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-.video_like_button .action_count .counter_anim_wrap {
-  line-height: 15px;
-  height: 15px;
-}
 .video_like_button .action_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png?8)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png?8)
     no-repeat 0 0;
   float: left;
   height: 10px;
@@ -518,7 +504,7 @@
 }
 @media (min-resolution: 192dpi) {
   .video_like_button .action_icon {
-    background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions_2x.png?8);
+    background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions_2x.png?8);
     background-size: 19px 199px;
   }
 }
@@ -527,12 +513,9 @@
   margin-left: 0;
   margin-top: 0;
 }
-.tt_w.like_tt.video_like_tt.tt_down:after {
-  left: 26px;
-}
 
 .video_share_button .action_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png?8)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png?8)
     no-repeat 0 -44px;
   height: 13px;
   width: 12px;
@@ -542,12 +525,12 @@
 }
 @media (min-resolution: 192dpi) {
   .video_share_button .action_icon {
-    background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions_2x.png?8);
+    background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions_2x.png?8);
     background-size: 19px 199px;
   }
 }
 .video_edit_button .action_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png?8)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png?8)
     no-repeat 0 -61px;
   height: 12px;
   width: 12px;
@@ -557,13 +540,13 @@
 }
 @media (min-resolution: 192dpi) {
   .video_edit_button .action_icon {
-    background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions_2x.png?8);
+    background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions_2x.png?8);
     background-size: 19px 199px;
   }
 }
 .video_delete_button .action_icon,
 .video_add_button .action_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions_2x.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions_2x.png)
     no-repeat 2px -30px;
   display: inline-block;
   position: relative;
@@ -595,11 +578,11 @@
   opacity: 1;
 }
 .miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_return {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_icon.png)
     no-repeat 3px -116px;
 }
 .miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_close {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/video_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/video_icon.png)
     no-repeat 3px -136px;
 }
 .miniplayer-body {
@@ -666,7 +649,7 @@
 .choose_upload_area_label {
   display: inline-block;
   padding-left: 29px;
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/upload_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/upload_icon.png)
     no-repeat left 2px;
 }
 .ovk-diag-body .attachment_selector:not(:has(.button)) .pr.pr_medium {
@@ -697,7 +680,7 @@
   width: 32px;
   height: 32px;
   transform: translate(-50%, -50%);
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/upload_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/upload_icon.png)
     no-repeat center;
   opacity: 0.35;
   pointer-events: none;
@@ -875,7 +858,6 @@
 .picker-items > .document_attachment_header:hover {
   background: var(--module-background-color--secondary);
 }
-.attachButton,
 .attachDocument {
   float: right;
   margin-left: 12px;
@@ -886,7 +868,6 @@
   opacity: 0;
   cursor: pointer;
 }
-.picker-items > div:hover .attachButton,
 .picker-items .document_attachment_header:hover .attachDocument {
   opacity: 1;
 }
@@ -937,13 +918,7 @@ body:not(.dark-mode) {
 }
 
 .picker-items--user:not(.picker-items--active),
-.picker-items--group:not(.picker-items--active),
-.picker-albums--user:not(.picker-albums--active),
-.picker-albums--group:not(.picker-albums--active) {
+.picker-items--group:not(.picker-items--active) {
   display: none !important;
 }
 
-#ovkDraw .literally {
-  border-radius: 0;
-  height: 510px;
-}

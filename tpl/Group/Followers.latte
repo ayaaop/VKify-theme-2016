@@ -54,11 +54,8 @@
 {/block}
 
 {block preview}
-    <img src="{if str_contains($ava = ($x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL('miniscule')), 'camera_200.png')}
-        /themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
-    {else}
-        {$ava}
-    {/if}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" width=75 />
+    {var $avaAuthor = $x instanceof $Manager ? $x->getUser() : $x}
+    {include '../components/avatar.latte', author => $avaAuthor, size => 'miniscule', width => 75, alt => $avaAuthor->getCanonicalName()}
 {/block}
 
 {block name}

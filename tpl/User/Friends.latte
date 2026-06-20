@@ -93,11 +93,7 @@
 {/block}
 
 {block preview}
-    <img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
-        /themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
-    {else}
-        {$x->getAvatarUrl('miniscule')}
-        {/if}" width="75" alt="{_photo}" loading=lazy />
+    {include '../components/avatar.latte', author => $x, size => 'miniscule', width => 75, alt => tr('photo')}
 {/block}
 
 {block name}

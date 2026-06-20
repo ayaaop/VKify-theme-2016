@@ -46,13 +46,7 @@
 {/block}
 
 {block preview}
-	<img src="{if str_contains($x->getAvatarUrl('miniscule'), 'camera_200.png')}
-		/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
-	{else}
-		{$x->getAvatarUrl('miniscule')}
-		{/if}" 
-		alt="{$x->getCanonicalName()}" width="80" loading=lazy
-	/>
+	{include '../components/avatar.latte', author => $x, size => 'miniscule', width => 80, alt => $x->getCanonicalName()}
 {/block}
 
 {block name}{/block}
@@ -145,11 +139,7 @@
                     <div class="line_cell clear_fix" n:foreach="$randomClubs as $club">
                         <div class="thumb">
                             <a href="club{$club->getId()}">
-                                <img class="cell_img" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-                                    /themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
-                                {else}
-                                    {$club->getAvatarUrl()}
-                                {/if}" alt="{$club->getCanonicalName()}" />
+                                {include '../components/avatar.latte', author => $club, size => 'miniscule', alt => $club->getCanonicalName(), class => 'cell_img'}
                             </a>
                         </div>
                         <div class="desc_info">

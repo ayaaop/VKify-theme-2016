@@ -25,7 +25,7 @@
                                     <div class="nim-peer--photo _im_dialog_photo">
                                         <a href="{$recipient->getURL()}" target="_blank">
                                             <div class="im_grid">
-                                                <img src="{if str_contains($recipient->getAvatarURL('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$recipient->getAvatarURL('miniscule')}{/if}" width="50" height="50" alt="{_photo}" loading="lazy">
+                                                {include '../components/avatar.latte', author => $recipient, size => 'miniscule', width => 50, height => 50, alt => tr('photo')}
                                             </div>
                                         </a>
                                     </div>
@@ -49,7 +49,7 @@
                                         <span class="nim-dialog--preview _dialog_body" tabindex="0">
                                             <span class="nim-dialog--who">
                                                 <div class="im-prebody">
-                                                    <img alt="" src="{if str_contains($lastMsg->getSender()->getAvatarURL('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$lastMsg->getSender()->getAvatarURL('miniscule')}{/if}">
+                                                    {include '../components/avatar.latte', author => $lastMsg->getSender(), size => 'miniscule', alt => ''}
                                                 </div>
                                             </span>
                                             <span class="nim-dialog--inner-text">{$lastMsg->getText()|noescape}</span>

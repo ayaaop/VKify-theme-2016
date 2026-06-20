@@ -54,7 +54,7 @@
             <div class="pv_author_block clear_fix">
                 <div class="pv_author_img fl_l">
                     <a href="{$owner->getURL()}">
-                        <img loading="lazy" src="{$owner->getAvatarUrl('miniscule')}" />
+                        {include '../components/avatar.latte', author => $owner, size => 'miniscule'}
                     </a>
                 </div>
                 <div class="pv_author_info fl_l">

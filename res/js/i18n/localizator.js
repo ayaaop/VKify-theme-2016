@@ -82,6 +82,10 @@ let locales = {
 		feed_user_ignored: "User hidden from feed.",
 		feed_club_ignored: "Group hidden from feed.",
 		feed_unignore: "Undo",
+		copy_video_link_at_time: "Copy video link at current time",
+		link_copied_vk: "VK video link copied",
+		link_copied_direct: "Direct video link copied",
+		link_copied_time: "Video link at current time copied. Note that currently this link will only work in this themepack",
 	},
 	ru: {
 		language: "Язык",
@@ -168,6 +172,10 @@ let locales = {
 		feed_club_ignored: "Сообщество скрыто из ленты.",
 		feed_unignore: "Отменить",
 		restore: "Восстановить",
+		copy_video_link_at_time: "Копировать ссылку на видео в текущее время",
+		link_copied_vk: "Ссылка на видео скопирована",
+		link_copied_direct: "Прямая ссылка на видео скопирована",
+		link_copied_time: "Ссылка на видео в текущее время скопирована. Заметьте, что пока что эта ссылка будет работать только в этой теме",
 	},
 	uk: {
 		language: "Мова",
@@ -254,6 +262,10 @@ let locales = {
 		feed_club_ignored: "Спільноту приховано з стрічки.",
 		feed_unignore: "Скасувати",
 		restore: "Відновити",
+		copy_video_link_at_time: "Копіювати посилання на відео у поточний час",
+		link_copied_vk: "Посилання на відео скопійовано",
+		link_copied_direct: "Пряме посилання на відео скопійовано",
+		link_copied_time: "Посилання на відео у поточний час скопійовано. Зауважте, що поки що ця ссылка буде працювати тільки в цій темі",
 	},
 	kk: {
 		language: "Тіл",
@@ -339,6 +351,10 @@ let locales = {
 		feed_club_ignored: "Бірлестік таспадан жасырылды.",
 		feed_unignore: "Болдырмау",
 		restore: "Қалпына келтіру",
+		copy_video_link_at_time: "Бейне сілтемесін ағымдағы уақытта көшіру",
+		link_copied_vk: "Бейне сілтемесі көшірілді",
+		link_copied_direct: "Тікелей бейне сілтемесі көшірілді",
+		link_copied_time: "Бейне сілтемесі ағымдағы уақытта көшірілді. Бұл сілтеме әзірше тек осы стильде жұмыс істейтінін ескеріңіз",
 	},
 };
 
@@ -347,7 +363,7 @@ window.vkifylocalize = function (langcode, fallback = "en") {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.3.7/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.3.8/resource/langs/${langcode}.json`)
 				.then((response) => {
 					if (!response.ok) {
 						patchpage(fallbackCode);

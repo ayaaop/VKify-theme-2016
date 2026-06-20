@@ -396,14 +396,23 @@ function switchAvatar(el, targetType) {
     const targetImg = targetType === 'group' ? groupImg : anonImg;
     if (!targetImg) return;
 
+    if (formContext) {
+        if (formContext._avatarTimeout) clearTimeout(formContext._avatarTimeout);
+        if (formContext._avatarCleanupTimeout) clearTimeout(formContext._avatarCleanupTimeout);
+    }
+
     if (el.checked) {
         if (targetType === 'group' && anonImg) anonImg.style.opacity = '0';
         if (targetType === 'anon' && groupImg) groupImg.style.opacity = '0';
 
-        userImg.classList.remove('avatar-showing');
-        userImg.classList.add('avatar-flipping');
+        if (userImg.style.opacity !== '0' || userImg.classList.contains('avatar-showing')) {
+            userImg.style.opacity = '';
+            userImg.classList.remove('avatar-showing');
+            userImg.classList.add('avatar-flipping');
+        }
 
-        setTimeout(() => {
+        const showTarget = () => {
+            targetImg.style.opacity = '';
             targetImg.classList.remove('avatar-flipping');
             targetImg.classList.add('avatar-showing');
 
@@ -412,18 +421,27 @@ function switchAvatar(el, targetType) {
                 avatarLink.href = targetUrl;
             }
 
-            setTimeout(() => {
+            const cleanup = () => {
                 userImg.style.opacity = '0';
                 userImg.classList.remove('avatar-flipping');
                 targetImg.style.opacity = '1';
                 targetImg.classList.remove('avatar-showing');
-            }, 150);
-        }, 150);
-    } else {
-        targetImg.classList.remove('avatar-showing');
-        targetImg.classList.add('avatar-flipping');
+            };
+            if (formContext) formContext._avatarCleanupTimeout = setTimeout(cleanup, 150);
+            else setTimeout(cleanup, 150);
+        };
 
-        setTimeout(() => {
+        if (formContext) formContext._avatarTimeout = setTimeout(showTarget, 150);
+        else setTimeout(showTarget, 150);
+    } else {
+        if (targetImg.style.opacity !== '0' || targetImg.classList.contains('avatar-showing')) {
+            targetImg.style.opacity = '';
+            targetImg.classList.remove('avatar-showing');
+            targetImg.classList.add('avatar-flipping');
+        }
+
+        const showUser = () => {
+            userImg.style.opacity = '';
             userImg.classList.remove('avatar-flipping');
             userImg.classList.add('avatar-showing');
 
@@ -431,13 +449,18 @@ function switchAvatar(el, targetType) {
                 avatarLink.href = userImg.dataset.userUrl;
             }
 
-            setTimeout(() => {
+            const cleanup = () => {
                 targetImg.style.opacity = '0';
                 targetImg.classList.remove('avatar-flipping');
                 userImg.style.opacity = '1';
                 userImg.classList.remove('avatar-showing');
-            }, 150);
-        }, 150);
+            };
+            if (formContext) formContext._avatarCleanupTimeout = setTimeout(cleanup, 150);
+            else setTimeout(cleanup, 150);
+        };
+
+        if (formContext) formContext._avatarTimeout = setTimeout(showUser, 150);
+        else setTimeout(showUser, 150);
     }
 }
 
@@ -707,11 +730,11 @@ function isAjaxWallOpen() {
 
 function showAjaxWallContent(tabId) {
     const insertThere = document.querySelector('.wall_module .insertThere');
-    const underHeader = document.getElementById('underHeader');
+    const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
     const tabLink = document.querySelector(`#${tabId} a`);
-    if (!insertThere || !underHeader || !tabLink) return;
+    if (!insertThere || !allPostsContainer || !tabLink) return;
 
-    underHeader.style.display = 'none';
+    allPostsContainer.style.display = 'none';
     insertThere.style.display = 'block';
     
     if (tabId === 'wall_tab_suggested') {
@@ -719,6 +742,7 @@ function showAjaxWallContent(tabId) {
     } else {
         insertThere.classList.remove('infContainer');
     }
+
     
     history.pushState({}, '', tabLink.href);
 
@@ -745,13 +769,14 @@ function showAjaxWallContent(tabId) {
                 if (tabId === 'wall_tab_suggested') {
                     result = doc.querySelector('.infContainer');
                 } else if (tabId === 'wall_tab_owners') {
-                    result = doc.querySelector('.wall_posts.content.scroll_container') || doc.querySelector('.content.scroll_container');
+                    result = doc.getElementById('owner_posts') || doc.querySelector('.wall_posts.content.scroll_container') || doc.querySelector('.content.scroll_container');
                 }
 
                 if (!result) return;
                 
                 if (tabId === 'wall_tab_owners' || tabId === 'wall_tab_suggested') {
                     const loadedSearch = result.querySelector('#wall_search');
+                    // The search bar is wrapped in a page_block, it's better to hide the whole block if it exists
                     if (loadedSearch) {
                         const searchBlock = loadedSearch.closest('.page_block');
                         if (searchBlock && searchBlock.style) {
@@ -763,7 +788,12 @@ function showAjaxWallContent(tabId) {
                 }
 
                 result.querySelectorAll('.bsdn').forEach(bsdnInitElement);
-                insertThere.innerHTML = result.innerHTML;
+                // For owners, we inject outerHTML so the #owner_posts wrapper is preserved
+                if (tabId === 'wall_tab_owners') {
+                    insertThere.innerHTML = result.outerHTML;
+                } else {
+                    insertThere.innerHTML = result.innerHTML;
+                }
             }],
         },
     });
@@ -771,10 +801,10 @@ function showAjaxWallContent(tabId) {
 
 function hideAjaxWallContent() {
     const insertThere = document.querySelector('.wall_module .insertThere');
-    const underHeader = document.getElementById('underHeader');
-    if (!insertThere || !underHeader) return;
+    const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
+    if (!insertThere || !allPostsContainer) return;
 
-    underHeader.style.display = '';
+    allPostsContainer.style.display = '';
     insertThere.style.display = 'none';
     insertThere.classList.remove('infContainer');
     insertThere.dataset.loadedTab = 'wall_tab_all';

@@ -102,8 +102,7 @@
                             {if $section === 'users'}
                                 <div class='scroll_node search_row' data-uniqueid="user-{$dat->getId()}" n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
-                                        <img src="{if str_contains($dat->getAvatarUrl('tiny'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$dat->getAvatarUrl('tiny')}{/if}" 
-                                            width="75" alt="{_photo}" loading='lazy' />
+                                        {include '../components/avatar.latte', author => $dat, size => 'tiny', width => 75, alt => tr('photo'), class => ''}
                                     </a>
                                     <div class="info">
                                         <div class="labeled name">
@@ -152,10 +151,7 @@
                             {elseif $section === 'groups'}
                                 <div class='scroll_node search_row' data-uniqueid="group-{$dat->getId()}" n:foreach="$data as $dat">
                                     <a href="{$dat->getURL()}" class="img">
-                                        <img src="{str_contains($dat->getAvatarUrl('miniscule'), 'camera_200.png') 
-                                            ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' 
-                                            : $dat->getAvatarUrl('miniscule')}" 
-                                            width="75" alt="{_photo}" loading='lazy' />
+                                        {include '../components/avatar.latte', author => $dat, size => 'miniscule', width => 75, alt => tr('photo'), class => ''}
                                     </a>
                                     <div class="info">
                                         <div class="labeled name">

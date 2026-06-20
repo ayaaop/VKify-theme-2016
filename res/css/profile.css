@@ -14,20 +14,14 @@
 }
 
 .page_list_module .group_desc,
-.page_list_module .people_desc,
-.page_list_module .people_extra {
+.page_list_module .people_desc {
   font-size: 12px;
   max-height: 48px;
   overflow: hidden;
   color: var(--muted-text-color-2);
 }
 
-.page_list_module .people_extra {
-  padding-bottom: 0;
-  color: var(--muted-text-color);
-}
 
-.page_list_module .people_extra_lnk,
 .edit_link {
   color: var(--muted-text-color) !important;
 }
@@ -66,7 +60,6 @@
 }
 
 .page_list_module .line_cell .desc_info,
-.page_list_module .line_cell .extra_info,
 .page_list_module .line_cell .info {
   width: 147px;
   overflow: hidden;
@@ -106,7 +99,7 @@
 
 .page_album_title {
   font-size: 12.5px;
-  background: url(/themepack/vkify16/3.3.3.7/resource/album_top_shadow.png);
+  background: url(/themepack/vkify16/3.3.3.8/resource/album_top_shadow.png);
   color: var(--white);
   position: absolute;
   bottom: 0;
@@ -136,18 +129,11 @@
   margin: -1px 0 0 5px;
 }
 
-.page_album_photos {
-  margin-left: 5px;
-}
 
-.page_album_under_row {
-  padding-top: 5px;
-  clear: both;
-}
 
 .page_album_nocover {
   background: var(--album-background-color)
-    url(/themepack/vkify16/3.3.3.7/resource/camera_big.png) no-repeat 50% 45%;
+    url(/themepack/vkify16/3.3.3.8/resource/camera_big.png) no-repeat 50% 45%;
   width: 279px;
   height: 185px;
 }
@@ -214,9 +200,6 @@
   height: 132px;
 }
 
-.video_module .video_row_single {
-  margin: 0 auto !important;
-}
 
 .video_module .video {
   position: relative;
@@ -237,7 +220,7 @@
   left: 0;
   right: 0;
   background: var(--video-overlay-background)
-    url(/themepack/vkify16/3.3.3.7/resource/video_play_small.png) 19px 13px
+    url(/themepack/vkify16/3.3.3.8/resource/video_play_small.png) 19px 13px
     no-repeat;
   margin: auto;
   width: 50px;
@@ -252,17 +235,6 @@
   background-color: var(--video-overlay-background-hover);
 }
 
-.video_module .video div.page_video_duration {
-  font-size: 12.5px;
-  padding: 3px 6px;
-  margin: 8px;
-  background: var(--video-overlay-background);
-  border-radius: var(--button-border-radius);
-  color: var(--white);
-  position: absolute;
-  bottom: 0;
-  right: 0;
-}
 
 .video_module .video .page_video_thumb {
   width: 200px;
@@ -477,7 +449,7 @@ table.ugc-table * {
   margin: 0;
 }
 .audioStatus::before {
-  background-image: url("/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png");
+  background-image: url("/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png");
   width: 13px;
   height: 13px;
   background-position: 0px -44px;
@@ -495,33 +467,8 @@ table.ugc-table * {
   width: 165px !important;
 }
 
-.right_big_block h4 {
-  color: var(--black);
-  font-size: 13px !important;
-  font-weight: normal;
-  padding-bottom: 4px;
-  margin-bottom: 4px;
-  padding-right: 7px !important;
-  display: flex !important;
-  align-items: center;
-  white-space: nowrap;
-  padding-top: 10px !important;
-  border-bottom: none;
-}
 
-.right_big_block h4 a {
-  display: none;
-}
 
-.right_big_block h4:after {
-  display: block;
-  content: "";
-  width: 100%;
-  float: right;
-  height: 1px;
-  margin-left: 10px;
-  background-color: var(--border-color);
-}
 
 .counts_module {
   text-align: center;
@@ -599,7 +546,7 @@ div.avatar_block:hover .avatar_variants {
 }
 .avatarDelete:before {
 	display: block;
-	background: url(/themepack/vkify16/3.3.3.7/resource/icons/attach_icons.png) no-repeat 0 -40px;
+	background: url(/themepack/vkify16/3.3.3.8/resource/icons/attach_icons.png) no-repeat 0 -40px;
 	opacity: 0.85;
 	width: 8px;
 	height: 8px;
@@ -639,11 +586,6 @@ div.avatar_block:hover .avatar_variants {
   margin-top: 10px;
 }
 
-.completeness_block .completeness-gauge {
-  background: none;
-  width: auto;
-  border: 0;
-}
 
 .page_status_popup {
   border: 1px solid var(--border-color);
@@ -670,7 +612,7 @@ div.avatar_block:hover .avatar_variants {
   width: 21px;
   height: 21px;
   margin: 10px;
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/add_info_icons.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/add_info_icons.png)
     no-repeat 0 0;
 }
 
@@ -717,12 +659,6 @@ div.avatar_block:hover .avatar_variants {
   filter: none;
 }
 
-.profile_warning_hide {
-  width: 9px;
-  height: 9px;
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/attach_icons.png)
-    no-repeat 0 0;
-}
 
 .profile_warning_label {
   overflow: hidden;
@@ -732,21 +668,8 @@ div.avatar_block:hover .avatar_variants {
   padding: 8px 0;
 }
 
-.page_info + div:has(.profile_info) {
-  box-shadow: none;
-  border: 1px solid var(--shadow-outline-color);
-  border-top: 0;
-  border-bottom: 1px solid var(--profile-border-color);
-  padding-top: 0;
-  margin: -20px -1px 0;
-}
-
-.frenMenu .button {
-  width: 100%;
-}
-
 .profile_actions {
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .profile_msg_split .cut_left,
@@ -777,7 +700,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/gift_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/gift_icon.png)
     no-repeat;
   background-position: center;
   background-size: 11px;
@@ -790,7 +713,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .button.profile_more_btn {
-  background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/more_icon.png);
+  background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/more_icon.png);
   background-repeat: no-repeat;
   background-position: 100% 13px;
   width: 36px;
@@ -799,7 +722,6 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_actions_split {
-  margin-top: 8px;
   display: flex;
   justify-content: end;
 }
@@ -818,15 +740,6 @@ div.avatar_block:hover .avatar_variants {
 }
 .search_row .profile_actions_split .profile_link_form {
   flex: 0;
-}
-
-.content_title_expanded + .page_info,
-.page_info + div:has(.profile_info) {
-  margin-top: -15px;
-}
-
-.content_divider [class^="content_title_"] {
-  margin: 0;
 }
 
 .profile_info_block {
@@ -885,7 +798,7 @@ div.avatar_block:hover .avatar_variants {
   display: block;
   position: absolute;
   content: "";
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/group_info_cons.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_info_cons.png)
     no-repeat 0 0;
   height: 15px;
   width: 15px;
@@ -898,7 +811,7 @@ div.avatar_block:hover .avatar_variants {
   (-o-min-device-pixel-ratio: 2/1),
   (min-resolution: 192dpi) {
   .group_info_row:before {
-    background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/group_info_cons_2x.png);
+    background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/group_info_cons_2x.png);
     background-size: 15px 149px;
   }
 }
@@ -926,11 +839,11 @@ div.avatar_block:hover .avatar_variants {
   left: 0;
   width: 12px;
   height: 12px;
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/topic_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/topic_icon.png)
     no-repeat 0 0;
 }
 .topics_module.notes_module .topic_icon {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/post_icon.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/post_icon.png)
     no-repeat;
   background-position: -5px -244px;
   height: 16px;
@@ -995,7 +908,7 @@ div.avatar_block:hover .avatar_variants {
   cursor: pointer;
 }
 .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/group_icons.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_icons.png)
     no-repeat;
   position: absolute;
   display: block;
@@ -1009,7 +922,7 @@ div.avatar_block:hover .avatar_variants {
   padding: 17px 13px 17px 47px;
 }
 .wide_column .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.7/resource/icons/group_icons_big.png)
+  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_icons_big.png)
     no-repeat;
   width: 25px;
   height: 27px;

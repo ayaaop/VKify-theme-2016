@@ -11,7 +11,7 @@
         ]}
         <div class="video_block_layout" style="padding-top: 20px;">
             {if $video->getType() === 0}
-                <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
+                <div class="bsdn" data-id="{$video->getPrettyId()}" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
                     <video data-src="{$video->getURL()}"></video>
                 </div>
             {else}
@@ -64,7 +64,7 @@
             </div>
             <div class="video_info_author clear_fix">
                 <a href="{$video->getOwner()->getURL()}" class="video_info_author_image">
-                    <img class="post-avatar" src="{$video->getOwner()->getAvatarUrl('miniscule')}" />
+                    {include '../components/avatar.latte', author => $video->getOwner(), size => 'miniscule', class => 'post-avatar'}
                 </a>
                 <div class="video_info_author_info">
                     <div class="video_info_author_name">

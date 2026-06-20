@@ -236,9 +236,10 @@ vkify.once('contentFetcher', function() {
                                     <div id="__modalPlayerClose" class="video_top_button video_top_close" role="button" tabindex="0" aria-label="Close">
                                         <div class="video_close_icon"></div>
                                     </div>
-                                    ${opts.showMinimize ? `<div id="__modalPlayerMinimize" class="video_top_button video_top_minimize">
+                                    ${opts.showMinimize ? `<div id="__modalPlayerMinimize" class="video_top_button video_top_minimize" title="Minimize">
                                         <div class="video_minimize_icon"></div>
                                     </div>` : ''}
+
                                 </div>
                             </div>
                             <div class="page_block">
@@ -284,7 +285,7 @@ vkify.once('contentFetcher', function() {
         },
 
         createModal(options) {
-            const { type, title, content, isPrivate, showMinimize, closeOnButtons, warnOnExit, uniqueName } = options;
+            const { type, title, content, isPrivate, showMinimize, hasSourceInline, closeOnButtons, warnOnExit, uniqueName } = options;
             
             if (this.hasActiveModal()) {
                 const activeModal = this.getActiveModal();
@@ -293,7 +294,7 @@ vkify.once('contentFetcher', function() {
                 }
             }
 
-            const template = this.createModalTemplate(type, { content, isPrivate, showMinimize });
+            const template = this.createModalTemplate(type, { content, isPrivate, showMinimize, hasSourceInline });
             
             const modal = new CMessageBox({
                 title: title || '',

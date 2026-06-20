@@ -240,7 +240,7 @@
 	opacity: 1;
 }
 .AudioPlaylistSnippet__actions .ActionButton--add:before {
-	background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png);
+	background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png);
 	background-position: 0 -15px;
 	transition: background-position 0.15s ease;
 }
@@ -248,7 +248,7 @@
 	background-position: 0 -30px;
 }
 .AudioPlaylistSnippet__actions .ActionButton--share:before {
-	background-image: url(/themepack/vkify16/3.3.3.7/resource/icons/video_actions.png);
+	background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png);
 	background-position: 0 -45px;
 }
 .AudioPlaylistSnippet__actions .ActionButton--more:after {
@@ -324,9 +324,6 @@
 .AudioPlaylistSnippet .ActionButton--shuffle__text {
 	color: var(--link-color);
 }
-.AudioPlaylistSnippet .ActionButton--all__text {
-	color: var(--link-color);
-}
 .AudioPlaylistSnippet .audio_row__title:before {
 	display: none;
 }
@@ -338,7 +335,6 @@
 	max-width: 100%;
 }
 .ActionButton--add__text,
-.ActionButton--all__text,
 .ActionButton--more__text,
 .ActionButton--share__text,
 .ActionButton--shuffle__text {

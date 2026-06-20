@@ -36,7 +36,7 @@
                 <div class="page_block wall_posts_tabs">
                     {include "../components/page_block_header.latte", title => $type == 'search' ? 'search_results' : 'wall'}
                 </div>
-                <div class="content scroll_container">
+                <div id="{$type == 'owners' ? 'owner_posts' : 'all_posts'}" class="content scroll_container">
                     <div class="page_block" style="margin: 0">
                     {include "../components/search_bar.latte",
                         id => 'wall_search',

@@ -154,7 +154,7 @@
                                 <div class="link">
                                     <a id="userMenuTrigger" data-tippy-content-id="userMenuTooltip" data-tippy-trigger="click" data-tippy-placement="bottom-end">
                                         <div id="userMenuName">{$thisUser->getFirstName()}</div>
-                                        <img id="userMenuAvatar" src="{if str_contains($thisUser->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$thisUser->getAvatarUrl('miniscule')}{/if}">
+                                        {include 'components/avatar.latte', author => $thisUser, size => 'miniscule', id => 'userMenuAvatar'}
                                         <div id="userMenuArrow"></div>
                                     </a>
                                 </div>

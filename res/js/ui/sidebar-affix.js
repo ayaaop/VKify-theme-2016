@@ -39,8 +39,9 @@ vkify.once("updateNarrow", () => {
 
         const toPx = (value) => Math.round(value) + 'px';
 
-        if ((st <= headH && !smallEnough) || tooBig) {
+        if (st <= pagePos - headH || tooBig) {
             styles = { marginTop: '0px' };
+            needFix = false;
         } else if (st <= Math.min(lastSt, barPos - headH) || smallEnough) {
             styles = { top: toPx(headH), marginLeft: toPx(marginLeft) };
             needFix = true;

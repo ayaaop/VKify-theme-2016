@@ -47,7 +47,7 @@
                                 </div>
                             </div>
                             <a href="{$correspondent->getURL()}" class="messenger-app--header--ava">
-                                <img class="post-avatar" src="{if str_contains($correspondent->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$correspondent->getAvatarUrl('miniscule')}{/if}" alt="{$correspondent->getCanonicalName()}" />
+                                {include '../components/avatar.latte', author => $correspondent, size => 'miniscule', alt => $correspondent->getCanonicalName(), class => 'post-avatar'}
                                 <div n:if="5 >= $diff->i" class="messenger-app--header--online"></div>
                             </a>
                         </div>
@@ -79,11 +79,7 @@
                     </div>
                     <div class="messenger-app--input">
                         {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
-                            {if str_contains($thisUser->getAvatarUrl('miniscule'), 'camera_200.png')}
-                                <img class="ava" src="/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png" alt="{$thisUser->getCanonicalName()}" />
-                            {else}
-                                <img class="ava" src="{$thisUser->getAvatarUrl('miniscule')}" alt="{$thisUser->getCanonicalName()}" />
-                            {/if}
+                            {include '../components/avatar.latte', author => $thisUser, size => 'miniscule', alt => $thisUser->getCanonicalName(), class => 'ava'}
                             <div class="messenger-app--input---messagebox">
                                 <textarea
                                         data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"

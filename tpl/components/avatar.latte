@@ -1,0 +1,28 @@
+{var $Club = openvk\Web\Models\Entities\Club::class}
+{var $User = openvk\Web\Models\Entities\User::class}
+
+{var $size = $size ?? 'miniscule'}
+{var $class = $class ?? 'post-avatar'}
+{var $width = $width ?? 50}
+{var $height = $height ?? null}
+{var $alt = $alt ?? ''}
+{var $url = $author->getAvatarUrl($size)}
+
+{if $author instanceof $User && ($author->isDeleted() || $author->isBanned() || $author->isDeactivated())}
+    {var $finalUrl = '/themepack/vkify16/'.$theme->getVersion().'/resource/deactivated_200.png'}
+{elseif str_contains($url, 'camera_200.png')}
+    {if $author instanceof $Club}
+        {var $finalUrl = '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png'}
+    {else}
+        {var $finalUrl = '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png'}
+    {/if}
+{else}
+    {var $finalUrl = $url}
+{/if}
+
+{var $style = $style ?? null}
+{var $onclick = $onclick ?? null}
+
+{var $data = $data ?? []}
+
+<img src="{$finalUrl}" class="{$class}" n:attr="width => $width, height => $height, alt => $alt, id => $id ?? null, style => $style, onclick => $onclick" {foreach $data as $k => $v}data-{$k}="{$v}" {/foreach}/>

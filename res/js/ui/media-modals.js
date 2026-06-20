@@ -7,7 +7,7 @@ vkify.once('mediaModals', function () {
     const findAuthor = window.find_author;
     const CF = window.ContentFetcher;
 
-    async function vkifyOpenVideo(video_arr = [], init_player = true, skipUrlUpdate = false) {
+    async function vkifyOpenVideo(video_arr = [], init_player = true, skipUrlUpdate = false, startAtTime = 0) {
         try {
             const loader = CF.createLoader();
             if (loader.isShown()) return;
@@ -67,7 +67,7 @@ vkify.once('mediaModals', function () {
                 <div class="video-player-container" style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%;">
                     <iframe
                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-                       src="https://www.youtube-nocookie.com/embed/${video_id}"
+                       src="https://www.youtube-nocookie.com/embed/${video_id}?autoplay=1&start=${Math.floor(startAtTime)}"
                        frameborder="0"
                        sandbox="allow-same-origin allow-scripts allow-popups"
                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -81,7 +81,7 @@ vkify.once('mediaModals', function () {
                         const author_name = `${author.first_name} ${author.last_name}`;
                         player_html = `
                     <div class="video-player-container" style="position: relative; width: 100%; height: 0; padding-bottom: 56.25%;">
-                        <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                        <div class='bsdn media' data-id="${pretty_id}" data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
                             <video class='media' data-src='${video_object.player}' style="width: 100%; height: 100%; object-fit: contain;"></video>
                         </div>
                     </div>
@@ -115,7 +115,23 @@ vkify.once('mediaModals', function () {
 
             if (video_object.platform != 'youtube' && video_object.is_processed) {
                 bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0]);
+                const modalPlayer = msgbox.getNode().find('.bsdn > video').nodes[0];
+                if (modalPlayer && startAtTime > 0) {
+                    if (!modalPlayer.src && modalPlayer.dataset.src) {
+                        modalPlayer.src = modalPlayer.dataset.src;
+                        modalPlayer.load();
+                    }
+                    modalPlayer.addEventListener('loadedmetadata', function() {
+                        modalPlayer.currentTime = startAtTime;
+                        modalPlayer.play();
+                    }, { once: true });
+                    if (modalPlayer.readyState >= 1) {
+                        modalPlayer.currentTime = startAtTime;
+                        modalPlayer.play();
+                    }
+                }
             }
+
 
             async function loadVideoInfo() {
                 u('#video_info_loader').html(`<div class="pr pr_medium"><div class="pr_bt"></div><div class="pr_bt"></div><div class="pr_bt"></div></div>`);
@@ -170,7 +186,6 @@ vkify.once('mediaModals', function () {
             CF.setupDimmerClose(msgbox);
             msgbox.getNode().find('#__modalPlayerClose').on('click', (e) => {
                 e.preventDefault();
-                u('.miniplayer').remove();
                 msgbox.close();
             });
 
@@ -182,173 +197,6 @@ vkify.once('mediaModals', function () {
             });
 
             updateVideoUrl(pretty_id);
-
-            msgbox.getNode().find('#__modalPlayerMinimize').on('click', (e) => {
-                e.preventDefault();
-
-                u('.miniplayer').remove();
-
-                const miniplayer = u(`
-            <div class='miniplayer' data-video-id="${pretty_id}">
-                <div class='miniplayer-head'>
-                    <b>${escapeHtml(video_object.title)}</b>
-                    <div class='miniplayer-head-buttons'>
-                        <div id='__miniplayer_return' title="Restore"></div>
-                        <div id='__miniplayer_close' title="Close"></div>
-                    </div>
-                </div>
-                <div class='miniplayer-body' style="overflow: hidden;"></div>
-            </div>
-        `);
-
-                msgbox.hide();
-
-                u('body').append(miniplayer);
-
-                const videoContent = msgbox.getNode().find('.video_block_layout').nodes[0];
-                if (videoContent) {
-                    miniplayer.find('.miniplayer-body').nodes[0].appendChild(videoContent);
-                }
-
-                const savedSettings = JSON.parse(localStorage.getItem('miniplayerSettings') || '{}');
-                const defaultSettings = {
-                    width: 320,
-                    height: 180,
-                    left: 20,
-                    bottom: 20
-                };
-                const settings = { ...defaultSettings, ...savedSettings };
-
-                miniplayer.attr('style', `position: fixed; left: ${settings.left}px; bottom: ${settings.bottom}px; z-index: 9999; width: ${settings.width}px; height: ${settings.height}px;`);
-
-                miniplayer.find('#__miniplayer_return').on('click', (e) => {
-                    e.preventDefault();
-
-                    const videoContent = miniplayer.find('.miniplayer-body > *').nodes[0];
-                    if (videoContent) {
-                        videoContent.style.width = '';
-                        videoContent.style.height = '';
-                        videoContent.style.position = '';
-                        videoContent.style.left = '';
-                        videoContent.style.top = '';
-
-                        const iframe = videoContent.querySelector('iframe');
-                        const video = videoContent.querySelector('video');
-
-                        if (iframe) {
-                            iframe.style.width = '100%';
-                            iframe.style.height = '100%';
-                        }
-
-                        if (video) {
-                            video.style.width = '100%';
-                            video.style.height = '100%';
-                            video.style.objectFit = 'contain';
-                        }
-
-                        const videoInfo = msgbox.getNode().find('.video_info').nodes[0];
-                        if (videoInfo && videoInfo.parentNode) {
-                            videoInfo.parentNode.insertBefore(videoContent, videoInfo);
-                        }
-                    }
-
-                    msgbox.reveal();
-                    u('.miniplayer').remove();
-                });
-
-                miniplayer.find('#__miniplayer_close').on('click', (e) => {
-                    e.preventDefault();
-                    msgbox.close();
-                    u('.miniplayer').remove();
-                });
-
-                function saveMiniplayerSettings() {
-                    const miniplayerNode = miniplayer.nodes[0];
-                    const rect = miniplayerNode.getBoundingClientRect();
-                    const settings = {
-                        width: miniplayerNode.offsetWidth,
-                        height: miniplayerNode.offsetHeight,
-                        left: rect.left,
-                        bottom: window.innerHeight - rect.bottom
-                    };
-                    localStorage.setItem('miniplayerSettings', JSON.stringify(settings));
-                }
-
-                window.$(miniplayer.nodes[0]).draggable({
-                    cursor: 'grabbing',
-                    containment: 'window',
-                    handle: '.miniplayer-head',
-                    cancel: '.miniplayer-head-buttons',
-                    stop: function () {
-                        saveMiniplayerSettings();
-                    }
-                });
-
-                function adjustVideoPlayerSize() {
-                    const miniplayerBody = miniplayer.find('.miniplayer-body').nodes[0];
-                    const videoBlockLayout = miniplayer.find('.video_block_layout').nodes[0];
-
-                    if (videoBlockLayout && miniplayerBody) {
-                        const bodyWidth = miniplayerBody.offsetWidth;
-                        const bodyHeight = miniplayerBody.offsetHeight;
-                        const aspectRatio = 16 / 9;
-
-                        let newWidth = bodyWidth;
-                        let newHeight = bodyWidth / aspectRatio;
-
-                        if (newHeight > bodyHeight) {
-                            newHeight = bodyHeight;
-                            newWidth = bodyHeight * aspectRatio;
-                        }
-
-                        videoBlockLayout.style.width = newWidth + 'px';
-                        videoBlockLayout.style.height = newHeight + 'px';
-                        videoBlockLayout.style.position = 'absolute';
-
-                        const leftOffset = (bodyWidth - newWidth) / 2;
-                        const topOffset = (bodyHeight - newHeight) / 2;
-                        videoBlockLayout.style.left = leftOffset + 'px';
-                        videoBlockLayout.style.top = topOffset + 'px';
-
-                        const iframe = videoBlockLayout.querySelector('iframe');
-                        const video = videoBlockLayout.querySelector('video');
-
-                        if (iframe) {
-                            iframe.style.width = '100%';
-                            iframe.style.height = '100%';
-                        }
-
-                        if (video) {
-                            video.style.width = '100%';
-                            video.style.height = '100%';
-                        }
-                    }
-                }
-
-                window.$(miniplayer.nodes[0]).resizable({
-                    maxHeight: 2000,
-                    maxWidth: 3000,
-                    minHeight: 150,
-                    minWidth: 200,
-                    resize: function () {
-                        adjustVideoPlayerSize();
-                    },
-                    stop: function () {
-                        saveMiniplayerSettings();
-                    }
-                });
-
-                setTimeout(adjustVideoPlayerSize, 100);
-
-                const resizeHandler = () => adjustVideoPlayerSize();
-                window.addEventListener('resize', resizeHandler);
-
-                const originalRemove = miniplayer.remove;
-                miniplayer.remove = function () {
-                    window.removeEventListener('resize', resizeHandler);
-                    return originalRemove.call(this);
-                };
-            });
 
             loader.hide();
         } catch (err) {

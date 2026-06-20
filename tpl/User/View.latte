@@ -62,16 +62,7 @@
 							{var $avatarSizes = $avatarPhoto ? $avatarPhoto->getSizes() : null}
 							{var $avatarNormal = $avatarSizes['normal'] ?? null}
 							<a href="{$user->getAvatarLink()|nocheck}" style="display: block; line-height: 0;">
-								<img src="{if $hasAvatar}{$user->getAvatarUrl('normal')}{else}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{/if}"
-									alt="{$user->getCanonicalName()}"
-									id="bigAvatar"
-									width="{$avatarNormal ? $avatarNormal->width : 200}"
-									height="{$avatarNormal ? $avatarNormal->height : 200}"
-									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
-									{if $avatarPhoto}
-									onclick="OpenMiniature(event, {$user->getAvatarUrl('normal')}, null, {$avatarPhoto->getPrettyId()}, null)"
-									{/if}
-								/>
+								{include '../components/avatar.latte', author => $user, size => 'normal', id => 'bigAvatar', width => ($avatarNormal ? $avatarNormal->width : 200), height => ($avatarNormal ? $avatarNormal->height : 200), alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;', onclick => ($avatarPhoto ? "event.preventDefault(); OpenMiniature(event, '{$user->getAvatarUrl('normal')}', null, '{$avatarPhoto->getPrettyId()}', null);" : null), class => ''}
 							</a>
 						</div>
 					</div>
@@ -238,11 +229,7 @@
 								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriends(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
-											<img class="people_cell_img" width="50" height="50" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
-											{else}
-												{$friend->getAvatarUrl()}
-											{/if}" alt="{$friend->getFirstName()}" />
+											{include '../components/avatar.latte', author => $friend, size => 'miniscule', width => 50, height => 50, alt => $friend->getFirstName(), class => 'people_cell_img'}
 										</a>
 										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
 									</div>
@@ -264,11 +251,7 @@
 								<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($user->getFriendsOnline(1)), 0, 6), 3) as $friendRow">
 									<div class="people_cell" n:foreach="$friendRow as $friend">
 										<a class="people_cell_ava" href="{$friend->getURL()}">
-												<img class="people_cell_img" width="50" height="50" src="{if str_contains($friend->getAvatarUrl(), 'camera_200.png')}
-													/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png
-												{else}
-													{$friend->getAvatarUrl()}
-												{/if}" alt="{$friend->getFirstName()}" />
+												{include '../components/avatar.latte', author => $friend, size => 'miniscule', width => 50, height => 50, alt => $friend->getFirstName(), class => 'people_cell_img'}
 										</a>
 										<div class="people_cell_name"><a href="{$friend->getURL()}">{$friend->getFirstName()}</a></div>
 									</div>
@@ -309,11 +292,7 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(iterator_to_array($user->getClubs(1)), 0, 5) as $club">
 									<div class="thumb">
 										<a href="club{$club->getId()}">
-											<img class="cell_img" width="40" height="40" src="{if str_contains($club->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
-											{else}
-												{$club->getAvatarUrl()}
-											{/if}" alt="{$club->getCanonicalName()}" />
+											{include '../components/avatar.latte', author => $club, size => 'miniscule', width => 40, height => 40, alt => $club->getCanonicalName(), class => 'cell_img'}
 										</a>
 									</div>
 									<div class="desc_info">
@@ -340,11 +319,7 @@
 								<div class="line_cell clear_fix" n:foreach="array_slice(iterator_to_array($user->getMeetings(1)), 0, 5) as $meeting">
 									<div class="thumb">
 										<a href="/event{$meeting->getId()}">
-											<img class="cell_img" width="40" height="40" src="{if str_contains($meeting->getAvatarUrl(), 'camera_200.png')}
-												/themepack/vkify16/{$theme->getVersion()}/resource/community_200.png
-											{else}
-												{$meeting->getAvatarUrl()}
-											{/if}" alt="{$meeting->getName()}" />
+											{include '../components/avatar.latte', author => $meeting, size => 'miniscule', width => 40, height => 40, alt => $meeting->getName(), class => 'cell_img'}
 										</a>
 									</div>
 									<div class="desc_info">

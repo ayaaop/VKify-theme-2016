@@ -36,17 +36,7 @@
 <div data-id="{$post->getPrettyId()}" n:attr="data-uniqueid => (!$compact && $scrollNode) ? $post->getPrettyId() : null" n:class="post, ($post->isExplicit() && (!isset($thisUser) || $thisUser->getNsfwTolerance() < 2)) ? post-nsfw, $compact ? copy_quote, !$compact ? page_block, !$compact && $scrollNode ? scroll_node">
     <div class="post_header">
         <a class="post_image{if !$post->isPostedOnBehalfOfGroup() && $author->isOnline()} online{/if}{if in_array($onlinePlatform, ['android', 'iphone', 'mobile'])} mobile{/if}" href="{$author->getURL()}">
-            {if $author instanceof \openvk\Web\Models\Entities\Club}
-                <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                    ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' : $author->getAvatarUrl('miniscule')}" 
-                    width="50" 
-                    class="post-avatar" />
-            {else}
-                <img src="{str_contains($author->getAvatarUrl('miniscule'), 'camera_200.png') 
-                    ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png' : $author->getAvatarUrl('miniscule')}" 
-                    width="50" 
-                    class="post-avatar" />
-            {/if}
+            {include 'avatar.latte', author => $author, size => 'miniscule', width => 50, class => 'post-avatar'}
         </a>
         <div class="post_header_info">
             <div class="post_author">
