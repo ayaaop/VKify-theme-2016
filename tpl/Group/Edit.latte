@@ -76,19 +76,26 @@
                                 <input type="hidden" name="ava" value="" />
                                 <div class="form_separator"></div>
                                 <div class="form_field">
-                                    <div class="form_label">Banner</div>
+                                    <div class="form_label"><vkifyloc name="banner"/></div>
                                     <div class="form_data">
                                         {var $proxySecret = "openvk_proxy_secret_123"}
                                         {var $date = date('Y-m-d')}
                                         {var $uploadToken = hash('sha256', $club->getId() . $date . $proxySecret)}
-                                        <button type="button" class="button button_gray" onclick="openBannerUploadModal()">Upload Banner</button>
-                                        <div id="bannerUploadStatus" style="margin-top: 8px; color: #818c99;"></div>
+                                        <button type="button" class="button button_gray" onclick="openBannerUploadModal()"><vkifyloc name="upload_banner"/></button>
+                                        <div id="bannerUploadStatus" style="margin-top: 8px; color: var(--muted-text-color);"></div>
                                         <script>
                                             function openBannerUploadModal() {
+                                                var locUploadBanner = window.vkifylang && window.vkifylang['upload_banner'] ? window.vkifylang['upload_banner'] : 'Upload Banner';
+                                                var locDesc1 = window.vkifylang && window.vkifylang['upload_banner_desc1'] ? window.vkifylang['upload_banner_desc1'] : 'Upload a banner for this group.';
+                                                var locDesc2 = window.vkifylang && window.vkifylang['upload_banner_desc2'] ? window.vkifylang['upload_banner_desc2'] : 'The image should be at least 1590x400 pixels.';
+                                                var locSelectArea = window.vkifylang && window.vkifylang['select_visible_area'] ? window.vkifylang['select_visible_area'] : 'Select the visible area for the banner';
+                                                var locCancel = typeof tr !== "undefined" ? tr('cancel') : 'Cancel';
+                                                var locUpload = typeof tr !== "undefined" ? tr('save') : 'Upload';
+                                                
                                                 var body = `
                                                 <div id="bannerUpload">
-                                                    <p>Upload a banner for this group.</p>
-                                                    <p>The image should be at least 1590x400 pixels.</p><br>
+                                                    <p>` + locDesc1 + `</p>
+                                                    <p>` + locDesc2 + `</p><br>
                                                     <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">
                                                         Browse
                                                         <input accept="image/*" type="file" id="_bannerInput" hidden style="display: none;">
@@ -97,21 +104,22 @@
                                                 </div>
                                                 `;
 
-                                                var msg = MessageBox('Upload Banner', body, ['Cancel'], [function() {}]);
-                                                msg.attr("style", "width: 600px;");
+                                                var msgInst = MessageBox(locUploadBanner, body, [locCancel], [function() {}], true);
+                                                var msg = msgInst.getNode ? msgInst.getNode() : msgInst;
+                                                msg.attr("style", "width: 800px;");
                                                 document.querySelector(".ovk-diag-body").style.padding = "13px";
 
                                                 $("#bannerUpload input").on("change", function(ev) {
                                                     var image = URL.createObjectURL(ev.currentTarget.files[0]);
                                                     $(".ovk-diag-body")[0].innerHTML = `
-                                                        <span>Select the visible area for the banner</span>
-                                                        <div class="cropper-image-cont" style="max-height: 274px;">
+                                                        <span style="display: block; margin-bottom: 10px;">` + locSelectArea + `</span>
+                                                        <div class="cropper-image-cont" style="width: 100%; height: 350px;">
                                                             <img src="` + image + `" id="temp_bannerUploadPic" style="max-width: 100%;">
                                                         </div>
                                                     `;
 
                                                     document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
-                                                        <button class="button" style="margin-left: 4px;" id="_uploadBannerImg">Upload</button>
+                                                        <button class="button" style="margin-left: 4px;" id="_uploadBannerImg">` + locUpload + `</button>
                                                     `);
 
                                                     var imageDiv = document.getElementById('temp_bannerUploadPic');
@@ -136,7 +144,7 @@
                                                         }
                                                     });
 
-                                                    msg.attr("style", "width: 487px;");
+                                                    msg.attr("style", "width: 800px;");
 
                                                     document.querySelector("#_uploadBannerImg").onclick = function() {
                                                         document.querySelector("#_uploadBannerImg").classList.add("lagged");
@@ -155,8 +163,7 @@
                                                                 method: 'POST',
                                                                 body: formdata
                                                             }).then(function(r) { return r.json(); }).then(function(res) {
-                                                                u(".ovk-diag-cont").remove();
-                                                                u("body").removeClass("dimmed");
+                                                                if(msgInst.close) msgInst.close(); else msgInst.hide();
                                                                 var status = document.getElementById('bannerUploadStatus');
                                                                 if (res.success) {
                                                                     status.innerText = 'Banner uploaded successfully!';
@@ -164,8 +171,7 @@
                                                                     status.innerText = 'Error: ' + res.error;
                                                                 }
                                                             }).catch(function(err) {
-                                                                u(".ovk-diag-cont").remove();
-                                                                u("body").removeClass("dimmed");
+                                                                if(msgInst.close) msgInst.close(); else msgInst.hide();
                                                                 document.getElementById('bannerUploadStatus').innerText = 'Error: ' + err;
                                                             });
                                                         }, 'image/jpeg', 0.9);

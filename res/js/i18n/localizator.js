@@ -82,6 +82,11 @@ let locales = {
 		feed_user_ignored: "User hidden from feed.",
 		feed_club_ignored: "Group hidden from feed.",
 		feed_unignore: "Undo",
+		banner: "Banner",
+		upload_banner: "Upload banner",
+		upload_banner_desc1: "Upload a banner for this group.",
+		upload_banner_desc2: "The image should be at least 1590x400 pixels.",
+		select_visible_area: "Select the visible area for the banner"
 	},
 	ru: {
 		language: "Язык",
@@ -168,6 +173,11 @@ let locales = {
 		feed_club_ignored: "Сообщество скрыто из ленты.",
 		feed_unignore: "Отменить",
 		restore: "Восстановить",
+		banner: "Обложка",
+		upload_banner: "Загрузить обложку",
+		upload_banner_desc1: "Загрузите обложку для этого сообщества.",
+		upload_banner_desc2: "Изображение должно быть размером не менее 1590x400 пикселей.",
+		select_visible_area: "Выберите видимую область обложки"
 	},
 	uk: {
 		language: "Мова",
@@ -254,6 +264,11 @@ let locales = {
 		feed_club_ignored: "Спільноту приховано з стрічки.",
 		feed_unignore: "Скасувати",
 		restore: "Відновити",
+		banner: "Обкладинка",
+		upload_banner: "Завантажити обкладинку",
+		upload_banner_desc1: "Завантажте обкладинку для цієї спільноти.",
+		upload_banner_desc2: "Зображення має бути розміром не менше 1590x400 пікселів.",
+		select_visible_area: "Виберіть видиму область обкладинки"
 	},
 	kk: {
 		language: "Тіл",
@@ -339,6 +354,11 @@ let locales = {
 		feed_club_ignored: "Бірлестік таспадан жасырылды.",
 		feed_unignore: "Болдырмау",
 		restore: "Қалпына келтіру",
+		banner: "Мұқаба",
+		upload_banner: "Мұқабаны жүктеу",
+		upload_banner_desc1: "Бұл бірлестік үшін мұқабаны жүктеңіз.",
+		upload_banner_desc2: "Сурет кемінде 1590x400 пиксель болуы керек.",
+		select_visible_area: "Мұқабаның көрінетін аймағын таңдаңыз"
 	},
 };
 
