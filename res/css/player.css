@@ -408,7 +408,7 @@ time.bsdn_timeFull,
 .bsdn-player .bsdn_teaser {
     width: 100%;
     height: 100%;
-    background: var(--post-image);
+    background: var(--post-image) center/contain no-repeat !important;
     border-radius: 0;
     padding: 0;
     position: absolute;
@@ -416,6 +416,10 @@ time.bsdn_timeFull,
     left: 0;
     display: block;
     box-sizing: border-box;
+}
+
+.bsdn-player.bsdn-dirty .bsdn_teaser {
+    background: transparent !important;
 }
 
 .video_item {
@@ -531,4 +535,31 @@ time.bsdn_timeFull,
     pointer-events: none;
     transition: .2s opacity ease-in-out;
     transition-delay: 0;
+}
+.bsdn-player {
+    container-type: inline-size;
+}
+
+@container (max-width: 480px) {
+    .bsdn_titleBar,
+    .bsdn_settingsButton,
+    .bsdn_fullScreenButton,
+    .bsdn_repeatButton,
+    .bsdn_timeWrap,
+    .bsdn_volumeWrap {
+        display: none !important;
+    }
+    
+    .bsdn_controls {
+        height: 40px !important;
+        padding: 0 8px !important;
+    }
+}
+
+@container (min-width: 481px) and (max-width: 600px) {
+    .bsdn_titleBar,
+    .bsdn_settingsButton,
+    .bsdn_volumeWrap {
+        display: none !important;
+    }
 }

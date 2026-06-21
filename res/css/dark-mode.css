@@ -101,7 +101,7 @@ body.dark-mode {
 	--album-background-color: #323233;
 	--album-title-muted-color: #858585;
 	--profile-border-color: #454546;
-	--profile-button-border-color: #71aaeb;
+	--profile-button-border-color: #cccccc;
 }
 
 body.dark-mode .sidebar_inner .link::before, body.dark-mode .post-attach-menu__icon, body.dark-mode .page_upload_label, body.dark-mode .home_navigation .top_nav_btn_icon {
