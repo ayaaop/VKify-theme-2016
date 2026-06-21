@@ -23,6 +23,6 @@
 {var $style = $style ?? null}
 {var $onclick = $onclick ?? null}
 
-{var $data = $data ?? []}
+{var $dataAttrs = $dataAttrs ?? []}
 
-<img src="{$finalUrl}" class="{$class}" n:attr="width => $width, height => $height, alt => $alt, id => $id ?? null, style => $style, onclick => $onclick" {foreach $data as $k => $v}data-{$k}="{$v}" {/foreach}/>
+<img src="{$finalUrl}" class="{$class}" n:attr="width => $width, height => $height, alt => $alt, id => $id ?? null, style => $style, onclick => $onclick" {foreach $dataAttrs as $k => $v}data-{$k}="{$v}" {/foreach}/>
