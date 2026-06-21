@@ -1472,6 +1472,8 @@ function bindWallSearchOnce() {
         if (tabs.classList.contains('ui_tabs_search_opened')) return;
 
         e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
         tabs.classList.add('ui_tabs_search_opened');
         const input = tabs.querySelector('.ui_search_field');
         if (input) input.focus();
