@@ -65,6 +65,7 @@ body.dark-mode {
 	/* Success colors */
 	--success-color: #5cb85c;
 	--success-color--hover: #6fd16f;
+	--success-color--active: #4BAA4B;
 	--success-text-color: var(--white);
 
 	/* Audio player colors */
@@ -96,6 +97,9 @@ body.dark-mode {
 	--message-warning-background: #3d2c28;
 	--message-warning-border: #e64d4d;
 	--overlay-background: rgba(0, 0, 0, 0.85);
+
+	--elevator-bg-color: #272727;
+	--elevator-text-color: #a5a5a5;
 
 	/* Profile page colors */
 	--album-background-color: #323233;

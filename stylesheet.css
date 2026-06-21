@@ -99,6 +99,7 @@ body {
     /* Success colors */
     --success-color: #5fb053;
     --success-color--hover: #68b35d;
+    --success-color--active: #4e9e45;
     --success-text-color: var(--white);
 
     /* Audio player colors */
@@ -425,7 +426,7 @@ textarea:focus {
     z-index: 1;
     opacity: 1;
     padding-top: 13px;
-    transition: padding 500ms ease;
+    transition: 250ms ease;
 }
 .toTop nobr {
     padding: 0 24px;
@@ -434,6 +435,7 @@ textarea:focus {
 }
 .toTop #wrap {
     opacity: 0;
+    transition: 250ms ease;
 }
 body.scrolled .toTop {
     padding-top: 60px;
@@ -3731,11 +3733,11 @@ a.poll-retract-vote,
     margin: 0;
     flex: 1;
 }
-.docListViewItem .doc_content b {
+.docListViewItem .doc_content b,.docListViewItem .doc_content span {
     color: var(--text-color);
 }
 .docListViewItem .doc_content .doc_content_info,
-.docListViewItem .doc_content span {
+.docListViewItem .doc_content .doc_content_info span {
     color: var(--muted-text-color);
 }
 .docGalleryItem {

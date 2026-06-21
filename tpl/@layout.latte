@@ -360,7 +360,7 @@
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_log_in}" class="button" style="display: inline-block;" />
-                            <a href="/reg"><input type="button" value="{_registration}" class="button button_blue" style="font-family: Tahoma" /></a><br><br>
+                            <a href="/reg"><input type="button" value="{_registration}" class="button button_blue" /></a><br><br>
                             {if !\OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}
                             <div class="forgot">
                                 <a href="/restore">{_forgot_password}</a>

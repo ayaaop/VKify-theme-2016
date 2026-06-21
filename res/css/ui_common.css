@@ -495,6 +495,10 @@ input[type="submit"].button_green:hover {
   background-color: var(--success-color--hover);
   color: var(--success-text-color);
 }
+.button.button_green:active {
+  background-color: var(--success-color--active);
+  color: var(--success-text-color);
+}
 
 .button.button_light,
 #profile_link,
