@@ -669,7 +669,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_actions {
-  padding-top: 8px;
+  padding-top: 10px;
 }
 
 .profile_msg_split .cut_left,
@@ -721,6 +721,10 @@ div.avatar_block:hover .avatar_variants {
   border-right: 9px solid transparent;
 }
 
+.button + .profile_actions_split, .profile_msg_split + .profile_actions_split {
+  margin-top: 10px;
+}
+
 .profile_actions_split {
   display: flex;
   justify-content: end;
@@ -728,7 +732,7 @@ div.avatar_block:hover .avatar_variants {
 
 .profile_actions_split .profile_link_form {
   flex: 1;
-  margin-right: 5px;
+  margin-right: 7px;
   display: inline-block;
 }
 .profile_actions_split .profile_link_form:last-child {
