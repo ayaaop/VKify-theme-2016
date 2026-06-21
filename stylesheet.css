@@ -510,7 +510,7 @@ body.scrolled .toTop:hover #wrap {
     font-size: 14px;
     color: var(--header-text-color);
     font-weight: 700;
-    margin: 0 8px 12px;
+    margin: 0 8px 11px;
     border-left: 1px solid var(--header-text-color);
     padding-left: 8px;
     white-space: nowrap;
@@ -2452,7 +2452,8 @@ table,
 .post-signature,
 .post .sourceDiv,
 .post .post-geo {
-    margin: 0 20px 15px;
+    margin: 0 20px 0;
+    padding-bottom: 15px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -4129,6 +4130,7 @@ ul.im-page--dcontent {
     height: 71px;
     box-sizing: border-box;
     padding: 10px 0;
+    overflow: hidden;
 }
 .nim-dialog.nim-dialog_classic .nim-dialog--name {
     height: 19px;
