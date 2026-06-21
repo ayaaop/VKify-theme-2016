@@ -1756,3 +1756,4 @@ select:focus {
   opacity: 0;
   transition: opacity 150ms ease;
 }
+.ui_tabs_search_opened .ui_tab_search_wrap .ui_search { display: block; }
