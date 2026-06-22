@@ -17,6 +17,16 @@ const defaultTippyConfig = {
     allowHTML: true
 };
 
+const TIPPY_PRESETS = {
+    'dropdown': {
+        arrow: false,
+        offset: [0, 0],
+        animation: 'none',
+        duration: 0,
+        trigger: 'click'
+    }
+};
+
 function hasTippyInstance(element) {
     return element && (element._tippy || element.hasAttribute('aria-describedby'));
 }
@@ -169,11 +179,15 @@ function initializeTooltip(triggerElement) {
         return false;
     }
     
-    const placement = triggerElement.getAttribute('data-tippy-placement') || defaultTippyConfig.placement;
+    const presetName = triggerElement.getAttribute('data-tippy-preset');
+    const presetConfig = presetName && TIPPY_PRESETS[presetName] ? TIPPY_PRESETS[presetName] : {};
+
+    const placement = triggerElement.getAttribute('data-tippy-placement') || presetConfig.placement || defaultTippyConfig.placement;
     
     try {
-        tippy(triggerElement, {
+        const config = {
             ...defaultTippyConfig,
+            ...presetConfig,
             placement,
             content: clonedContent,
             onShow(instance) {
@@ -190,7 +204,9 @@ function initializeTooltip(triggerElement) {
                 }
                 defaultTippyConfig.onDestroy?.();
             }
-        });
+        };
+
+        tippy(triggerElement, config);
         return true;
     } catch (error) {
         console.error('[Tooltips] Error creating Tippy instance:', error);
@@ -278,21 +294,43 @@ window.Tooltips = {
 // Backward-compatible helper used by router patches (ported from old tippys.js)
 window.initializeTippys = function initializeTippys() {
     const userMenuTrigger = ge('userMenuTrigger');
-    if (!userMenuTrigger?._tippy) return;
+    if (userMenuTrigger?._tippy) {
+        const tippyInstance = userMenuTrigger._tippy;
+        const { onShow: originalOnShow, onHide: originalOnHide } = tippyInstance.props;
 
-    const tippyInstance = userMenuTrigger._tippy;
-    const { onShow: originalOnShow, onHide: originalOnHide } = tippyInstance.props;
+        tippyInstance.setProps({
+            onShow: (instance) => {
+                originalOnShow?.(instance);
+                instance.reference.classList.add('shown');
+            },
+            onHide: (instance) => {
+                originalOnHide?.(instance);
+                instance.reference.classList.remove('shown');
+            }
+        });
+    }
 
-    tippyInstance.setProps({
-        onShow: (instance) => {
-            originalOnShow?.(instance);
-            instance.reference.classList.add('shown');
-        },
-        onHide: (instance) => {
-            originalOnHide?.(instance);
-            instance.reference.classList.remove('shown');
-        }
-    });
+    const profileMoreBtn = ge('profile_more_btn');
+    if (profileMoreBtn?._tippy) {
+        const tippyInstance = profileMoreBtn._tippy;
+        const { onShow: origShow, onHide: origHide } = tippyInstance.props;
+
+        tippyInstance.setProps({
+            onShow: (instance) => {
+                origShow?.(instance);
+                const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
+                if (wrapper) wrapper.classList.add('profile_more_active');
+            },
+            onHide: (instance) => {
+                origHide?.(instance);
+                // We don't remove active here because the DOM node is still present during unmount phase!
+            },
+            onHidden: (instance) => {
+                const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
+                if (wrapper) wrapper.classList.remove('profile_more_active');
+            }
+        });
+    }
 };
 
 function setupTooltipObserver() {

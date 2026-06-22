@@ -9,21 +9,7 @@
                                 style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
                         </div>
                     </div>
-                    <div class="profile_actions clear_fix" n:if="isset($thisUser)" n:ifcontent>
-                        {var $subStatus = $user->getSubscriptionStatus($thisUser)}
-                        {var $actions = [
-                            2 => ['act' => 'rem', 'label' => tr('friends_reject')],
-                            3 => ['act' => 'rem', 'label' => tr('friends_delete')]
-                        ]}
-                        {if isset($actions[$subStatus])}
-                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
-                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
-                                <input type="hidden" name="id"  value="{$user->getId()}" />
-                                <input type="hidden" name="hash" value="{$csrfToken}" />
-                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide button_gray" />
-                            </form>
-                        {/if}
-                    </div>
+					{include '../components/profile_actions.latte'}
                 </div>
             </div>
         </div>
@@ -56,7 +42,7 @@
         </div>
     </div>
 </div>
-{if isset($thisUser)}
+{ifset $thisUser}
     <script n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
         function unbanUser() {
             uUnbanMsgTxt  = "Вы собираетесь разбанить пользователя " + {$user->getCanonicalName()} + ".";
@@ -77,9 +63,7 @@
             ]);
         }
     </script>
-{/if}
-{if isset($thisUser)}
-    <script n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\\Web\\Models\\Entities\\TicketReply')->whichBelongsTo(0)">
+    <script n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
         {if $user->isBannedInSupport()}
             function toggleBanInSupport() {
                 uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
@@ -121,4 +105,4 @@
             }
         {/if}
     </script>
-{/if}
+{/ifset}

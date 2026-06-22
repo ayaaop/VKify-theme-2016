@@ -9,9 +9,7 @@
             <div class="page_block photo_block">
                 <div class="avatar_block">
                     <div class="avatar_block_inner">
-                        <img src="{$thisUser->getAvatarUrl('normal')}"
-                             alt="{$thisUser->getCanonicalName()}"
-                             style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                        {include './components/avatar.latte', author => $thisUser, size => 'normal', alt => $thisUser->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;'}
                     </div>
                 </div>
             </div>

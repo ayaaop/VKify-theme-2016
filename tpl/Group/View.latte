@@ -26,15 +26,7 @@
 							{var $avatarSizes = $avatarPhoto ? $avatarPhoto->getSizes() : null}
 							{var $avatarNormal = $avatarSizes['normal'] ?? null}
 							<a href="{$avatarLink|nocheck}" style="display: block; line-height: 0;">
-								<img src="{str_contains($club->getAvatarUrl('normal'), 'camera_200.png') ? '/themepack/vkify16/'.$theme->getVersion().'/resource/community_200.png' : $club->getAvatarUrl('normal')}"
-									id="bigAvatar"
-									width="{$avatarNormal ? $avatarNormal->width : 200}"
-									height="{$avatarNormal ? $avatarNormal->height : 200}"
-									style="width: 100%; image-rendering: -webkit-optimize-contrast;"
-									{if $avatarPhoto}
-									onclick="OpenMiniature(event, {$club->getAvatarUrl('normal')}, null, {$avatarPhoto->getPrettyId()}, null)"
-									{/if}
-									/>
+								{include '../components/avatar.latte', author => $club, size => 'normal', id => 'bigAvatar', width => ($avatarNormal ? $avatarNormal->width : 200), height => ($avatarNormal ? $avatarNormal->height : 200), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;', onclick => ($avatarPhoto ? "event.preventDefault(); OpenMiniature(event, '{$club->getAvatarUrl('normal')}', null, '{$avatarPhoto->getPrettyId()}', null);" : null)}
 							</a>
 						</div>
 					</div>
@@ -54,32 +46,37 @@
 										<input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
 									</form>
 								{/if}
-								<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn" data-tippy-content-id="profile_actions_tooltip" data-tippy-placement="bottom-end" data-tippy-trigger="click"><span class="clear_fix">&nbsp;</span></button>
-								<div id="profile_actions_tooltip" class="tippy-content-template">
-									<div class="tippy-menu">
-										{if $canEdit}
-											<a href="/club{$club->getId()}/edit">{_edit_group}</a>
-											<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
-											{var $clubPinned = $thisUser->isClubPinned($club)}
-											<a href="/groups_pin?club={$club->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$club->getName()}" data-group-url="{$club->getUrl()}">
-												{if $clubPinned}
-													{_remove_from_left_menu}
-												{else}
-													{_add_to_left_menu}
-												{/if}
+								<div class="profile_more_wrapper">
+									<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn" data-tippy-content-id="profile_actions_tooltip" data-tippy-placement="bottom-end" data-tippy-preset="dropdown">
+										{_actions}
+										<span class="clear_fix">&nbsp;</span>
+									</button>
+									<div id="profile_actions_tooltip" class="tippy-content-template">
+										<div class="tippy-menu">
+											{if $canEdit}
+												<a href="/club{$club->getId()}/edit">{_edit_group}</a>
+												<a href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
+												{var $clubPinned = $thisUser->isClubPinned($club)}
+												<a href="/groups_pin?club={$club->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$club->getName()}" data-group-url="{$club->getUrl()}">
+													{if $clubPinned}
+														{_remove_from_left_menu}
+													{else}
+														{_add_to_left_menu}
+													{/if}
+												</a>
+												<div class="separator"></div>
+											{/if}
+											{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+												<a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
+												<a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
+												<div class="separator"></div>
+											{/if}
+											<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+												{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
 											</a>
-											<div class="separator"></div>
-										{/if}
-										{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-											<a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
-											<a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
-											<div class="separator"></div>
-										{/if}
-										<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
-											{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
-										</a>
-										{var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
-										<a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+											{var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+											<a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -108,7 +105,7 @@
 								<div class="people_cell" n:foreach="$followerRow as $follower">
 									<a class="people_cell_ava" href="{$follower->getURL()}">
 										<div class="people_cell_img">
-											<img src="{if str_contains($follower->getAvatarUrl('miniscule'), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$follower->getAvatarUrl('miniscule')}{/if}" width="50" height="50" alt="{$follower->getFirstName()}">
+											{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName()}
 										</div>
 									</a>
 									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
@@ -244,7 +241,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $author, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -272,7 +269,7 @@
 								{var $author = $club->getOwner()}
 								<div class="thumb">
 									<a href="{$author->getURL()}">
-										<img class="cell_img" src="{if str_contains($author->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$author->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $author, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($club->getOwnerComment()) ? 'info' : 'desc_info'">
@@ -284,7 +281,7 @@
 								{var $user = $manager->getUser()}
 								<div class="thumb">
 									<a href="{$user->getURL()}">
-										<img class="cell_img" src="{if str_contains($user->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$user->getAvatarUrl()}{/if}">
+										{include '../components/avatar.latte', author => $user, size => 'miniscule', class => 'cell_img'}
 									</a>
 								</div>
 								<div n:class="empty($manager->getComment()) ? 'info' : 'desc_info'">

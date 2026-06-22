@@ -8,32 +8,10 @@
                 <div class="page_block photo_block">
                     <div class="avatar_block">
                         <div class="avatar_block_inner">
-                            {if str_contains($user->getAvatarUrl('miniscule'), 'camera_200.png')}
-                                <img src="/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png"
-                                    alt="{$user->getCanonicalName()}"
-                                    style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-                            {else}
-                                <img src="{$user->getAvatarUrl('normal')}"
-                                    alt="{$user->getCanonicalName()}"
-                                    style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-                            {/if}
+                            {include '../components/avatar.latte', author => $user, size => 'normal', alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;'}
                         </div>
                     </div>
-                    <div class="profile_actions clear_fix" n:if="isset($thisUser)" n:ifcontent>
-                        {var $subStatus = $user->getSubscriptionStatus($thisUser)}
-                        {var $actions = [
-                            2 => ['act' => 'rem', 'label' => tr('friends_reject')],
-                            3 => ['act' => 'rem', 'label' => tr('friends_delete')]
-                        ]}
-                        {if isset($actions[$subStatus])}
-                            <form action="/setSub/user" method="post" class="profile_link_form fl_l" style="width: 100%">
-                                <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
-                                <input type="hidden" name="id"  value="{$user->getId()}" />
-                                <input type="hidden" name="hash" value="{$csrfToken}" />
-                                <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide button_gray" />
-                            </form>
-                        {/if}
-                    </div>
+					{include '../components/profile_actions.latte'}
                 </div>
             </div>
         </div>

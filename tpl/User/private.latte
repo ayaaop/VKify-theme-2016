@@ -8,9 +8,7 @@
 				<div class="page_block photo_block">
                     <div class="avatar_block">
 						<div class="avatar_block_inner">
-                            <img src="{$user->getAvatarUrl('normal')}"
-                                alt="{$user->getCanonicalName()}"
-                                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                            {include '../components/avatar.latte', author => $user, size => 'normal', alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;'}
                         </div>
                     </div>
                     <div class="profile_actions clear_fix" n:if="isset($thisUser)">

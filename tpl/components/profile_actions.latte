@@ -1,0 +1,115 @@
+<div class="profile_actions clear_fix">
+	{ifset $thisUser}
+		{if $user->getId() != $thisUser->getId()}
+			{if !$user->isBanned() && !$user->isDeleted() && !$user->isDeactivated() && !$user->isBlacklistedBy($thisUser) && !$thisUser->isBlacklistedBy($user)}
+				{if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
+					{if $user->getPrivacyPermission('messages.write', $thisUser)}
+						<div class="profile_msg_split">
+							<div class="cut_left">
+								<a class="button button_blue profile_btn_cut_left profile_action_btn button_wide" href="/im?sel={$user->getId()}">
+									{_send_message}
+								</a>
+							</div>
+							<div class="cut_right">
+								<a class="button button_blue profile_btn_cut_right profile_action_btn" href="/gifts?act=pick&user={$user->getId()}">
+									<span class="profile_gift_icon"></span>
+								</a>
+							</div>
+						</div>
+					{else}
+						<a class="button button_blue profile_action_btn button_wide" href="/gifts?act=pick&user={$user->getId()}">
+							<span class="profile_gift_icon"></span> {_gift}
+						</a>
+					{/if}
+				{else}
+					<a class="button button_blue button_wide" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}">
+						{_send_message}
+					</a>
+				{/if}
+			{/if}
+			{var $subStatus = $user->getSubscriptionStatus($thisUser)}
+			<div class="profile_actions_split">
+				{var $actions = [
+					0 => ['act' => 'add', 'label' => tr('friends_add')],
+					1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+					2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+					3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+				]}
+				{if isset($actions[$subStatus])}
+					<form action="/setSub/user" method="post" class="profile_link_form fl_l">
+						<input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+						<input type="hidden" name="id"  value="{$user->getId()}" />
+						<input type="hidden" name="hash" value="{$csrfToken}" />
+						<input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+					</form>
+				{/if}
+				<div class="profile_more_wrapper">
+					<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn" data-tippy-content-id="profile_actions_tooltip" data-tippy-placement="bottom-end" data-tippy-preset="dropdown">
+						{_actions}
+						<span class="clear_fix">&nbsp;</span>
+					</button>
+					<div id="profile_actions_tooltip" class="tippy-content-template">
+						<div class="tippy-menu">
+							{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+								{if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+									<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+										{tr("login_as", $user->getFirstName())}
+									</a>
+								{/if}
+								<a href="/admin/users/id{$user->getId()}">
+									{_manage_user_action}
+								</a>
+								{var $isBanned = $user->isBanned()}
+								<a href="javascript:{if $isBanned}unbanUser(){else}banUser(){/if}">
+									{if $isBanned}{_unban_user_action}{else}{_ban_user_action}{/if}
+								</a>
+								<a href="javascript:warnUser()">
+									{_warn_user_action}
+								</a>
+								<a href="/admin/user{$user->getId()}/bans">
+									{_blocks}
+								</a>
+								<a href="/admin/logs?uid={$user->getId()}">
+									{_last_actions}
+								</a>
+								<div class="separator"></div>
+							{/if}
+							{if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+								<a href="javascript:toggleBanInSupport()">
+									{if $user->isBannedInSupport()}
+										{_unban_in_support_user_action}
+									{else}
+										{_ban_in_support_user_action}
+									{/if}
+								</a>
+							{/if}
+							<div class="separator"></div>
+							{var $isBlacklisted = $user->isBlacklistedBy($thisUser)}
+							<a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="{if $isBlacklisted}0{else}1{/if}" data-id="{$user->getRealId()}" class="tippy-menu-item">
+								{if $isBlacklisted}{_bl_remove}{else}{_bl_add}{/if}
+							</a>
+
+							<a class="tippy-menu-item" href="javascript:reportUser({$user->getId()})">
+								{_report}
+							</a>
+
+							{if !$user->isHideFromGlobalFeedEnabled()}
+								{var $isIgnored = $user->isIgnoredBy($thisUser)}
+								<a class="tippy-menu-item" id="__ignoreSomeone" data-val="{if $isIgnored}0{else}1{/if}" data-id="{$user->getId()}">
+									{if $isIgnored}{_unignore_user}{else}{_ignore_user}{/if}
+								</a>
+							{/if}
+						</div>
+					</div>
+				</div>
+			</div>
+		{/if}
+		{if $user->getId() == $thisUser->getId()}
+			<a class="button button_blue button_wide" href="/edit" class="link">{_edit_page}</a>
+		{/if}
+	{else}
+		<div class="guest_actions">
+			<vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
+		</div>
+	{/ifset}
+</div>

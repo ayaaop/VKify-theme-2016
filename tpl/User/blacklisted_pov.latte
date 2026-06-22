@@ -8,15 +8,10 @@
 				<div class="page_block photo_block">
                     <div class="avatar_block">
 						<div class="avatar_block_inner">
-                            <img src="{$user->getAvatarUrl('normal')}"
-                                alt="{$user->getCanonicalName()}"
-                                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+                            {include '../components/avatar.latte', author => $user, size => 'normal', alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;'}
                         </div>
                     </div>
-                    <div class="profile_actions clear_fix" n:if="isset($thisUser)">
-                        <a n:if="!$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="button button_gray button_wide">{_bl_remove}</a>
-                        <a class="button button_gray button_wide" href="javascript:reportUser({$user->getId()})">{_report}</a>
-                    </div>
+					{include '../components/profile_actions.latte'}
                 </div>
             </div>
         </div>
@@ -29,7 +24,7 @@
                                 <h2 class="page_name">{$user->getFullName()}
                                     <a class="page_verified" n:if="$user->isVerified()" href="/verify"></a>
                                 </h2>
-                                <div class="page_status" style="color: #AAA;">{_closed_page}</div>
+                                <div class="page_status" style="color: var(--muted-text-color);">{_closed_page}</div>
                             </div>
                         </div>
                         <div class="msg msg_yellow">

@@ -719,6 +719,16 @@ div.avatar_block:hover .avatar_variants {
   width: 36px;
   padding-right: 7px;
   border-right: 9px solid transparent;
+  text-indent: -9999px;
+}
+.profile_more_wrapper.profile_more_active .button.profile_more_btn {
+  text-indent: 0;
+  width: 100%;
+  justify-content: start;
+  position: relative;
+  z-index: 11;
+  float: none;
+  border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
 }
 
 .button + .profile_actions_split, .profile_msg_split + .profile_actions_split {
@@ -728,6 +738,38 @@ div.avatar_block:hover .avatar_variants {
 .profile_actions_split {
   display: flex;
   justify-content: end;
+  position: relative;
+}
+
+.profile_more_wrapper {
+  position: relative;
+}
+
+.profile_more_wrapper.profile_more_active {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  border: 1px solid var(--border-color-2);
+  border-radius: var(--button-border-radius);
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: -1px -0.5px 0;
+  background: var(--button-background-color);
+}
+
+
+.profile_actions_split [data-tippy-root] {
+  width: 200px;
+  position: relative!important;
+  transform: none!important;
+  z-index: 10!important;
+}
+.profile_actions_split .tippy-box[data-theme~="vk"] {
+  border-radius: 0 0 var(--button-border-radius) var(--button-border-radius);
+  box-shadow: none;
+  border: 0;
+  border-top: 1px solid var(--border-color-2);
+  transform: none;
 }
 
 .profile_actions_split .profile_link_form {
@@ -802,7 +844,7 @@ div.avatar_block:hover .avatar_variants {
   display: block;
   position: absolute;
   content: "";
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_info_cons.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/group_info_cons.png)
     no-repeat 0 0;
   height: 15px;
   width: 15px;
@@ -815,7 +857,7 @@ div.avatar_block:hover .avatar_variants {
   (-o-min-device-pixel-ratio: 2/1),
   (min-resolution: 192dpi) {
   .group_info_row:before {
-    background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/group_info_cons_2x.png);
+    background-image: url(/themepack/vkify16/3.3.3.9/resource/icons/group_info_cons_2x.png);
     background-size: 15px 149px;
   }
 }
@@ -843,11 +885,11 @@ div.avatar_block:hover .avatar_variants {
   left: 0;
   width: 12px;
   height: 12px;
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/topic_icon.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/topic_icon.png)
     no-repeat 0 0;
 }
 .topics_module.notes_module .topic_icon {
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/post_icon.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/post_icon.png)
     no-repeat;
   background-position: -5px -244px;
   height: 16px;
@@ -912,7 +954,7 @@ div.avatar_block:hover .avatar_variants {
   cursor: pointer;
 }
 .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_icons.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/group_icons.png)
     no-repeat;
   position: absolute;
   display: block;
@@ -926,7 +968,7 @@ div.avatar_block:hover .avatar_variants {
   padding: 17px 13px 17px 47px;
 }
 .wide_column .page_upload_label {
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/group_icons_big.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/group_icons_big.png)
     no-repeat;
   width: 25px;
   height: 27px;
