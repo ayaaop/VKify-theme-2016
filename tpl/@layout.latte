@@ -248,6 +248,22 @@
                                     <div class="link_icon"></div>
                                     <span>{_bookmarks_tab}</span>
                                 </a>
+                                <a href="/support" class="link my_helpdesk">
+                                    <div class="link_icon"></div>
+                                    <span>{_header_help|firstUpper}</span>
+                                    <object type="internal/link" n:if="$ticketAnsweredCount > 0">
+                                        {var $answeredTicketId = null}
+                                        {foreach (new \openvk\Web\Models\Repositories\Tickets())->getTicketsByUserId($thisUser->getId(), 1) as $t}
+                                            {if $t->getType() === 1}
+                                                {var $answeredTicketId = $t->getId()}
+                                                {breakIf true}
+                                            {/if}
+                                        {/foreach}
+                                        <a href="/support/view/{$answeredTicketId}" class="linkunderline">
+                                            <b>{$ticketAnsweredCount}</b>
+                                        </a>
+                                    </object>
+                                </a>
                             {/if}
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
@@ -321,9 +337,8 @@
 
                             <div class="left_menu_nav_wrap">
                                 <a href="/club1">{_footer_blog|firstUpper}</a>
-                                <a href="/support">{_footer_help|firstUpper}</a>
                                 <a href="/terms">{_footer_rules|firstUpper}</a>
-                                <a href="javascript:void(0);" id="moreOptionsLink" data-tippy-content-id="moreOptionsContent" data-tippy-trigger="mouseenter focus" data-tippy-placement="bottom-start" data-tippy-append-to="body" data-tippy-max-width="300"><vkifyloc name="more" fallback="show_more" /></a>
+                                <a href="javascript:void(0);" id="moreOptionsLink" data-tippy-content-id="moreOptionsContent" data-tippy-placement="bottom-start"><vkifyloc name="more" fallback="show_more" /></a>
                                 
                                 <div id="moreOptionsContent" class="tippy-content-template">
                                     <div class="tippy-menu">
