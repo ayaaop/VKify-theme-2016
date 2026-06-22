@@ -31,40 +31,60 @@
             ], white => true}
         </div>
             {if $isNew}
-                <div class="page_block page_padding">
                     {if !is_null($banReason)}
-                        <center>
-                            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
-                        </center>
-                        <p>
-                            {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
-                            {tr("banned_in_support_2", htmlentities($banReason))|noescape}
-                        </p>
+                        <style>
+                            .banned_container {
+                                padding: 30px;
+                            }
+                            .banned_header {
+                                font-size: 20px;
+                                font-weight: 400;
+                                color: var(--heading-color);
+                                padding-bottom: 20px;
+                                border-bottom: 1px solid var(--border-color);
+                                margin-bottom: 25px;
+                            }
+                            .banned_content {
+                                font-size: 13px;
+                                line-height: 160%;
+                                color: var(--text-color);
+                            }
+                        </style>
+                        <div class="page_block banned_container">
+                            <div class="banned_header">
+                                {_banned_header}
+                            </div>
+                            <div class="banned_content">
+                                {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
+                                {tr("banned_in_support_2", htmlentities($banReason))|noescape}
+                            </div>
+                        </div>
                     {else}
-                        <div class="new">
-                            <div class="form_group tickets_create_form">
-                                <form action="/support" method="post" style="margin:0;">
-                                    <div class="form_field">
-                                        <div class="form_data">
-                                            <input type="text" name="name" style="resize: vertical;" placeholder="{_support_new_title}" />
+                        <div class="page_block page_padding">
+                            <div class="new">
+                                <div class="form_group tickets_create_form">
+                                    <form action="/support" method="post" style="margin:0;">
+                                        <div class="form_field">
+                                            <div class="form_data">
+                                                <input type="text" name="name" style="resize: vertical;" placeholder="{_support_new_title}" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form_field">
-                                        <div class="form_data">
-                                            <textarea name="text" style="resize: vertical;" placeholder="{_support_new_content}"></textarea>
+                                        <div class="form_field">
+                                            <div class="form_data">
+                                                <textarea name="text" style="resize: vertical;" placeholder="{_support_new_content}"></textarea>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form_field">
-                                        <div class="form_data">
-                                            <input type="hidden" name="hash" value="{$csrfToken}" />
-                                            <input type="submit" value="{_write}" class="button fl_r" />
+                                        <div class="form_field">
+                                            <div class="form_data">
+                                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                                <input type="submit" value="{_write}" class="button fl_r" />
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     {/if}
-                </div>
             {/if}
     {/if}
     <div n:ifcontent n:class="page_block, $isList ? 'list_view tickets_list' : page_padding">

@@ -99,7 +99,7 @@
 
 .page_album_title {
   font-size: 12.5px;
-  background: url(/themepack/vkify16/3.3.3.8/resource/album_top_shadow.png);
+  background: url(/themepack/vkify16/3.3.3.9/resource/album_top_shadow.png);
   color: var(--white);
   position: absolute;
   bottom: 0;
@@ -133,7 +133,7 @@
 
 .page_album_nocover {
   background: var(--album-background-color)
-    url(/themepack/vkify16/3.3.3.8/resource/camera_big.png) no-repeat 50% 45%;
+    url(/themepack/vkify16/3.3.3.9/resource/camera_big.png) no-repeat 50% 45%;
   width: 279px;
   height: 185px;
 }
@@ -220,7 +220,7 @@
   left: 0;
   right: 0;
   background: var(--video-overlay-background)
-    url(/themepack/vkify16/3.3.3.8/resource/video_play_small.png) 19px 13px
+    url(/themepack/vkify16/3.3.3.9/resource/video_play_small.png) 19px 13px
     no-repeat;
   margin: auto;
   width: 50px;
@@ -449,7 +449,7 @@ table.ugc-table * {
   margin: 0;
 }
 .audioStatus::before {
-  background-image: url("/themepack/vkify16/3.3.3.8/resource/icons/video_actions.png");
+  background-image: url("/themepack/vkify16/3.3.3.9/resource/icons/video_actions.png");
   width: 13px;
   height: 13px;
   background-position: 0px -44px;
@@ -546,7 +546,7 @@ div.avatar_block:hover .avatar_variants {
 }
 .avatarDelete:before {
 	display: block;
-	background: url(/themepack/vkify16/3.3.3.8/resource/icons/attach_icons.png) no-repeat 0 -40px;
+	background: url(/themepack/vkify16/3.3.3.9/resource/icons/attach_icons.png) no-repeat 0 -40px;
 	opacity: 0.85;
 	width: 8px;
 	height: 8px;
@@ -612,7 +612,7 @@ div.avatar_block:hover .avatar_variants {
   width: 21px;
   height: 21px;
   margin: 10px;
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/add_info_icons.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/add_info_icons.png)
     no-repeat 0 0;
 }
 
@@ -700,7 +700,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-  background: url(/themepack/vkify16/3.3.3.8/resource/icons/gift_icon.png)
+  background: url(/themepack/vkify16/3.3.3.9/resource/icons/gift_icon.png)
     no-repeat;
   background-position: center;
   background-size: 11px;
@@ -713,7 +713,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .button.profile_more_btn {
-  background-image: url(/themepack/vkify16/3.3.3.8/resource/icons/more_icon.png);
+  background-image: url(/themepack/vkify16/3.3.3.9/resource/icons/more_icon.png);
   background-repeat: no-repeat;
   background-position: 100% 13px;
   width: 36px;

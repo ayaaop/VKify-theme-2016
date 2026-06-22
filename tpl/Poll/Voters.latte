@@ -33,15 +33,12 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading=lazy />
+    {include '../components/avatar.latte', author => $x, size => 'miniscule', width => 75, alt => tr('photo'), loading => 'lazy'}
 {/block}
 
 {block name}
     {$x->getCanonicalName()}
-    <img n:if="$x->isVerified()"
-        class="name-checkmark"
-        src="/assets/packages/static/openvk/img/checkmark.png"
-        />
+    <a n:if="$x->isVerified()" href="/verify" class="page_verified"></a>
 {/block}
 
 {block description}

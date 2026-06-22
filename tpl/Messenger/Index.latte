@@ -52,7 +52,7 @@
                                                     {include '../components/avatar.latte', author => $lastMsg->getSender(), size => 'miniscule', alt => ''}
                                                 </div>
                                             </span>
-                                            <span class="nim-dialog--inner-text">{$lastMsg->getText()|noescape}</span>
+                                            <span class="nim-dialog--inner-text">{$lastMsg->getText()|truncate: 150}</span>
                                         </span>
                                     </div>
                                 </div>

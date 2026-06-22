@@ -133,11 +133,14 @@ body {
 	height: 16px !important;
 	width: 16px !important;
 	margin-top: -2px;
-	opacity: 1;
+	opacity: .7;
 	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'%3E%3Cpath fill='%23b2b2b2' d='M10.96 2.5A4.036 4.036 0 0 1 15 6.534c0 2.211-.884 3.316-4.52 6.14l-1.099.853a2.25 2.25 0 0 1-2.762 0l-1.099-.853C1.884 9.85 1 8.745 1 6.534A4.036 4.036 0 0 1 5.04 2.5c1.111 0 2.103.481 2.96 1.402.857-.92 1.849-1.402 2.96-1.402M5.04 3.998A2.54 2.54 0 0 0 2.5 6.534c0 1.588.653 2.404 3.94 4.957l1.1.854c.27.21.65.21.92 0l1.1-.854c3.287-2.553 3.94-3.37 3.94-4.957 0-1.4-1.137-2.536-2.54-2.536-.848 0-1.618.482-2.343 1.528l-.206.297a.5.5 0 0 1-.822 0l-.206-.297C6.658 4.48 5.888 3.998 5.04 3.998'/%3E%3C/svg%3E");
 	background-position: 0px 0px;
 	background-size: 16px;
 	display: inline-block;
+}
+.reply .like_wrap:hover .action_icon  {
+	opacity: 1;
 }
 .reply #liked.action_icon {
 	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cpath d='M0 0h16v16H0z'/%3E%3Cpath fill='%23ff3d55' fill-rule='nonzero' d='M11.08 2.5A3.92 3.92 0 0 1 15 6.42c0 2.19-.88 3.28-4.6 6.18l-1.67 1.3c-.43.33-1.01.33-1.44 0L5.6 12.6C1.88 9.7 1 8.6 1 6.42A3.92 3.92 0 0 1 4.92 2.5c1.16 0 2.2.55 3.08 1.6.89-1.05 1.92-1.6 3.08-1.6'/%3E%3C/g%3E%3C/svg%3E");

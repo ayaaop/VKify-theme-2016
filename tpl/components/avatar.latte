@@ -2,7 +2,7 @@
 {var $User = openvk\Web\Models\Entities\User::class}
 
 {var $size = $size ?? 'miniscule'}
-{var $class = $class ?? 'post-avatar'}
+{var $class = $class ?? null}
 {var $width = $width ?? 50}
 {var $height = $height ?? null}
 {var $alt = $alt ?? ''}
@@ -24,5 +24,6 @@
 {var $onclick = $onclick ?? null}
 
 {var $dataAttrs = $dataAttrs ?? []}
+{var $loading = $loading ?? null}
 
-<img src="{$finalUrl}" class="{$class}" n:attr="width => $width, height => $height, alt => $alt, id => $id ?? null, style => $style, onclick => $onclick" {foreach $dataAttrs as $k => $v}data-{$k}="{$v}" {/foreach}/>
+<img src="{$finalUrl}" class="{$class}" n:attr="width => $width, height => $height, alt => $alt, id => $id ?? null, style => $style, onclick => $onclick, loading => $loading" {foreach $dataAttrs as $k => $v}data-{$k}="{$v}" {/foreach}/>

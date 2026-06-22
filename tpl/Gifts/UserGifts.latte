@@ -16,8 +16,7 @@
                     <div class="post_header">
                         <a class="post_image" href="{!$x->anon ? $x->sender->getURL() : 'javascript:false'}">
                             {if !$x->anon}
-                                <img src="{str_contains($x->sender->getAvatarUrl('miniscule'), 'camera_200.png') 
-                                ? '/themepack/vkify16/'.$theme->getVersion().'/resource/camera_200.png' : $x->sender->getAvatarUrl('miniscule')}" width="50" class="post-avatar" />
+                                {include '../components/avatar.latte', author => $x->sender, size => 'miniscule', width => 50, class => 'post-avatar'}
                             {else}
                                 <img src="/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png" width="50" class="post-avatar" />
                             {/if}
