@@ -17,15 +17,7 @@ const defaultTippyConfig = {
     allowHTML: true
 };
 
-const TIPPY_PRESETS = {
-    'dropdown': {
-        arrow: false,
-        offset: [0, 0],
-        animation: 'none',
-        duration: 0,
-        trigger: 'click'
-    }
-};
+const TIPPY_PRESETS = {};
 
 function hasTippyInstance(element) {
     return element && (element._tippy || element.hasAttribute('aria-describedby'));

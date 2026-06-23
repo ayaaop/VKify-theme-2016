@@ -60,8 +60,9 @@ const isAttached = (form, type, id, playlistMode = false) => {
     if (playlistMode) {
         return form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0;
     }
-    if (type === 'photo' || type === 'video') return form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).length > 0;
-    return form?.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).length > 0;
+    const checkType = type === 'document' ? 'doc' : type;
+    if (checkType === 'photo' || checkType === 'video') return form?.find(`.upload-item[data-type='${checkType}'][data-id='${id}']`).length > 0;
+    return form?.find(`.vertical-attachment[data-type='${checkType}'][data-id='${id}']`).length > 0;
 };
 
 const canAttach = (form, count = 1, playlistMode = false) => {
@@ -106,10 +107,11 @@ const removeAttachment = (form, type, id, playlistMode = false) => {
         form?.find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove();
         return;
     }
-    if (type === 'photo' || type === 'video') {
-        form?.find(`.upload-item[data-type='${type}'][data-id='${id}']`).remove();
+    const checkType = type === 'document' ? 'doc' : type;
+    if (checkType === 'photo' || checkType === 'video') {
+        form?.find(`.upload-item[data-type='${checkType}'][data-id='${id}']`).remove();
     } else {
-        form?.find(`.vertical-attachment[data-type='${type}'][data-id='${id}']`).remove();
+        form?.find(`.vertical-attachment[data-type='${checkType}'][data-id='${id}']`).remove();
     }
 };
 
@@ -356,6 +358,7 @@ class AttachmentPicker extends AttachmentPickerBase {
             title: this.adapter.title,
             body: this.adapter.buildBody(this, preRendered),
             close_on_buttons: false,
+            warn_on_exit: true,
             buttons: this.adapter.buttons || [],
             callbacks: this.adapter.callbacks?.(this) || []
         });
@@ -451,11 +454,12 @@ class AttachmentPicker extends AttachmentPickerBase {
         });
 
         node.on('click', '.picker-item-attach', (e) => {
+            if (u(e.target).closest('.picker-item-select').length) return;
             e.preventDefault();
             e.stopPropagation();
             const row = u(e.target).closest('[data-picker-id]');
             const id = row.attr('data-picker-id');
-            if (e.ctrlKey || e.metaKey) {
+            if (e.ctrlKey || e.metaKey || e.shiftKey) {
                 this.handleItemSelect(row, id);
             } else {
                 this.handleItemAttach(row, id);
@@ -843,6 +847,7 @@ class PhotoPicker extends AttachmentPickerBase {
             title,
             body: view.buildBody(),
             close_on_buttons: false,
+            warn_on_exit: true,
             buttons,
             callbacks
         });
@@ -868,10 +873,11 @@ class PhotoPicker extends AttachmentPickerBase {
         });
 
         node.on('click', '.picker-item-attach', (e) => {
+            if (u(e.target).closest('.picker-item-select').length) return;
             e.preventDefault(); e.stopPropagation();
             const row = u(e.target).closest('[data-picker-id]');
             const id = row.attr('data-picker-id');
-            if (e.ctrlKey || e.metaKey) {
+            if (e.ctrlKey || e.metaKey || e.shiftKey) {
                 this.handleItemSelect(row, id);
             } else {
                 this.handleItemAttach(row, id);
@@ -921,7 +927,11 @@ const VideoAdapter = {
             e.stopPropagation();
             const row = u(e.target).closest('[data-picker-id]');
             const id = row.attr('data-picker-id');
-            picker.handleItemAttach(row, id);
+            if (e.ctrlKey || e.metaKey || e.shiftKey) {
+                picker.handleItemSelect(row, id);
+            } else {
+                picker.handleItemAttach(row, id);
+            }
         });
 
         node.on('click', '.video_item_title', (e) => {
@@ -929,7 +939,11 @@ const VideoAdapter = {
             e.stopPropagation();
             const row = u(e.target).closest('[data-picker-id]');
             const id = row.attr('data-picker-id');
-            picker.handleItemAttach(row, id);
+            if (e.ctrlKey || e.metaKey || e.shiftKey) {
+                picker.handleItemSelect(row, id);
+            } else {
+                picker.handleItemAttach(row, id);
+            }
         });
     },
 
@@ -1326,6 +1340,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
     const msg = new CMessageBox({
         title: tr('upload_video'),
         close_on_buttons: false,
+        warn_on_exit: true,
         unique_name: 'video_uploader',
         body: `
         <div id='_fast_video_upload'>

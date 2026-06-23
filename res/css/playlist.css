@@ -240,7 +240,7 @@
 	opacity: 1;
 }
 .AudioPlaylistSnippet__actions .ActionButton--add:before {
-	background-image: url(/themepack/vkify16/3.3.4.0/resource/icons/video_actions.png);
+	background-image: url(/themepack/vkify16/3.3.4.1/resource/icons/video_actions.png);
 	background-position: 0 -15px;
 	transition: background-position 0.15s ease;
 }
@@ -248,7 +248,7 @@
 	background-position: 0 -30px;
 }
 .AudioPlaylistSnippet__actions .ActionButton--share:before {
-	background-image: url(/themepack/vkify16/3.3.4.0/resource/icons/video_actions.png);
+	background-image: url(/themepack/vkify16/3.3.4.1/resource/icons/video_actions.png);
 	background-position: 0 -45px;
 }
 .AudioPlaylistSnippet__actions .ActionButton--more:after {

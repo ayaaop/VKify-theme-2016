@@ -178,11 +178,11 @@ label.radio + br {
 }
 
 input[type="checkbox"] {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/dev_check.png) 0 0
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/dev_check.png) 0 0
     no-repeat;
 }
 input[type="radio"] {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/dev_radio.png) 0 0
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/dev_radio.png) 0 0
     no-repeat;
   height: 14px;
   width: 14px;
@@ -297,7 +297,7 @@ table * {
 
 /* checkmark */
 .page_verified {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/verify.png?1)
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/verify.png?1)
     no-repeat 0;
   vertical-align: middle;
   margin-left: 2px;
@@ -308,7 +308,7 @@ table * {
   width: 16px;
 }
 .post .page_verified {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/verify_small.png)
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/verify_small.png)
     no-repeat 0;
   margin: 1px 0 0 1px;
   padding: 0;
@@ -647,7 +647,7 @@ body.dimmed > .dimmer #clickable {
 .ovk-diag-head-close {
   float: right;
   padding: 21px 25px 21px 12px;
-  background: url(/themepack/vkify16/3.3.4.0/resource/cross.png) no-repeat 12px
+  background: url(/themepack/vkify16/3.3.4.1/resource/cross.png) no-repeat 12px
     21px;
   width: 12px;
   height: 12px;
@@ -939,7 +939,7 @@ h2.page_block_h2.tabs_header {
   opacity: 1;
 }
 .ui_rmenu_extra_item .addIcon {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/ui_rmenu_icons.png)
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/ui_rmenu_icons.png)
     no-repeat 0 0;
   width: 13px;
   height: 13px;
@@ -1053,14 +1053,14 @@ a.ui_crumb {
   flex-shrink: 0;
   width: 6px;
   height: 11px;
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/breadcrumbs.png) -6px
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/breadcrumbs.png) -6px
     0 no-repeat;
   margin: 0 10px 0 7px;
 }
 
 @media (min-resolution: 192dpi) {
   .ui_crumb_sep {
-    background-image: url(/themepack/vkify16/3.3.4.0/resource/icons/breadcrumbs_2x.png);
+    background-image: url(/themepack/vkify16/3.3.4.1/resource/icons/breadcrumbs_2x.png);
     background-size: 12px 11px;
   }
 }
@@ -1092,7 +1092,7 @@ input.ui_search_field {
   line-height: 18px;
 }
 input.ui_search_field {
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/search_icon.png)
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/search_icon.png)
     no-repeat;
   padding-left: 28px;
   border-left: 20px solid transparent;
@@ -1107,7 +1107,7 @@ input.ui_search_field:focus::placeholder {
 .ui_search_reset {
   position: absolute;
   width: 38px;
-  background: url(/themepack/vkify16/3.3.4.0/resource/icons/cross.png) no-repeat
+  background: url(/themepack/vkify16/3.3.4.1/resource/icons/cross.png) no-repeat
     50%;
   top: 0;
   bottom: 0;
@@ -1197,7 +1197,7 @@ input.ui_search_field:focus::placeholder {
 }
 .ui_search_new .ui_search_progress {
   display: none !important;
-  background-image: url(/themepack/vkify16/3.3.4.0/resource/icons/c_upload.gif);
+  background-image: url(/themepack/vkify16/3.3.4.1/resource/icons/c_upload.gif);
   width: 16px;
   height: 16px;
   pointer-events: none;
@@ -1720,7 +1720,7 @@ select:focus {
 }
 .msg.msg_yellow {
   background: var(--message-warning-background)
-    url(/themepack/vkify16/3.3.4.0/resource/icons/msg_error.png) no-repeat 12px
+    url(/themepack/vkify16/3.3.4.1/resource/icons/msg_error.png) no-repeat 12px
     12px;
   padding-left: 55px;
   border-color: var(--message-warning-border);

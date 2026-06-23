@@ -62,20 +62,33 @@ window.Profile = {
         }
     },
 
-    initializeProfileTippys: function() {
+    initProfileMoreMenu: function() {
         const profileMoreBtn = ge('profile_more_btn');
-        if (profileMoreBtn?._tippy) {
-            const tippyInstance = profileMoreBtn._tippy;
-            const { onShow: origShow, onHide: origHide } = tippyInstance.props;
+        const tooltipContent = ge('profile_actions_tooltip');
 
-            tippyInstance.setProps({
+        if (profileMoreBtn && tooltipContent && !profileMoreBtn._tippy) {
+            tooltipContent.style.display = 'block';
+            
+            tippy(profileMoreBtn, {
+                theme: 'light vk',
+                placement: 'bottom-end',
+                trigger: 'click',
+                interactive: true,
+                interactiveBorder: 8,
+                arrow: false,
+                appendTo: 'parent',
+                animation: 'none',
+                duration: 0,
+                offset: [0, 0],
+                allowHTML: true,
+                content: tooltipContent,
                 onShow: (instance) => {
-                    origShow?.(instance);
+                    profileMoreBtn.setAttribute('aria-expanded', 'true');
                     const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
                     if (wrapper) wrapper.classList.add('profile_more_active');
                 },
                 onHide: (instance) => {
-                    origHide?.(instance);
+                    profileMoreBtn.setAttribute('aria-expanded', 'false');
                 },
                 onHidden: (instance) => {
                     const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
@@ -87,6 +100,6 @@ window.Profile = {
 };
 
 vkify.hook(vkify, 'onPageReady', (container) => {
-    Profile.initializeProfileTippys();
+    Profile.initProfileMoreMenu();
     Profile.updateWarnings();
 }, 'after');
