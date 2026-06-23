@@ -553,6 +553,22 @@
                                             <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()">
                                             <span><vkifyloc name="profile_recommendations"/></span>
                                         </label>
+                                        <script n:syntax="off">
+                                            (function() {
+                                                const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0);
+                                                const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1);
+                                                const CURRENT_GIF_AUTOPLAY = Number(localStorage.getItem('ux.gif_autoplay') ?? 1);
+                                                
+                                                const ajaxCb = document.getElementById('ux.disable_ajax_routing');
+                                                if (ajaxCb) ajaxCb.checked = CURRENT_DISABLE_AJAX === 0;
+
+                                                const scrollCb = document.getElementById('ux.auto_scroll');
+                                                if (scrollCb) scrollCb.checked = CURRENT_AUTO_SCROLL === 1;
+
+                                                const gifCb = document.getElementById('ux.gif_autoplay');
+                                                if (gifCb) gifCb.checked = CURRENT_GIF_AUTOPLAY === 1;
+                                            })();
+                                        </script>
                                     </div>
                                 </div>
                                 <input type="hidden" name="hash" value="{$csrfToken}" />

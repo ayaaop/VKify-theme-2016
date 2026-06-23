@@ -73,35 +73,40 @@
 					{var $completeness = $user->getProfileCompletenessReport()}
 					
 					{if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
-						<div class="profile_warning_row" n:if="in_array('interests', $completeness->unfilled)">
+						<div class="profile_warning_row" data-warning="interests" style="display: none;" n:if="in_array('interests', $completeness->unfilled)">
+							<div class="profile_warning_hide_wrap" onclick="Profile.hideWarning('interests', event)"><div class="profile_warning_hide"></div></div>
 							<div class="profile_warning_img interests"></div>
 							<div class="profile_warning_label">
 								<a href="/edit?act=interests">{_interests} <span class="unfilled_rating">+20%</span></a>
 							</div>
 						</div>
 						
-						<div class="profile_warning_row" n:if="in_array('email', $completeness->unfilled)">
+						<div class="profile_warning_row" data-warning="email" style="display: none;" n:if="in_array('email', $completeness->unfilled)">
+							<div class="profile_warning_hide_wrap" onclick="Profile.hideWarning('email', event)"><div class="profile_warning_hide"></div></div>
 							<div class="profile_warning_img email"></div>
 							<div class="profile_warning_label">
 								<a href="/edit?act=contacts">Email <span class="unfilled_rating">+20%</span></a>
 							</div>
 						</div>
 						
-						<div class="profile_warning_row" n:if="in_array('phone', $completeness->unfilled)">
+						<div class="profile_warning_row" data-warning="phone" style="display: none;" n:if="in_array('phone', $completeness->unfilled)">
+							<div class="profile_warning_hide_wrap" onclick="Profile.hideWarning('phone', event)"><div class="profile_warning_hide"></div></div>
 							<div class="profile_warning_img phone"></div>
 							<div class="profile_warning_label">
 								<a href="/edit?act=contacts">{_phone} <span class="unfilled_rating">+20%</span></a>
 							</div>
 						</div>
 						
-						<div class="profile_warning_row" n:if="in_array('telegram', $completeness->unfilled)">
+						<div class="profile_warning_row" data-warning="telegram" style="display: none;" n:if="in_array('telegram', $completeness->unfilled)">
+							<div class="profile_warning_hide_wrap" onclick="Profile.hideWarning('telegram', event)"><div class="profile_warning_hide"></div></div>
 							<div class="profile_warning_img telegram"></div>
 							<div class="profile_warning_label">
 								<a href="/edit?act=contacts">Telegram <span class="unfilled_rating">+15%</span></a>
 							</div>
 						</div>
 						
-						<div class="profile_warning_row" n:if="in_array('status', $completeness->unfilled)">
+						<div class="profile_warning_row" data-warning="status" style="display: none;" n:if="in_array('status', $completeness->unfilled)">
+							<div class="profile_warning_hide_wrap" onclick="Profile.hideWarning('status', event)"><div class="profile_warning_hide"></div></div>
 							<div class="profile_warning_img status"></div>
 							<div class="profile_warning_label">
 								<a href="/edit">{_status} <span class="unfilled_rating">+15%</span></a>
@@ -570,7 +575,7 @@
 							<div class="label">{tr("followers")}</div>
 						</a>
 						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)" href="/albums{$user->getId()}">
-							<div class="count">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
+							<div class="count" id="profile_photos_counter_val">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
 							<div class="label">{tr("mobile_photos")}</div>
 						</a>
 						<a class="page_counter" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0" href="/gifts{$user->getId()}">
@@ -589,10 +594,11 @@
 				</div>
 				{var $photoCount = (new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}
 				<div class="page_block {if $photoCount > 0}module photos_module{/if}" id="page_photos_block" n:if="($photoCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)) || (isset($thisUser) && $user->getId() == $thisUser->getId())">
-					<a class="module_header" href="/albums{$user->getId()}" n:if="$photoCount > 0">
+					<a class="module_header" href="/albums{$user->getId()}" {if $photoCount == 0}style="display: none"{/if} id="page_photos_module_header">
 						<div class="header_top clear_fix">
 							<span class="header_label fl_l">{_mobile_photos}</span>
-							<span class="header_count fl_l">{$photoCount}</span>
+							<span class="header_count fl_l" id="page_photos_module_count">{$photoCount}</span>
+							<span class="a fl_r" n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" onclick="event.stopPropagation(); event.preventDefault(); document.getElementById('page_photos_upload_input').click();">{_add_photos}</span>
 						</div>
 					</a>
 					{if $photoCount > 0 }
@@ -604,8 +610,10 @@
 							<label for="page_photos_upload_input" class="page_module_upload" id="page_photos_upload_label">
 								<div class="page_upload_label page_photos_upload"></div>{_add_photos}
 							</label>
-							<input type="file" id="page_photos_upload_input" accept="image/*" multiple style="display:none">
 						{/if}
+					{/if}
+					{if isset($thisUser) && $user->getId() == $thisUser->getId()}
+						<input type="file" id="page_photos_upload_input" accept="image/*" multiple style="display:none">
 					{/if}
 				</div>
 
@@ -636,6 +644,10 @@
 								var block = document.getElementById('page_photos_block');
 								var grid = document.getElementById('page_photos_grid');
 								var label = document.getElementById('page_photos_upload_label');
+								var header = document.getElementById('page_photos_module_header');
+								var count = document.getElementById('page_photos_module_count');
+								var profileCount = document.getElementById('profile_photos_counter_val');
+
 								if (!grid) {
 									block.classList.add('module', 'photos_module');
 									var newGrid = document.createElement('div');
@@ -645,6 +657,12 @@
 									else block.appendChild(newGrid);
 									grid = newGrid;
 								}
+
+								if (header) header.style.display = '';
+								if (count) count.textContent = parseInt(count.textContent || 0) + 1;
+								if (profileCount) profileCount.textContent = parseInt(profileCount.textContent || 0) + 1;
+								if (label) label.style.display = 'none';
+
 								var a = document.createElement('a');
 								a.className = 'page_square_photo';
 								a.href = '/photo' + photo.pretty_id;

@@ -346,6 +346,10 @@ window.router = new class Router {
             }
         });
 
+        if (typeof window.__resetPaginatorState === 'function') {
+            window.__resetPaginatorState();
+        }
+
         u('.page_body').html(pageBody.html());
         u('.sidebar').html(sidebar.html());
 
@@ -528,20 +532,33 @@ window.router = new class Router {
         try {
             const oldUrl = location.href;
             const response = await fetch(resolvedUrl, {
-                method: 'AJAX',
+                method: 'GET',
                 referrer: oldUrl,
+                redirect: 'manual',
                 headers: {
                     'X-OpenVK-Ajax-Query': '1',
                 }
             });
 
+            if (!response.ok || response.redirected || response.type === 'opaqueredirect') {
+                let errorBody = tr('error');
+                
+                if (response.status === 404) {
+                    errorBody = tr('app_err_not_found');
+                } else if (response.status === 403 || response.status === 401) {
+                    errorBody = tr('forbidden');
+                } else if (response.redirected || response.type === 'opaqueredirect') {
+                    errorBody = tr('forbidden');
+                }
+
+                MessageBox(tr('error'), errorBody, [tr('close')], [() => {}]);
+                this.cancelPendingNavigation();
+                return;
+            }
+
             const text = await response.text();
             const parser = new DOMParser();
             const parsedContent = parser.parseFromString(text, 'text/html');
-
-            if (response.redirected) {
-                history.replaceState({ from_router: 1 }, '', response.url);
-            }
 
             this._closeMsgs();
             this._unlinkObservers();

@@ -208,7 +208,7 @@
                                 <div class="link_icon"></div>
                                 <span>{_mobile_friends}</span>
                                 <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
+                                    <a href="/friends{$thisUser->getId()}?act=incoming">
                                        <b>{$thisUser->getRequestsCount()}</b>
                                     </a>
                                 </object>
@@ -273,7 +273,7 @@
                                     <span>{ovk_proc_strtr($pinnedClub->getName(), 14)}</span>
 
                                     <object type="internal/link" style="white-space: normal;" id="sug{$pinnedClub->getId()}" n:if="$pinnedClub->getSuggestedPostsCount($thisUser) > 0 && $pinnedClub->getWallType() == 2">
-                                        <a href="/club{$pinnedClub->getId()}/suggested" class="linkunderline">
+                                        <a href="/club{$pinnedClub->getId()}/suggested">
                                             <b>{$pinnedClub->getSuggestedPostsCount($thisUser)}</b>
                                         </a>
                                     </object>
@@ -390,14 +390,21 @@
 
             <div class="page_body">
                     <script n:ifset="$flashMessage">
-                        NewNotification(
-                            {$flashMessage->title},
-                            {$flashMessage->msg ?? ''},
-                            null,
-                            () => {},
-                            5000,
-                            false
-                        );
+                        document.addEventListener("DOMContentLoaded", () => {
+                            if (typeof NewNotification === 'function') {
+                                NewNotification(
+                                    {$flashMessage->title},
+                                    {$flashMessage->msg ?? ''}
+                                );
+                            } else if (typeof MessageBox === 'function') {
+                                MessageBox(
+                                    {$flashMessage->title},
+                                    {$flashMessage->msg ?? ''},
+                                    [window.lang?.close ?? 'Close'],
+                                    [() => {}]
+                                );
+                            }
+                        });
                     </script>
                 {ifset wrap}
                     {include wrap}

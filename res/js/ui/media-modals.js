@@ -390,7 +390,11 @@ vkify.once('mediaModals', function () {
             }
 
             async function initializeNavigation() {
-                if (post && post.length > 0) {
+                if (type === 'album' && post && post.length > 0) {
+                    currentAlbumId = post;
+                    await loadContext('album', post);
+                    shown_offset = getIndex();
+                } else if (post && post.length > 0) {
                     await loadContext('post', post);
                     shown_offset = getIndex();
                 } else if (type === 'album') {

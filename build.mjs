@@ -48,6 +48,7 @@ const modules = [
 
     'features/status-editor.js',
     'features/pin-group.js',
+    'features/profile.js',
     'features/likes.js',
     'features/paginator.js',
     'features/album-photos-loader.js',

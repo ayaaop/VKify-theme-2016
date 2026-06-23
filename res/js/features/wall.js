@@ -751,6 +751,11 @@ function showAjaxWallContent(tabId) {
     insertThere.innerHTML = '';
     insertThere.dataset.loadedTab = tabId;
 
+    if (typeof window.__resetPaginatorState === 'function') {
+        const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
+        window.__resetPaginatorState(allPostsContainer);
+    }
+
     ky.get(tabLink.href, {
         hooks: {
             beforeRequest: [() => {
@@ -808,6 +813,10 @@ function hideAjaxWallContent() {
     insertThere.style.display = 'none';
     insertThere.classList.remove('infContainer');
     insertThere.dataset.loadedTab = 'wall_tab_all';
+    
+    if (typeof window.__resetPaginatorState === 'function') {
+        window.__resetPaginatorState(allPostsContainer);
+    }
     
     const allTabLink = document.querySelector('#wall_tab_all a');
     const url = allTabLink ? allTabLink.href : getClubPageUrl();

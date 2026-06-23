@@ -309,28 +309,6 @@ window.initializeTippys = function initializeTippys() {
             }
         });
     }
-
-    const profileMoreBtn = ge('profile_more_btn');
-    if (profileMoreBtn?._tippy) {
-        const tippyInstance = profileMoreBtn._tippy;
-        const { onShow: origShow, onHide: origHide } = tippyInstance.props;
-
-        tippyInstance.setProps({
-            onShow: (instance) => {
-                origShow?.(instance);
-                const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
-                if (wrapper) wrapper.classList.add('profile_more_active');
-            },
-            onHide: (instance) => {
-                origHide?.(instance);
-                // We don't remove active here because the DOM node is still present during unmount phase!
-            },
-            onHidden: (instance) => {
-                const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
-                if (wrapper) wrapper.classList.remove('profile_more_active');
-            }
-        });
-    }
 };
 
 function setupTooltipObserver() {
