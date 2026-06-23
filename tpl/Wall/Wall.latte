@@ -34,7 +34,7 @@
                     {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
                 </div>
                 <div class="page_block wall_posts_tabs">
-                    {include "../components/page_block_header.latte", title => $type == 'search' ? 'search_results' : 'wall'}
+                    {include "../components/page_block_header.latte", title => $type == 'search' ? 'search_results' : 'wall', extra => '<a href="/wall'.$owner.'/rss" class="button">'.tr('read_in_rss').'</a>'}
                 </div>
                 <div id="{$type == 'owners' ? 'owner_posts' : 'all_posts'}" class="content scroll_container">
                     <div class="page_block" style="margin: 0">
