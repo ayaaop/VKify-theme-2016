@@ -6,9 +6,7 @@ window.router = new class Router {
         this.navigationState = {
             isNavigating: false,
             pendingNavigation: null,
-            navigationTimeout: null,
-            navigationQueue: [],
-            timeoutDuration: 3000
+            navigationQueue: []
         };
         this.managedStyleLinks = new Map();
         this._loadedScriptPaths = new Set();
@@ -42,11 +40,6 @@ window.router = new class Router {
     }
 
     cancelPendingNavigation() {
-        if (this.navigationState.navigationTimeout) {
-            clearTimeout(this.navigationState.navigationTimeout);
-            this.navigationState.navigationTimeout = null;
-        }
-
         if (this.navigationState.pendingNavigation) {
             console.log('ROUTER | Cancelling pending navigation');
             this.navigationState.pendingNavigation = null;
@@ -54,44 +47,6 @@ window.router = new class Router {
 
         this.navigationState.isNavigating = false;
         u('body').removeClass('ajax_request_made');
-    }
-
-    setNavigationTimeout(fallbackCallback, duration = null) {
-        const timeoutDuration = duration ?? this.navigationState.timeoutDuration;
-        this.navigationState.navigationTimeout = setTimeout(() => {
-            console.log('ROUTER | Navigation timeout reached, showing notification');
-            
-            const lang = window.vkifylang || {};
-            const title = lang.ajax_timeout_title || 'Page loading slowly';
-            const body = `
-                <div>${lang.ajax_timeout_body || 'The page is taking longer than expected to load.'} <a href="#" id="ajax_timeout_load">${lang.ajax_timeout_link || 'Load without AJAX'}</a></div>
-            `;
-            
-            NewNotification(title, body, null, Function.noop, 999999, false);
-            
-            this.navigationState.timeoutNotificationId = _n_counter;
-            
-            setTimeout(() => {
-                const loadLink = ge('ajax_timeout_load');
-                
-                if (loadLink) {
-                    loadLink.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('ROUTER | User chose to load without AJAX');
-                        u(e.target).closest('.notification_ballon').addClass('disappears');
-                        setTimeout(() => {
-                            u(e.target).closest('.notification_ballon').remove();
-                        }, 500);
-                        window.router.navigationState.timeoutNotificationId = null;
-                        window.router.cancelPendingNavigation();
-                        if (typeof fallbackCallback === 'function') {
-                            fallbackCallback();
-                        }
-                    });
-                }
-            }, 100);
-        }, timeoutDuration);
     }
 
     queueNavigation(navigationRequest) {
@@ -124,17 +79,6 @@ window.router = new class Router {
 
     completeNavigation() {
         this.cancelPendingNavigation();
-        
-        if (this.navigationState.timeoutNotificationId) {
-            const notificationElement = u(`#n${this.navigationState.timeoutNotificationId}`);
-            if (notificationElement.length > 0) {
-                notificationElement.addClass('disappears');
-                setTimeout(() => {
-                    notificationElement.remove();
-                }, 500);
-            }
-            this.navigationState.timeoutNotificationId = null;
-        }
         
         setTimeout(() => {
             this.processNextNavigation();
@@ -522,12 +466,6 @@ window.router = new class Router {
         }
 
         u('body').addClass('ajax_request_made');
-
-        this.setNavigationTimeout(() => {
-            console.log('ROUTER | Navigation timeout, falling back to browser navigation');
-            resolvedUrl.searchParams.delete('al');
-            location.assign(resolvedUrl);
-        });
 
         try {
             const oldUrl = location.href;

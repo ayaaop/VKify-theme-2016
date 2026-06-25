@@ -167,7 +167,7 @@ const isNearDocumentBottom = () => (
 );
 
 const isPaginatorTriggerZone = (paginatorEl) => (
-    isPaginatorNearViewport(paginatorEl) || isNearDocumentBottom()
+    isPaginatorNearViewport(paginatorEl)
 );
 
 const getLastLoadedPage = (paginatorEl, containerEl) => {
@@ -219,12 +219,17 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
             const parser = new DOMParser();
 
             let fetchUrlStr = location.href;
-            const isModal = paginatorEl && paginatorEl.closest('.ovk-photo-view-window, .ovk-modal-video-window');
-            if (isModal) {
-                const zParam = new URLSearchParams(window.location.search).get('z');
-                if (zParam) {
-                    const cleanZ = zParam.split('/')[0];
-                    fetchUrlStr = '/' + cleanZ;
+            const fetchUrlNode = paginatorEl?.closest('[data-fetch-url]');
+            if (fetchUrlNode && fetchUrlNode.dataset.fetchUrl) {
+                fetchUrlStr = fetchUrlNode.dataset.fetchUrl;
+            } else {
+                const isModal = paginatorEl && paginatorEl.closest('.ovk-photo-view-window, .ovk-modal-video-window');
+                if (isModal) {
+                    const zParam = new URLSearchParams(window.location.search).get('z');
+                    if (zParam) {
+                        const cleanZ = zParam.split('/')[0];
+                        fetchUrlStr = '/' + cleanZ;
+                    }
                 }
             }
 
@@ -262,7 +267,7 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
                 return;
             }
 
-            const updatedPaginator = currentPaginator || getPaginatorElement();
+            const updatedPaginator = currentPaginator || targetPaginator;
             const paginatorWrap = updatedPaginator?.closest('.clear_fix') || updatedPaginator?.parentElement;
             if (containerEl && paginatorWrap && paginatorWrap.parentElement === containerEl && containerEl.lastElementChild !== paginatorWrap) {
                 containerEl.appendChild(paginatorWrap);
@@ -331,9 +336,8 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
         console.error(e);
     } finally {
         if (containerEl) delete containerEl.dataset.paginatorLoading;
-        const stillExists = u('.vkify-paginator:not(.vkify-paginator-at-top)');
-        if (stillExists.length > 0) {
-            const refreshedBtn = stillExists.find('.vkify-paginator-loader');
+        if (paginatorNode && document.body.contains(paginatorNode)) {
+            const refreshedBtn = u(paginatorNode).find('.vkify-paginator-loader');
             setButtonLoadingState(refreshedBtn, false);
         }
         if (!containerEl || !containerEl.dataset.paginatorExhausted) {
@@ -355,16 +359,17 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
     let scrollCheckTimer = null;
 
     const checkPaginatorInView = () => {
-        const paginatorEl = getPaginatorElement();
-        if (!paginatorEl) return;
-        if (!isPaginatorTriggerZone(paginatorEl)) return;
-        if (!shouldAllowAutoScroll()) return;
-        if (!canLoadNextPage(paginatorEl)) return;
+        const paginators = document.querySelectorAll('.vkify-paginator:not(.vkify-paginator-at-top)');
+        paginators.forEach(paginatorEl => {
+            if (!isPaginatorTriggerZone(paginatorEl)) return;
+            if (!shouldAllowAutoScroll()) return;
+            if (!canLoadNextPage(paginatorEl)) return;
 
-        const btn = u(paginatorEl).find('.vkify-paginator-loader');
-        if (btn.length < 1) return;
+            const btn = u(paginatorEl).find('.vkify-paginator-loader');
+            if (btn.length < 1) return;
 
-        handlePaginationTrigger(paginatorEl, btn.nodes[0]);
+            handlePaginationTrigger(paginatorEl, btn.nodes[0]);
+        });
     };
 
     const schedulePaginatorCheck = () => {
@@ -402,7 +407,7 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
 
     if (!window.__vkifyPaginatorScrollBound) {
         window.__vkifyPaginatorScrollBound = true;
-        window.addEventListener('scroll', schedulePaginatorCheckSoon, { passive: true });
+        window.addEventListener('scroll', schedulePaginatorCheckSoon, { passive: true, capture: true });
         window.addEventListener('resize', schedulePaginatorCheckSoon, { passive: true });
     }
 

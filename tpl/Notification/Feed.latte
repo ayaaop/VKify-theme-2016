@@ -27,7 +27,7 @@
     ]}
     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
     {if sizeof($data) > 0}
-        <div n:class="$mode !== 'new' ? scroll_container">
+        <div class="scroll_container">
             <div class="feedback_row scroll_node" n:foreach="$data as $dat">
                 {var $sxModel = $dat->getModel(1)}
                 {if !(method_exists($sxModel, "getURL") && method_exists($sxModel, "getAvatarUrl"))}

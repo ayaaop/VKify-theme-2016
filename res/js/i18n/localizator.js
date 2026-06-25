@@ -68,9 +68,6 @@ let locales = {
 		postremove: "Are you sure you want to remove that message?",
 		going_to_report_note: "You are about to report this note.",
 		more: "More",
-		ajax_timeout_title: "Page loading slowly",
-		ajax_timeout_body: "The page is taking longer than expected to load.",
-		ajax_timeout_link: "Load without AJAX",
 		gif_autoplay: "Automatically play GIF documents",
 		error_saving:
 			"Error saving settings. Try refreshing the page and retrying.",
@@ -156,9 +153,6 @@ let locales = {
 		postremove: "Вы действительно хотите удалить это сообщение?",
 		going_to_report_note: "Вы собираетесь пожаловаться на данную заметку.",
 		more: "Ещё",
-		ajax_timeout_title: "Страница загружается медленно",
-		ajax_timeout_body: "Страница загружается дольше обычного.",
-		ajax_timeout_link: "Загрузить без AJAX",
 		gif_autoplay: "Автоматически воспроизводить GIF-документы",
 		error_saving:
 			"Ошибка сохранения настроек. Попробуйте обновить страницу и повторить попытку.",
@@ -247,9 +241,6 @@ let locales = {
 		postremoved: "Повідомлення відалено.",
 		going_to_report_note: "Ви збираєтеся поскаржитися на цю нотатку.",
 		more: "Ще",
-		ajax_timeout_title: "Сторінка завантажується повільно",
-		ajax_timeout_body: "Сторінка завантажується довше, ніж зазвичай.",
-		ajax_timeout_link: "Завантажити без AJAX",
 		error_saving:
 			"Помилка збереження налаштувань. Спробуйте оновити сторінку та повторити спробу.",
 		sidebar_note:
@@ -335,9 +326,6 @@ let locales = {
 		postremove: "Бұл жазбаны шынымен өшіргіңіз келе ме?",
 		going_to_report_note: "Сіз бұл жазба үстінен шағым түсіргелі жатырсыз.",
 		more: "Тағы",
-		ajax_timeout_title: "Бет баяу жүктелуде",
-		ajax_timeout_body: "Бет әдеттегіден ұзақ жүктеліп жатыр.",
-		ajax_timeout_link: "AJAX-сыз жүктеу",
 		gif_autoplay: "GIF құжаттарын өздігінен ойнату",
 		error_saving:
 			"Түзетулерді сақтау кезінде қате кетті. Бетті жаңартып, қайталап көріңіз.",

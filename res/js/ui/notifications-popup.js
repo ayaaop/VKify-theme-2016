@@ -50,6 +50,15 @@ vkify.once("initNotificationsPopup", () => {
             const notificationsContainer = await window.ContentFetcher.fetchPageContent('/notifications', '.notifications', { ajaxQuery: false });
 
             if (notificationsContainer) {
+                const paginator = notificationsContainer.querySelector('.vkify-paginator');
+                if (paginator) {
+                    const wrap = paginator.closest('.clear_fix');
+                    if (wrap && wrap.children.length === 1) {
+                        wrap.remove();
+                    } else {
+                        paginator.remove();
+                    }
+                }
                 return notificationsContainer.innerHTML + `<a href="/notifications" class="top_notify_show_all">${tr('show_more')}</a>`;
             }
 
