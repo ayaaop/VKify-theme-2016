@@ -1,8 +1,6 @@
-<div  n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["enable"]' class="bottom-popup red-popup global-alert-popup" style="display: none">
+<div n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["enable"]' class="bottom-popup red-popup global-alert-popup" style="display: none">
     <div class="contanier">
-        <div class="text" id="global-alert-text">
-            {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["text"]}
-        </div>
+        <div class="text" id="global-alert-text">{php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["text"]}</div>
         <div class="buttons">
             <a onClick="dismissGlobalAlert()" n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["canBeDismissed"]' class="button">
                 {_close}
@@ -13,7 +11,7 @@
 
 <script>
     let cookie = document.cookie.split(";");
-    let alertContent = encodeURIComponent(document.getElementById("global-alert-text").textContent.trim());
+    let alertContent = encodeURI("\n" + document.getElementById("global-alert-text").textContent + "    \n");
     let alertDismissed = false;
     for(let i = 0; i < cookie.length; i++) {
         let c = cookie[i].trim();
