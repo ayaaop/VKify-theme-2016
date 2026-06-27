@@ -348,6 +348,7 @@ nobold,
 }
 .bottom-popup {
     height: unset;
+    background-color: var(--module-header-background-color);
     color: var(--muted-text-color-2);
 }
 .bottom-popup .contanier {

@@ -1,0 +1,38 @@
+<div  n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["enable"]' class="bottom-popup red-popup global-alert-popup" style="display: none">
+    <div class="contanier">
+        <div class="text" id="global-alert-text">
+            {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["text"]}
+        </div>
+        <div class="buttons">
+            <a onClick="dismissGlobalAlert()" n:if='\OPENVK_ROOT_CONF["openvk"]["preferences"]["siteAlert"]["canBeDismissed"]' class="button">
+                {_close}
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cookie = document.cookie.split(";");
+    let alertContent = encodeURIComponent(document.getElementById("global-alert-text").textContent.trim());
+    let alertDismissed = false;
+    for(let i = 0; i < cookie.length; i++) {
+        let c = cookie[i].trim();
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if(c == "alertDismissed=" + alertContent) {
+            alertDismissed = true;
+            break;
+        }
+    }
+    if(!alertDismissed) {
+        u(".global-alert-popup").nodes[0].style.display = "block";
+    }
+
+    function dismissGlobalAlert() {
+        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+        
+        document.cookie = "alertDismissed=" + alertContent + ";expires=" + expires + ";SameSite=Strict";
+        u(".global-alert-popup").nodes[0].style.display = "none";
+    }
+</script>
