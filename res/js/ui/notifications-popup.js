@@ -13,7 +13,7 @@ function parseNotifyCount(text) {
 
 vkify.ready(() => {
     const customSoundId = "vkify_notification";
-    createjs.Sound.registerSound("/themepack/vkify16/3.3.4.1/resource/bb1.mp3", customSoundId);
+    createjs.Sound.registerSound("/themepack/vkify16/3.3.4.2/resource/bb1.mp3", customSoundId);
 
     window.__actualPlayNotifSound = function() {
         createjs.Sound.play(customSoundId);

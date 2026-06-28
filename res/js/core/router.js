@@ -478,14 +478,12 @@ window.router = new class Router {
                 }
             });
 
-            if (!response.ok || response.redirected || response.type === 'opaqueredirect') {
+            if (response.status === 404 || response.status === 402 || response.status === 401) {
                 let errorBody = tr('error');
                 
                 if (response.status === 404) {
                     errorBody = tr('app_err_not_found');
                 } else if (response.status === 403 || response.status === 401) {
-                    errorBody = tr('forbidden');
-                } else if (response.redirected || response.type === 'opaqueredirect') {
                     errorBody = tr('forbidden');
                 }
 

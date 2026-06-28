@@ -485,7 +485,7 @@ vkify.once('mediaModals', function () {
                 LoaderUtils.show('#pv_bottom_actions_loader', { theme: 'baw', size: 'small' });
 
                 try {
-                    const body = await CF.fetchPageContent(`/photo${photoId}`, null, { ajaxQuery: false });
+                    const body = await CF.fetchPageContent(`/photo${photoId}`, null, { ajaxQuery: false, skipRedirectError: true });
 
                     const pvRight = body.querySelector('.pv_right');
                     if (!pvRight) throw new Error('No content');
@@ -765,7 +765,7 @@ vkify.once('mediaModals', function () {
                 if (this.currentModal) {
                     this.closePostPopup(false);
                 }
-                if (updateUrl) {
+                if (updateUrl && error.message !== 'Page redirected') {
                     location.href = postPath;
                 }
             }

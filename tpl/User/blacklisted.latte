@@ -8,7 +8,7 @@
                 <div class="page_block photo_block">
                     <div class="avatar_block">
                         <div class="avatar_block_inner">
-                            {include '../components/avatar.latte', author => $user, size => 'normal', alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast;'}
+                             {include '../components/avatar.latte', author => $user, size => 'normal', id => 'bigAvatar', width => ($avatarNormal ? $avatarNormal->width : 200), height => ($avatarNormal ? $avatarNormal->height : 200), alt => $user->getCanonicalName(), style => 'width: 100%; image-rendering: -webkit-optimize-contrast', class => ''}
                         </div>
                     </div>
 					{include '../components/profile_actions.latte'}

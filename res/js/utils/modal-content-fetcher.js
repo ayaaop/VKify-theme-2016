@@ -15,6 +15,19 @@ vkify.once('contentFetcher', function() {
                 throw new Error(`HTTP ${response.status}`);
             }
 
+            if (response.redirected && !options.skipRedirectError) {
+                const tr = window.tr || ((key) => key);
+                const msg = new CMessageBox({
+                    title: tr('error'),
+                    body: tr('forbidden'),
+                    buttons: ['OK'],
+                    callbacks: [() => {
+                        msg.close()
+                    }]
+                });
+                throw new Error('Page redirected');
+            }
+
             const html = await response.text();
             return this.extractDomContent(html, selector);
         },
