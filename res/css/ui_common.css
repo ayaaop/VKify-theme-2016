@@ -531,13 +531,10 @@ input[type="submit"].button_green:hover {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 5px;
 }
 .form_data .buttons_row {
   justify-content: flex-start;
-}
-.buttons_row .button:not(:last-child),
-#lastStepButtons .button:not(:last-child) {
-  margin-right: 10px;
 }
 
 /* message box */

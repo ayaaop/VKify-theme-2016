@@ -401,6 +401,7 @@
 .page_status,
 .page_info_wrap .nobold {
   font-size: 13px;
+  width: 100%;
 }
 
 table.ugc-table * {
@@ -754,7 +755,6 @@ div.avatar_block:hover .avatar_variants {
 
 .profile_more_wrapper.profile_more_active {
   position: absolute;
-  right: 0;
   width: 100%;
   border: 1px solid var(--border-color-2);
   border-radius: var(--button-border-radius);

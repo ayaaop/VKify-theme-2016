@@ -71,7 +71,7 @@ window.Profile = {
             
             tippy(profileMoreBtn, {
                 theme: 'light vk',
-                placement: 'bottom-end',
+                placement: 'start-end',
                 trigger: 'click',
                 interactive: true,
                 interactiveBorder: 8,
