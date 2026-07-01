@@ -2619,7 +2619,8 @@ table,
     padding-bottom: 10px;
 }
 .post-content .attachments_b:not(:last-child) .attachment:last-child,
-.copy_quote .post-content .attachments_m > .attachment:last-child {
+.copy_quote .post-content .attachments_m > .attachment:last-child,
+.post-content .attachments_m > .audios_attachment:not(:last-child) {
     padding-bottom: 0;
 }
 
