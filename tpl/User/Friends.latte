@@ -107,7 +107,7 @@
     <div class="labeled">
         {$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))} {if !is_null($x->getCity())}<span class="divider"></span> {$x->getCity()}{/if}
     </div>
-    {if $x->getSubscriptionStatus($thisUser) === 3}
+    {if !is_null($thisUser) && $x->getId() !== $thisUser->getId() && $x->getPrivacyPermission('messages.write', $thisUser)}
         <div class="labeled message">
             <a href="/im?sel={$x->getId()}" rel="nofollow">{_send_message}</a>
         </div>
@@ -115,7 +115,7 @@
 {/block}
 
 {block actions}
-    {if ($x->getId() !== $thisUser->getId()) && ($thisUser->getId() === $user->getId())}
+    {if !is_null($thisUser) && ($x->getId() !== $thisUser->getId())}
         {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
             <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
