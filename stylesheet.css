@@ -4269,6 +4269,21 @@ ul.im-page--dcontent {
     padding: 0;
     height: calc(100vh - var(--header-height) - 15px - 49px - 65px);
 }
+.messenger-app--typing-status {
+    color: var(--muted-text-color);
+    margin-left: 50px;
+    margin-bottom: 10px;
+    font-size: 12.5px;
+    transition: opacity 0.25s;
+    opacity: 1;
+}
+.messenger-app--typing-status .pr {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+.pr_gray .pr_bt {
+    background-color: var(--muted-text-color);
+}
 .messenger-app--messages---message {
     margin-bottom: 0 !important;
     padding: 15px 20px 10px;
