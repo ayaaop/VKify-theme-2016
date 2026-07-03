@@ -1071,5 +1071,142 @@ vkify.bindOnce('statusBroadcastToggle', () => {
     }, true);
 });
 
+document.addEventListener('contextmenu', (e) => {
+    setTimeout(() => {
+        const ctxMenu = document.querySelector('#ctx_menu');
+        const linkBtn = ctxMenu && ctxMenu.querySelector('#audio_ctx_link_playlist');
+        if (linkBtn) linkBtn.remove();
+        
+        const addBtn = ctxMenu && ctxMenu.querySelector('#audio_ctx_add_to_playlist');
+        
+        if (addBtn && !addBtn.dataset.vkifySubmenuAdded) {
+            addBtn.dataset.vkifySubmenuAdded = "1";
+            
+            const newAddBtn = addBtn.cloneNode(true);
+            addBtn.parentNode.replaceChild(newAddBtn, addBtn);
+            
+            const subitemContainer = document.createElement('div');
+            subitemContainer.style.display = 'none';
+            newAddBtn.insertAdjacentElement('afterend', subitemContainer);
+            
+            const placeholder = document.createElement('a');
+            placeholder.className = 'vkify_ctx_subitem_empty';
+            placeholder.textContent = '...';
+            subitemContainer.appendChild(placeholder);
+            
+            newAddBtn.onclick = (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (subitemContainer.style.display === 'none') {
+                    subitemContainer.style.display = 'block';
+                    newAddBtn.classList.add('vkify_submenu_open');
+                } else {
+                    subitemContainer.style.display = 'none';
+                    newAddBtn.classList.remove('vkify_submenu_open');
+                }
+            };
+            
+            (async () => {
+                try {
+                    let res;
+                    if (window.openvk && window.openvk.writeablePlaylists) {
+                        res = { response: window.openvk.writeablePlaylists };
+                    } else {
+                        const raw = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=&limit=100&offset=0&from_me=1`);
+                        res = await raw.json();
+                        if (window.openvk && res && res.response) {
+                            window.openvk.writeablePlaylists = res.response;
+                        }
+                    }
+                    
+                    const isBigPlayer = e.target.closest('.bigPlayer, #ajax_audio_player');
+                    const ctx_type = isBigPlayer ? 'main_player' : 'mini_player';
+                    let trackId;
+                    
+                    if (ctx_type === 'main_player') {
+                        trackId = window.player && window.player.current_track_id;
+                    } else {
+                        const audioEmbed = e.target.closest('.audioEmbed');
+                        trackId = audioEmbed ? Number(audioEmbed.getAttribute('data-realid')) : null;
+                    }
+                    
+                    placeholder.remove();
+                    
+                    if (res && res.response && res.response.items && res.response.items.length > 0) {
+                        res.response.items.forEach(pl => {
+                            const plNode = document.createElement('a');
+                            plNode.className = 'vkify_ctx_subitem';
+                            plNode.innerHTML = `<span>${escapeHtml(pl.title)}</span><span class="vkify_ctx_subitem_check" style="display:none;">✔</span>`;
+                            
+                            if (trackId && window.OVKAPI) {
+                                window.OVKAPI.call('audio.get', { owner_id: pl.owner_id, album_id: pl.id, count: 6000 }).then(audios => {
+                                    if (audios && audios.items && audios.items.some(t => String(t.id) === String(trackId) || String(t.aid) === String(trackId))) {
+                                        const checkNode = plNode.querySelector('.vkify_ctx_subitem_check');
+                                        if (checkNode) checkNode.style.display = 'inline';
+                                    }
+                                }).catch(() => {});
+                            }
+                            
+                            plNode.onclick = async (ev) => {
+                                ev.stopPropagation();
+                                ev.preventDefault();
+                                
+                                if (!trackId) return;
+                                
+                                const csrfMeta = document.querySelector('meta[name="csrf"]');
+                                const hash = csrfMeta ? csrfMeta.getAttribute("value") : "";
+                                
+                                $.ajax({
+                                    type: "POST",
+                                    url: `/audio${trackId}/action?act=add_to_playlist`,
+                                    data: {
+                                        hash: hash,
+                                        playlists: `${pl.owner_id}_${pl.id}`
+                                    },
+                                    success: (response) => {
+                                        const ctx = document.querySelector('#ctx_menu');
+                                        if (ctx) ctx.remove();
+                                        
+                                        if (response.success) {
+                                            if (typeof makeError === 'function') {
+                                                const msg = window.vkifylang?.audio_added_to_playlist || 'Added to playlist';
+                                                makeError(msg, 'Green', 2000, 80);
+                                            }
+                                        } else {
+                                            if (typeof fastError === 'function') {
+                                                fastError(response.flash?.message || 'Failed to add to playlist');
+                                            } else if (typeof makeError === 'function') {
+                                                makeError('Failed to add to playlist', 'Red', 2000, 80);
+                                            }
+                                        }
+                                    },
+                                    error: () => {
+                                        if (typeof makeError === 'function') {
+                                            makeError('Error adding to playlist', 'Red', 2000, 80);
+                                        }
+                                    }
+                                });
+                            };
+                            subitemContainer.appendChild(plNode);
+                        });
+                    } else {
+                        const emptyNode = document.createElement('a');
+                        emptyNode.className = 'vkify_ctx_subitem_empty';
+                        emptyNode.textContent = 'No playlists';
+                        subitemContainer.appendChild(emptyNode);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    if (placeholder) placeholder.remove();
+                    const emptyNode = document.createElement('a');
+                    emptyNode.className = 'vkify_ctx_subitem_empty';
+                    emptyNode.textContent = 'Error loading';
+                    subitemContainer.appendChild(emptyNode);
+                }
+            })();
+        }
+    }, 0);
+}, false);
+
 vkify.onPage(init);
 })();

@@ -1264,14 +1264,56 @@ body.scrolled .toTop:hover #wrap {
     top: 0;
 }
 
-#ctx_menu a:not([id]):last-child {
+.bigPlayer #ctx_menu a:not([id]):last-child {
     color: var(--muted-text-color);
     cursor: default;
     font-size: 11px;
 }
 
-#ctx_menu a:not([id]):last-child:hover {
+.bigPlayer #ctx_menu a:not([id]):last-child:hover {
     background: transparent;
+}
+
+#audio_ctx_add_to_playlist[data-vkify-submenu-added="1"] {
+    position: relative;
+}
+
+#audio_ctx_add_to_playlist[data-vkify-submenu-added="1"]::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    margin-top: -4px;
+    width: 8px;
+    height: 8px;
+    background: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%228%22%20height%3D%228%22%20viewBox%3D%220%200%208%208%22%3E%0A%20%20%20%20%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Crect%20width%3D%228%22%20height%3D%228%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cpolyline%20stroke%3D%22%2392A0B1%22%20stroke-width%3D%221.3%22%20points%3D%221%203%204%205.5%207%203%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E") no-repeat center center;
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+#audio_ctx_add_to_playlist[data-vkify-submenu-added="1"].vkify_submenu_open::after {
+    transform: rotate(180deg);
+}
+
+a.vkify_ctx_subitem {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 25px !important;
+    color: var(--muted-text-color-2) !important;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.vkify_ctx_subitem:hover {
+    background: var(--ctx-menu-hover-bg) !important;
+}
+
+a.vkify_ctx_subitem_empty {
+    display: block;
+    padding-left: 25px !important;
+    color: var(--muted-text-color);
+    font-style: italic;
+    cursor: default;
 }
 
 .page_header #search_box input[type="search"] {
