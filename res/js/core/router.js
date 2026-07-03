@@ -496,6 +496,15 @@ window.router = new class Router {
             const parser = new DOMParser();
             const parsedContent = parser.parseFromString(text, 'text/html');
 
+            const nextBody = parsedContent.querySelector('body');
+            if (nextBody && nextBody.getAttribute('data-themepack') !== 'vkify16') {
+                console.log('ROUTER | Next page is not vkify16, navigating directly');
+                this.cancelPendingNavigation();
+                resolvedUrl.searchParams.delete('al');
+                location.assign(resolvedUrl);
+                return;
+            }
+
             this._closeMsgs();
             this._unlinkObservers();
             u('body').removeClass('ajax_request_made');
@@ -627,6 +636,16 @@ u(document).on('submit', 'form', async (e) => {
         const text = await response.text();
         const parser = new DOMParser();
         const parsedContent = parser.parseFromString(text, 'text/html');
+
+        const nextBody = parsedContent.querySelector('body');
+        if (nextBody && nextBody.getAttribute('data-themepack') !== 'vkify16') {
+            console.log('ROUTER | Form response is not vkify16, navigating directly');
+            window.router.cancelPendingNavigation();
+            u('#ajloader').removeClass('shown');
+            const targetUrl = response.redirected ? response.url : urlObj.toString();
+            location.assign(targetUrl);
+            return;
+        }
 
         if (response.redirected) {
             history.replaceState({ from_router: 1 }, '', response.url);

@@ -78,7 +78,9 @@
 .notification_ballon wrap {
 	display: flex;
 	flex-direction: row;
-	padding: 11px 12px 12px;
+	padding: 6px 12px 12px;
+	width: 100%;
+	box-sizing: border-box;
 }
 .notification_ballon wrap content {
 	font-size: 12.5px;
@@ -94,9 +96,11 @@
 	border-radius: 50%;
 }
 .notification_ballon wrap content a {
-	text-decoration: underline;
 	color: var(--white);
 	font-weight: 700;
+}
+.notification_ballon wrap content a:hover {
+	text-decoration: underline;
 }
 
 .feedback_row {

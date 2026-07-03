@@ -375,6 +375,20 @@ vkify.ready(() => {
         }
     }
 
+    const currentTheme = document.body.getAttribute('data-themepack');
+    if (currentTheme !== 'vkify16') {
+        if (typeof NewNotification === 'function') {
+            NewNotification(
+                window.vkifylang?.something_not_right || "Something isn't right.",
+                window.vkifylang?.themepack_warn || "Please set \"VKify16\" in the styles settings again, or reload the page.",
+                null,
+                () => {},
+                2147483647,
+                false
+            );
+        }
+    }
+
 
 
     const musicKeysDown = [32, 37, 39, 107, 109];
