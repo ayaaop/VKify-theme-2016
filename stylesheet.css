@@ -2925,13 +2925,21 @@ h4.gifts_section_header {
     margin: -5px -10px -10px;
     transition: opacity 0.1s;
     line-height: 1;
+    opacity: 0;
+}
+.reply:hover .like_wrap,
+.reply .like_wrap[data-likes] {
+    opacity: 0.5;
 }
 .reply .like_wrap:hover {
     text-decoration: none;
 }
 
-.reply .like_wrap:hover .action_icon {
-    opacity: 0.5;
+.reply .like_wrap .action_icon,
+.reply .like_wrap:hover .action_icon,
+.reply .like_wrap:hover,
+.reply .like_wrap.my_like {
+    opacity: 1!important;
 }
 
 .action_icon:not(#liked) + .action_count {

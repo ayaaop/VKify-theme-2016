@@ -116,6 +116,11 @@ body {
 .reply .like_wrap {
 	padding: 5px 10px;
 	margin: -5px -10px -10px;
+	transition: opacity 0.1s;
+}
+.reply:hover .like_wrap,
+.reply .like_wrap[data-likes] {
+    opacity: 0.7;
 }
 .action_count {
 	font-size: 13px;
@@ -133,13 +138,13 @@ body {
 	height: 16px !important;
 	width: 16px !important;
 	margin-top: -2px;
-	opacity: .7;
 	background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'%3E%3Cpath fill='%23b2b2b2' d='M10.96 2.5A4.036 4.036 0 0 1 15 6.534c0 2.211-.884 3.316-4.52 6.14l-1.099.853a2.25 2.25 0 0 1-2.762 0l-1.099-.853C1.884 9.85 1 8.745 1 6.534A4.036 4.036 0 0 1 5.04 2.5c1.111 0 2.103.481 2.96 1.402.857-.92 1.849-1.402 2.96-1.402M5.04 3.998A2.54 2.54 0 0 0 2.5 6.534c0 1.588.653 2.404 3.94 4.957l1.1.854c.27.21.65.21.92 0l1.1-.854c3.287-2.553 3.94-3.37 3.94-4.957 0-1.4-1.137-2.536-2.54-2.536-.848 0-1.618.482-2.343 1.528l-.206.297a.5.5 0 0 1-.822 0l-.206-.297C6.658 4.48 5.888 3.998 5.04 3.998'/%3E%3C/svg%3E");
 	background-position: 0px 0px;
 	background-size: 16px;
 	display: inline-block;
 }
-.reply .like_wrap:hover .action_icon  {
+.reply .action_icon,
+.reply .like_wrap:hover .action_icon {
 	opacity: 1;
 }
 .reply #liked.action_icon {
