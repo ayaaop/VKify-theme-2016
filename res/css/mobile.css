@@ -1,0 +1,274 @@
+@media (max-width: 768px) {
+    body {
+        --header-height: 56px;
+        --layout-width: 100%;
+        --page-width: 100%;
+    }
+
+    .page_header {
+        display: none !important;
+    }
+
+    .layout,
+    .page_body,
+    .wrap1,
+    .wrap2,
+    .page_content,
+    .wide_column,
+    .wide_column_wrap,
+    #auth,
+    .crp-list,
+    .messenger-app {
+        width: 100% !important;
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        box-sizing: border-box;
+        position: static;
+    }
+
+    .wide_column_left .wide_column_wrap,
+    .wide_column_right .wide_column_wrap {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+
+    .sidebar {
+        position: fixed;
+        left: -70vw;
+        top: 0;
+        bottom: 0;
+        display: block !important;
+        padding-top: 0;
+        width: 70vw !important;
+        background-color: var(--module-background-color);
+        transition: left 0.3s ease;
+        overflow-y: auto;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+        margin: 0 !important;
+        z-index: 201;
+    }
+
+    .sidebar_inner {
+        width: 100%;
+    }
+
+    body.menu-expanded .sidebar {
+        left: 0;
+    }
+    
+    body.menu-expanded {
+        overflow: hidden;
+    }
+
+    .mobileonly {
+        display: block !important;
+    }
+    .nomobile {
+        display: none!important;
+    }
+
+    .mobile-profile-bar {
+        display: block;
+        position: sticky;
+        width: 100%;
+        height: 140px;
+        top: 0;
+        overflow: hidden;
+        text-decoration: none;
+        box-sizing: border-box;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 8px;
+        z-index: 1;
+    }
+
+    .mobile-profile-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        filter: blur(10px) brightness(0.65);
+        transform: scale(1.15);
+        z-index: 1;
+    }
+
+    .mobile-profile-info {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #mobileProfileAvatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-bottom: 8px;
+        object-fit: cover;
+    }
+
+    .mobile-profile-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--white);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    .appbar {
+        display: flex;
+        align-items: center;
+        height: var(--header-height);
+        background-color: var(--accent-color);
+        color: var(--accent-text-color);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 198;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+
+    .appbar .hamburger {
+        width: 24px;
+        height: 24px;
+        margin-right: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .appbar .hamburger svg {
+        fill: var(--accent-text-color);
+    }
+
+    .appbar .appbar-title {
+        font-size: 20px;
+        font-weight: 500;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .appbar .appbar-extra {
+        display: flex;
+        align-items: center;
+    }
+
+    .toTop {
+        display: none !important;
+    }
+    
+    .page_body {
+        margin-top: var(--header-height)
+    }
+
+    .narrow_column_wrap,.narrow_column {
+        width: 100% !important;
+    }
+
+    .form_group .form_field,.form_field.vertical {
+        flex-direction: column;
+        width: 100%;
+    }
+    .form_group .form_label {
+        width: 100%;
+        padding: 0 0 6px;
+        color: var(--muted-text-color-2);
+        font-weight: 500;
+    }
+    .form_group .form_label:empty {
+        display: none;
+    }
+    .form_group .form_data {
+        line-height: 18px;
+        margin-left: 0;
+    }
+    .form_field input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"]), .form_field:not(.settings_privacy_row) select, .form_field textarea {
+        width: 100%;
+    }
+
+    .attachments_b {
+        width: 100% !important;
+        height: auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .attachments_b .attachment {
+        width: 100% !important;
+        height: auto !important;
+        float: none !important;
+    }
+    .attachments_b .attachment img.media_makima {
+        width: 100% !important;
+        height: auto !important;
+        max-height: 70vh !important;
+        object-fit: contain !important;
+    }
+    .attachments_b .attachment .compact_video {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .ovk-diag-cont {
+        width: 100%!important;
+        height: auto!important;
+        top: auto;
+        bottom: 0;
+        left: 0;
+        margin-right: 0;
+        transform: translateY(0);
+        animation: slideUpBottomSheet 0.3s ease-out forwards !important;
+        background-color: transparent !important;
+    }
+    .ovk-diag {
+        width: 100% !important;
+        margin: 0;
+        border: none;
+        border-radius: 12px 12px 0 0;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    .ovk-diag-head {
+        border-radius: 12px 12px 0 0;
+    }
+    .ovk-diag-body {
+        height: auto !important;
+        max-height: 75vh !important;
+    }
+    .ovk-diag-action {
+        display: flex;
+        gap: 8px;
+    }
+    .ovk-diag-action > .button,
+    .ovk-diag-action > button,
+    .ovk-diag-action > input[type="button"],
+    .ovk-diag-action > input[type="submit"] {
+        width: 100%;
+        margin: 0;
+        box-sizing: border-box;
+    }
+}
+@keyframes slideUpBottomSheet {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@media (min-width: 769px) {
+    .appbar,
+    .mobileonly {
+        display: none !important;
+    }
+}

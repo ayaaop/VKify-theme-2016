@@ -13,6 +13,7 @@
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="/themepack/vkify16/{$theme->getVersion()}/resource/favicon_vk.ico" />
         <meta name="application-name" content="{$instance_name}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
 
         <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
@@ -96,6 +97,19 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
+            
+            <div class="appbar">
+                <div class="hamburger" id="mobileMenuTrigger">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </div>
+                <div class="appbar-title">{ifset title}{include title}{/ifset}</div>
+                <div class="appbar-extra" n:ifset="appbar_extra">
+                    {block appbar_extra}{/block}
+                </div>
+            </div>
+
             <div class="page_header">
                 <div class="page_header_inner">
                     <a href="/" class="home_button" title="{$instance_name}">
@@ -188,8 +202,15 @@
             <div class="sidebar" {if $hideSidebar}style="display: none;"{/if}>
                 <div class="sidebar_inner">
                     {ifset $thisUser}
+                        <a href="{$thisUser->getURL()}" class="mobile-profile-bar mobileonly">
+                            <div class="mobile-profile-bg" style="background-image: url({$thisUser->getAvatarUrl('medium')|noescape})"></div>
+                            <div class="mobile-profile-info">
+                                {include 'components/avatar.latte', author => $thisUser, size => 'medium', id => 'mobileProfileAvatar'}
+                                <div class="mobile-profile-name">{$thisUser->getFirstName()}&nbsp;{$thisUser->getLastName()}</div>
+                            </div>
+                        </a>
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
-                            <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">
+                            <a href="{$thisUser->getURL()}" class="link my_page nomobile" title="{_my_page} [Alt+Shift+.]" accesskey=".">
                                 <div class="link_icon"></div>
                                 <span>{_my_page}</span>
                             </a>
@@ -236,6 +257,10 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
                                 <div class="link_icon"></div>
                                 <span>{_mobile_notes}</span>
+                            </a>
+                            <a href="/settings" class="link my_settings mobileonly">
+                                <div class="link_icon"></div>
+                                <span>{_mobile_settings}</span>
                             </a>
                             
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('fave')}
@@ -578,6 +603,8 @@
 
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/page.js"></script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/tooltips.js"></script>
+
+        <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/mobile.js"></script>
 
         {* Bundled themepack JS (see build.mjs for module order) *}
         <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/dist/vkify16.bundle.js"></script>
