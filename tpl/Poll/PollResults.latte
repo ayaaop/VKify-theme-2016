@@ -14,6 +14,44 @@
     <style>body { margin: 8px; } .poll { border: 1px solid #e3e3e3; }</style>
 {/if}
 
+{var $is2018 = ($_COOKIE['vkify16_2018mode'] ?? '0') === '1'}
+
+{if $is2018}
+<div class="post_media_voting poll" data-id="{$id}">
+    <div class="media_voting">
+        <div class="media_voting_header">
+            <div class="media_voting_question">{$title}</div>
+            <div class="media_voting_info">{$meta}</div>
+        </div>
+        <div class="media_voting_options">
+            {var $maxPct = 0}
+            {foreach $results->options as $option}
+                {if $option->pct > $maxPct}{var $maxPct = $option->pct}{/if}
+            {/foreach}
+            <div n:foreach="$results->options as $option" n:class="media_voting_option_wrap, $option->voted ? media_voting_option_voted, $option->pct == $maxPct && $option->pct > 0 ? media_voting_option_leader">
+                <div class="media_voting_option">
+                    <div class="media_voting_option_bar" style="width: {$option->pct}%;"></div>
+                    <div class="media_voting_option_text">
+                        {if $isAnon}
+                            <a href="javascript:false" style="color: inherit; text-decoration: none;">{$option->name}</a>
+                        {else}
+                            <a href="/poll{$id}/voters?option={base_convert(''.$option->id, 10, 32)}" style="color: inherit; text-decoration: none;" target="_blank">{$option->name}</a>
+                        {/if}
+                        <span class="media_voting_option_count"><span class="media_voting_separator">⋅</span>{$option->votes}</span>
+                    </div>
+                    <div class="media_voting_option_percent">{$option->pct}%</div>
+                </div>
+            </div>
+        </div>
+        <div class="media_voting_footer">
+            <div class="media_voting_footer_voted">
+                <span style="display: block; margin-bottom: 8px;">{tr("poll_voter_count", $votes)|noescape}</span>
+                <a n:if="$unlocked && $voted" href="javascript:pollRetractVote({$id})" class="media_voting_footer_button" style="position: relative; opacity: 1; pointer-events: all; display: inline-block; transform: none; left: auto; text-decoration: none;">{_retract_vote}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{else}
 <div class="poll" data-id="{$id}">
     <span class="nobold meta">{$meta}</span>
     <h4>{$title}</h4>
@@ -54,3 +92,4 @@
         <a n:if="$unlocked && $voted" href="javascript:pollRetractVote({$id})" class="poll-retract-vote">{_retract_vote}</a>
     </div>
 </div>
+{/if}

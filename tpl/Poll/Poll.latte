@@ -14,6 +14,38 @@
     <style>body { margin: 8px; }</style>
 {/if}
 
+{var $is2018 = ($_COOKIE['vkify16_2018mode'] ?? '0') === '1'}
+
+{if $is2018}
+<div class="post_media_voting poll" data-id="{$id}">
+    <form onsubmit="pollFormSubmit(event, this)" data-multi="{$multiple ? '1' : '0'}" data-pid="{$id}">
+        <div class="media_voting media_voting_clickable_options">
+            <div class="media_voting_header">
+                <div class="media_voting_question">{$title}</div>
+                <div class="media_voting_info">{$meta}</div>
+            </div>
+            <div n:class="media_voting_options, $multiple ? media_voting_multiple">
+                <div n:foreach="$options as $oid => $option" class="media_voting_option_wrap media_voting_clickable_option">
+                    <label class="media_voting_option">
+                        {if $multiple}
+                            <input n:attr="disabled => is_null($thisUser)" style="display:none" type="checkbox" name="option{$oid}" onclick="pollCheckBoxPressed(this); $(this).closest('.media_voting_option_wrap').toggleClass('media_voting_option_selected', this.checked);" />
+                        {else}
+                            <input n:attr="disabled => is_null($thisUser)" style="display:none" type="radio" value="{$oid}" name="vote" onclick="pollRadioPressed(this); $(this).closest('.media_voting_options').find('.media_voting_option_selected').removeClass('media_voting_option_selected'); $(this).closest('.media_voting_option_wrap').addClass('media_voting_option_selected');" />
+                        {/if}
+                        <div class="media_voting_option_text">{$option}</div>
+                    </label>
+                </div>
+            </div>
+            <div class="media_voting_footer">
+                <div class="media_voting_footer_voted"><span>{tr("poll_voter_count", $votes)|noescape}</span></div>
+                {if $multiple}
+                    <button type="submit" class="media_voting_footer_button" disabled="disabled">{_cast_vote}</button>
+                {/if}
+            </div>
+        </div>
+    </form>
+</div>
+{else}
 <div class="poll">
     <span class="nobold meta">{$meta}</span>
     <h4>{$title}</h4>
@@ -41,3 +73,4 @@
         {tr("poll_voter_count", $votes)|noescape}<br/>
     </div>
 </div>
+{/if}

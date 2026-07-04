@@ -4,7 +4,7 @@
 function shouldSkipChoiceLabel(label) {
     if (!(label instanceof HTMLLabelElement)) return true;
     if (label.dataset.vkifyChoiceLabel) return true;
-    if (label.classList.contains('field') || label.classList.contains('button')) return true;
+    if (label.classList.contains('field') || label.classList.contains('button') || label.classList.contains('media_voting_option')) return true;
     if (label.classList.contains('entity_vertical_list_item')) return true;
     if (label.closest('.page_module_upload')) return true;
     if (label.querySelector('input[type="file"]')) return true;
