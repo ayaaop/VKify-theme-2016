@@ -52,6 +52,18 @@
         width: 100%;
     }
 
+    .sidebar_inner .link {
+        height: 36px;
+        line-height: 36px;
+    }
+    .sidebar_inner .link span {
+        margin-top: 1px;
+    }
+    .sidebar .sidebar_inner .link object[type="internal/link"] {
+        right: 10px;
+        margin-top: 6px;
+    }
+
     body.menu-expanded .sidebar {
         left: 0;
     }
@@ -174,7 +186,7 @@
     .narrow_column_wrap,.narrow_column {
         width: 100% !important;
     }
-
+    
     .form_group .form_field,.form_field.vertical {
         flex-direction: column;
         width: 100%;
@@ -194,6 +206,27 @@
     }
     .form_field input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"]), .form_field:not(.settings_privacy_row) select, .form_field textarea {
         width: 100%;
+    }
+    .label_end .form_label {
+        text-align: start;
+    }
+
+    .search_row .img {
+        width: 60px;
+        height: 60px;
+    }
+    .search_row .controls {
+        width: fit-content;
+    }
+    .action_links .button {
+        padding: 7px 16px 8px
+    }
+
+    .profile_actions_split [data-tippy-root] {
+        width: 100%;
+    }
+    .profile_actions_split .tippy-box[data-theme~="vk"] {
+        max-width: 100%!important;
     }
 
     .attachments_b {
