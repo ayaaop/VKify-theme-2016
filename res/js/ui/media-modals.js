@@ -239,7 +239,40 @@ vkify.once('mediaModals', function () {
             let photoRealId = parseInt(photo_id.split('_')[1]);
             const currentUserId = window.openvk?.current_id || 0;
 
-            const content = `
+            let content;
+            if (window.isMobile && window.isMobile()) {
+                content = `
+        <div class="pv_wrapper mobile-photo-modal">
+            <div class="mobile-photo-header">
+                <div class="mph-left">
+                    <div class="pv_album_name"><div id='pv_actions_loader'></div></div>
+                    <div class="pv_counter"></div>
+                </div>
+                <div class="mph-right">
+                    <div class="pv_actions_more_wrap" style="display:none;"></div>
+                    <div id="__modal_photo_close" class="photo_close_icon" style="cursor:pointer; margin-left: 15px;"></div>
+                </div>
+            </div>
+
+            <div class="mobile-photo-body pv_photo" style="overflow: hidden; position: relative; touch-action: none;">
+                <img src="${photo}" id="pv_photo_img" style="transform-origin: center center;" />
+                <div class="pv_nav_left" id="pv_nav_left" style="display: none;">
+                    <div class="pv_nav_arrow"></div>
+                </div>
+                <div class="pv_nav_right" id="pv_nav_right" style="display: none;">
+                    <div class="pv_nav_arrow"></div>
+                </div>
+            </div>
+
+            <div class="mobile-photo-footer">
+                <div class="pv_desc" style="display:none;"></div>
+                <div class="mobile-photo-actions pv_bottom_actions"></div>
+            </div>
+            
+            <div class="pv_right" style="display:none;"><div id='pv_right_loader'></div></div>
+        </div>`;
+            } else {
+                content = `
         <div class="pv_wrapper">
             <div class="pv_left">
                 <div class="pv_photo">
@@ -263,6 +296,7 @@ vkify.once('mediaModals', function () {
                 <div id='pv_right_loader' class='pv_author_block'></div>
             </div>
         </div>`;
+            }
 
 
             const msgbox = CF.createModal({
@@ -459,6 +493,130 @@ vkify.once('mediaModals', function () {
                 e.preventDefault();
                 slidePhoto(1);
             });
+            
+            if (window.isMobile && window.isMobile()) {
+                const img = msgbox.getNode().find('#pv_photo_img').nodes[0];
+                const container = msgbox.getNode().find('.mobile-photo-body').nodes[0];
+                const windowNode = msgbox.getNode().find('.ovk-photo-view-window').nodes[0];
+                const headerNode = msgbox.getNode().find('.mobile-photo-header').nodes[0];
+                const footerNode = msgbox.getNode().find('.mobile-photo-footer').nodes[0];
+                
+                let scale = 1;
+                let lastScale = 1;
+                let currentX = 0;
+                let currentY = 0;
+                let startDistance = 0;
+                let lastTap = 0;
+                let initialX = 0;
+                let initialY = 0;
+                let opacity = 1;
+
+                function getDistance(touches) {
+                    return Math.hypot(
+                        touches[0].clientX - touches[1].clientX,
+                        touches[0].clientY - touches[1].clientY
+                    );
+                }
+
+                function updateTransform() {
+                    if (scale < 1) { scale = 1; currentX = 0; currentY = 0; }
+                    img.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+                }
+                
+                function updateOpacity() {
+                    if (windowNode) windowNode.style.backgroundColor = `rgba(0,0,0,${opacity})`;
+                    if (headerNode) headerNode.style.opacity = opacity;
+                    if (footerNode) footerNode.style.opacity = opacity;
+                }
+
+                container.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        startDistance = getDistance(e.touches);
+                        lastScale = scale;
+                        img.style.transition = 'none';
+                    } else if (e.touches.length === 1) {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+                        
+                        if (tapLength < 300 && tapLength > 0) {
+                            e.preventDefault();
+                            scale = scale > 1 ? 1 : 2;
+                            currentX = 0; currentY = 0;
+                            img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                            updateTransform();
+                        } else {
+                            img.style.transition = 'none';
+                            initialX = e.touches[0].clientX - currentX;
+                            initialY = e.touches[0].clientY - currentY;
+                            if (windowNode) windowNode.style.transition = 'none';
+                            if (headerNode) headerNode.style.transition = 'none';
+                            if (footerNode) footerNode.style.transition = 'none';
+                        }
+                        lastTap = currentTime;
+                    }
+                }, { passive: false });
+
+                container.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        const currentDistance = getDistance(e.touches);
+                        scale = lastScale * (currentDistance / startDistance);
+                        updateTransform();
+                    } else if (e.touches.length === 1) {
+                        if (scale > 1) {
+                            e.preventDefault();
+                            currentX = e.touches[0].clientX - initialX;
+                            currentY = e.touches[0].clientY - initialY;
+                            updateTransform();
+                        } else if (scale === 1) {
+                            e.preventDefault();
+                            currentX = e.touches[0].clientX - initialX;
+                            currentY = e.touches[0].clientY - initialY;
+                            updateTransform();
+                            
+                            opacity = 1 - Math.min(Math.abs(currentY) / 300, 1);
+                            updateOpacity();
+                        }
+                    }
+                }, { passive: false });
+
+                container.addEventListener('touchend', (e) => {
+                    lastScale = scale;
+                    img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    if (scale < 1) {
+                        scale = 1;
+                        currentX = 0;
+                        currentY = 0;
+                        updateTransform();
+                    } else if (scale === 1) {
+                        if (Math.abs(currentY) > 100) {
+                            const direction = currentY > 0 ? 1 : -1;
+                            currentY = currentY + direction * window.innerHeight;
+                            opacity = 0;
+                            updateTransform();
+                            
+                            if (windowNode) windowNode.style.transition = 'background-color 0.2s';
+                            if (headerNode) headerNode.style.transition = 'opacity 0.2s';
+                            if (footerNode) footerNode.style.transition = 'opacity 0.2s';
+                            updateOpacity();
+                            
+                            setTimeout(() => {
+                                msgbox.close();
+                            }, 200);
+                        } else {
+                            currentX = 0;
+                            currentY = 0;
+                            opacity = 1;
+                            updateTransform();
+                            if (windowNode) windowNode.style.transition = 'background-color 0.2s';
+                            if (headerNode) headerNode.style.transition = 'opacity 0.2s';
+                            if (footerNode) footerNode.style.transition = 'opacity 0.2s';
+                            updateOpacity();
+                        }
+                    }
+                });
+            }
 
             initializeNavigation();
 
@@ -500,10 +658,54 @@ vkify.once('mediaModals', function () {
                     msgbox.getNode().find('.pv_bottom_actions').html(pvActions ? pvActions.innerHTML : '');
 
                     msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
+                    
+                    if (window.isMobile && window.isMobile()) {
+                        const desc = msgbox.getNode().find('.pv_right .pv_desc').html();
+                        if (desc && desc.trim()) {
+                            msgbox.getNode().find('.mobile-photo-footer .pv_desc').html(desc).attr('style', '');
+                        } else {
+                            msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
+                        }
+                        
+                        const likes = msgbox.getNode().find('.pv_right .post_full_like').html();
+                        msgbox.getNode().find('.mobile-photo-actions').html(likes || '');
+                        
+                        let moreHtml = '';
+                        if (pvActions) {
+                           const moreMenu = pvActions.querySelector('#pv_actions_more_menu');
+                           const deleteBtn = pvActions.querySelector('#_photoDelete');
+                           if (moreMenu) {
+                               moreHtml += moreMenu.innerHTML;
+                           }
+                           if (deleteBtn) {
+                               moreHtml += deleteBtn.outerHTML;
+                           }
+                        }
+                        
+                        if (moreHtml) {
+                            msgbox.getNode().find('.pv_actions_more_wrap').html(`
+                                <div class="pv_actions_more mobile-three-dots" role="button" data-tippy-content-id="pv_actions_more_menu_mobile" data-tippy-theme="dark vk" style="display:flex; align-items:center;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                                </div>
+                                <div id="pv_actions_more_menu_mobile" class="tippy-menu tippy-content-template">
+                                    ${moreHtml}
+                                </div>
+                            `).attr('style', 'display:block; cursor:pointer;');
+                        } else {
+                            msgbox.getNode().find('.pv_actions_more_wrap').html('').attr('style', 'display:none;');
+                        }
+                        
+                        msgbox.getNode().find('#__mobile_photo_comment_btn').attr('href', `/photo${photoId}`);
+                    }
                 } catch (e) {
                     msgbox.getNode().find('.ovk-photo-view-window').addClass('private');
                     msgbox.getNode().find('.pv_right').html('');
                     msgbox.getNode().find('.pv_album_name').html('');
+                    if (window.isMobile && window.isMobile()) {
+                         msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
+                         msgbox.getNode().find('.mobile-photo-actions').html('');
+                         msgbox.getNode().find('.pv_actions_more_wrap').html('').attr('style', 'display:none;');
+                    }
                 }
 
                 setTimeout(window.reinitializeTooltips, 200);

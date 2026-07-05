@@ -1,4 +1,4 @@
-<div class="profile_actions clear_fix">
+<div class="profile_actions clear_fix nomobile">
 	{ifset $thisUser}
 		{if $user->getId() != $thisUser->getId()}
 			{if !$user->isBanned() && !$user->isDeleted() && !$user->isDeactivated() && !$user->isBlacklistedBy($thisUser) && !$thisUser->isBlacklistedBy($user)}

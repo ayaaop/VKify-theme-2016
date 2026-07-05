@@ -31,7 +31,7 @@
         }, true); // capture phase!
 
         // Also close sidebar when a link inside the sidebar is clicked
-        u(document).on('click', '.sidebar a', () => {
+        u(document).on('click', '.sidebar a:not([href^="javascript:"])', () => {
             if (body.classList.contains('menu-expanded')) {
                 closeSidebar();
             }

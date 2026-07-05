@@ -307,6 +307,17 @@ window.router = new class Router {
         u('.sidebar').html(sidebar.html());
         u('.appbar').html(appbar.html());
 
+        if (window.__profileAppbarScrollHandler) {
+            window.removeEventListener('scroll', window.__profileAppbarScrollHandler);
+            window.__profileAppbarScrollHandler = null;
+        }
+        document.body.classList.remove('has-transparent-appbar');
+        const liveAppbar = document.getElementById('appbar');
+        if (liveAppbar) {
+            liveAppbar.classList.remove('appbar--transparent', 'appbar--scrolled');
+            liveAppbar.style.removeProperty('--appbar-bg-alpha');
+        }
+
         if (backdrop.length > 0) {
             if (u('#backdrop').length === 0) {
                 u('body').append('<div id="backdrop"></div>');

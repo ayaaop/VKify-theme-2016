@@ -2,12 +2,264 @@
 {var $backdrops = $club->getBackDropPictureURLs()}
 {var $canEdit = $thisUser && $club->canBeModifiedBy($thisUser)}
 
-{block title}{$club->getName()}{/block} 
+{block title}{$club->getName()}{/block}
+
+{var $transparentAppbar = true}
+
+{block appbar_extra}
+<div class="mobileonly" id="group_appbar_extra">
+    <button class="appbar-extra-btn" id="groupAppbarMoreBtn" aria-label="More actions"
+        data-tippy-content-id="mobile_appbar_menu_content"
+        data-tippy-placement="bottom-end"
+        data-tippy-preset="appbar_menu">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    </button>
+</div>
+{/block}
 
 {block content}
+    {var $audios = iterator_to_array($audios)}
+    {var $albums = iterator_to_array($albums)}
     {var $topics = iterator_to_array($topics)}
+    {var $followersCount = $club->getFollowersCount()}
+
+    {* ===== MOBILE HERO ===== *}
+    <div class="mobile-group-hero mobileonly">
+        <div class="mobile-hero-img-wrap">
+            <img src="{$club->getAvatarUrl('large')}" alt="{$club->getName()}" class="mobile-hero-img" />
+            <div class="mobile-hero-gradient"></div>
+            <div class="mobile-hero-info">
+                <h2 class="mobile-hero-name">{$club->getName()} <a class="page_verified" n:if="$club->isVerified()" href="/verify"></a></h2>
+                <div class="mobile-hero-status">
+                    {if $followersCount > 0}
+                        {tr('participants')}: {$followersCount}
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {* ===== MOBILE CONTENT ===== *}
+    <div class="mobileonly mobile-group-content">
+
+        <div class="page_block mobile-actions-info-block">
+            {* Primary action: Join / Leave only *}
+            <div class="mobile-actions-wrap">
+                <div class="mobile_profile_actions">
+                    {ifset $thisUser}
+                        {var $subStatus = $club->getSubscriptionStatus($thisUser)}
+                        {var $joinActions = [
+                            0 => ['act' => 'add', 'label' => tr('join_community')],
+                            1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
+                        ]}
+                        {if isset($joinActions[$subStatus ? 1 : 0])}
+                            <form action="/setSub/club" method="post" class="mobile_profile_action_primary">
+                                <input type="hidden" name="act" value="{$joinActions[$subStatus ? 1 : 0]['act']}" />
+                                <input type="hidden" name="id" value="{$club->getId()}" />
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="submit" value="{$joinActions[$subStatus ? 1 : 0]['label']}" class="button button_wide mobile_profile_action_btn {if isset($joinActions[$subStatus ? 1 : 0]['class'])}{$joinActions[$subStatus ? 1 : 0]['class']}{/if}" />
+                            </form>
+                        {/if}
+                    {else}
+                        <div class="guest_actions">
+                            <vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+                        </div>
+                    {/ifset}
+                </div>
+            </div>
+
+            {* Info rows *}
+            <div class="mobile-info-rows">
+                {var $descPlain = $club->getDescription() ?? ''}
+                {if $descPlain !== ''}
+                    <div class="mobile-info-row">
+                        <div class="mir-icon mir-icon-status"></div>
+                        <div class="mir-text">{mb_strimwidth($descPlain, 0, 150, '…')}</div>
+                    </div>
+                {/if}
+                {if $club->getWebsite()}
+                    <div class="mobile-info-row">
+                        <div class="mir-icon mir-icon-website"></div>
+                        <div class="mir-text"><a href="{$club->getWebsite()}" rel="ugc" target="_blank">{$club->getWebsite()}</a></div>
+                    </div>
+                {/if}
+                {if $followersCount > 0}
+                    <div class="mobile-info-row">
+                        <div class="mir-icon mir-icon-friends"></div>
+                        <div class="mir-text"><a href="/club{$club->getId()}/followers">{tr('participants', $followersCount)}</a></div>
+                    </div>
+                {/if}
+                {var $owner = $club->getOwner()}
+                <div class="mobile-info-row">
+                    <div class="mir-icon mir-icon-friends"></div>
+                    <div class="mir-text"><a href="{$owner->getURL()}">{_creator}: {$owner->getCanonicalName()}</a></div>
+                </div>
+                <div class="mobile-info-row mobile-info-row-more" onclick="__mobileGroupShowMore()">
+                    <div class="mir-icon mir-icon-more"></div>
+                    <div class="mir-text mir-text-link">{_additional_information}</div>
+                </div>
+            </div>
+        </div>{* /page_block mobile-actions-info-block *}
+
+        {* Horizontally-scrolling modules strip *}
+        <div class="page_block mobile-scroll-modules">
+            {if $albumsCount > 0}
+                {var $firstAlbum = $albums[0] ?? null}
+                <a class="msm-card msm-card-albums" href="/albums{$club->getId() * -1}">
+                    <div class="msm-header">{_albums} <span class="msm-count">{$albumsCount}</span></div>
+                    <div class="msm-body">
+                        {if $firstAlbum && $firstAlbum->getCoverPhoto()}
+                            <img src="{$firstAlbum->getCoverPhoto()->getURLBySizeId('normal')}" class="msm-album-cover" alt="" />
+                        {else}
+                            <div class="msm-placeholder-icon msm-icon-album"></div>
+                        {/if}
+                    </div>
+                </a>
+            {/if}
+            {if $audiosCount > 0}
+                {var $firstAudio = $audios[0] ?? null}
+                <a class="msm-card msm-card-audio" href="/audios-{$club->getId()}">
+                    <div class="msm-header">{_audios} <span class="msm-count">{$audiosCount}</span></div>
+                    <div class="msm-body">
+                        <div class="msm-audio-note">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </div>
+                        {if $firstAudio}
+                            <div class="msm-audio-title">{$firstAudio->getTitle()|truncate:40}<br>{$firstAudio->getPerformer()|truncate:40}</div>
+                        {/if}
+                    </div>
+                </a>
+            {/if}
+            {if $docsCount > 0}
+                <a class="msm-card msm-card-docs" href="/docs{$club->getRealId()}">
+                    <div class="msm-header">{_documents} <span class="msm-count">{$docsCount}</span></div>
+                    <div class="msm-body msm-docs-body">
+                        <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" style="opacity:0.35"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                    </div>
+                </a>
+            {/if}
+        </div>
+
+        {* Dedicated topics module *}
+        {if $topicsCount > 0}
+        <div class="page_block topics_module mobile-topics-module">
+            <a href="/board{$club->getId()}" class="module_header">
+                <h3 class="header_top clear_fix">
+                    <span class="header_label fl_l">{_discussions}</span>
+                    <span class="header_count fl_l">{$topicsCount}</span>
+                </h3>
+            </a>
+            <div class="module_body">
+                <div class="topic_row" n:foreach="$topics as $topic">
+                    <div class="topic_info_wrap">
+                        <a href="/topic{$topic->getPrettyId()}">
+                            <div class="topic_icon"></div>
+                            <div class="topic_title">{$topic->getTitle()}</div>
+                        </a>
+                        <div class="topic_info">{tr('updated_at', $topic->getUpdateTime())}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
+
+    </div>{* /mobile-group-content *}
+
+    {* Hidden: More info MessageBox content *}
+    <div id="mobile_group_more_info_content" style="display:none;">
+        {if $docsCount > 0}
+        <a class="mobile-more-row" href="/docs{$club->getRealId()}"><span class="mir-icon mir-icon-more"></span> {tr('documents', $docsCount)}</a>
+        {/if}
+        {if $club->getWebsite()}
+        <hr class="mobile-more-sep">
+        <a class="mobile-more-row" href="{$club->getWebsite()}" rel="ugc" target="_blank"><span class="mir-icon mir-icon-website"></span> {$club->getWebsite()}</a>
+        {/if}
+        <hr class="mobile-more-sep">
+        <div class="form_group clear_fix">
+            <div class="form_field"><div class="form_label">{_creator}</div><div class="form_data">{$owner->getCanonicalName()}</div></div>
+            {if $descPlain !== ''}
+            <div class="form_field">
+                <div class="form_label">{_information}</div>
+                <div class="form_data" dir="auto">
+                    {var $descHtml2 = $club->getDescriptionHtml()}
+                    {include "../components/truncated_text.latte", html => $descHtml2, plain => $descPlain, limit => 500}
+                </div>
+            </div>
+            {/if}
+        </div>
+    </div>
+
+    {* Mobile appbar menu — server-rendered for tippy *}
+    {ifset $thisUser}
+    <div id="mobile_appbar_menu_content" class="tippy-menu">
+        {if $canEdit}
+            <a class="tippy-menu-item" href="/club{$club->getId()}/edit">{_edit_group}</a>
+            <a class="tippy-menu-item" href="/club{$club->getId()}/stats" rel="nofollow">{_statistics}</a>
+            {var $clubPinned = $thisUser->isClubPinned($club)}
+            <a class="tippy-menu-item" href="/groups_pin?club={$club->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$club->getName()}" data-group-url="{$club->getUrl()}">{if $clubPinned}{_remove_from_left_menu}{else}{_add_to_left_menu}{/if}</a>
+            <div class="separator"></div>
+        {/if}
+        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            <a class="tippy-menu-item" href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
+            <div class="separator"></div>
+        {/if}
+        <a class="tippy-menu-item" n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val="{!$ignore_status ? 1 : 0}" data-id="{$club->getRealId()}">{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}</a>
+        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+        <a class="tippy-menu-item" n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
+    </div>
+    {/ifset}
+
+    <script>
+    function __mobileGroupShowMore() {
+        var el = document.getElementById('mobile_group_more_info_content');
+        MessageBox(tr('additional_information'), el ? el.innerHTML : '', [tr('close')], [Function.noop]);
+    }
+    </script>
+
+    <script>
+    (function() {
+        var isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (!isMobile) return;
+
+        var appbar = document.getElementById('appbar');
+        var hero = document.querySelector('.mobile-group-hero');
+
+        if (appbar) {
+            document.body.classList.add('has-transparent-appbar');
+            var heroHeight = hero ? hero.offsetHeight : 200;
+            window.__profileAppbarScrollHandler = function() {
+                var scrollY = window.scrollY || window.pageYOffset;
+                var progress = Math.min(scrollY / Math.max(heroHeight - 56, 1), 1);
+                appbar.style.setProperty('--appbar-bg-alpha', progress);
+                if (progress <= 0) {
+                    appbar.classList.add('appbar--transparent');
+                    appbar.classList.remove('appbar--scrolled');
+                } else if (progress >= 1) {
+                    appbar.classList.remove('appbar--transparent');
+                    appbar.classList.add('appbar--scrolled');
+                } else {
+                    appbar.classList.remove('appbar--transparent', 'appbar--scrolled');
+                }
+            };
+            window.__profileAppbarScrollHandler();
+            window.addEventListener('scroll', window.__profileAppbarScrollHandler, {'passive': true});
+        }
+
+        var moreBtn = document.getElementById('groupAppbarMoreBtn');
+        if (moreBtn && window.Tooltips) {
+            TIPPY_PRESETS['appbar_menu'] = {
+                trigger: 'click',
+                theme: 'light vk',
+                placement: 'bottom-end',
+                appendTo: document.body,
+            };
+            Tooltips.initializeTooltip(moreBtn);
+        }
+    })();
+    </script>
+
     <div class="wide_column_left">
-        <div class="narrow_column_wrap">
+        <div class="narrow_column_wrap nomobile">
             <div class="narrow_column">
 			    {var $avatarPhoto = $club->getAvatarPhoto()}
     			{var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
@@ -87,7 +339,6 @@
 						{/ifset}
 					</div>
 				</div>
-				{var $followersCount = $club->getFollowersCount()}
 				<div n:if="$followersCount > 0" class="page_block module people_module">
 
 						<a href="/club{$club->getId()}/followers" class="module_header">
@@ -297,14 +548,22 @@
 		<div class="wide_column_wrap">
 			<div class="wide_column">
 				<div n:if="!is_null($alert = $club->getAlert())" class="msg msg_yellow">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
-				<div class="page_block">
+				{var $pinnedPost = (new \openvk\Web\Models\Repositories\Posts())->getPinnedPost($club->getId() * -1)}
+				{if $pinnedPost}
+				<div class="mobileonly page_block">
+					<div id="underHeader">
+						<div class="wall_posts content scroll_container">
+							{include "../components/post.latte", post => $pinnedPost, commentSection => true, onWallOf => true}
+						</div>
+					</div>
+				</div>
+				{/if}
+				<div class="page_block info_block nomobile">
 					<div class="page_top">
 						<h2 class="page_name">{$club->getName()}
 							<a class="page_verified" n:if="$club->isVerified()" href="/verify"></a>
 						</h2>
 					</div>
-					{var $pinnedPost = (new \openvk\Web\Models\Repositories\Posts())->getPinnedPost($club->getId() * -1)}
-					
 					{if $pinnedPost}
 						{var $infoTabs = [
 							[

@@ -2,6 +2,10 @@
 {var $iterator = $user->getClubs($page, $admin)}
 {var $count    = $user->getClubCount($admin)}
 
+{block title}
+    {_groups}
+{/block}
+
 {block noscroll}{/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
@@ -105,7 +109,7 @@
         </a>
     </div>
     {if !is_null($thisUser)}
-        <div class="page_block module page_list_module groups_module">
+        <div class="page_block module page_list_module groups_module nomobile">
             <a href="/search?section=groups" class="module_header">
                 <h3 class="header_top clear_fix">
                     <span class="header_label fl_l">

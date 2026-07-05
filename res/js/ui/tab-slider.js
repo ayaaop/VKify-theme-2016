@@ -74,7 +74,7 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
                 handled = window.__vkifyOnWallTabSwitch(targetTab) === true;
             }
 
-            if (!handled && href) {
+            if (!handled && href && !href.startsWith('#')) {
                 const fullUrl = new URL(href, window.location.href).href;
                 vkify.navigate(fullUrl);
             }
