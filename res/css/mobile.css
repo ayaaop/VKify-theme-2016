@@ -341,6 +341,9 @@
     .settings_block_msg,.post .wall_text {
         padding-inline: 16px;
     }
+    .form_field.settings_privacy_row {
+        padding-top: 0;
+    }
     .post .post_header {
         padding: 16px 16px 11px;
     }
@@ -630,6 +633,9 @@
     .mobile-hero-img-wrap {
         position: relative;
         width: 100%;
+    }
+    .mobile-hero-img-wrap.has-avatar-photo {
+        cursor: pointer;
     }
     .mobile-hero-img {
         width: 100%;

@@ -35,7 +35,7 @@
 {var $transparentAppbar = true}
 
 {block appbar_extra}
-<div class="mobileonly" id="profile_appbar_extra">
+<div n:if="$user->getId() !== $thisUser->getId()" class="mobileonly" id="profile_appbar_extra">
     <button class="appbar-extra-btn" id="profileAppbarMoreBtn" aria-label="More actions"
         data-tippy-content-id="mobile_appbar_menu_content"
         data-tippy-placement="bottom-end"
@@ -59,7 +59,9 @@
     {else}
     
     <div class="mobile-profile-hero mobileonly">
-        <div class="mobile-hero-img-wrap">
+        {var $__avPhoto = $user->getAvatarPhoto()}
+        {var $__avOnclick = $__avPhoto ? "event.preventDefault(); OpenMiniature(event, '" . $user->getAvatarUrl('large') . "', null, '" . $__avPhoto->getPrettyId() . "', null);" : null}
+        <div class="mobile-hero-img-wrap{if $__avPhoto} has-avatar-photo{/if}" n:attr="onclick => $__avOnclick">
             <img src="{$user->getAvatarUrl('large')}" alt="{$user->getCanonicalName()}" class="mobile-hero-img" />
             <div class="mobile-hero-gradient"></div>
             <div class="mobile-hero-info">

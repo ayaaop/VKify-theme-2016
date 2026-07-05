@@ -25,7 +25,9 @@
 
     {* ===== MOBILE HERO ===== *}
     <div class="mobile-group-hero mobileonly">
-        <div class="mobile-hero-img-wrap">
+        {var $__avPhoto = $club->getAvatarPhoto()}
+        {var $__avOnclick = $__avPhoto ? "event.preventDefault(); OpenMiniature(event, '" . $club->getAvatarUrl('large') . "', null, '" . $__avPhoto->getPrettyId() . "', null);" : null}
+        <div class="mobile-hero-img-wrap{if $__avPhoto} has-avatar-photo{/if}" n:attr="onclick => $__avOnclick">
             <img src="{$club->getAvatarUrl('large')}" alt="{$club->getName()}" class="mobile-hero-img" />
             <div class="mobile-hero-gradient"></div>
             <div class="mobile-hero-info">
