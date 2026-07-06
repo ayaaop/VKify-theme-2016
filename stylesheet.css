@@ -2373,6 +2373,7 @@ table,
 }
 .post_date {
     font-size: 12.5px;
+    padding-top: 2px;
 }
 .post_date,
 .post_date .post_link,
