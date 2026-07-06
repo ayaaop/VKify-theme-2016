@@ -572,7 +572,7 @@
 					<div class="counts_module" n:ifcontent>
 						<a class="page_counter" n:if="$user->getFollowersCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)" href="/friends{$user->getId()}?act=incoming">
 							<div class="count">{$user->getFollowersCount()}</div>
-							<div class="label">{tr("followers")}</div>
+							<div class="label">{tr("followers", $user->getFollowersCount())|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)" href="/albums{$user->getId()}">
 							<div class="count" id="profile_photos_counter_val">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
@@ -580,15 +580,15 @@
 						</a>
 						<a class="page_counter" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0" href="/gifts{$user->getId()}">
 							<div class="count">{$giftCount}</div>
-							<div class="label">{tr("gifts")}</div>
+							<div class="label">{tr("gifts", $giftCount)|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user) > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)" href="/videos{$user->getId()}">
 							<div class="count">{(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user)}</div>
-							<div class="label">{tr("videos")}</div>
+							<div class="label">{tr("videos", (new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user))|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)" href="/audios{$user->getId()}">
 							<div class="count">{$audiosCount}</div>
-							<div class="label">{tr("audios")}</div>
+							<div class="label">{tr("audios_count", $audiosCount)|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 					</div>
 				</div>
