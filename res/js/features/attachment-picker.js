@@ -196,7 +196,7 @@ class AttachmentPickerBase {
         }
         const linkId = `${this.type}_picker_toggle`;
         const labelKey = this.viewingUser ? `back_to_club_${this.type}s` : `choose_from_my_${this.type}s`;
-        header.append(`<span id="${linkId}"><span class="divider">|</span><a href="#" class="tab_link picker-toggle-link">
+        header.append(`<span class="toggle_link" id="${linkId}"><span class="divider">|</span><a href="#" class="tab_link picker-toggle-link">
             <vkifyloc name="${labelKey}"></vkifyloc></a></span>`);
         window.processVkifyLocTags?.();
     }

@@ -21,7 +21,10 @@ function applyAutosize(el) {
         el.style.height = 'auto';
 
         const required = el.scrollHeight;
-        const max = parseMaxHeight(el);
+        let max = parseMaxHeight(el);
+        if (max === Infinity && window.isMobile && window.isMobile()) {
+            max = 120;
+        }
         const needed = required + BOOST;
 
         if (max === Infinity) {

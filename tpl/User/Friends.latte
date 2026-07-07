@@ -83,9 +83,7 @@
             : ($act == "followers" ? "followers"
                 : ($act == "online" ? "friends_online" : "all_friends")))
         : "friends"}
-    <div class="page_block wall_posts_tabs">
-        {include "../components/page_block_header.latte", title => $title, count => $count}
-    </div>
+    {include "../components/page_block_header.latte", title => $title, count => $count}
 {/block}
 
 {block link|strip|stripHtml}

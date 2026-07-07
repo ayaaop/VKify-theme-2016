@@ -431,7 +431,7 @@ textarea:focus {
 }
 .toTop nobr {
     padding: 0 24px;
-    background: url("/themepack/vkify16/3.3.4.4/resource/icons/dev_toplink.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.4.5/resource/icons/dev_toplink.png") no-repeat;
     margin-left: 7px;
 }
 .toTop #wrap {
@@ -492,7 +492,7 @@ body.scrolled .toTop:hover #wrap {
 }
 
 .home_button .home_button_bg {
-    background: url("/themepack/vkify16/3.3.4.4/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.4.5/resource/icons/head_icons.png") no-repeat;
     background-position: 0px -107px;
     height: 19px;
     width: 32px;
@@ -581,7 +581,7 @@ body.scrolled .toTop:hover #wrap {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -647,7 +647,7 @@ body.scrolled .toTop:hover #wrap {
     object-fit: cover;
 }
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -698,7 +698,7 @@ body.scrolled .toTop:hover #wrap {
 .top_audio_player .top_audio_player_btn > div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.3.4.4/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.3.4.5/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -887,7 +887,7 @@ body.scrolled .toTop:hover #wrap {
     gap: 8px;
 }
 .musicIcon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/audio_player_controls.png) no-repeat;
     height: 10px;
     width: 12px;
 }
@@ -901,7 +901,7 @@ body.scrolled .toTop:hover #wrap {
 .bigPlayer .playButtons .playButton .playIcon {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/audio_player_controls.png) no-repeat;
     background-position: left top;
 }
 .bigPlayer .playButtons .playButton.pause .playIcon {
@@ -941,13 +941,13 @@ body.scrolled .toTop:hover #wrap {
     right: 8px;
 }
 .audioEntry .buttons .musicIcon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/common.png) no-repeat;
     height: 13px !important;
     width: 13px !important;
     box-sizing: border-box;
 }
 .audioEntry .buttons .musicIcon.download-icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/download_icon.png) no-repeat !important;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/download_icon.png) no-repeat !important;
 }
 .audioEntry .buttons .musicIcon.add-icon,
 .audioEntry .buttons .musicIcon.add-icon-group {
@@ -1188,7 +1188,7 @@ body.scrolled .toTop:hover #wrap {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: var(--accent-color-2) url(/themepack/vkify16/3.3.4.4/resource/icons/audio_playpause.png) no-repeat 8px 7px;
+    background: var(--accent-color-2) url(/themepack/vkify16/3.3.4.5/resource/icons/audio_playpause.png) no-repeat 8px 7px;
 }
 .audioEntry.nowPlaying .playIcon {
     background-position-y: -15px !important;
@@ -1222,6 +1222,7 @@ body.scrolled .toTop:hover #wrap {
     background: none;
     border: 0;
     padding: 0;
+    width: 100%;
 }
 #upload_container {
     margin: 0 auto;
@@ -1251,6 +1252,9 @@ body.scrolled .toTop:hover #wrap {
 .ovk-diag-body .form_group {
     margin: 0;
     width: 100% !important;
+}
+.ovk-diag-body .page_padding:not(#__content) {
+    padding: 0!important;
 }
 .ovk-diag #upload_container .upload_container_element .upload_container_name {
     padding-inline: 0;
@@ -1285,7 +1289,7 @@ body.scrolled .toTop:hover #wrap {
     transition:
         background-color 0.05s,
         color 0.05s;
-    background: var(--search-color) url(/themepack/vkify16/3.3.4.4/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.3.4.5/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -1344,7 +1348,7 @@ body.scrolled .toTop:hover #wrap {
 }
 
 .sidebar_inner .link .link_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/menu_icon.png) no-repeat 7px -441px;
     height: 25px;
     width: 35px;
     opacity: 0.75;
@@ -1360,40 +1364,36 @@ body.scrolled .toTop:hover #wrap {
     background-position: 7px -917px;
 }
 .sidebar_inner .link.my_friends .link_icon {
-    background-position: 7px -77px;
+    background-position: 7px -78px;
 }
 .sidebar_inner .link.my_photos .link_icon {
-    background-position: 7px -133px;
+    background-position: 7px -134px;
 }
 .sidebar_inner .link.my_videos .link_icon {
-    background-position: 7px -189px;
+    background-position: 7px -190px;
 }
 .sidebar_inner .link.my_audios .link_icon {
-    background-position: 7px -161px;
+    background-position: 7px -162px;
 }
 .sidebar_inner .link.my_apps .link_icon {
-    background-position: 7px -217px;
+    background-position: 7px -218px;
 }
 .sidebar_inner .link.my_notes .link_icon {
-    background-position: 7px -385px;
+    background-position: 7px -387px;
 }
 .sidebar_inner .group_link .link_icon,
 .sidebar_inner .link.my_groups .link_icon {
-    background-position: 7px -105px;
+    background-position: 7px -106px;
 }
 .sidebar_inner .link[href="/donate"] .link_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .sidebar_inner .link.my_docs .link_icon {
-    background-position: 7px -273px;
+    background-position: 7px -274px;
 }
 .sidebar_inner .link.my_fave .link_icon {
-    background-position: 7px -301px;
-}
-.sidebar_inner .link.my_settings .link_icon {
-    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='16px' height='16px' viewBox='0 0 24 24' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='Page-2' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='settings_24'%3E%3Crect id='Bounds' x='0' y='0' width='24' height='24'%3E%3C/rect%3E%3Cpath d='M9.12680989,5.05220851 C10.3826493,4.33281204 10.600043,3.58307268 10.75,2.83333333 C10.9166768,2 11.1666667,2 11.5833333,2 C12,2 12,2 12.4166667,2 C12.8333333,2 13.0000102,2 13.25,2.83333333 C13.4752575,3.58422221 13.6328714,4.33511109 14.8811783,5.05551731 C16.277881,5.43483977 16.9617473,5.05841451 17.5979287,4.63430436 C18.3050427,4.16290703 18.4818122,4.33967654 18.77644,4.63430436 C19.0710678,4.92893219 19.0710678,4.92893219 19.3656956,5.22356001 C19.6603235,5.51818784 19.7781818,5.63604616 19.3656956,6.40207132 C18.9940181,7.09231104 18.5745094,7.73471953 18.9477915,9.12680989 C19.667188,10.3826493 20.4169273,10.600043 21.1666667,10.75 C22,10.9166768 22,11.1666667 22,11.5833333 C22,12 22,12 22,12.4166667 C22,12.8333333 22,13.0000102 21.1666667,13.25 C20.4157778,13.4752575 19.6648889,13.6328714 18.9444827,14.8811783 C18.5651602,16.277881 18.9415855,16.9617473 19.3656956,17.5979287 C19.837093,18.3050427 19.6603235,18.4818122 19.3656956,18.77644 C19.0710678,19.0710678 19.0710678,19.0710678 18.77644,19.3656956 C18.4818122,19.6603235 18.3639538,19.7781818 17.5979287,19.3656956 C16.907689,18.9940181 16.2652805,18.5745094 14.8731901,18.9477915 C13.6173507,19.667188 13.399957,20.4169273 13.25,21.1666667 C13.0833232,22 12.8333333,22 12.4166667,22 C12,22 12,22 11.5833333,22 C11.1666667,22 10.9999898,22 10.75,21.1666667 C10.5247425,20.4157778 10.3671286,19.6648889 9.11882173,18.9444827 C7.72211902,18.5651602 7.03825272,18.9415855 6.40207132,19.3656956 C5.69495734,19.837093 5.51818784,19.6603235 5.22356001,19.3656956 C4.92893219,19.0710678 4.92893219,19.0710678 4.63430436,18.77644 C4.33967654,18.4818122 4.22181821,18.3639538 4.63430436,17.5979287 C5.00598188,16.907689 5.42549062,16.2652805 5.05220851,14.8731901 C4.33281204,13.6173507 3.58307268,13.399957 2.83333333,13.25 C2,13.0833232 2,12.8333333 2,12.4166667 C2,12 2,12 2,11.5833333 C2,11.1666667 2,10.9999898 2.83333333,10.75 C3.58422221,10.5247425 4.33511109,10.3671286 5.05551731,9.11882173 C5.43483977,7.72211902 5.05841451,7.03825272 4.63430436,6.40207132 C4.16290703,5.69495734 4.33967654,5.51818784 4.63430436,5.22356001 C4.92893219,4.92893219 4.92893219,4.92893219 5.22356001,4.63430436 C5.51818784,4.33967654 5.63604616,4.22181821 6.40207132,4.63430436 C7.09231104,5.00598188 7.73471953,5.42549062 9.12680989,5.05220851 Z M12,16.75 C14.6233526,16.75 16.75,14.6233526 16.75,12 C16.75,9.37664744 14.6233526,7.25 12,7.25 C9.37664744,7.25 7.25,9.37664744 7.25,12 C7.25,14.6233526 9.37664744,16.75 12,16.75 Z' id='Mask' fill='%2394aabf'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    background-position: 8px 5px;
+    background-position: 7px -302px;
 }
 .sidebar_inner .link.my_helpdesk .link_icon {
     background-position: 7px -358px;
@@ -1419,7 +1419,7 @@ body.scrolled .toTop:hover #wrap {
 .post-attach-menu__trigger:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1690,7 +1690,7 @@ div.container_gray > form > table {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -1997,7 +1997,7 @@ table,
 
 .post-source #remove_source_button,
 #small_remove_button {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/attach_icons.png?4) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/attach_icons.png?4) no-repeat 0 0;
     width: 9px;
     height: 9px;
     margin: 5px 0 5px 10px;
@@ -2041,7 +2041,7 @@ table,
 .post-has-geo.appended-geo::before {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png) no-repeat;
     opacity: 0.7;
     content: "";
     display: inline-block;
@@ -2194,7 +2194,7 @@ table,
     width: 30px;
     height: 30px;
     border-radius: 3px;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/doc_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/doc_icons.png) no-repeat;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2382,6 +2382,7 @@ table,
 }
 .post_date {
     font-size: 12.5px;
+    padding-top: 2px;
 }
 .post_date,
 .post_date .post_link,
@@ -2574,7 +2575,7 @@ table,
 }
 
 .action_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png) no-repeat 0 0;
     width: 16px;
     height: 13px;
     margin: 2px 0 1px;
@@ -2713,7 +2714,7 @@ table,
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -2920,7 +2921,7 @@ h4.gifts_section_header {
     vertical-align: top;
 }
 .reply .action_icon {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -2967,7 +2968,7 @@ h4.gifts_section_header {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     cursor: pointer;
     height: 13px;
@@ -2987,7 +2988,7 @@ h4.gifts_section_header {
     opacity: 1;
 }
 .reply_action.reply_report_action {
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/common.png) 0px -454px;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/common.png) 0px -454px;
     background-size: 24px;
 }
 .reply .reply_action.reply_report_action:hover {
@@ -3410,7 +3411,7 @@ h4.gifts_section_header {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.4.4/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.4.5/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -3511,7 +3512,7 @@ h4.gifts_section_header {
     width: 16px;
     height: 16px;
     background-repeat: no-repeat;
-    background-image: url(/themepack/vkify16/3.3.4.4/resource/icons/photo_edit_actions.png);
+    background-image: url(/themepack/vkify16/3.3.4.5/resource/icons/photo_edit_actions.png);
 }
 .video_thumb_actions .video_thumb_action_edit .icon {
     background-position: 0 -65px;
@@ -3726,7 +3727,7 @@ a.poll-retract-vote,
 .docListViewItem .doc_volume .doc_action {
     height: 13px;
     width: 13px;
-    background: url("/themepack/vkify16/3.3.4.4/resource/icons/common.png");
+    background: url("/themepack/vkify16/3.3.4.5/resource/icons/common.png");
 }
 .docListViewItem .doc_volume .doc_action,
 .docGalleryItem .doc_top_panel > div {
@@ -4278,7 +4279,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
     height: 48px;
     width: 48px;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/post_more.png) no-repeat center center;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_more.png) no-repeat center center;
     cursor: pointer;
 }
 
@@ -4385,13 +4386,21 @@ ul.im-page--dcontent {
 }
 #votesBalance,
 #news {
-    margin-top: 10px;
+    margin: 10px 0;
     padding: 10px;
     background-color: var(--module-header-background-color);
     border: 1px solid var(--menu-divider-color);
 }
 #news b {
     color: var(--link-color-2);
+}
+.psa-poster-wrapper {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+}
+.pas-poster-wrapper img {
+    max-width: 200px;
 }
 hr {
     background-color: var(--border-color);
@@ -4707,7 +4716,7 @@ hr {
     right: 8px;
     width: 16px;
     height: 16px;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/cross.png) center no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/cross.png) center no-repeat;
     background-size: 10px;
 }
 .popup-close:hover {
@@ -4811,7 +4820,7 @@ hr {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(/themepack/vkify16/3.3.4.4/resource/icons/cross.png) center no-repeat;
+    background: url(/themepack/vkify16/3.3.4.5/resource/icons/cross.png) center no-repeat;
     opacity: 0.5;
     transition: opacity 150ms;
 }

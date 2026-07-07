@@ -459,7 +459,8 @@
                             }
                         </script>
                         <div class="page_block_footer">
-                            {tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken))|noescape}
+                            {php $transferPointsHtml = str_replace('\\"', '"', tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken)))}
+                            {$transferPointsHtml|noescape}
                         </div>
                     </div>
                 {elseif $isFinanceTU}

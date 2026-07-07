@@ -121,6 +121,7 @@
 	background-color: var(--module-background-color--secondary);
 	position: relative;
 	vertical-align: top;
+	object-fit: cover;
 }
 .feedback_content {
 	margin: 0 0 0 62px;

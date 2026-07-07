@@ -359,7 +359,7 @@ window.vkifylocalize = function (langcode, fallback = "en") {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.4.4/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.4.5/resource/langs/${langcode}.json`)
 				.then((response) => {
 					if (!response.ok) {
 						patchpage(fallbackCode);

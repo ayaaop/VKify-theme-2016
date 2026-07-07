@@ -521,6 +521,7 @@ function initTopPlayerOnce() {
     window.__vkifyMusicPopupTryWrapUpdateFace = tryWrapUpdateFace;
 }
 
+
 let friendsHtmlCache = null;
 let friendsHtmlPromise = null;
 
@@ -763,6 +764,9 @@ async function initMusicPopupTippyOnce() {
 
             if (typeof window.__vkifyMusicPopupUpdateTopPlayer === 'function') {
                 window.__vkifyMusicPopupUpdateTopPlayer();
+            }
+            if (typeof window.__vkifyMusicPopupUpdateSidebarPlayer === 'function') {
+                window.__vkifyMusicPopupUpdateSidebarPlayer();
             }
         }
     });

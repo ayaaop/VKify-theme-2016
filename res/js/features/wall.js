@@ -345,12 +345,18 @@ function setupTooltipCheckboxListeners() {
         }
 
         syncGlobalWallCheckboxState(state);
+        
+        const form = resolveWallFormContext(e.target);
+        syncWallCheckboxHiddenInputs(form);
     });
 
     u(document).on('change', 'input[name="force_sign"]', (e) => {
         const state = getWallCheckboxState(e.target);
         state.force_sign = e.target.checked;
         syncGlobalWallCheckboxState(state);
+        
+        const form = resolveWallFormContext(e.target);
+        syncWallCheckboxHiddenInputs(form);
     });
 
     u(document).on('change', 'input[name="anon"]', (e) => {
@@ -375,12 +381,18 @@ function setupTooltipCheckboxListeners() {
         syncGlobalWallCheckboxState(state);
 
         window.handleWallAnonClick(e.target);
+        
+        const form = resolveWallFormContext(e.target);
+        syncWallCheckboxHiddenInputs(form);
     });
 
     u(document).on('change', 'input[name="nsfw"]', (e) => {
         const state = getWallCheckboxState(e.target);
         state.nsfw = e.target.checked;
         syncGlobalWallCheckboxState(state);
+        
+        const form = resolveWallFormContext(e.target);
+        syncWallCheckboxHiddenInputs(form);
     });
 }
 
@@ -1182,7 +1194,7 @@ function bindPostDeleteConfirmOnce() {
 bindPostDeleteConfirmOnce();
 
 vkify.hook(vkify, 'onPageReady', () => {
-    if (!window.postPopupManager?.currentModal) {
+    if (window.postPopupManager && !window.postPopupManager.currentModal) {
         window.postPopupManager.checkInitialUrl();
         bindPostDeleteConfirmOnce();
     }
@@ -1471,6 +1483,11 @@ function bindWallSearchOnce() {
         input.closest('.ui_search')?.classList.toggle('ui_search_field_empty', input.value.length === 0);
     };
 
+    const resetTabsScrollPosition = (tabs) => {
+        if (!tabs) return;
+        tabs.scrollLeft = 0;
+    };
+
     document.addEventListener('click', (e) => {
         const toggle = e.target.closest('.ui_tab_search');
         if (!toggle) return;
@@ -1484,6 +1501,7 @@ function bindWallSearchOnce() {
         e.stopPropagation();
         e.stopImmediatePropagation();
         tabs.classList.add('ui_tabs_search_opened');
+        resetTabsScrollPosition(tabs);
         const input = tabs.querySelector('.ui_search_field');
         if (input) input.focus();
     }, true);
@@ -1510,7 +1528,10 @@ function bindWallSearchOnce() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('type') === 'search') {
         const tabs = document.querySelector('#wall_top_tabs');
-        if (tabs) tabs.classList.add('ui_tabs_search_opened');
+        if (tabs) {
+            tabs.classList.add('ui_tabs_search_opened');
+            resetTabsScrollPosition(tabs);
+        }
     }
 }
 

@@ -1,6 +1,50 @@
 (function () {
 'use strict';
 
+function findHorizontalScroller(element) {
+    let el = element;
+    while (el && el !== document.body && el !== document.documentElement) {
+        const style = window.getComputedStyle(el);
+        if (style.overflowX === 'auto' || style.overflowX === 'scroll') {
+            return el;
+        }
+        el = el.parentElement;
+    }
+    return null;
+}
+
+function scrollActiveTabIntoView(container, tabAnchor, animate = true) {
+    const scroller = findHorizontalScroller(container);
+    if (!scroller || !tabAnchor) return;
+
+    const scrollerRect = scroller.getBoundingClientRect();
+    const tabRect = tabAnchor.getBoundingClientRect();
+    const scrollerStyle = window.getComputedStyle(scroller);
+    const borderLeft = parseFloat(scrollerStyle.borderLeftWidth) || 0;
+    const paddingLeft = parseFloat(scrollerStyle.paddingLeft) || 0;
+
+    const contentLeft = scrollerRect.left + borderLeft + paddingLeft;
+    const tabLeft = tabRect.left - contentLeft;
+    const tabRight = tabLeft + tabRect.width;
+    const visibleLeft = scroller.scrollLeft;
+    const visibleRight = visibleLeft + scroller.clientWidth;
+
+    let targetScroll = scroller.scrollLeft;
+    if (tabRight > visibleRight) {
+        targetScroll = tabRight - scroller.clientWidth;
+    } else if (tabLeft < visibleLeft) {
+        targetScroll = tabLeft;
+    } else {
+        return;
+    }
+
+    const maxScroll = scroller.scrollWidth - scroller.clientWidth;
+    scroller.scrollTo({
+        left: Math.max(0, Math.min(targetScroll, maxScroll)),
+        behavior: animate ? 'smooth' : 'auto'
+    });
+}
+
 function moveTabSlider(container, tabAnchor, animate = true) {
     const slider = container?.querySelector('.ui_tabs_slider');
     if (!slider || !tabAnchor) return;
@@ -18,6 +62,8 @@ function moveTabSlider(container, tabAnchor, animate = true) {
         slider.style.transform = `translateX(${offsetLeft}px)`;
         slider.style.width = `${offsetWidth}px`;
     }
+
+    scrollActiveTabIntoView(container, tabAnchor, animate);
 }
 
 window.__vkifyMoveTabSlider = moveTabSlider;

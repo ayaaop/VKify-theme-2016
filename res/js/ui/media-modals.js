@@ -245,12 +245,16 @@ vkify.once('mediaModals', function () {
         <div class="pv_wrapper mobile-photo-modal">
             <div class="mobile-photo-header">
                 <div class="mph-left">
-                    <div class="pv_album_name"><div id='pv_actions_loader'></div></div>
-                    <div class="pv_counter"></div>
+                    <div id="__modal_photo_close" class="pv_back_btn" style="cursor:pointer;">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><use href="#arrow-left-outline-28"></use></svg>
+                    </div>
+                    <div class="pv_title_group">
+                        <div class="pv_album_name"><div id='pv_actions_loader'></div></div>
+                        <div class="pv_counter"></div>
+                    </div>
                 </div>
                 <div class="mph-right">
                     <div class="pv_actions_more_wrap" style="display:none;"></div>
-                    <div id="__modal_photo_close" class="photo_close_icon" style="cursor:pointer; margin-left: 15px;"></div>
                 </div>
             </div>
 
@@ -506,9 +510,18 @@ vkify.once('mediaModals', function () {
                 let currentX = 0;
                 let currentY = 0;
                 let startDistance = 0;
+                let pinchMidX = 0;
+                let pinchMidY = 0;
+                let pinchStartX = 0;
+                let pinchStartY = 0;
                 let lastTap = 0;
+                let singleTapTimer = null;
                 let initialX = 0;
                 let initialY = 0;
+                let startTouchX = 0;
+                let startTouchY = 0;
+                let swipeAxis = null;
+                let uiVisible = true;
                 let opacity = 1;
 
                 function getDistance(touches) {
@@ -516,6 +529,28 @@ vkify.once('mediaModals', function () {
                         touches[0].clientX - touches[1].clientX,
                         touches[0].clientY - touches[1].clientY
                     );
+                }
+
+                function getMidpoint(touches) {
+                    return {
+                        x: (touches[0].clientX + touches[1].clientX) / 2,
+                        y: (touches[0].clientY + touches[1].clientY) / 2,
+                    };
+                }
+
+                const MAX_SCALE = 5;
+
+                function clampPan() {
+                    const imgW = img.naturalWidth || img.offsetWidth || container.offsetWidth;
+                    const imgH = img.naturalHeight || img.offsetHeight || container.offsetHeight;
+                    const cW = container.offsetWidth;
+                    const cH = container.offsetHeight;
+                    const renderedW = Math.min(imgW, cW);
+                    const renderedH = Math.min(imgH, cH);
+                    const maxX = Math.max(0, (renderedW * scale - cW) / 2);
+                    const maxY = Math.max(0, (renderedH * scale - cH) / 2);
+                    currentX = Math.max(-maxX, Math.min(maxX, currentX));
+                    currentY = Math.max(-maxY, Math.min(maxY, currentY));
                 }
 
                 function updateTransform() {
@@ -529,31 +564,70 @@ vkify.once('mediaModals', function () {
                     if (footerNode) footerNode.style.opacity = opacity;
                 }
 
+                function setUiVisible(visible) {
+                    uiVisible = visible;
+                    if (headerNode) headerNode.classList.toggle('pv-ui-hidden', !visible);
+                    if (footerNode) footerNode.classList.toggle('pv-ui-hidden', !visible);
+                }
+
+                function resetPosition(animated = true) {
+                    if (animated) img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    currentX = 0;
+                    currentY = 0;
+                    opacity = 1;
+                    updateTransform();
+                    if (windowNode) windowNode.style.transition = 'background-color 0.2s';
+                    if (headerNode) headerNode.style.transition = '';
+                    if (footerNode) footerNode.style.transition = '';
+                    updateOpacity();
+                }
+
                 container.addEventListener('touchstart', (e) => {
                     if (e.touches.length === 2) {
                         e.preventDefault();
                         startDistance = getDistance(e.touches);
                         lastScale = scale;
+                        swipeAxis = null;
                         img.style.transition = 'none';
+                        const mid = getMidpoint(e.touches);
+                        pinchMidX = mid.x;
+                        pinchMidY = mid.y;
+                        pinchStartX = currentX;
+                        pinchStartY = currentY;
                     } else if (e.touches.length === 1) {
                         const currentTime = new Date().getTime();
                         const tapLength = currentTime - lastTap;
                         
                         if (tapLength < 300 && tapLength > 0) {
+                            clearTimeout(singleTapTimer);
+                            singleTapTimer = null;
                             e.preventDefault();
-                            scale = scale > 1 ? 1 : 2;
-                            currentX = 0; currentY = 0;
+                            if (scale > 1) {
+                                scale = 1;
+                                currentX = 0;
+                                currentY = 0;
+                            } else {
+                                const containerRect = container.getBoundingClientRect();
+                                const tapX = e.touches[0].clientX - containerRect.left - containerRect.width / 2;
+                                const tapY = e.touches[0].clientY - containerRect.top - containerRect.height / 2;
+                                scale = 2;
+                                currentX = -tapX * (scale - 1) / scale;
+                                currentY = -tapY * (scale - 1) / scale;
+                                clampPan();
+                            }
                             img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
                             updateTransform();
+                            lastTap = 0;
                         } else {
                             img.style.transition = 'none';
+                            startTouchX = e.touches[0].clientX;
+                            startTouchY = e.touches[0].clientY;
                             initialX = e.touches[0].clientX - currentX;
                             initialY = e.touches[0].clientY - currentY;
+                            swipeAxis = null;
                             if (windowNode) windowNode.style.transition = 'none';
-                            if (headerNode) headerNode.style.transition = 'none';
-                            if (footerNode) footerNode.style.transition = 'none';
+                            lastTap = currentTime;
                         }
-                        lastTap = currentTime;
                     }
                 }, { passive: false });
 
@@ -561,27 +635,67 @@ vkify.once('mediaModals', function () {
                     if (e.touches.length === 2) {
                         e.preventDefault();
                         const currentDistance = getDistance(e.touches);
-                        scale = lastScale * (currentDistance / startDistance);
+                        const newScale = Math.min(MAX_SCALE, Math.max(1, lastScale * (currentDistance / startDistance)));
+                        const scaleDelta = newScale / scale;
+
+                        const containerRect = container.getBoundingClientRect();
+                        const originX = pinchMidX - containerRect.left - containerRect.width / 2;
+                        const originY = pinchMidY - containerRect.top - containerRect.height / 2;
+                        const curMid = getMidpoint(e.touches);
+
+                        currentX = pinchStartX + (originX - pinchStartX) * (1 - scaleDelta) + (curMid.x - pinchMidX);
+                        currentY = pinchStartY + (originY - pinchStartY) * (1 - scaleDelta) + (curMid.y - pinchMidY);
+
+                        scale = newScale;
+                        clampPan();
                         updateTransform();
                     } else if (e.touches.length === 1) {
                         if (scale > 1) {
                             e.preventDefault();
                             currentX = e.touches[0].clientX - initialX;
                             currentY = e.touches[0].clientY - initialY;
+                            clampPan();
                             updateTransform();
+                            swipeAxis = null;
                         } else if (scale === 1) {
+                            const dx = e.touches[0].clientX - startTouchX;
+                            const dy = e.touches[0].clientY - startTouchY;
+
+                            if (!swipeAxis && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+                                swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+                            }
+
                             e.preventDefault();
-                            currentX = e.touches[0].clientX - initialX;
-                            currentY = e.touches[0].clientY - initialY;
-                            updateTransform();
-                            
-                            opacity = 1 - Math.min(Math.abs(currentY) / 300, 1);
-                            updateOpacity();
+                            if (swipeAxis === 'x') {
+                                currentX = e.touches[0].clientX - initialX;
+                                currentY = 0;
+                                updateTransform();
+                            } else {
+                                currentX = 0;
+                                currentY = e.touches[0].clientY - initialY;
+                                updateTransform();
+                                opacity = 1 - Math.min(Math.abs(currentY) / 300, 1);
+                                updateOpacity();
+                            }
                         }
                     }
                 }, { passive: false });
 
                 container.addEventListener('touchend', (e) => {
+                    if (e.touches.length === 0 && e.changedTouches.length === 1 && swipeAxis === null) {
+                        const dx = e.changedTouches[0].clientX - startTouchX;
+                        const dy = e.changedTouches[0].clientY - startTouchY;
+                        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) {
+                            clearTimeout(singleTapTimer);
+                            singleTapTimer = setTimeout(() => {
+                                singleTapTimer = null;
+                                setUiVisible(!uiVisible);
+                            }, 300);
+                            swipeAxis = null;
+                            return;
+                        }
+                    }
+
                     lastScale = scale;
                     img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
                     if (scale < 1) {
@@ -590,7 +704,19 @@ vkify.once('mediaModals', function () {
                         currentY = 0;
                         updateTransform();
                     } else if (scale === 1) {
-                        if (Math.abs(currentY) > 100) {
+                        if (swipeAxis === 'x' && Math.abs(currentX) > 60 && imagesCount > 1) {
+                            const goNext = currentX < 0;
+                            const exitX = goNext ? -window.innerWidth : window.innerWidth;
+                            currentX = exitX;
+                            updateTransform();
+                            setTimeout(() => {
+                                img.style.transition = 'none';
+                                currentX = 0;
+                                currentY = 0;
+                                updateTransform();
+                                slidePhoto(goNext ? 1 : 0);
+                            }, 200);
+                        } else if (swipeAxis === 'y' && Math.abs(currentY) > 200) {
                             const direction = currentY > 0 ? 1 : -1;
                             currentY = currentY + direction * window.innerHeight;
                             opacity = 0;
@@ -605,16 +731,10 @@ vkify.once('mediaModals', function () {
                                 msgbox.close();
                             }, 200);
                         } else {
-                            currentX = 0;
-                            currentY = 0;
-                            opacity = 1;
-                            updateTransform();
-                            if (windowNode) windowNode.style.transition = 'background-color 0.2s';
-                            if (headerNode) headerNode.style.transition = 'opacity 0.2s';
-                            if (footerNode) footerNode.style.transition = 'opacity 0.2s';
-                            updateOpacity();
+                            resetPosition(true);
                         }
                     }
+                    swipeAxis = null;
                 });
             }
 
@@ -652,7 +772,9 @@ vkify.once('mediaModals', function () {
                     msgbox.getNode().find('.pv_right').html(pvRight.innerHTML);
 
                     const pvAlbumName = body.querySelector('.pv_album_name');
-                    msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
+                    const pvAlbumContent = pvAlbumName ? pvAlbumName.innerHTML : '';
+                    msgbox.getNode().find('.pv_album_name').html(pvAlbumContent);
+                    msgbox.getNode().find('.pv_title_group').toggleClass('pv-no-album', !pvAlbumContent.trim());
 
                     const pvActions = body.querySelector('.pv_bottom_actions');
                     msgbox.getNode().find('.pv_bottom_actions').html(pvActions ? pvActions.innerHTML : '');
@@ -667,7 +789,7 @@ vkify.once('mediaModals', function () {
                             msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
                         }
                         
-                        const likes = msgbox.getNode().find('.pv_right .post_full_like').html();
+                        const likes = msgbox.getNode().find('.pv_right .post_full_like_wrap').html();
                         msgbox.getNode().find('.mobile-photo-actions').html(likes || '');
                         
                         let moreHtml = '';
@@ -685,7 +807,7 @@ vkify.once('mediaModals', function () {
                         if (moreHtml) {
                             msgbox.getNode().find('.pv_actions_more_wrap').html(`
                                 <div class="pv_actions_more mobile-three-dots" role="button" data-tippy-content-id="pv_actions_more_menu_mobile" data-tippy-theme="dark vk" style="display:flex; align-items:center;">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                                    <svg width="28" height="28" viewBox="0 0 28 28"><use href="#more-vertical-28"></use></svg>
                                 </div>
                                 <div id="pv_actions_more_menu_mobile" class="tippy-menu tippy-content-template">
                                     ${moreHtml}
@@ -701,6 +823,7 @@ vkify.once('mediaModals', function () {
                     msgbox.getNode().find('.ovk-photo-view-window').addClass('private');
                     msgbox.getNode().find('.pv_right').html('');
                     msgbox.getNode().find('.pv_album_name').html('');
+                    msgbox.getNode().find('.pv_title_group').addClass('pv-no-album');
                     if (window.isMobile && window.isMobile()) {
                          msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
                          msgbox.getNode().find('.mobile-photo-actions').html('');
@@ -1174,5 +1297,5 @@ vkify.once('mediaModals', function () {
     }
 
     window.PostPopupManager = PostPopupManager;
-    window.postPopupManager = new PostPopupManager();
+    if (!window.isMobile || !window.isMobile()) window.postPopupManager = new PostPopupManager();
 });

@@ -66,17 +66,34 @@ vkify.bindOnce('statusEditorOverrides', () => {
     hookStatusEditor();
     vkify.hook(vkify, 'onPageReady', hookStatusEditor, 'after');
 
-    window.__mobileEditStatus = function() {
-        const form = document.status_popup_form || document.forms['status_popup_form'];
-        const currentStatus = form?.status?.value ?? '';
+    function openMobileStatusEditor(opts) {
+        const { value, placeholder, onSave } = opts;
         const inputId = 'mobile_status_input_' + Date.now();
-        const html = `<div style="padding:8px 0"><input id="${inputId}" type="text" style="width:100%;box-sizing:border-box;padding:6px 8px;font-size:14px;border:1px solid var(--border-color);border-radius:4px;" maxlength="255" value="${escapeHtml(currentStatus)}" placeholder="${tr('change_status')}" /></div>`;
+        const safePlaceholder = placeholder ? escapeHtml(placeholder) : '';
+        const html = `<div style="padding:8px 0"><textarea id="${inputId}" style="width:100%;box-sizing:border-box;height:90px;resize:vertical;" maxlength="255" placeholder="${safePlaceholder}">${escapeHtml(value)}</textarea></div>`;
 
         MessageBox(tr('status'), html, [tr('save'), tr('close')], [
             async function() {
                 const input = document.getElementById(inputId);
                 if (!input) return;
-                const newStatus = input.value;
+                await onSave(input.value);
+            },
+            Function.noop,
+        ]);
+
+        requestAnimationFrame(() => {
+            const input = document.getElementById(inputId);
+            if (input) { input.focus(); input.select(); }
+        });
+    }
+
+    window.__mobileEditStatus = function() {
+        const form = document.status_popup_form || document.forms['status_popup_form'];
+        const currentStatus = form?.status?.value ?? '';
+        openMobileStatusEditor({
+            value: currentStatus,
+            placeholder: tr('change_status'),
+            onSave: async function(newStatus) {
                 if (form?.status) form.status.value = newStatus;
                 const csrf = form?.hash?.value || document.querySelector('meta[name=csrf]')?.getAttribute('value') || '';
                 const fd = new FormData();
@@ -95,14 +112,9 @@ vkify.bindOnce('statusEditorOverrides', () => {
                     console.error(e);
                 }
             },
-            Function.noop,
-        ]);
-
-        requestAnimationFrame(() => {
-            const input = document.getElementById(inputId);
-            if (input) { input.focus(); input.select(); }
         });
     };
+
 });
 
 })();

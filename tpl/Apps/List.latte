@@ -4,6 +4,14 @@
     {_apps}
 {/block}
 
+{block appbar_extra}
+<div n:if="$act === 'dev'" class="mobileonly" id="app_appbar_extra">
+    <a class="appbar-extra-btn" href="/editapp?act=create" aria-label="{_create}">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><use href="#add-outline-24"></use></svg>
+    </a>
+</div>
+{/block}
+
 {block content}
     {var $tabs = [
         [
@@ -27,7 +35,7 @@
     ]}
     {if $act === 'dev'}
         <div class="page_block wall_posts_tabs">
-            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="button" href="/editapp?act=create">' . tr('create') . '</a>'}
+            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="button nomobile" href="/editapp?act=create">' . tr('create') . '</a>'}
         </div>
     {else}
         <div class="page_block wall_posts_tabs">
