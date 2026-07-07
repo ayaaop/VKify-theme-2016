@@ -261,7 +261,16 @@ vkify.once('contentFetcher', function() {
                         </div>
                     </div>
                 `,
-                photo: (opts) => `
+                photo: (opts) => {
+                    if (window.isMobile && window.isMobile()) {
+                        return `
+                        <div class="ovk-photo-view-dimmer">
+                            <div class="ovk-photo-view-window${opts.isPrivate ? ' private' : ''}">
+                                ${opts.content || ''}
+                            </div>
+                        </div>`;
+                    }
+                    return `
                     <div class="ovk-photo-view-dimmer">
                         <div class="ovk-photo-view-window${opts.isPrivate ? ' private' : ''}">
                             <div id="photo_top_controls">
@@ -272,7 +281,8 @@ vkify.once('contentFetcher', function() {
                             ${opts.content || ''}
                         </div>
                     </div>
-                `,
+                `;
+                },
                 post: (opts) => `
                     <div class="ovk-photo-view-dimmer post_popup_modal">
                         <div class="ovk-modal-video-window">

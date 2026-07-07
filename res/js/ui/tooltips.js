@@ -7,7 +7,7 @@
 const defaultTippyConfig = {
     theme: 'light vk',
     placement: 'bottom',
-    trigger: 'mouseenter focus',
+    trigger: window.matchMedia("(max-width: 770px)").matches ? 'click' : 'mouseenter focus',
     interactive: true,
     interactiveBorder: 8,
     appendTo: 'parent',

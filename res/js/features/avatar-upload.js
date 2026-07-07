@@ -3,8 +3,9 @@
 
     function openAvatarUploadModal(btn) {
         const avatarBlock = btn.closest(".avatar_block");
-        const clubId = avatarBlock ? avatarBlock.dataset.club : null;
+        const clubId = (avatarBlock ? avatarBlock.dataset.club : null) || btn.dataset.club || null;
         const isGroup = !!clubId;
+        console.log('[AvatarUpload] modal opened', { clubId, isGroup, url: isGroup ? '/club' + clubId + '/al_avatar' : '/al_avatars' });
 
         const body = `
         <div id="avatarUpload">
@@ -24,7 +25,9 @@
         document.querySelector(".ovk-diag-body").style.padding = "13px";
 
         $("#avatarUpload input").on("change", (ev) => {
-            const image = URL.createObjectURL(ev.currentTarget.files[0]);
+            const file = ev.currentTarget.files[0];
+            console.log('[AvatarUpload] file selected', file ? { name: file.name, type: file.type, size: file.size } : null);
+            const image = URL.createObjectURL(file);
             $(".ovk-diag-body")[0].innerHTML = `
                 <span>${!isGroup ? tr("selected_area_user") : tr("selected_area_club")}</span>
                 <p style="margin-bottom: 10px;">${tr("selected_area_rotate")}</p>
@@ -40,8 +43,8 @@
                 </label>
             `;
 
-            document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
-                <button class="button" style="margin-left: 4px;" id="_uploadImg">${tr("upload_button")}</button>
+            document.querySelector(".ovk-diag-action").insertAdjacentHTML("afterbegin", `
+                <button type="button" class="button" style="margin-left: 4px;" id="_uploadImg">${tr("upload_button")}</button>
             `);
 
             const imageDiv = document.getElementById('temp_uploadPic');
@@ -66,27 +69,33 @@
 
             msg.attr("style", "width: 487px;");
 
-            document.querySelector("#_uploadImg").onclick = () => {
+            document.querySelector("#_uploadImg").onclick = (e) => {
+                e?.preventDefault();
+                e?.stopPropagation();
                 cropper.getCroppedCanvas({
                     fillColor: '#fff',
                     imageSmoothingEnabled: false,
                     imageSmoothingQuality: 'high',
                 }).toBlob((blob) => {
                     document.querySelector("#_uploadImg").classList.add("lagged");
+                    console.log('[AvatarUpload] cropped blob', { size: blob?.size, type: blob?.type });
                     const formdata = new FormData();
                     formdata.append("blob", blob);
                     formdata.append("ajax", 1);
                     formdata.append("on_wall", Number(document.querySelector("#publish_on_wall").checked));
                     formdata.append("hash", vkify.getCsrf());
+                    const uploadUrl = isGroup ? "/club" + clubId + "/al_avatar" : "/al_avatars";
+                    console.log('[AvatarUpload] uploading to', uploadUrl, 'hash present:', !!vkify.getCsrf());
 
                     $.ajax({
                         type: "POST",
-                        url: isGroup ? "/club" + clubId + "/al_avatar" : "/al_avatars",
+                        url: uploadUrl,
                         data: formdata,
                         processData: false,
                         contentType: false,
-                        error: (xhr) => {
+                        error: (xhr, textStatus, errorThrown) => {
                             document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                            console.error('[AvatarUpload] upload error', { status: xhr.status, statusText: xhr.statusText, textStatus, errorThrown, responseText: xhr.responseText });
                             let errorMsg = "Upload failed";
                             try {
                                 const res = JSON.parse(xhr.responseText);
@@ -96,6 +105,7 @@
                         },
                         success: (response) => {
                             document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                            console.log('[AvatarUpload] upload response', response);
                             u("body").removeClass("dimmed");
                             document.querySelector("html").style.overflowY = "scroll";
                             u(".ovk-diag-cont").remove();
@@ -112,6 +122,24 @@
                                 if (bigAvatar.parentNode && bigAvatar.parentNode.tagName === 'A') {
                                     bigAvatar.parentNode.href = "/photo" + response.new_photo;
                                 }
+                            }
+
+                            // 1.5 Update mobile hero avatar and make it open the new photo
+                            const mobileHeroImg = document.querySelector(".mobile-hero-img");
+                            if (mobileHeroImg) {
+                                mobileHeroImg.src = response.url;
+                            }
+                            const mobileHeroWrap = document.querySelector(".mobile-hero-img-wrap");
+                            if (mobileHeroWrap) {
+                                mobileHeroWrap.classList.add("has-avatar-photo");
+                                mobileHeroWrap.onclick = (event) => {
+                                    event.preventDefault();
+                                    OpenMiniature(event, response.url, null, response.new_photo, null);
+                                };
+                            }
+                            const mobileHeroEdit = document.querySelector(".mobile-hero-avatar-edit");
+                            if (mobileHeroEdit && typeof tr === 'function') {
+                                mobileHeroEdit.textContent = tr('upload_new_picture');
                             }
 
                             // 2. Toggle avatar control buttons visibility on profile page

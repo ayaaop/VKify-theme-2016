@@ -65,6 +65,56 @@ vkify.bindOnce('statusEditorOverrides', () => {
 
     hookStatusEditor();
     vkify.hook(vkify, 'onPageReady', hookStatusEditor, 'after');
+
+    function openMobileStatusEditor(opts) {
+        const { value, placeholder, onSave } = opts;
+        const inputId = 'mobile_status_input_' + Date.now();
+        const safePlaceholder = placeholder ? escapeHtml(placeholder) : '';
+        const html = `<div style="padding:8px 0"><textarea id="${inputId}" style="width:100%;box-sizing:border-box;height:90px;resize:vertical;" maxlength="255" placeholder="${safePlaceholder}">${escapeHtml(value)}</textarea></div>`;
+
+        MessageBox(tr('status'), html, [tr('save'), tr('close')], [
+            async function() {
+                const input = document.getElementById(inputId);
+                if (!input) return;
+                await onSave(input.value);
+            },
+            Function.noop,
+        ]);
+
+        requestAnimationFrame(() => {
+            const input = document.getElementById(inputId);
+            if (input) { input.focus(); input.select(); }
+        });
+    }
+
+    window.__mobileEditStatus = function() {
+        const form = document.status_popup_form || document.forms['status_popup_form'];
+        const currentStatus = form?.status?.value ?? '';
+        openMobileStatusEditor({
+            value: currentStatus,
+            placeholder: tr('change_status'),
+            onSave: async function(newStatus) {
+                if (form?.status) form.status.value = newStatus;
+                const csrf = form?.hash?.value || document.querySelector('meta[name=csrf]')?.getAttribute('value') || '';
+                const fd = new FormData();
+                fd.append('status', newStatus);
+                fd.append('broadcast', 0);
+                fd.append('hash', csrf);
+                try {
+                    const response = await ky.post('/edit?act=status', { body: fd });
+                    if (!parseAjaxResponse(await response.text())) return;
+                    const el = document.getElementById('mobile_status_display');
+                    if (el) {
+                        el.textContent = newStatus || tr('change_status');
+                        el.className = newStatus ? 'mir-text' : 'mir-text mir-text-muted';
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            },
+        });
+    };
+
 });
 
 })();

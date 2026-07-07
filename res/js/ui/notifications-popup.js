@@ -13,7 +13,7 @@ function parseNotifyCount(text) {
 
 vkify.ready(() => {
     const customSoundId = "vkify_notification";
-    createjs.Sound.registerSound("/themepack/vkify16/3.3.4.3/resource/bb1.mp3", customSoundId);
+    createjs.Sound.registerSound("/themepack/vkify16/3.3.4.5/resource/bb1.mp3", customSoundId);
 
     window.__actualPlayNotifSound = function() {
         createjs.Sound.play(customSoundId);
@@ -41,6 +41,20 @@ vkify.ready(() => {
 
         countEl.textContent = formatNotifyCount(nextCount);
         btn.classList.add('has_notify');
+
+        const mobileLink = document.querySelector('a.my_feedback.mobileonly');
+        if (mobileLink) {
+            let obj = mobileLink.querySelector('object');
+            const mobileCount = (obj ? parseNotifyCount(obj.querySelector('b')?.textContent) : 0) + 1;
+            if (!obj) {
+                obj = document.createElement('object');
+                obj.type = 'internal/link';
+                const b = document.createElement('b');
+                obj.appendChild(b);
+                mobileLink.appendChild(obj);
+            }
+            mobileLink.querySelector('object b').textContent = formatNotifyCount(mobileCount);
+        }
     }, 'replace');
 });
 
@@ -107,6 +121,7 @@ vkify.once("initNotificationsPopup", () => {
             async onShow(instance) {
                 document.querySelector('#top_notify_btn')?.classList.add('top_nav_btn_active');
                 document.querySelector('#top_notify_btn')?.classList.remove('has_notify');
+                document.querySelector('a.my_feedback.mobileonly object')?.remove();
                 instance.setContent(loadingContent);
                 const freshNotificationsContent = await fetchNotificationsContent();
                 instance.setContent(freshNotificationsContent);

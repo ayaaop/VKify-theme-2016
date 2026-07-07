@@ -7,6 +7,7 @@ vkify.once("updateNarrow", () => {
         const wideCol = document.querySelector('.wide_column');
         const layout = document.querySelector('.layout');
 
+        if (window.isMobile && window.isMobile()) return;
         if (!bar || !wideCol || !layout) return;
         if (document.querySelector('#ajloader.shown')) return;
         if (document.body.classList.contains('dimmed')) return;
@@ -149,6 +150,11 @@ vkify.once('affixedNavigation', () => {
         const menu = getMenu();
         const pageBody = getPageBody();
         if (!menu || !pageBody || !state) {
+            return;
+        }
+
+        if (window.isMobile && window.isMobile()) {
+            resetMenu(menu);
             return;
         }
 

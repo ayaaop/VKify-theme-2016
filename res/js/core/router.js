@@ -1,3 +1,11 @@
+window.isMobile = function() {
+    return window.matchMedia("(max-width: 770px)").matches;
+};
+
+window.isMobileAndExpanded = function() {
+    return window.isMobile() && document.body.classList.contains('menu-expanded');
+};
+
 window.router = new class Router {
     constructor() {
         window.__vkifyResourceBase = window.vkify?.resourceBase || window.__vkifyResourceBase;
@@ -253,7 +261,7 @@ window.router = new class Router {
     }
 
     _appendPage(parsed_content) {
-        const requiredElements = ['.page_body', '.sidebar', '.page_header'];
+        const requiredElements = ['.page_body', '.sidebar', '.page_header', '.appbar'];
         const missingElements = requiredElements.filter(selector => !parsed_content.querySelector(selector));
         if (missingElements.length > 0) {
             console.warn('Missing required elements for AJAX transition:', missingElements);
@@ -265,6 +273,7 @@ window.router = new class Router {
         const sidebar = u(parsed_content.querySelector('.sidebar'));
         const pageHeader = u(parsed_content.querySelector('.page_header'));
         const backdrop = u(parsed_content.querySelector('#backdrop'));
+        const appbar = u(parsed_content.querySelector('.appbar'));
 
         this._syncManagedStyles(parsed_content);
 
@@ -296,6 +305,18 @@ window.router = new class Router {
 
         u('.page_body').html(pageBody.html());
         u('.sidebar').html(sidebar.html());
+        u('.appbar').html(appbar.html());
+
+        if (window.__profileAppbarScrollHandler) {
+            window.removeEventListener('scroll', window.__profileAppbarScrollHandler);
+            window.__profileAppbarScrollHandler = null;
+        }
+        document.body.classList.remove('has-transparent-appbar');
+        const liveAppbar = document.getElementById('appbar');
+        if (liveAppbar) {
+            liveAppbar.classList.remove('appbar--transparent', 'appbar--scrolled');
+            liveAppbar.style.removeProperty('--appbar-bg-alpha');
+        }
 
         if (backdrop.length > 0) {
             if (u('#backdrop').length === 0) {

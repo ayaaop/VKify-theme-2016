@@ -13,6 +13,7 @@
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="/themepack/vkify16/{$theme->getVersion()}/resource/favicon_vk.ico" />
         <meta name="application-name" content="{$instance_name}" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
 
         <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
@@ -46,6 +47,7 @@
         <link rel="preload" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
         <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"></noscript>
         {include "_includeCSS.latte"}
+        {include "_mobileIcons.latte"}
         {if $darkModeEnabled}
             <link id="dark-mode-css" rel="stylesheet" href="/themepack/vkify16/{$theme->getVersion()|noescape}/resource/css/dark-mode.css">
         {/if}
@@ -96,6 +98,20 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
+            
+            <div class="appbar{if isset($transparentAppbar) && $transparentAppbar} appbar--transparent{/if}" id="appbar">
+                <div class="hamburger" id="mobileMenuTrigger">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <use href="#menu-outline-24"></use>
+                    </svg>
+                    <span class="hamburger-badge" id="hamburgerBadge"></span>
+                </div>
+                <div class="appbar-title">{ifset title}{include title}{/ifset}</div>
+                <div class="appbar-extra" n:ifset="appbar_extra">
+                    {block appbar_extra}{/block}
+                </div>
+            </div>
+
             <div class="page_header">
                 <div class="page_header_inner">
                     <a href="/" class="home_button" title="{$instance_name}">
@@ -188,14 +204,33 @@
             <div class="sidebar" {if $hideSidebar}style="display: none;"{/if}>
                 <div class="sidebar_inner">
                     {ifset $thisUser}
+                        <a href="{$thisUser->getURL()}" class="mobile-profile-bar mobileonly">
+                            <div class="mobile-profile-bg" style="background-image: url({$thisUser->getAvatarUrl('medium')|noescape})"></div>
+                            <div class="mobile-profile-avatar-wrap">
+                                {include 'components/avatar.latte', author => $thisUser, size => 'medium', id => 'mobileProfileAvatar'}
+                            </div>
+                            <div class="mobile-profile-info">
+                                <div class="mobile-profile-name">{$thisUser->getFirstName()}&nbsp;{$thisUser->getLastName()}</div>
+                                {if $thisUser->getStatus()}
+                                    <div class="mobile-profile-status">{$thisUser->getStatus()|truncate:60}</div>
+                                {/if}
+                            </div>
+                        </a>
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
-                            <a href="{$thisUser->getURL()}" class="link my_page" title="{_my_page} [Alt+Shift+.]" accesskey=".">
+                            <a href="{$thisUser->getURL()}" class="link my_page nomobile" title="{_my_page} [Alt+Shift+.]" accesskey=".">
                                 <div class="link_icon"></div>
                                 <span>{_my_page}</span>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link my_feed" title="{_news} [Alt+Shift+,]" accesskey=",">
                                 <div class="link_icon"></div>
                                 <span>{_news}</span>
+                            </a>
+                            <a href="/notifications" class="link my_feedback mobileonly" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">
+                                <div class="link_icon"></div>
+                                <span>{_my_feedback}</span>
+                                <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
+                                    <b>{$thisUser->getNotificationsCount() > 99 ? '99+' : $thisUser->getNotificationsCount()}</b>
+                                </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link my_messages">
                                 <div class="link_icon"></div>
@@ -236,6 +271,10 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link my_notes">
                                 <div class="link_icon"></div>
                                 <span>{_mobile_notes}</span>
+                            </a>
+                            <a href="/settings" class="link my_settings mobileonly">
+                                <div class="link_icon"></div>
+                                <span>{_mobile_settings}</span>
                             </a>
                             
                             {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('fave')}
@@ -329,8 +368,8 @@
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
 
-                            <a n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
-                                <img src="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 15px;" />
+                            <a class="psa-poster-wrapper" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                                <img src="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo \OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%;" />
                             </a>
 
                             <div class="menu_divider" style="margin-left: 0; margin-top: 15px;"></div>
@@ -366,6 +405,20 @@
                                 <a href="/settings/reactivate"><vkifyloc name="restore" />.</a>    
                             </div>
                         {/if}
+                        <div class="sidebar_audio_player mobileonly" id="sidebar_audio_player">
+                            <div class="sidebar_ap_play_btn" id="sidebar_ap_play_btn">
+                                <svg class="sidebar_ap_play_icon" width="24" height="24" viewBox="0 0 24 24"><use href="#play-24"></use></svg>
+                                <svg class="sidebar_ap_pause_icon" width="24" height="24" viewBox="0 0 24 24"><use href="#pause-24"></use></svg>
+                            </div>
+                            <div class="sidebar_ap_track_info">
+                                <div class="sidebar_ap_track_name"></div>
+                                <div class="sidebar_ap_track_performer"></div>
+                            </div>
+                            <div class="sidebar_ap_right_btn" id="sidebar_ap_right_btn">
+                                <svg class="sidebar_ap_next_icon" width="24" height="24" viewBox="0 0 24 24"><use href="#skip-next-24"></use></svg>
+                                <svg class="sidebar_ap_cancel_icon" width="24" height="24" viewBox="0 0 24 24"><use href="#cancel-24"></use></svg>
+                            </div>
+                        </div>
                     {else}
                         <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
                             <label class="field" for="login"><span>{_email}:</span></label>
@@ -579,6 +632,9 @@
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/page.js"></script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/ui/tooltips.js"></script>
 
+        <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/router.js"></script>
+        <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/features/mobile.js"></script>
+
         {* Bundled themepack JS (see build.mjs for module order) *}
         <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/dist/vkify16.bundle.js"></script>
 
@@ -588,7 +644,6 @@
         {ifset bodyScripts}
             {include bodyScripts}
         {/ifset}
-        <script defer src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/router.js"></script>
     </body>
 </html>
 {/if}

@@ -239,7 +239,44 @@ vkify.once('mediaModals', function () {
             let photoRealId = parseInt(photo_id.split('_')[1]);
             const currentUserId = window.openvk?.current_id || 0;
 
-            const content = `
+            let content;
+            if (window.isMobile && window.isMobile()) {
+                content = `
+        <div class="pv_wrapper mobile-photo-modal">
+            <div class="mobile-photo-header">
+                <div class="mph-left">
+                    <div id="__modal_photo_close" class="pv_back_btn" style="cursor:pointer;">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><use href="#arrow-left-outline-28"></use></svg>
+                    </div>
+                    <div class="pv_title_group">
+                        <div class="pv_album_name"><div id='pv_actions_loader'></div></div>
+                        <div class="pv_counter"></div>
+                    </div>
+                </div>
+                <div class="mph-right">
+                    <div class="pv_actions_more_wrap" style="display:none;"></div>
+                </div>
+            </div>
+
+            <div class="mobile-photo-body pv_photo" style="overflow: hidden; position: relative; touch-action: none;">
+                <img src="${photo}" id="pv_photo_img" style="transform-origin: center center;" />
+                <div class="pv_nav_left" id="pv_nav_left" style="display: none;">
+                    <div class="pv_nav_arrow"></div>
+                </div>
+                <div class="pv_nav_right" id="pv_nav_right" style="display: none;">
+                    <div class="pv_nav_arrow"></div>
+                </div>
+            </div>
+
+            <div class="mobile-photo-footer">
+                <div class="pv_desc" style="display:none;"></div>
+                <div class="mobile-photo-actions pv_bottom_actions"></div>
+            </div>
+            
+            <div class="pv_right" style="display:none;"><div id='pv_right_loader'></div></div>
+        </div>`;
+            } else {
+                content = `
         <div class="pv_wrapper">
             <div class="pv_left">
                 <div class="pv_photo">
@@ -263,6 +300,7 @@ vkify.once('mediaModals', function () {
                 <div id='pv_right_loader' class='pv_author_block'></div>
             </div>
         </div>`;
+            }
 
 
             const msgbox = CF.createModal({
@@ -459,6 +497,246 @@ vkify.once('mediaModals', function () {
                 e.preventDefault();
                 slidePhoto(1);
             });
+            
+            if (window.isMobile && window.isMobile()) {
+                const img = msgbox.getNode().find('#pv_photo_img').nodes[0];
+                const container = msgbox.getNode().find('.mobile-photo-body').nodes[0];
+                const windowNode = msgbox.getNode().find('.ovk-photo-view-window').nodes[0];
+                const headerNode = msgbox.getNode().find('.mobile-photo-header').nodes[0];
+                const footerNode = msgbox.getNode().find('.mobile-photo-footer').nodes[0];
+                
+                let scale = 1;
+                let lastScale = 1;
+                let currentX = 0;
+                let currentY = 0;
+                let startDistance = 0;
+                let pinchMidX = 0;
+                let pinchMidY = 0;
+                let pinchStartX = 0;
+                let pinchStartY = 0;
+                let lastTap = 0;
+                let singleTapTimer = null;
+                let initialX = 0;
+                let initialY = 0;
+                let startTouchX = 0;
+                let startTouchY = 0;
+                let swipeAxis = null;
+                let uiVisible = true;
+                let opacity = 1;
+
+                function getDistance(touches) {
+                    return Math.hypot(
+                        touches[0].clientX - touches[1].clientX,
+                        touches[0].clientY - touches[1].clientY
+                    );
+                }
+
+                function getMidpoint(touches) {
+                    return {
+                        x: (touches[0].clientX + touches[1].clientX) / 2,
+                        y: (touches[0].clientY + touches[1].clientY) / 2,
+                    };
+                }
+
+                const MAX_SCALE = 5;
+
+                function clampPan() {
+                    const imgW = img.naturalWidth || img.offsetWidth || container.offsetWidth;
+                    const imgH = img.naturalHeight || img.offsetHeight || container.offsetHeight;
+                    const cW = container.offsetWidth;
+                    const cH = container.offsetHeight;
+                    const renderedW = Math.min(imgW, cW);
+                    const renderedH = Math.min(imgH, cH);
+                    const maxX = Math.max(0, (renderedW * scale - cW) / 2);
+                    const maxY = Math.max(0, (renderedH * scale - cH) / 2);
+                    currentX = Math.max(-maxX, Math.min(maxX, currentX));
+                    currentY = Math.max(-maxY, Math.min(maxY, currentY));
+                }
+
+                function updateTransform() {
+                    if (scale < 1) { scale = 1; currentX = 0; currentY = 0; }
+                    img.style.transform = `translate(${currentX}px, ${currentY}px) scale(${scale})`;
+                }
+                
+                function updateOpacity() {
+                    if (windowNode) windowNode.style.backgroundColor = `rgba(0,0,0,${opacity})`;
+                    if (headerNode) headerNode.style.opacity = opacity;
+                    if (footerNode) footerNode.style.opacity = opacity;
+                }
+
+                function setUiVisible(visible) {
+                    uiVisible = visible;
+                    if (headerNode) headerNode.classList.toggle('pv-ui-hidden', !visible);
+                    if (footerNode) footerNode.classList.toggle('pv-ui-hidden', !visible);
+                }
+
+                function resetPosition(animated = true) {
+                    if (animated) img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    currentX = 0;
+                    currentY = 0;
+                    opacity = 1;
+                    updateTransform();
+                    if (windowNode) windowNode.style.transition = 'background-color 0.2s';
+                    if (headerNode) headerNode.style.transition = '';
+                    if (footerNode) footerNode.style.transition = '';
+                    updateOpacity();
+                }
+
+                container.addEventListener('touchstart', (e) => {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        startDistance = getDistance(e.touches);
+                        lastScale = scale;
+                        swipeAxis = null;
+                        img.style.transition = 'none';
+                        const mid = getMidpoint(e.touches);
+                        pinchMidX = mid.x;
+                        pinchMidY = mid.y;
+                        pinchStartX = currentX;
+                        pinchStartY = currentY;
+                    } else if (e.touches.length === 1) {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+                        
+                        if (tapLength < 300 && tapLength > 0) {
+                            clearTimeout(singleTapTimer);
+                            singleTapTimer = null;
+                            e.preventDefault();
+                            if (scale > 1) {
+                                scale = 1;
+                                currentX = 0;
+                                currentY = 0;
+                            } else {
+                                const containerRect = container.getBoundingClientRect();
+                                const tapX = e.touches[0].clientX - containerRect.left - containerRect.width / 2;
+                                const tapY = e.touches[0].clientY - containerRect.top - containerRect.height / 2;
+                                scale = 2;
+                                currentX = -tapX * (scale - 1) / scale;
+                                currentY = -tapY * (scale - 1) / scale;
+                                clampPan();
+                            }
+                            img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                            updateTransform();
+                            lastTap = 0;
+                        } else {
+                            img.style.transition = 'none';
+                            startTouchX = e.touches[0].clientX;
+                            startTouchY = e.touches[0].clientY;
+                            initialX = e.touches[0].clientX - currentX;
+                            initialY = e.touches[0].clientY - currentY;
+                            swipeAxis = null;
+                            if (windowNode) windowNode.style.transition = 'none';
+                            lastTap = currentTime;
+                        }
+                    }
+                }, { passive: false });
+
+                container.addEventListener('touchmove', (e) => {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        const currentDistance = getDistance(e.touches);
+                        const newScale = Math.min(MAX_SCALE, Math.max(1, lastScale * (currentDistance / startDistance)));
+                        const scaleDelta = newScale / scale;
+
+                        const containerRect = container.getBoundingClientRect();
+                        const originX = pinchMidX - containerRect.left - containerRect.width / 2;
+                        const originY = pinchMidY - containerRect.top - containerRect.height / 2;
+                        const curMid = getMidpoint(e.touches);
+
+                        currentX = pinchStartX + (originX - pinchStartX) * (1 - scaleDelta) + (curMid.x - pinchMidX);
+                        currentY = pinchStartY + (originY - pinchStartY) * (1 - scaleDelta) + (curMid.y - pinchMidY);
+
+                        scale = newScale;
+                        clampPan();
+                        updateTransform();
+                    } else if (e.touches.length === 1) {
+                        if (scale > 1) {
+                            e.preventDefault();
+                            currentX = e.touches[0].clientX - initialX;
+                            currentY = e.touches[0].clientY - initialY;
+                            clampPan();
+                            updateTransform();
+                            swipeAxis = null;
+                        } else if (scale === 1) {
+                            const dx = e.touches[0].clientX - startTouchX;
+                            const dy = e.touches[0].clientY - startTouchY;
+
+                            if (!swipeAxis && (Math.abs(dx) > 6 || Math.abs(dy) > 6)) {
+                                swipeAxis = Math.abs(dx) >= Math.abs(dy) ? 'x' : 'y';
+                            }
+
+                            e.preventDefault();
+                            if (swipeAxis === 'x') {
+                                currentX = e.touches[0].clientX - initialX;
+                                currentY = 0;
+                                updateTransform();
+                            } else {
+                                currentX = 0;
+                                currentY = e.touches[0].clientY - initialY;
+                                updateTransform();
+                                opacity = 1 - Math.min(Math.abs(currentY) / 300, 1);
+                                updateOpacity();
+                            }
+                        }
+                    }
+                }, { passive: false });
+
+                container.addEventListener('touchend', (e) => {
+                    if (e.touches.length === 0 && e.changedTouches.length === 1 && swipeAxis === null) {
+                        const dx = e.changedTouches[0].clientX - startTouchX;
+                        const dy = e.changedTouches[0].clientY - startTouchY;
+                        if (Math.abs(dx) < 8 && Math.abs(dy) < 8) {
+                            clearTimeout(singleTapTimer);
+                            singleTapTimer = setTimeout(() => {
+                                singleTapTimer = null;
+                                setUiVisible(!uiVisible);
+                            }, 300);
+                            swipeAxis = null;
+                            return;
+                        }
+                    }
+
+                    lastScale = scale;
+                    img.style.transition = 'transform 0.2s cubic-bezier(0.25, 1, 0.5, 1)';
+                    if (scale < 1) {
+                        scale = 1;
+                        currentX = 0;
+                        currentY = 0;
+                        updateTransform();
+                    } else if (scale === 1) {
+                        if (swipeAxis === 'x' && Math.abs(currentX) > 60 && imagesCount > 1) {
+                            const goNext = currentX < 0;
+                            const exitX = goNext ? -window.innerWidth : window.innerWidth;
+                            currentX = exitX;
+                            updateTransform();
+                            setTimeout(() => {
+                                img.style.transition = 'none';
+                                currentX = 0;
+                                currentY = 0;
+                                updateTransform();
+                                slidePhoto(goNext ? 1 : 0);
+                            }, 200);
+                        } else if (swipeAxis === 'y' && Math.abs(currentY) > 200) {
+                            const direction = currentY > 0 ? 1 : -1;
+                            currentY = currentY + direction * window.innerHeight;
+                            opacity = 0;
+                            updateTransform();
+                            
+                            if (windowNode) windowNode.style.transition = 'background-color 0.2s';
+                            if (headerNode) headerNode.style.transition = 'opacity 0.2s';
+                            if (footerNode) footerNode.style.transition = 'opacity 0.2s';
+                            updateOpacity();
+                            
+                            setTimeout(() => {
+                                msgbox.close();
+                            }, 200);
+                        } else {
+                            resetPosition(true);
+                        }
+                    }
+                    swipeAxis = null;
+                });
+            }
 
             initializeNavigation();
 
@@ -494,16 +772,63 @@ vkify.once('mediaModals', function () {
                     msgbox.getNode().find('.pv_right').html(pvRight.innerHTML);
 
                     const pvAlbumName = body.querySelector('.pv_album_name');
-                    msgbox.getNode().find('.pv_album_name').html(pvAlbumName ? pvAlbumName.innerHTML : '');
+                    const pvAlbumContent = pvAlbumName ? pvAlbumName.innerHTML : '';
+                    msgbox.getNode().find('.pv_album_name').html(pvAlbumContent);
+                    msgbox.getNode().find('.pv_title_group').toggleClass('pv-no-album', !pvAlbumContent.trim());
 
                     const pvActions = body.querySelector('.pv_bottom_actions');
                     msgbox.getNode().find('.pv_bottom_actions').html(pvActions ? pvActions.innerHTML : '');
 
                     msgbox.getNode().find(".pv_right .bsdn").nodes.forEach(bsdnInitElement);
+                    
+                    if (window.isMobile && window.isMobile()) {
+                        const desc = msgbox.getNode().find('.pv_right .pv_desc').html();
+                        if (desc && desc.trim()) {
+                            msgbox.getNode().find('.mobile-photo-footer .pv_desc').html(desc).attr('style', '');
+                        } else {
+                            msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
+                        }
+                        
+                        const likes = msgbox.getNode().find('.pv_right .post_full_like_wrap').html();
+                        msgbox.getNode().find('.mobile-photo-actions').html(likes || '');
+                        
+                        let moreHtml = '';
+                        if (pvActions) {
+                           const moreMenu = pvActions.querySelector('#pv_actions_more_menu');
+                           const deleteBtn = pvActions.querySelector('#_photoDelete');
+                           if (moreMenu) {
+                               moreHtml += moreMenu.innerHTML;
+                           }
+                           if (deleteBtn) {
+                               moreHtml += deleteBtn.outerHTML;
+                           }
+                        }
+                        
+                        if (moreHtml) {
+                            msgbox.getNode().find('.pv_actions_more_wrap').html(`
+                                <div class="pv_actions_more mobile-three-dots" role="button" data-tippy-content-id="pv_actions_more_menu_mobile" data-tippy-theme="dark vk" style="display:flex; align-items:center;">
+                                    <svg width="28" height="28" viewBox="0 0 28 28"><use href="#more-vertical-28"></use></svg>
+                                </div>
+                                <div id="pv_actions_more_menu_mobile" class="tippy-menu tippy-content-template">
+                                    ${moreHtml}
+                                </div>
+                            `).attr('style', 'display:block; cursor:pointer;');
+                        } else {
+                            msgbox.getNode().find('.pv_actions_more_wrap').html('').attr('style', 'display:none;');
+                        }
+                        
+                        msgbox.getNode().find('#__mobile_photo_comment_btn').attr('href', `/photo${photoId}`);
+                    }
                 } catch (e) {
                     msgbox.getNode().find('.ovk-photo-view-window').addClass('private');
                     msgbox.getNode().find('.pv_right').html('');
                     msgbox.getNode().find('.pv_album_name').html('');
+                    msgbox.getNode().find('.pv_title_group').addClass('pv-no-album');
+                    if (window.isMobile && window.isMobile()) {
+                         msgbox.getNode().find('.mobile-photo-footer .pv_desc').attr('style', 'display:none;');
+                         msgbox.getNode().find('.mobile-photo-actions').html('');
+                         msgbox.getNode().find('.pv_actions_more_wrap').html('').attr('style', 'display:none;');
+                    }
                 }
 
                 setTimeout(window.reinitializeTooltips, 200);
@@ -972,5 +1297,5 @@ vkify.once('mediaModals', function () {
     }
 
     window.PostPopupManager = PostPopupManager;
-    window.postPopupManager = new PostPopupManager();
+    if (!window.isMobile || !window.isMobile()) window.postPopupManager = new PostPopupManager();
 });

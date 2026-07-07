@@ -254,6 +254,7 @@ vkify.onPage(() => {
     vkify.bindOnce('hookFeedSettingsLink', () => {
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#__feed_settings_link')) return;
+            e.preventDefault();
 
             u('.ovk-diag-cont').last().setAttribute('style', 'width:500px');
             u('.ovk-diag-body').attr('style', 'padding:0px !important; min-height: 290px; overflow: hidden;');

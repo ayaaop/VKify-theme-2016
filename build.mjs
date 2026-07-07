@@ -55,7 +55,7 @@ const modules = [
     'features/audio-upload.js',
     'features/avatar-upload.js',
     'features/gif-autoplay.js',
-    'features/video-audio-coord.js',
+    "features/video-audio-coord.js",
     'features/video-delete.js',
 ];
 

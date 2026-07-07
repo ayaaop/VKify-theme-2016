@@ -357,7 +357,7 @@ vkify.once("showAudioUploadPopup", () => {
 
         const actionEl = audioUploadPopup.getNode().find('.ovk-diag-action').nodes[0];
         if (actionEl) {
-            actionEl.insertAdjacentHTML('afterbegin', `<a href="/search?section=audios" style="float: left;margin-top: 6px;margin-left: 5px;">${tr('audio_search')}</a>`);
+            actionEl.insertAdjacentHTML('afterbegin', `<a href="/search?section=audios" class="button button_light" style="float: left; margin: 0;">${tr('audio_search')}</a>`);
         }
     };
 });

@@ -65,6 +65,7 @@ vkify.bindOnce('dropdownHandlers', () => {
     };
 
     const onSelectMouseDown = (e) => {
+        if (window.isMobile && window.isMobile()) return;
         const t = e.target;
         if (!(t instanceof Element)) return;
         const sel = t.closest('select');
@@ -73,6 +74,7 @@ vkify.bindOnce('dropdownHandlers', () => {
     };
 
     const onSelectClick = (e) => {
+        if (window.isMobile && window.isMobile()) return;
         const t = e.target;
         if (!(t instanceof Element)) return;
         const sel = t.closest('select');

@@ -30,7 +30,7 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                <div n:if="$canPost" class="page_block">
+                <div n:if="$canPost" class="page_block postFeedWrapperMicroblog">
                     {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
                 </div>
                 <div class="page_block wall_posts_tabs">
