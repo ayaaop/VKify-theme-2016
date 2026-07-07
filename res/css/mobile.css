@@ -188,7 +188,6 @@
         background-color: var(--module-background-color);
         transition: left 0.3s ease;
         overflow-y: auto;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
         margin: 0 !important;
         z-index: 201;
     }
@@ -229,6 +228,7 @@
     }
     body.menu-expanded .sidebar {
         left: 0;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.2);
     }
     body.menu-expanded {
         overflow: hidden;
