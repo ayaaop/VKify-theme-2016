@@ -49,9 +49,9 @@
 
 {define mobileProfile}
     <div class="mobile-profile-hero mobileonly">
-        {var $__avPhoto = $user->getAvatarPhoto()}
-        {var $__avOnclick = $__avPhoto ? "event.preventDefault(); OpenMiniature(event, '" . $user->getAvatarUrl('large') . "', null, '" . $__avPhoto->getPrettyId() . "', null);" : null}
-        <div class="mobile-hero-img-wrap{if $__avPhoto} has-avatar-photo{/if}" n:attr="onclick => $__avOnclick">
+        {var $avPhoto = $user->getAvatarPhoto()}
+        {var $avOnclick = $avPhoto ? "event.preventDefault(); OpenMiniature(event, '" . $user->getAvatarUrl('large') . "', null, '" . $avPhoto->getPrettyId() . "', null);" : null}
+        <div class="mobile-hero-img-wrap{if $avPhoto} has-avatar-photo{/if}" n:attr="onclick => $avOnclick">
             {include '../components/avatar.latte', author => $user, size => 'large', class => 'mobile-hero-img', width => false, height => false, alt => $user->getCanonicalName()}
             <div class="mobile-hero-gradient"></div>
             <div class="mobile-hero-info">
@@ -173,24 +173,18 @@
 					</div>
 					</div>{* /page_block mobile-actions-info-block *}
 
-					{* Horizontally-scrolling modules strip *}
-					{*
-					 * Show the strip if:
-					 *   (a) the viewer is the profile owner — they always see it (with placeholders for empty modules), or
-					 *   (b) at least one module has visible content for this visitor
-					 *}
-					{var $__canSeeVideos  = $videosCount  > 0 && $user->getPrivacyPermission('videos.read',  $thisUser ?? NULL)}
-					{var $__canSeeAudios  = $audiosCount  > 0 && $user->getPrivacyPermission('audios.read',  $thisUser ?? NULL)}
-					{var $__canSeeGroups  = $user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
-					{var $__canSeeAlbums  = $albumsCount  > 0 && $user->getPrivacyPermission('photos.read',  $thisUser ?? NULL)}
-					{var $__canSeeGifts   = \OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() > 0}
-					{var $__stripHasContent = $__canSeeVideos || $__canSeeAudios || $__canSeeGroups || $__canSeeAlbums || $__canSeeGifts}
+					{var $canSeeVideos  = $videosCount  > 0 && $user->getPrivacyPermission('videos.read',  $thisUser ?? NULL)}
+					{var $canSeeAudios  = $audiosCount  > 0 && $user->getPrivacyPermission('audios.read',  $thisUser ?? NULL)}
+					{var $canSeeGroups  = $user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
+					{var $canSeeAlbums  = $albumsCount  > 0 && $user->getPrivacyPermission('photos.read',  $thisUser ?? NULL)}
+					{var $canSeeGifts   = \OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() > 0}
+					{var $stripHasContent = $canSeeVideos || $canSeeAudios || $canSeeGroups || $canSeeAlbums || $canSeeGifts}
 
-					{if $thatIsThisUser || $__stripHasContent}
+					{if $thatIsThisUser || $stripHasContent}
 					<div class="page_block mobile-scroll-modules">
 
 						{* ── Videos ── *}
-						{if $__canSeeVideos}
+						{if $canSeeVideos}
 							{var $firstVideo = $videos[0] ?? null}
 							<div class="module clear video_module mobile-scroll-card">
 								<a href="/videos{$user->getId()}" class="module_header">
@@ -223,7 +217,7 @@
 						{/if}
 
 						{* ── Audios ── *}
-						{if $__canSeeAudios}
+						{if $canSeeAudios}
 							{var $firstAudio = $audios[0] ?? null}
 							<div class="module clear mobile-scroll-card">
 								<a href="/audios{$user->getId()}" class="module_header">
@@ -256,7 +250,7 @@
 						{/if}
 
 						{* ── Groups ── *}
-						{if $__canSeeGroups}
+						{if $canSeeGroups}
 							<div class="module clear page_list_module mobile-scroll-card">
 								<a href="/groups{$user->getId()}" class="module_header">
 									<h3 class="header_top clear_fix">
@@ -287,7 +281,7 @@
 						{/if}
 
 						{* ── Albums ── *}
-						{if $__canSeeAlbums}
+						{if $canSeeAlbums}
 							{var $firstAlbum = $albums[0] ?? null}
 							<div class="module clear album_module mobile-scroll-card">
 								<a href="/albums{$user->getId()}" class="module_header">
@@ -319,7 +313,7 @@
 						{/if}
 
 						{* ── Gifts ── *}
-						{if $__canSeeGifts}
+						{if $canSeeGifts}
 							<div class="module clear profile_gifts mobile-scroll-card">
 								<a class="module_header" href="/gifts{$user->getId()}">
 									<h3 class="header_top clear_fix">
@@ -433,7 +427,7 @@
 {block content}
 	{var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
     {var $videos = iterator_to_array($videos)}
-    {var $audios = iterator_to_array($audios)}
+    {var $audios = iterator_to_array((new \openvk\Web\Models\Repositories\Audios())->getByEntityID($user->getId(), 0, 3))}
     {var $albums = iterator_to_array($albums)}
     {var $photoCount = (new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}
     {if !$user->isBanned()}

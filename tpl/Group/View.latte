@@ -473,9 +473,7 @@
 							<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
 								<div class="people_cell" n:foreach="$followerRow as $follower">
 									<a class="people_cell_ava" href="{$follower->getURL()}">
-										<div class="people_cell_img">
-											{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName()}
-										</div>
+										{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName(), class => 'people_cell_img'}
 									</a>
 									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
 								</div>
