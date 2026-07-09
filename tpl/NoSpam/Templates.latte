@@ -8,7 +8,8 @@
         {include "Tabs.latte", mode => "templates"}
     </div>
     <div class="page_block page_padding">
-        <table n:if="count($templates) > 0" class="page_table" cellspacing="0" cellpadding="7" width="100%">
+        <div n:if="count($templates) > 0" class="page_table_wrapper">
+            <table class="page_table" cellspacing="0" cellpadding="7" width="100%">
             <tr>
                 <th style="text-align: center;">ID</th>
                 <th>{_n_user}</th>
@@ -48,6 +49,7 @@
                 </td>
             </tr>
         </table>
+        </div>
         <div n:if="count($templates) <= 0">
             {include "../components/nothing.latte"}
         </div>

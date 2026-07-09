@@ -1,7 +1,8 @@
 <div class="profile_actions clear_fix nomobile">
 	{ifset $thisUser}
 		{if $user->getId() != $thisUser->getId()}
-			{if !$user->isBanned() && !$user->isDeleted() && !$user->isDeactivated() && !$user->isBlacklistedBy($thisUser) && !$thisUser->isBlacklistedBy($user)}
+			{var $isRestricted = $user->isClosed() || $user->isBanned() || $user->isDeactivated() || $user->isBlacklistedBy($thisUser) || $thisUser->isBlacklistedBy($user)}
+			{if !$isRestricted}
 				{if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
 					{if $user->getPrivacyPermission('messages.write', $thisUser)}
 						<div class="profile_msg_split">
@@ -28,15 +29,15 @@
 				{/if}
 			{/if}
 			{var $subStatus = $user->getSubscriptionStatus($thisUser)}
-			<div class="profile_actions_split">
-				{var $actions = [
-					0 => ['act' => 'add', 'label' => tr('friends_add')],
-					1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
-					2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
-					3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
-				]}
-				{if isset($actions[$subStatus])}
-					<form action="/setSub/user" method="post" class="profile_link_form fl_l">
+			{var $actions = [
+				0 => ['act' => 'add', 'label' => tr('friends_add')],
+				1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+				2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+				3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+			]}
+			<div class="{if $isRestricted && ($subStatus === 0 || $subStatus === 1)}profile_actions_standalone{else}profile_actions_split{/if}">
+				{if isset($actions[$subStatus]) && (!$isRestricted || ($subStatus !== 0 && $subStatus !== 1))}
+					<form action="/setSub/user" method="post" class="profile_link_form{if !$isRestricted} fl_l{/if}">
 						<input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
 						<input type="hidden" name="id"  value="{$user->getId()}" />
 						<input type="hidden" name="hash" value="{$csrfToken}" />
@@ -44,63 +45,10 @@
 					</form>
 				{/if}
 				<div class="profile_more_wrapper">
-					<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn">
+					<button class="button button_gray profile_more_btn{if !$isRestricted} fl_r{/if}" id="profile_more_btn">
 						{_actions}
 						<span class="clear_fix">&nbsp;</span>
 					</button>
-					<div id="profile_actions_tooltip" class="tippy-content-template">
-						<div class="tippy-menu">
-							{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-								{if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
-									<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
-										{tr("login_as", $user->getFirstName())}
-									</a>
-								{/if}
-								<a href="/admin/users/id{$user->getId()}">
-									{_manage_user_action}
-								</a>
-								{var $isBanned = $user->isBanned()}
-								<a href="javascript:{if $isBanned}unbanUser(){else}banUser(){/if}">
-									{if $isBanned}{_unban_user_action}{else}{_ban_user_action}{/if}
-								</a>
-								<a href="javascript:warnUser()">
-									{_warn_user_action}
-								</a>
-								<a href="/admin/user{$user->getId()}/bans">
-									{_blocks}
-								</a>
-								<a href="/admin/logs?uid={$user->getId()}">
-									{_last_actions}
-								</a>
-								<div class="separator"></div>
-							{/if}
-							{if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-								<a href="javascript:toggleBanInSupport()">
-									{if $user->isBannedInSupport()}
-										{_unban_in_support_user_action}
-									{else}
-										{_ban_in_support_user_action}
-									{/if}
-								</a>
-							{/if}
-							<div class="separator"></div>
-							{var $isBlacklisted = $user->isBlacklistedBy($thisUser)}
-							<a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="{if $isBlacklisted}0{else}1{/if}" data-id="{$user->getRealId()}" class="tippy-menu-item">
-								{if $isBlacklisted}{_bl_remove}{else}{_bl_add}{/if}
-							</a>
-
-							<a class="tippy-menu-item" href="javascript:reportUser({$user->getId()})">
-								{_report}
-							</a>
-
-							{if !$user->isHideFromGlobalFeedEnabled()}
-								{var $isIgnored = $user->isIgnoredBy($thisUser)}
-								<a class="tippy-menu-item" id="__ignoreSomeone" data-val="{if $isIgnored}0{else}1{/if}" data-id="{$user->getId()}">
-									{if $isIgnored}{_unignore_user}{else}{_ignore_user}{/if}
-								</a>
-							{/if}
-						</div>
-					</div>
 				</div>
 			</div>
 		{/if}
@@ -112,4 +60,65 @@
 			<vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
 		</div>
 	{/ifset}
+</div>
+<div id="profile_actions_tooltip" class="tippy-content-template">
+	<div class="tippy-menu">
+		{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+			{if $user->getId() !== $thisUser->getId() && $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+				<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+					{tr("login_as", $user->getFirstName())}
+				</a>
+			{/if}
+			<a href="/admin/users/id{$user->getId()}">
+				{_manage_user_action}
+			</a>
+			{var $isBanned = $user->isBanned()}
+			<a href="javascript:{if $isBanned}unbanUser(){else}banUser(){/if}">
+				{if $isBanned}{_unban_user_action}{else}{_ban_user_action}{/if}
+			</a>
+			<a href="javascript:warnUser()">
+				{_warn_user_action}
+			</a>
+			<a href="/admin/user{$user->getId()}/bans">
+				{_blocks}
+			</a>
+			<a href="/admin/logs?uid={$user->getId()}">
+				{_last_actions}
+			</a>
+			<div class="separator"></div>
+		{/if}
+		{if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+			<a href="javascript:toggleBanInSupport()">
+				{if $user->isBannedInSupport()}
+					{_unban_in_support_user_action}
+				{else}
+					{_ban_in_support_user_action}
+				{/if}
+			</a>
+			<div class="separator"></div>
+		{/if}
+		{if $user->getId() != $thisUser->getId()}
+			{var $isBlacklisted = $user->isBlacklistedBy($thisUser)}
+			{if !$user->isDeleted() || $isBlacklisted}
+				<a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="{if $isBlacklisted}0{else}1{/if}" data-id="{$user->getRealId()}">
+					{if $isBlacklisted}{_bl_remove}{else}{_bl_add}{/if}
+				</a>
+			{/if}
+
+			<a  href="javascript:reportUser({$user->getId()})">
+				{_report}
+			</a>
+
+			{if !$user->isHideFromGlobalFeedEnabled()}
+				{var $isIgnored = $user->isIgnoredBy($thisUser)}
+				<a  id="__ignoreSomeone" data-val="{if $isIgnored}0{else}1{/if}" data-id="{$user->getId()}">
+					{if $isIgnored}{_unignore_user}{else}{_ignore_user}{/if}
+				</a>
+			{/if}
+		{else}
+			<a class="_add_image" id="vkify_add_image">
+				{_upload_new_picture}
+			</a>
+		{/if}
+	</div>
 </div>

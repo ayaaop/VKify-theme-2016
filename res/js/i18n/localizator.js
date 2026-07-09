@@ -79,6 +79,7 @@ let locales = {
 		feed_user_ignored: "User hidden from feed.",
 		feed_club_ignored: "Group hidden from feed.",
 		feed_unignore: "Undo",
+		restore: "Restore",
 		copy_video_link_at_time: "Copy video link at current time",
 		link_copied_vk: "VK video link copied",
 		link_copied_direct: "Direct video link copied",
@@ -359,7 +360,7 @@ window.vkifylocalize = function (langcode, fallback = "en") {
 
 	if (!(langcode in locales)) {
 		try {
-			fetch(`/themepack/vkify16/3.3.4.5/resource/langs/${langcode}.json`)
+			fetch(`/themepack/vkify16/3.3.4.6/resource/langs/${langcode}.json`)
 				.then((response) => {
 					if (!response.ok) {
 						patchpage(fallbackCode);

@@ -164,7 +164,8 @@ function initializeTooltip(triggerElement) {
         return false;
     }
     
-    const movedContent = takeTemplateNode(triggerElement, contentId);
+    const keepOriginal = triggerElement.hasAttribute('data-tippy-keep-original');
+    const movedContent = keepOriginal ? null : takeTemplateNode(triggerElement, contentId);
     const clonedContent = movedContent || cloneTooltipContent(triggerElement, contentId);
     if (!clonedContent) {
         console.error(`[Tooltips] Content template not found for ID: ${contentId}`);

@@ -74,6 +74,37 @@
 
     vkify.onPage(bindSidebarPlayerDOM);
 
+    function setupTransparentAppbar() {
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        if (!isMobile) return;
+
+        const appbar = document.getElementById('appbar');
+        if (!appbar || !appbar.classList.contains('appbar--transparent')) return;
+
+        const hero = document.querySelector('.mobile-profile-hero');
+
+        document.body.classList.add('has-transparent-appbar');
+        const heroHeight = hero ? hero.offsetHeight : 200;
+        window.__profileAppbarScrollHandler = function() {
+            const scrollY = window.scrollY || window.pageYOffset;
+            const progress = Math.min(scrollY / Math.max(heroHeight - 56, 1), 1);
+            appbar.style.setProperty('--appbar-bg-alpha', progress);
+            if (progress <= 0) {
+                appbar.classList.add('appbar--transparent');
+                appbar.classList.remove('appbar--scrolled');
+            } else if (progress >= 1) {
+                appbar.classList.remove('appbar--transparent');
+                appbar.classList.add('appbar--scrolled');
+            } else {
+                appbar.classList.remove('appbar--transparent', 'appbar--scrolled');
+            }
+        };
+        window.__profileAppbarScrollHandler();
+        window.addEventListener('scroll', window.__profileAppbarScrollHandler, {'passive': true});
+    }
+
+    vkify.hook(vkify, 'onPageReady', setupTransparentAppbar, 'after');
+
     function setupSidebarPlayerOnce() {
         if (!vkify.bindOnce('sidebarPlayerSetup', setupSidebarPlayerOnce)) return;
 

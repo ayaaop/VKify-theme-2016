@@ -86,7 +86,7 @@
                         {if $comment->getUType() === 0}
                             {include '../components/avatar.latte', author => $comment->getUser(), size => 'miniscule', width => 30, class => 'reply_img'}
                         {else}
-                            <img src="{$comment->getAvatar()}" width="30" class="reply_img" style="filter: hue-rotate({$comment->getColorRotation()}deg);" />
+                            <img src="{$comment->getAvatar()}" width="30" class="avatar reply_img" style="filter: hue-rotate({$comment->getColorRotation()}deg);" />
                         {/if}
                     </a>
                     <div class="reply_content">

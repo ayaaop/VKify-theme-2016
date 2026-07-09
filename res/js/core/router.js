@@ -311,11 +311,22 @@ window.router = new class Router {
             window.removeEventListener('scroll', window.__profileAppbarScrollHandler);
             window.__profileAppbarScrollHandler = null;
         }
-        document.body.classList.remove('has-transparent-appbar');
         const liveAppbar = document.getElementById('appbar');
+        const newAppbarHasTransparent = appbar.nodes[0]?.classList.contains('appbar--transparent');
+
+        if (newAppbarHasTransparent) {
+            document.body.classList.add('has-transparent-appbar');
+        } else {
+            document.body.classList.remove('has-transparent-appbar');
+        }
+
         if (liveAppbar) {
-            liveAppbar.classList.remove('appbar--transparent', 'appbar--scrolled');
-            liveAppbar.style.removeProperty('--appbar-bg-alpha');
+            if (newAppbarHasTransparent) {
+                liveAppbar.classList.add('appbar--transparent');
+            } else {
+                liveAppbar.classList.remove('appbar--transparent', 'appbar--scrolled');
+                liveAppbar.style.removeProperty('--appbar-bg-alpha');
+            }
         }
 
         if (backdrop.length > 0) {

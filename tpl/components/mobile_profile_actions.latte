@@ -1,0 +1,61 @@
+<div class="mobile-actions-wrap mobileonly">
+    <div class="mobile_profile_actions">
+    {ifset $thisUser}
+        {if $user->getId() != $thisUser->getId()}
+            {var $isRestricted = $user->isClosed() || $user->isBanned() || $user->isDeactivated() || $user->isBlacklistedBy($thisUser) || $thisUser->isBlacklistedBy($user)}
+            {if !$isRestricted}
+                {if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
+                    {if $user->getPrivacyPermission('messages.write', $thisUser)}
+                        <div class="mobile_profile_action_primary">
+                            <a class="button mobile_profile_action_btn" href="/im?sel={$user->getId()}">{_send_message}</a>
+                        </div>
+                    {else}
+                        <div class="mobile_profile_action_primary">
+                            <a class="button mobile_profile_action_btn" href="/gifts?act=pick&user={$user->getId()}">{_gift}</a>
+                        </div>
+                    {/if}
+                {else}
+                    {if $user->getPrivacyPermission('messages.write', $thisUser)}
+                        <div class="mobile_profile_action_primary">
+                            <a class="button mobile_profile_action_btn" href="/im?sel={$user->getId()}">{_send_message}</a>
+                        </div>
+                    {/if}
+                {/if}
+            {/if}
+            {var $subStatus = $user->getSubscriptionStatus($thisUser)}
+            {var $actions = [
+                0 => ['act' => 'add', 'label' => tr('friends_add')],
+                1 => ['act' => 'add', 'label' => tr('friends_accept'), 'class' => 'button_gray'],
+                2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
+                3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
+            ]}
+            {if isset($actions[$subStatus]) && (!$isRestricted || ($subStatus !== 0 && $subStatus !== 1))}
+                {if $isRestricted}
+                    <form action="/setSub/user" method="post" class="mobile_profile_action_full">
+                        <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                        <input type="hidden" name="id" value="{$user->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{$actions[$subStatus]['label']}" class="button button_wide mobile_profile_action_btn {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{/if}" />
+                    </form>
+                {else}
+                    <div class="mobile_profile_action_secondary">
+                        <form action="/setSub/user" method="post">
+                            <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
+                            <input type="hidden" name="id" value="{$user->getId()}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{$actions[$subStatus]['label']}" class="button mobile_profile_action_btn {if isset($actions[$subStatus]['class'])}{$actions[$subStatus]['class']}{else}button_gray{/if}" />
+                        </form>
+                    </div>
+                {/if}
+            {/if}
+        {/if}
+        {if $user->getId() == $thisUser->getId()}
+            <a class="button button_wide mobile_profile_action_btn" href="/edit">{_edit_page}</a>
+        {/if}
+    {else}
+        <div class="guest_actions">
+            <vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
+        </div>
+    {/ifset}
+    </div>
+</div>

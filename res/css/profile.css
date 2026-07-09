@@ -41,9 +41,7 @@
   margin: auto;
   width: 40px;
   height: 40px;
-  object-fit: cover;
   max-height: 40px;
-  border-radius: 50%;
   display: block;
 }
 
@@ -100,7 +98,7 @@
 
 .page_album_title {
   font-size: 12.5px;
-  background: url(/themepack/vkify16/3.3.4.5/resource/album_top_shadow.png);
+  background: url(/themepack/vkify16/3.3.4.6/resource/album_top_shadow.png);
   color: var(--white);
   position: absolute;
   bottom: 0;
@@ -134,7 +132,7 @@
 
 .page_album_nocover {
   background: var(--album-background-color)
-    url(/themepack/vkify16/3.3.4.5/resource/camera_big.png) no-repeat 50% 45%;
+    url(/themepack/vkify16/3.3.4.6/resource/camera_big.png) no-repeat 50% 45%;
   width: 279px;
   height: 185px;
 }
@@ -204,6 +202,7 @@
 
 .video_module .video {
   position: relative;
+  display: block;
   width: 200px;
   height: 112px;
   overflow: hidden;
@@ -221,7 +220,7 @@
   left: 0;
   right: 0;
   background: var(--video-overlay-background)
-    url(/themepack/vkify16/3.3.4.5/resource/video_play_small.png) 19px 13px
+    url(/themepack/vkify16/3.3.4.6/resource/video_play_small.png) 19px 13px
     no-repeat;
   margin: auto;
   width: 50px;
@@ -238,8 +237,8 @@
 
 
 .video_module .video .page_video_thumb {
-  width: 200px;
-  height: 112px;
+  width: 100%;
+  height: 100%;
   display: inline-block;
   background-size: cover;
   background-position: 50%;
@@ -451,7 +450,7 @@ table.ugc-table * {
   margin: 0;
 }
 .audioStatus::before {
-  background-image: url("/themepack/vkify16/3.3.4.5/resource/icons/video_actions.png");
+  background-image: url("/themepack/vkify16/3.3.4.6/resource/icons/video_actions.png");
   width: 13px;
   height: 13px;
   background-position: 0px -44px;
@@ -548,7 +547,7 @@ div.avatar_block:hover .avatar_variants {
 }
 .avatarDelete:before {
 	display: block;
-	background: url(/themepack/vkify16/3.3.4.5/resource/icons/attach_icons.png) no-repeat 0 -40px;
+	background: url(/themepack/vkify16/3.3.4.6/resource/icons/attach_icons.png) no-repeat 0 -40px;
 	opacity: 0.85;
 	width: 8px;
 	height: 8px;
@@ -564,6 +563,7 @@ div.avatar_block:hover .avatar_variants {
 .avatar_block_inner img {
   height: fit-content;
   width: 100%;
+  border-radius: 0;
 }
 
 .avatar_block .add_image_text {
@@ -614,7 +614,7 @@ div.avatar_block:hover .avatar_variants {
   width: 21px;
   height: 21px;
   margin: 10px;
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/add_info_icons.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/add_info_icons.png)
     no-repeat 0 0;
 }
 
@@ -659,7 +659,7 @@ div.avatar_block:hover .avatar_variants {
 .profile_warning_hide {
   width: 9px;
   height: 9px;
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/attach_icons.png) no-repeat 0 0;
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/attach_icons.png) no-repeat 0 0;
 }
 
 .profile_warning_hide_wrap:hover {
@@ -679,6 +679,7 @@ div.avatar_block:hover .avatar_variants {
 
 .profile_actions {
   padding-top: 10px;
+  min-height: 30px;
 }
 
 .profile_msg_split .cut_left,
@@ -709,7 +710,7 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .profile_gift_icon {
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/gift_icon.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/gift_icon.png)
     no-repeat;
   background-position: center;
   background-size: 11px;
@@ -722,25 +723,26 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .button.profile_more_btn {
-  background-image: url(/themepack/vkify16/3.3.4.5/resource/icons/more_icon.png);
+  background-image: url(/themepack/vkify16/3.3.4.6/resource/icons/more_icon.png);
   background-repeat: no-repeat;
   background-position: 100% 13px;
   width: 36px;
   padding-right: 7px;
   border-right: 9px solid transparent;
   text-indent: -9999px;
+  justify-content: start;
 }
 .profile_more_wrapper.profile_more_active .button.profile_more_btn {
   text-indent: 0;
   width: 100%;
-  justify-content: start;
   position: relative;
   z-index: 11;
   float: none;
   border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
 }
 
-.button + .profile_actions_split, .profile_msg_split + .profile_actions_split {
+.button + .profile_actions_split, .button + .profile_actions_standalone,
+.profile_msg_split + .profile_actions_split, .profile_msg_split + .profile_actions_standalone {
   margin-top: 10px;
 }
 
@@ -748,6 +750,17 @@ div.avatar_block:hover .avatar_variants {
   display: flex;
   justify-content: end;
   position: relative;
+}
+
+.profile_actions_standalone {
+  position: relative;
+}
+.profile_actions_standalone .profile_link_form {
+  margin-bottom: 7px;
+}
+.profile_actions_standalone .button.profile_more_btn {
+  text-indent: 0;
+  width: 100%;
 }
 
 .profile_more_wrapper {
@@ -766,13 +779,14 @@ div.avatar_block:hover .avatar_variants {
 }
 
 
-.profile_actions_split [data-tippy-root] {
+.profile_actions_split [data-tippy-root], .profile_actions_standalone [data-tippy-root] {
   width: 200px;
   position: relative!important;
   transform: none!important;
   z-index: 10!important;
 }
-.profile_actions_split .tippy-box[data-theme~="vk"] {
+.profile_actions_split .tippy-box[data-theme~="vk"],
+.profile_actions_standalone .tippy-box[data-theme~="vk"] {
   border-radius: 0 0 var(--button-border-radius) var(--button-border-radius);
   box-shadow: none;
   border: 0;
@@ -852,7 +866,7 @@ div.avatar_block:hover .avatar_variants {
   display: block;
   position: absolute;
   content: "";
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/group_info_cons.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/group_info_cons.png)
     no-repeat 0 0;
   height: 15px;
   width: 15px;
@@ -865,7 +879,7 @@ div.avatar_block:hover .avatar_variants {
   (-o-min-device-pixel-ratio: 2/1),
   (min-resolution: 192dpi) {
   .group_info_row:before {
-    background-image: url(/themepack/vkify16/3.3.4.5/resource/icons/group_info_cons_2x.png);
+    background-image: url(/themepack/vkify16/3.3.4.6/resource/icons/group_info_cons_2x.png);
     background-size: 15px 149px;
   }
 }
@@ -893,11 +907,11 @@ div.avatar_block:hover .avatar_variants {
   left: 0;
   width: 12px;
   height: 12px;
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/topic_icon.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/topic_icon.png)
     no-repeat 0 0;
 }
 .topics_module.notes_module .topic_icon {
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/post_icon.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/post_icon.png)
     no-repeat;
   background-position: -5px -244px;
   height: 16px;
@@ -951,37 +965,38 @@ div.avatar_block:hover .avatar_variants {
 }
 
 .page_module_upload {
-  padding: 28px 13px 28px 230px;
+  padding: 24px 13px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-align: left;
   line-height: 16px;
   white-space: nowrap;
-  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--link-color);
   cursor: pointer;
 }
 .page_upload_label {
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/group_icons.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/group_icons.png)
     no-repeat;
-  position: absolute;
   display: block;
   width: 17px;
   height: 19px;
-  margin-left: -27px;
+  margin-right: 12px;
   opacity: 0.75;
   transition: opacity 100ms ease;
 }
 .narrow_column .page_module_upload {
-  padding: 17px 13px 17px 47px;
+  padding: 17px 13px 17px 17px;
+  justify-content: start;
 }
 .wide_column .page_upload_label {
-  background: url(/themepack/vkify16/3.3.4.5/resource/icons/group_icons_big.png)
+  background: url(/themepack/vkify16/3.3.4.6/resource/icons/group_icons_big.png)
     no-repeat;
   width: 25px;
-  height: 27px;
-  margin-left: -37px;
-  margin-top: -4px;
+  height: 25px;
+  margin-right: 16px;
 }
 a.page_module_upload:hover,
 .page_module_upload:hover {

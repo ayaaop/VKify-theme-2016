@@ -106,7 +106,7 @@ vkify.bindOnce('statusEditorOverrides', () => {
                     const el = document.getElementById('mobile_status_display');
                     if (el) {
                         el.textContent = newStatus || tr('change_status');
-                        el.className = newStatus ? 'mir-text' : 'mir-text mir-text-muted';
+                        el.className = newStatus ? 'mir-text' : 'mir-text';
                     }
                 } catch (e) {
                     console.error(e);

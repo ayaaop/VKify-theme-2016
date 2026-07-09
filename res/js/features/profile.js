@@ -63,39 +63,65 @@ window.Profile = {
     },
 
     initProfileMoreMenu: function() {
-        const profileMoreBtn = ge('profile_more_btn');
-        const tooltipContent = ge('profile_actions_tooltip');
+        const buttons = [
+            ge('profile_more_btn'),
+            ge('profileAppbarMoreBtn'),
+            ge('groupAppbarMoreBtn')
+        ].filter(Boolean);
 
-        if (profileMoreBtn && tooltipContent && !profileMoreBtn._tippy) {
-            tooltipContent.style.display = 'block';
-            
-            tippy(profileMoreBtn, {
-                theme: 'light vk',
-                placement: 'start-end',
-                trigger: 'click',
-                interactive: true,
-                interactiveBorder: 8,
-                arrow: false,
-                appendTo: 'parent',
-                animation: 'none',
-                duration: 0,
-                offset: [0, 0],
-                allowHTML: true,
-                content: tooltipContent,
-                onShow: (instance) => {
-                    profileMoreBtn.setAttribute('aria-expanded', 'true');
-                    const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
-                    if (wrapper) wrapper.classList.add('profile_more_active');
-                },
-                onHide: (instance) => {
-                    profileMoreBtn.setAttribute('aria-expanded', 'false');
-                },
-                onHidden: (instance) => {
-                    const wrapper = profileMoreBtn.closest('.profile_more_wrapper');
-                    if (wrapper) wrapper.classList.remove('profile_more_active');
-                }
-            });
-        }
+        buttons.forEach(button => {
+            if (button._tippy) return;
+
+            if (!button.isConnected || button.offsetParent === null) {
+                requestAnimationFrame(() => Profile.initProfileMoreMenu());
+                return;
+            }
+
+            const tooltipContent = ge('profile_actions_tooltip');
+            if (!tooltipContent) return;
+
+            const clonedContent = tooltipContent.cloneNode(true);
+            clonedContent.style.display = 'block';
+            clonedContent.removeAttribute('id');
+
+            // Hide the original template so it doesn't appear in the DOM
+            tooltipContent.style.display = 'none';
+
+            const isAppbar = button.id.includes('Appbar');
+            const placement = isAppbar ? 'bottom-end' : 'start-end';
+
+            try {
+                tippy(button, {
+                    theme: 'light vk',
+                    placement,
+                    trigger: 'click',
+                    interactive: true,
+                    interactiveBorder: 8,
+                    arrow: false,
+                    appendTo: 'parent',
+                    animation: isAppbar ? 'up_down' : 'none',
+                    duration: isAppbar ? [150, 100] : 0,
+                    allowHTML: true,
+                    content: clonedContent,
+                    onShow: (instance) => {
+                        button.setAttribute('aria-expanded', 'true');
+                        button.classList.add('shown');
+                        const wrapper = button.closest('.profile_more_wrapper');
+                        if (wrapper) wrapper.classList.add('profile_more_active');
+                    },
+                    onHide: (instance) => {
+                        button.setAttribute('aria-expanded', 'false');
+                        button.classList.remove('shown');
+                    },
+                    onHidden: (instance) => {
+                        const wrapper = button.closest('.profile_more_wrapper');
+                        if (wrapper) wrapper.classList.remove('profile_more_active');
+                    }
+                });
+            } catch (error) {
+                console.error('[Profile] Error creating Tippy instance:', error);
+            }
+        });
     }
 };
 

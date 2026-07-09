@@ -1,0 +1,11 @@
+{layout '../@layout.latte'}
+
+{block content}
+{capture $mobileInfoContent}
+<div class="msg msg_yellow">
+    <p>Test message</p>
+</div>
+{/capture}
+
+{include profileMobileInfo, content => $mobileInfoContent}
+{/block}
