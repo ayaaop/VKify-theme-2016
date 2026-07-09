@@ -468,6 +468,17 @@
         border-top-left-radius: 0;
         border-top-right-radius: 0;
     }
+    .app-play-block {
+        width: 100% !important;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    #appFrame {
+        width: 100vw;
+        height: 600px;
+        display: block;
+        margin: 16px auto;
+    }
     .page_block_sub_header, .page_padding, .audios_padding, .deactivated {
         padding: 16px!important;
     }
