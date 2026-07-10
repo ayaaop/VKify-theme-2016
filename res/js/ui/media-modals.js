@@ -964,17 +964,24 @@ vkify.once('mediaModals', function () {
         }
 
         setupEventListeners() {
-            u(document).on('click', '.scroll_container .post_link, .scroll_container .wall_text a[href^="/wall"]', (e) => {
-                const link = u(e.target).closest('.post_link, .wall_text a[href^="/wall"]');
-                const href = link.attr('href');
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('.scroll_container .post_link, .scroll_container .wall_text a[href^="/wall"]');
+                if (!link) return;
 
-                if (href && href.match(/^\/wall-?\d+_\d+$/)) {
-                    e.preventDefault();
-                    this.openPostPopup(href);
+                const href = link.getAttribute('href');
+                if (!href || !href.match(/^\/wall-?\d+_\d+$/)) return;
+
+                if (window.isMobile && window.isMobile()) {
+                    return;
                 }
-            });
+
+                e.preventDefault();
+                this.openPostPopup(href);
+            }, true);
 
             window.addEventListener('popstate', () => {
+                if (window.isMobile && window.isMobile()) return;
+
                 const wallParam = CF.getUrlParam('w');
                 const sortParam = CF.getUrlParam('sort');
                 const pageParam = CF.getUrlParam('p');
@@ -990,12 +997,17 @@ vkify.once('mediaModals', function () {
 
         checkInitialUrl() {
             const wallParam = CF.getUrlParam('w');
+            if (!wallParam || !wallParam.startsWith('wall')) return;
+
+            const postPath = '/' + wallParam;
+            if (window.isMobile && window.isMobile()) {
+                window.router.route(postPath);
+                return;
+            }
+
             const sortParam = CF.getUrlParam('sort');
             const pageParam = CF.getUrlParam('p');
-            if (wallParam && wallParam.startsWith('wall')) {
-                const postPath = '/' + wallParam;
-                this.openPostPopup(postPath, false, sortParam, pageParam);
-            }
+            this.openPostPopup(postPath, false, sortParam, pageParam);
         }
 
         async openPostPopup(postPath, updateUrl = true, sortParam = null, pageParam = null) {
@@ -1297,5 +1309,5 @@ vkify.once('mediaModals', function () {
     }
 
     window.PostPopupManager = PostPopupManager;
-    if (!window.isMobile || !window.isMobile()) window.postPopupManager = new PostPopupManager();
+    window.postPopupManager = new PostPopupManager();
 });
