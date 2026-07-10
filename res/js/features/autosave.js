@@ -76,12 +76,14 @@
         }, duration);
     }
 
-    function showSavedLabel(el) {
+    function showSavedLabel(el, message) {
         const label = getLabel(el);
-        const message = window.tr?.('changes_saved') || 'Changes saved.';
+        message = message || window.tr?.('changes_saved') || 'Changes saved.';
+
+        const form = el.closest('form');
+        if (form) removeErrorMessage(form);
 
         if (!label) {
-            const form = el.closest('form');
             if (!form) return;
             let msg = form.querySelector('.settings_saved_msg');
             if (msg) {
@@ -116,7 +118,16 @@
         label._hideTimer = setTimeout(() => textSpan.classList.remove('visible'), 1500);
     }
 
-    function showSaveError(form) {
+    function removeErrorMessage(form) {
+        const msg = form.querySelector('.settings_error_msg');
+        if (msg) {
+            clearTimeout(msg._hideTimer);
+            $(msg).stop(true, true);
+            animateHide($(msg));
+        }
+    }
+
+    function showSaveError(form, message) {
         hideLoader(form);
         const label = getLabel(form);
         if (label) {
@@ -124,21 +135,128 @@
             if (textSpan) textSpan.remove();
         }
 
+        message = message || window.vkifylang?.error_saving || 'Error saving settings.';
         let msg = form.querySelector('.settings_error_msg');
         if (msg) {
             clearTimeout(msg._hideTimer);
             $(msg).stop(true, true);
-            msg.textContent = window.vkifylang?.error_saving || 'Error saving settings.';
+            msg.textContent = message;
         } else {
             msg = document.createElement('div');
             msg.className = 'msg msg_yellow settings_error_msg';
-            msg.textContent = window.vkifylang?.error_saving || 'Error saving settings.';
+            msg.textContent = message;
             form.insertBefore(msg, form.firstChild);
             animateShow($(msg));
         }
-        msg._hideTimer = setTimeout(() => {
-            animateHide($(msg));
-        }, 5000);
+    }
+
+    function extractFlashMessage(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const pageBody = doc.querySelector('.page_body');
+        if (!pageBody) return null;
+
+        const scripts = pageBody.querySelectorAll(':scope > script');
+        for (const script of scripts) {
+            const text = script.textContent;
+            const match = text.match(/NewNotification\s*\(\s*(["'])(.*?)\1\s*,\s*(["'])(.*?)\3\s*\)/s)
+                       || text.match(/MessageBox\s*\(\s*(["'])(.*?)\1\s*,\s*(["'])(.*?)\3\s*,/s);
+            if (match) {
+                return { title: match[2], message: match[4] };
+            }
+        }
+        return null;
+    }
+
+    function isFlashSuccess(title) {
+        const successLabel = window.tr?.('changes_saved') || 'Changes saved.';
+        return title === successLabel;
+    }
+
+    function flashFormData(formDataEl) {
+        if (!formDataEl) return;
+        formDataEl.classList.remove('flash-error');
+        void formDataEl.offsetWidth;
+        formDataEl.classList.add('flash-error');
+        clearTimeout(formDataEl._flashTimer);
+        formDataEl._flashTimer = setTimeout(() => formDataEl.classList.remove('flash-error'), 3000);
+    }
+
+    function flashField(form, name) {
+        const input = form.querySelector(`[name="${name}"]`);
+        if (!input) return;
+        const field = input.closest('.form_field');
+        if (!field) return;
+        flashFormData(field.querySelector('.form_data'));
+    }
+
+    function flashElement(el) {
+        if (!el) return;
+        const field = el.closest('.form_field');
+        if (!field) return;
+        flashFormData(field.querySelector('.form_data'));
+    }
+
+    const errorFieldMap = {
+        invalid_email_address: ['email_contact', 'new_email'],
+        invalid_email_address_comment: ['email_contact', 'new_email'],
+        invalid_telegram_name: ['telegram'],
+        invalid_telegram_name_comment: ['telegram'],
+        invalid_real_name: ['first_name', 'last_name'],
+        error_shorturl: ['pseudo'],
+        backdrop_error_no_media: ['backdrop1', 'backdrop2'],
+        error_shorturl_incorrect: ['shortcode', 'sc'],
+        error_invalid_wall_value: ['wall'],
+        error_when_uploading_photo: ['ava'],
+        error_on_server_side: [],
+        no_title_specified: ['title'],
+        failed_to_change_topic: ['title'],
+        app_err_url: ['url'],
+        app_err_ava: ['ava'],
+        app_err_note: ['note'],
+        error_old_password: ['old_pass'],
+        error_new_password: ['new_pass', 'repeat_pass'],
+        incorrect_password: ['email_change_pass'],
+        incorrect_2fa_code: ['email_change_code', 'password_change_code'],
+        email_rate_limit_error: ['new_email'],
+        user_already_exists: ['new_email']
+    };
+
+    function getErrorFields(form, title, message) {
+        const tr = window.tr || ((key) => key);
+        const msg = message || '';
+        const normalize = (str) => str.replace(/\s+/g, ' ').trim();
+
+        const matches = (key) => {
+            const translated = normalize(tr(key));
+            return title === translated || msg === translated;
+        };
+
+        const dataFields = form.querySelectorAll('[data-autosave-error]');
+        for (const field of dataFields) {
+            const key = field.dataset.autosaveError;
+            const commentKey = key + '_comment';
+            if (matches(key) || matches(commentKey)) {
+                return [field.name];
+            }
+        }
+
+        for (const [key, names] of Object.entries(errorFieldMap)) {
+            if (matches(key)) {
+                return names;
+            }
+        }
+
+        return [];
+    }
+
+    function flashErrorFields(form, title, message, fallbackEl) {
+        const fields = getErrorFields(form, title, message);
+        if (fields.length) {
+            fields.forEach(name => flashField(form, name));
+        } else if (fallbackEl) {
+            flashElement(fallbackEl);
+        }
     }
 
     function initAutoSave() {
@@ -147,7 +265,7 @@
             if (form.dataset.autosaveBound) return;
             form.dataset.autosaveBound = '1';
 
-            let lastSave = 0, pending = false, queued = false, reloadAfterSave = false;
+            let lastSave = 0, pending = false, queued = false, reloadAfterSave = false, lastChangedEl = null;
             const MIN_INTERVAL = 1000, ERROR_COOLDOWN = 3000;
 
             function shouldReloadAfterSave(el) {
@@ -178,18 +296,54 @@
                         credentials: 'same-origin'
                     });
                     lastSave = Date.now();
-                    if (response.ok || response.status === 302) {
-                        showSavedLabel(form);
 
+                    const contentType = response.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showSavedLabel(form);
+                            if (reloadAfterSave) {
+                                navigateToFreshPage();
+                                return;
+                            }
+                        } else {
+                            showSaveError(form, data.flash?.title);
+                            flashErrorFields(form, data.flash?.title, data.flash?.message, lastChangedEl);
+                            lastSave += ERROR_COOLDOWN;
+                        }
+                        pending = false;
+                        reloadAfterSave = false;
+                        if (queued) { queued = false; submitForm(); }
+                        return;
+                    }
+
+                    if (!response.ok && response.status !== 302) {
+                        showSaveError(form);
+                        flashElement(lastChangedEl);
+                        lastSave += ERROR_COOLDOWN;
+                        pending = false;
+                        reloadAfterSave = false;
+                        if (queued) { queued = false; submitForm(); }
+                        return;
+                    }
+
+                    const html = await response.text();
+                    const flash = extractFlashMessage(html);
+                    if (flash && !isFlashSuccess(flash.title)) {
+                        showSaveError(form, flash.title);
+                        flashErrorFields(form, flash.title, flash.message, lastChangedEl);
+                        lastSave += ERROR_COOLDOWN;
+                    } else {
+                        showSavedLabel(form, flash ? flash.title : null);
                         if (reloadAfterSave) {
                             navigateToFreshPage();
                             return;
                         }
                     }
-                    else { showSaveError(form); lastSave += ERROR_COOLDOWN; }
                 } catch (e) {
                     vkify.warn('Auto-save failed:', e);
                     showSaveError(form);
+                    flashElement(lastChangedEl);
                     lastSave = Date.now() + ERROR_COOLDOWN;
                 }
                 pending = false;
@@ -201,9 +355,18 @@
                 e.preventDefault();
             });
 
+            form.addEventListener('input', (e) => {
+                const el = e.target;
+                if (el.type === 'hidden' || el.type === 'file') return;
+                if (form.querySelector('.settings_error_msg')) {
+                    removeErrorMessage(form);
+                }
+            });
+
             form.addEventListener('change', (e) => {
                 const el = e.target;
                 if (el.type === 'hidden' || el.type === 'file') return;
+                lastChangedEl = el;
                 if (el.dataset.act === 'localstorage_item' || el.closest('#vkifySettings')) {
                     showSavedLabel(el);
                     return;

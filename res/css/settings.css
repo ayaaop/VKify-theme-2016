@@ -187,6 +187,27 @@ label.checkbox .nobold {
 .outline_table {
     border-color: var(--border-color)
 }
+
+.form_data.flash-error input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"], [type="file"]),
+.form_data.flash-error select,
+.form_data.flash-error textarea {
+    animation: formInputFlashError 1s ease-in-out 3;
+}
+
+@keyframes formInputFlashError {
+    0% {
+        background-color: transparent;
+        border-color: var(--border-color);
+    }
+    50% {
+        background-color: var(--message-warning-background);
+        border-color: var(--message-warning-border);
+    }
+    100% {
+        background-color: transparent;
+        border-color: var(--border-color);
+    }
+}
 .page_block .knowledgebase_block {
     padding: 0!important;
     margin: 0!important;

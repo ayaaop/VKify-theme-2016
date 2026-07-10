@@ -447,21 +447,29 @@
 
             <div class="page_body">
                     <script n:ifset="$flashMessage">
-                        document.addEventListener("DOMContentLoaded", () => {
-                            if (typeof NewNotification === 'function') {
-                                NewNotification(
-                                    {$flashMessage->title},
-                                    {$flashMessage->msg ?? ''}
-                                );
-                            } else if (typeof MessageBox === 'function') {
-                                MessageBox(
-                                    {$flashMessage->title},
-                                    {$flashMessage->msg ?? ''},
-                                    [window.lang?.close ?? 'Close'],
-                                    [() => {}]
-                                );
+                        (function () {
+                            function showFlashMessage() {
+                                if (typeof NewNotification === 'function') {
+                                    NewNotification(
+                                        {$flashMessage->title},
+                                        {$flashMessage->msg ?? ''}
+                                    );
+                                } else if (typeof MessageBox === 'function') {
+                                    MessageBox(
+                                        {$flashMessage->title},
+                                        {$flashMessage->msg ?? ''},
+                                        [window.lang?.close ?? 'Close'],
+                                        [() => {}]
+                                    );
+                                }
                             }
-                        });
+
+                            if (typeof NewNotification === 'function' || typeof MessageBox === 'function') {
+                                showFlashMessage();
+                            } else {
+                                document.addEventListener('DOMContentLoaded', showFlashMessage);
+                            }
+                        })();
                     </script>
                 {ifset wrap}
                     {include wrap}
