@@ -299,13 +299,13 @@ window.router = new class Router {
             }
         });
 
-        if (typeof window.__resetPaginatorState === 'function') {
-            window.__resetPaginatorState();
-        }
-
         u('.page_body').html(pageBody.html());
         u('.sidebar').html(sidebar.html());
         u('.appbar').html(appbar.html());
+
+        if (typeof window.__resetPaginatorState === 'function') {
+            window.__resetPaginatorState();
+        }
 
         if (window.__profileAppbarScrollHandler) {
             window.removeEventListener('scroll', window.__profileAppbarScrollHandler);

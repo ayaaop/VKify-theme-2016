@@ -402,6 +402,13 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
     window.__vkifySchedulePaginatorCheck = schedulePaginatorCheckBurst;
 
     const initPaginatorAutoScroll = () => {
+        const paginatorEl = getPaginatorElement();
+        if (paginatorEl) {
+            const containerEl = getScrollContainer(paginatorEl);
+            if (typeof window.__resetPaginatorState === 'function' && containerEl) {
+                window.__resetPaginatorState(containerEl);
+            }
+        }
         schedulePaginatorCheckSoon();
     };
 
