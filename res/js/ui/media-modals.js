@@ -314,7 +314,16 @@ vkify.once('mediaModals', function () {
             const pretty_id = photo_id;
 
             function updatePhotoUrl(photoId, albumId = null) {
-                const value = albumId ? `photo${photoId}%2Falbum${albumId}` : `photo${photoId}`;
+                let value;
+                if (albumId) {
+                    value = `photo${photoId}%2Falbum${albumId}`;
+                } else if (type === 'post' && post) {
+                    value = `photo${photoId}%2Fwall${post}`;
+                } else if (type === 'comment' && post) {
+                    value = `photo${photoId}%2Fcomment${post}`;
+                } else {
+                    value = `photo${photoId}`;
+                }
                 CF.updateUrlParam('z', value, { skip: skipUrlUpdate });
             }
 
@@ -344,6 +353,26 @@ vkify.once('mediaModals', function () {
                 return json.body[_id];
             }
 
+            function preloadPhoto(url) {
+                if (!url) return;
+                const img = new Image();
+                img.src = url;
+            }
+
+            function preloadAdjacentPhotos() {
+                if (!json || !json.body || imagesCount <= 1) return;
+
+                const currentIndex = getIndex();
+                const prevIndex = currentIndex <= 1 ? imagesCount : currentIndex - 1;
+                const nextIndex = currentIndex >= imagesCount ? 1 : currentIndex + 1;
+
+                const prevPhoto = getByIndex(prevIndex);
+                const nextPhoto = getByIndex(nextIndex);
+
+                if (prevPhoto?.url) preloadPhoto(prevPhoto.url);
+                if (nextPhoto?.url) preloadPhoto(nextPhoto.url);
+            }
+
             function reloadTitleBar() {
                 const countText = imagesCount > 1 ? tr("photo_x_from_y", shown_offset, imagesCount) : '';
                 msgbox.getNode().find('.pv_counter').html(countText);
@@ -354,7 +383,8 @@ vkify.once('mediaModals', function () {
                     const form_data = new FormData();
                     form_data.append('parentType', contextType);
 
-                    const endpoint_url = `/iapi/getPhotosFromPost/${contextId}`;
+                    const contextParam = contextType === 'comment' ? `1_${contextId}` : contextId;
+                    const endpoint_url = `/iapi/getPhotosFromPost/${contextParam}`;
 
                     const fetcher = await fetch(endpoint_url, {
                         method: 'POST',
@@ -421,6 +451,7 @@ vkify.once('mediaModals', function () {
 
                 reloadTitleBar();
                 updatePhotoUrl(currentImageid, currentAlbumId);
+                preloadAdjacentPhotos();
 
                 msgbox.getNode().find('.pv_right').html(`<div id='pv_right_loader' class='pv_author_block'></div>`);
 
@@ -432,8 +463,11 @@ vkify.once('mediaModals', function () {
                     currentAlbumId = post;
                     await loadContext('album', post);
                     shown_offset = getIndex();
-                } else if (post && post.length > 0) {
+                } else if (type === 'post' && post && post.length > 0) {
                     await loadContext('post', post);
+                    shown_offset = getIndex();
+                } else if (type === 'comment' && post && post.length > 0) {
+                    await loadContext('comment', post);
                     shown_offset = getIndex();
                 } else if (type === 'album') {
                     try {
@@ -486,6 +520,7 @@ vkify.once('mediaModals', function () {
                 }
 
                 reloadTitleBar();
+                preloadAdjacentPhotos();
             }
 
             msgbox.getNode().find('#pv_nav_left').on('click', (e) => {
@@ -882,13 +917,28 @@ vkify.once('mediaModals', function () {
 
             const decoded = decodeURIComponent(zParam);
 
-            const photoMatch = decoded.match(/^photo(-?\d+)_(\d+)(?:\/album(-?\d+)_(\d+))?$/i);
+            const photoMatch = decoded.match(/^photo(-?\d+)_(\d+)(?:\/(album|wall|comment)(-?\d+(?:_\d+)?))?$/i);
             if (photoMatch) {
-                return {
+                const result = {
                     type: 'photo',
                     photoId: `${photoMatch[1]}_${photoMatch[2]}`,
-                    albumId: photoMatch[3] && photoMatch[4] ? `${photoMatch[3]}_${photoMatch[4]}` : null
+                    contextType: null,
+                    contextId: null
                 };
+
+                if (photoMatch[3]) {
+                    const context = photoMatch[3].toLowerCase();
+                    if (context === 'album') {
+                        result.contextType = 'album';
+                    } else if (context === 'comment') {
+                        result.contextType = 'comment';
+                    } else {
+                        result.contextType = 'post';
+                    }
+                    result.contextId = photoMatch[4];
+                }
+
+                return result;
             }
 
             const videoMatch = decoded.match(/^video(-?\d+)_(\d+)$/i);
@@ -933,9 +983,9 @@ vkify.once('mediaModals', function () {
 
                 const photo = photoApi[0];
                 const photoUrl = photo.src_xbig || photo.src_big || photo.src;
-                const type = data.albumId ? 'album' : 'photo';
+                const type = data.contextType || 'photo';
 
-                await window.OpenMiniature(null, photoUrl, null, data.photoId, type, true);
+                await window.OpenMiniature(null, photoUrl, data.contextId, data.photoId, type, true);
             } catch (err) {
                 clearZParam();
             }
