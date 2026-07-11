@@ -47,9 +47,8 @@
             <div class="wide_column">
                 <div class="page_block">
                     {include "../components/page_block_header.latte", title => "about_this_instance"}
-
-                    <div class="page_block_sub_header">{_statistics}</div>
                     <div class="page_padding" style="padding-top: 0">
+                        <h3>{_statistics}</h3>
                         {_on_this_instance_are}
                         <ul>
                             <li><span>{tr("about_users", $usersStats->all)|noescape}</span></li>

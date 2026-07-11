@@ -4,19 +4,13 @@
     {_document} "{ovk_proc_strtr($doc->getName(), 20)}"
 {/block}
 
-{block header}
-    {$doc->getName()}
-{/block}
-
 {block content}
     <style>
-        .sidebar, .page_header, .page_footer {
-            opacity: 0;
-            pointer-events: none;
+        .sidebar, .page_header, .page_footer, .page_block_h2 {
+            display: none;
         }
-
-        .page_body {
-            margin-top: -45px;
+        body {
+            --page-width: var(--layout-width);
         }
     </style>
 

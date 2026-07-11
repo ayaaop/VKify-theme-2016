@@ -1,12 +1,9 @@
 {extends "../@layout.latte"}
 {block title}{_create_group}{/block}
 
-{block header}
-    {_create_group}
-{/block}
-
 {block content}
-<div class="page_block page_padding">
+<div class="page_block">
+    {include "../components/page_block_header.latte", title: "create_group"}
     <div class="form_group page_padding">
         <form method="POST" enctype="multipart/form-data">
             <div class="form_field">

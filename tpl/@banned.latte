@@ -2,45 +2,19 @@
 {block title}{_banned_title}{/block}
 
 {block content}
-<style>
-    .banned_container {
-        padding: 30px;
-    }
-    .banned_header {
-        font-size: 20px;
-        font-weight: 400;
-        color: var(--heading-color);
-        padding-bottom: 20px;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 25px;
-    }
-    .banned_content {
-        font-size: 13px;
-        line-height: 160%;
-        color: var(--text-color);
-    }
-    .banned_actions {
-        padding: 30px;
-        text-align: center;
-    }
-    .banned_actions .button {
-        margin-bottom: 15px;
-    }
-</style>
-
-<div class="page_block banned_container">
-    <div class="banned_header">
+<div class="page_block status_container">
+    <div class="status_header">
         {_banned_header}
     </div>
-    
-    <div class="banned_content">
+
+    <div class="status_content">
         {var $ban = $thisUser->getBanReason("banned")}
         {if is_string($ban)}
             {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
             {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
         {else}
             {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}
-            <div style="margin-top: 10px;">
+            <div class="status_section">
                 Эта страница была заморожена {$ban[0]|noescape}
                 {if $ban[1] !== "app"}
                     {include "Report/ViewContent.latte", type => $ban[1], object => $ban[2]}
@@ -48,7 +22,7 @@
             </div>
         {/if}
 
-        <div style="margin-top: 10px;">
+        <div class="status_section">
             {if !$thisUser->getUnbanTime()}
                 {_banned_perm}
             {else}
@@ -58,7 +32,7 @@
     </div>
 </div>
 
-<div class="page_block banned_actions">
+<div class="page_block status_actions">
     {if $thisUser->canUnbanThemself()}
         <a href="/unban.php" class="button">{_banned_unban_myself}</a>
         <br/>

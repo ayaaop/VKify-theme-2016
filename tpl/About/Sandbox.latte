@@ -1,10 +1,11 @@
 {extends "../@layout.latte"}
 {block title}Sandbox{/block}
 
-{block header}
-    {_sandbox_for_developers}
-{/block}
-
 {block content}
-    {php var_dump($languages)}
+    <div class="page_block">
+        {include "../components/page_block_header.latte" title: "sandbox_for_developers"}
+        <div class="page_padding">
+            fat penis gock
+        </div>
+    </div>
 {/block}

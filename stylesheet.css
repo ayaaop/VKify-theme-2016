@@ -289,6 +289,38 @@ nobold,
     padding: 37px 30px;
 }
 
+.status_container {
+    padding: 30px;
+}
+
+.status_header {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--heading-color);
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 25px;
+}
+
+.status_content {
+    font-size: 13px;
+    line-height: 160%;
+    color: var(--text-color);
+}
+
+.status_actions {
+    padding: 30px;
+    text-align: center;
+}
+
+.status_actions .button:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+.status_section {
+    margin-top: 10px;
+}
+
 .module + .module {
     margin-top: 0;
     border-top: 1px solid var(--border-color);

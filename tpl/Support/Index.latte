@@ -32,29 +32,11 @@
         </div>
             {if $isNew}
                     {if !is_null($banReason)}
-                        <style>
-                            .banned_container {
-                                padding: 30px;
-                            }
-                            .banned_header {
-                                font-size: 20px;
-                                font-weight: 400;
-                                color: var(--heading-color);
-                                padding-bottom: 20px;
-                                border-bottom: 1px solid var(--border-color);
-                                margin-bottom: 25px;
-                            }
-                            .banned_content {
-                                font-size: 13px;
-                                line-height: 160%;
-                                color: var(--text-color);
-                            }
-                        </style>
-                        <div class="page_block banned_container">
-                            <div class="banned_header">
+                        <div class="page_block status_container">
+                            <div class="status_header">
                                 {_banned_header}
                             </div>
-                            <div class="banned_content">
+                            <div class="status_content">
                                 {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
                                 {tr("banned_in_support_2", htmlentities($banReason))|noescape}
                             </div>

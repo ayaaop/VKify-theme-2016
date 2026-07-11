@@ -1,12 +1,9 @@
 {extends "../@layout.latte"}
 {block title}{_information}{/block}
 
-{block header}
-    {_information}
-{/block}
-
 {block content}
     <div class="page_block">
+        {include "../components/page_block_header.latte", title => 'information'}
         {include "../components/content_error.latte", description => tr("profile_not_found")}
     </div>
 {/block}

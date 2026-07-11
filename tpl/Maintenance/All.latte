@@ -4,17 +4,9 @@
     {_global_maintenance}
 {/block}
 
-{block header}
-    {_global_maintenance}
-{/block}
-
 {block content}
-<div class="container_gray">
-    <center style="background: white;border: #DEDEDE solid 1px;">
-        <img src="/assets/packages/static/openvk/img/oof.apng" style="width: 20%;" />
-        <span style="color: #707070;margin: 10px 0;display: block;">
-            {_undergoing_global_maintenance}
-        </span>
-    </center>
-</div>
+    <div class="page_block">
+        {include "../components/page_block_header.latte", title: "global_maintenance"}
+        {include "../components/content_error.latte" description: tr("undergoing_global_maintenance")|noescape}
+    </div>
 {/block}

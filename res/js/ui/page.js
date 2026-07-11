@@ -54,7 +54,6 @@ window.expandText = function (item) {
 window.showBlueWarning = window.showBlueWarning || function (content) {
     NewNotification(tr('warning'), content, null, () => { }, 10000, false);
 };
-
 window.allLangsPopup = window.allLangsPopup || async function () {
     const CF = window.ContentFetcher;
     const loader = CF.createLoader();
@@ -81,6 +80,7 @@ window.allLangsPopup = window.allLangsPopup || async function () {
         setTimeout(() => {
             $('.ovk-msg-all[data-id]').css('width', '700px');
             $('.ovk-diag-body')[0].style.setProperty('padding', '20px 0 20px 30px', 'important');
+            $('.ovk-diag-action').prepend('<a class="button button_light" style="float: left; margin: 0;" href="https://hosted.weblate.org/projects/openvk/" target="_blank">' + tr('language_add_strings') + '</a>');
             window.reinitializeTooltips?.();
         }, 0);
     } catch (e) {

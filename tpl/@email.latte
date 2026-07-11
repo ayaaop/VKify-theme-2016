@@ -1,19 +1,23 @@
 {extends "@layout.latte"}
 {block title}{_ec_header}{/block}
 
-{block header}
-{_ec_header}
-{/block}
-
 {block content}
-    <div class="page_block module_body center">
-        <h4>{_ec_title}</h4>
-        <p>{tr("ec_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/></p>
-        <p>{_ec_2}</p>
-        <p>
-            <form action="/reg/resend" method="post">
-                <input type="submit" class="button" value="{_ec_resend}">
-            </form>
-        </p>
+<div class="page_block status_container">
+    <div class="status_header">
+        {_ec_header}
     </div>
+
+    <div class="status_content">
+        {tr("ec_1", htmlentities($thisUser->getCanonicalName()))|noescape}
+        <div class="status_section">
+            {_ec_2}
+        </div>
+    </div>
+</div>
+
+<div class="page_block status_actions">
+    <form action="/reg/resend" method="post">
+        <input type="submit" class="button" value="{_ec_resend}">
+    </form>
+</div>
 {/block}
