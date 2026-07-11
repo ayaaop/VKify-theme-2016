@@ -79,7 +79,7 @@
 						<div class="mir-text">
 							{tr("friends", $user->getFriendsCount())}
 							{if $user->getFriendsOnlineCount() > 0}
-								<span class="mir-muted"> &bull; {$user->getFriendsOnlineCount()} {tr("online_short")}</span>
+								<span class="divider"></span><span class="mir-muted">{tr("friends_online", $user->getFriendsOnlineCount())}</span>
 							{/if}
 						</div>
 					</a>

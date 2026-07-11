@@ -1226,6 +1226,9 @@
     a.mobile-info-row:active {
         opacity: 0.8;
     }
+    .mobile-info-row .divider {
+        margin-left: 4px;
+    }
     .mir-icon {
         width: 20px;
         height: 20px;
