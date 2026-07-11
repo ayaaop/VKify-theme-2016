@@ -645,6 +645,7 @@ body.dimmed > .dimmer #clickable {
   flex: 1;
 }
 #_feed_settings_container #__content {
+  padding: 15px;
   height: fit-content;
 }
 
@@ -673,12 +674,18 @@ body.dimmed > .dimmer #clickable {
   display: none;
 }
 
+/* я забыл для чего это нужно было
 .ovk-diag table td[width="120"] {
   text-align: start;
 }
+*/
 
 .ovk-diag table {
-  width: 100%;
+	width: 100%;
+	border-spacing: 10px;
+}
+.ovk-diag table input[type="checkbox"], .ovk-diag table input[type="radio"] {
+  margin: 0;
 }
 
 /* separator */
