@@ -135,9 +135,13 @@ vkify.once('masonry', () => {
         }
 
         function refresh(container) {
-            const instance = get(container);
-            if (instance) {
-                requestAnimationFrame(() => instance.layout());
+            if (typeof container === 'string') container = document.querySelector(container);
+            const data = instances.get(container);
+            if (data) {
+                requestAnimationFrame(() => {
+                    data.instance.layout();
+                    attachImageListeners(container, data.instance.layout);
+                });
             }
         }
 

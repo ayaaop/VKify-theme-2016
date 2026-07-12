@@ -14,8 +14,8 @@
 {/block}
 
 {define mobileProfile}
-    {include '../components/mobile_profile_hero.latte', entity => $user, name => $user->getFullName(), status => tr('closed_page'), verified => $user->isVerified()}
-    <div class="page_block mobile-actions-info-block mobileonly">
+    {include '../components/mobile_profile_hero.latte', entity => $user, name => $user->getFullName(), status => tr('closed_page'), verified => $user->isVerified(), disablePhotoViewer => true}
+    <div class="page_block mobile-actions-info-block mobileonly" n:ifcontent>
         {include '../components/mobile_profile_actions.latte'}
     </div>
     <div class="page_block page_padding mobile-page-info mobileonly">

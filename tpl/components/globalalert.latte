@@ -11,8 +11,11 @@
 
 <script>
     (function() {
+        let alertTextEl = document.getElementById("global-alert-text");
+        if(!alertTextEl) return;
+
         let cookie = document.cookie.split(";");
-        let alertContent = encodeURI("\n" + document.getElementById("global-alert-text").textContent + "    \n");
+        let alertContent = encodeURI("\n" + alertTextEl.textContent + "    \n");
         let alertDismissed = false;
         for(let i = 0; i < cookie.length; i++) {
             let c = cookie[i].trim();

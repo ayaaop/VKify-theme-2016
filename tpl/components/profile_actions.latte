@@ -2,6 +2,7 @@
 	{ifset $thisUser}
 		{if $user->getId() != $thisUser->getId()}
 			{var $isRestricted = $user->isClosed() || $user->isBanned() || $user->isDeactivated() || $user->isBlacklistedBy($thisUser) || $thisUser->isBlacklistedBy($user)}
+			{var $canAddFriend = !$user->isBanned() && !$user->isDeactivated() && !$user->isBlacklistedBy($thisUser) && !$thisUser->isBlacklistedBy($user)}
 			{if !$isRestricted}
 				{if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
 					{if $user->getPrivacyPermission('messages.write', $thisUser)}
@@ -35,9 +36,9 @@
 				2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
 				3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
 			]}
-			<div class="{if $isRestricted && ($subStatus === 0 || $subStatus === 1)}profile_actions_standalone{else}profile_actions_split{/if}">
-				{if isset($actions[$subStatus]) && (!$isRestricted || ($subStatus !== 0 && $subStatus !== 1))}
-					<form action="/setSub/user" method="post" class="profile_link_form{if !$isRestricted} fl_l{/if}">
+			<div class="{if !$canAddFriend && ($subStatus === 0 || $subStatus === 1)}profile_actions_standalone{else}profile_actions_split{/if}">
+				{if isset($actions[$subStatus]) && (($subStatus !== 0 && $subStatus !== 1) || $canAddFriend)}
+					<form action="/setSub/user" method="post" class="profile_link_form{if $canAddFriend} fl_l{/if}">
 						<input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
 						<input type="hidden" name="id"  value="{$user->getId()}" />
 						<input type="hidden" name="hash" value="{$csrfToken}" />
@@ -45,7 +46,7 @@
 					</form>
 				{/if}
 				<div class="profile_more_wrapper">
-					<button class="button button_gray profile_more_btn{if !$isRestricted} fl_r{/if}" id="profile_more_btn">
+					<button class="button button_gray profile_more_btn{if $canAddFriend} fl_r{/if}" id="profile_more_btn">
 						{_actions}
 						<span class="clear_fix">&nbsp;</span>
 					</button>

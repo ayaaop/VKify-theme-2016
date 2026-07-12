@@ -587,6 +587,27 @@
                         </div>
                     </div>
                     <div class="page_block">
+                        {include "../components/page_block_header.latte", title => "ui_settings_timezone"}
+                        <div class="form_group clear_fix settings_padding">
+                            <div class="form_field">
+                                <div class="form_label">{_ui_settings_timezone}</div>
+                                <div class="form_data">
+                                    <select id="timezone">
+                                        {foreach TIMEZONES_ARRAY as $tz}
+                                            <option {if intval($isTimezoned) == $tz}selected{/if} value="{$tz}">{tr('timezone-'.$tz)}</option>
+                                        {/foreach}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form_field">
+                                <div class="form_label"></div>
+                                <div class="form_data">
+                                    <a onClick="saveTimezoneSettings()" class="button">{_save}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page_block">
                         {include "../components/page_block_header.latte", title => "ui_settings_sidebar"}
                         <div class="settings_block_msg"><vkifyloc name="sidebar_note" /></div>
                         <div class="form_group clear_fix settings_padding">

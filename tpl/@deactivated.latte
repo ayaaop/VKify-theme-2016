@@ -4,7 +4,7 @@
 {block title}{$thisUser->getCanonicalName()}{/block}
 
 {define mobileProfile}
-    {include './components/mobile_profile_hero.latte', entity => $thisUser, name => $thisUser->getFullName(), status => tr('profile_deactivated_status'), verified => $thisUser->isVerified()}
+    {include './components/mobile_profile_hero.latte', entity => $thisUser, name => $thisUser->getFullName(), status => tr('profile_deactivated_status'), verified => $thisUser->isVerified(), disablePhotoViewer => true}
     <div class="page_block page_padding mobile-page-info mobileonly">
         <div class="profile_deleted_text">
             {tr("profile_deactivated_msg", $thisUser->getDeactivationDate()->format("%e %B %G" . tr("time_at_sp") . "%R"))|noescape}

@@ -1,8 +1,8 @@
-<div class="mobile-actions-wrap mobileonly">
-    <div class="mobile_profile_actions">
+{capture $actionsInner}
     {ifset $thisUser}
         {if $user->getId() != $thisUser->getId()}
             {var $isRestricted = $user->isClosed() || $user->isBanned() || $user->isDeactivated() || $user->isBlacklistedBy($thisUser) || $thisUser->isBlacklistedBy($user)}
+            {var $canAddFriend = !$user->isBanned() && !$user->isDeactivated() && !$user->isBlacklistedBy($thisUser) && !$thisUser->isBlacklistedBy($user)}
             {if !$isRestricted}
                 {if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
                     {if $user->getPrivacyPermission('messages.write', $thisUser)}
@@ -29,8 +29,8 @@
                 2 => ['act' => 'rem', 'label' => tr('friends_reject'), 'class' => 'button_gray'],
                 3 => ['act' => 'rem', 'label' => tr('friends_delete'), 'class' => 'button_gray']
             ]}
-            {if isset($actions[$subStatus]) && (!$isRestricted || ($subStatus !== 0 && $subStatus !== 1))}
-                {if $isRestricted}
+            {if isset($actions[$subStatus]) && (($subStatus !== 0 && $subStatus !== 1) || $canAddFriend)}
+                {if !$canAddFriend}
                     <form action="/setSub/user" method="post" class="mobile_profile_action_full">
                         <input type="hidden" name="act" value="{$actions[$subStatus]['act']}" />
                         <input type="hidden" name="id" value="{$user->getId()}" />
@@ -57,5 +57,12 @@
             <vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
         </div>
     {/ifset}
+{/capture}
+
+{if trim((string) $actionsInner)}
+    <div class="page_padding mobile-actions-wrap mobileonly">
+        <div class="mobile_profile_actions">
+            {(string) $actionsInner|trim|noescape}
+        </div>
     </div>
-</div>
+{/if}
