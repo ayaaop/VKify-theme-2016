@@ -313,7 +313,7 @@
 
                                 <a n:foreach="$thisUser->getPinnedClubs() as $pinnedClub" href="{$pinnedClub->getURL()}" class="link group_link">
                                     <div class="link_icon"></div>
-                                    <span>{ovk_proc_strtr($pinnedClub->getName(), 14)}</span>
+                                    <span>{ovk_proc_strtr($pinnedClub->getName(), 28)}</span>
 
                                     <object type="internal/link" style="white-space: normal;" id="sug{$pinnedClub->getId()}" n:if="$pinnedClub->getSuggestedPostsCount($thisUser) > 0 && $pinnedClub->getWallType() == 2">
                                         <a href="/club{$pinnedClub->getId()}/suggested">
