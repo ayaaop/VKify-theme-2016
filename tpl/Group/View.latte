@@ -153,7 +153,7 @@
                         </a>
                     {else}
                         <div class="module_body msm-grid">
-                            {foreach array_slice($docs, 0, 3) as $doc}
+                            {foreach array_slice($docs, 0, 6) as $doc}
                                 {var $docPreview = $doc->hasPreview() ? $doc->getPreview() : null}
                                 <a href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}" class="msm-grid__cell msm-doc-cell" title="{$doc->getName()}">
                                     {if $docPreview}
