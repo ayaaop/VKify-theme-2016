@@ -157,6 +157,21 @@ window.switchProfileInfo = window.switchProfileInfo || function () {
     }
 };
 
+window.updateToTopArea = function () {
+    const layout = document.querySelector('.layout');
+    if (!layout) return;
+
+    const leftOffset = layout.getBoundingClientRect().left;
+    if (leftOffset > 114) {
+        document.documentElement.style.setProperty('--to-top-width', leftOffset + 'px');
+    } else {
+        document.documentElement.style.setProperty('--to-top-width', '114px');
+    }
+};
+
+window.addEventListener('resize', window.updateToTopArea);
+vkify.onPage(window.updateToTopArea);
+
 function initLocalStorageCheckboxes() {
     document.querySelectorAll('input[data-act="localstorage_item"]').forEach((input) => {
         const stored = localStorage.getItem(input.name);

@@ -237,6 +237,7 @@ body {
 
 .narrow_column {
     width: 230px;
+    display: flow-root;
 }
 .fixed {
     position: fixed;
@@ -470,6 +471,7 @@ textarea:focus {
     background-color: var(--transparent);
     color: var(--elevator-text-color);
     width: 114px;
+    left: 0;
     top: 0px;
     font-weight: 700;
     font-size: 12.5px;
@@ -480,6 +482,15 @@ textarea:focus {
     visibility: visible;
     opacity: 1;
 }
+.toTop::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--to-top-width, 114px);
+    z-index: -1;
+}
 .toTop nobr {
     padding: 0 24px;
     background: url("/themepack/vkify16/3.3.4.9/resource/icons/dev_toplink.png") no-repeat;
@@ -487,7 +498,6 @@ textarea:focus {
 }
 .toTop #wrap {
     opacity: 0;
-    transition: 250ms ease;
 }
 body.scrolled .toTop {
     padding-top: 60px;
