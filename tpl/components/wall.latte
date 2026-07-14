@@ -65,7 +65,8 @@
     <div class="insertThere" id="postz"></div>
     <div id="underHeader">
         <div id="all_posts" class="wall_posts content scroll_container">
-            {if sizeof($posts) > 0}
+            {var $visiblePosts = isset($club) ? array_filter($posts, fn($post) => !$post->isPinned()) : $posts}
+            {if sizeof($visiblePosts) > 0}
                 {foreach $posts as $post}
                     {continueIf isset($club) && $post->isPinned()}
                     {include "../components/post.latte", post => $post, commentSection => true, onWallOf => true}
