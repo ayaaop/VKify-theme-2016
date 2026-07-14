@@ -63,7 +63,7 @@
 	{/ifset}
 </div>
 <div id="profile_actions_tooltip" class="tippy-content-template">
-	<div class="tippy-menu">
+	<div class="tippy-menu" n:ifset="$thisUser">
 		{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
 			{if $user->getId() !== $thisUser->getId() && $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
 				<a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
