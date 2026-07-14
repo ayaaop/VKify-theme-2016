@@ -189,6 +189,48 @@ vkify.once('mediaModals', function () {
                 msgbox.close();
             });
 
+            msgbox.getNode().find('#__modalPlayerMinimize').on('click', (e) => {
+                e.preventDefault();
+
+                const miniplayer = u(`
+                    <div class="miniplayer">
+                        <div class="miniplayer-head">
+                            <b>${escapeHtml(video_object.title)}</b>
+                            <div class="miniplayer-head-buttons">
+                                <div id="__miniplayer_return"></div>
+                                <div id="__miniplayer_close"></div>
+                            </div>
+                        </div>
+                        <div class="miniplayer-body"></div>
+                    </div>
+                `);
+
+                msgbox.hide();
+
+                u('body').append(miniplayer);
+                miniplayer.find('.miniplayer-body').nodes[0].append(msgbox.getNode().find('.video_block_layout').nodes[0]);
+                miniplayer.attr('style', 'left:100px;top:0px;');
+
+                miniplayer.find('#__miniplayer_return').on('click', () => {
+                    msgbox.reveal();
+                    msgbox.getNode().find('.page_block').nodes[0].prepend(miniplayer.find('.video_block_layout').nodes[0]);
+                    miniplayer.remove();
+                });
+
+                miniplayer.find('#__miniplayer_close').on('click', () => {
+                    msgbox.close();
+                    miniplayer.remove();
+                });
+
+                $('.miniplayer').draggable({ cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body' });
+                $('.miniplayer').resizable({
+                    maxHeight: 2000,
+                    maxWidth: 3000,
+                    minHeight: 150,
+                    minWidth: 200
+                });
+            });
+
             CF.setupCleanup(msgbox, () => {
                 CF.unregisterModal(msgbox);
                 clearVideoUrl();
