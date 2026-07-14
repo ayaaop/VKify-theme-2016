@@ -41,6 +41,7 @@ body {
     /* Background colors */
     --body-background-color: #edeef0;
     --module-background-color: var(--white);
+    --page-background-color: var(--module-background-color) /* to avoid confusion */;
     --module-background-color--secondary: #f0f2f5;
     --module-header-background-color: #fafbfc;
     --header-background-color: #507299;
@@ -2395,6 +2396,33 @@ table,
 }
 .page_block.wall_posts_tabs .ui_tabs {
     z-index: 1;
+}
+
+.archive_banner {
+    padding: 14px 16px;
+    line-height: 1.462;
+}
+.archive_banner_title {
+    display: block;
+    margin-bottom: 4px;
+}
+.archive_banner_description {
+	color: var(--muted-text-color-2);
+}
+.archive_actions_button {
+	padding: 8px;
+	margin-top: 7px;
+	margin-right: 7px;
+	color: var(--link-color);
+	font-size: 12px;
+    cursor: pointer;
+}
+
+.tippy-menu form {
+    margin: 0;
+}
+.archived_repost_unavailable {
+    color: var(--muted-text-color);
 }
 
 /* posts */

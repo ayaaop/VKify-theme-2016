@@ -176,12 +176,16 @@ function initializeTooltip(triggerElement) {
     const presetConfig = presetName && TIPPY_PRESETS[presetName] ? TIPPY_PRESETS[presetName] : {};
 
     const placement = triggerElement.getAttribute('data-tippy-placement') || presetConfig.placement || defaultTippyConfig.placement;
-    
+
+    const appendToAttr = triggerElement.getAttribute('data-tippy-append-to');
+    const appendTo = appendToAttr === 'body' ? document.body : (appendToAttr || defaultTippyConfig.appendTo);
+
     try {
         const config = {
             ...defaultTippyConfig,
             ...presetConfig,
             placement,
+            appendTo,
             content: clonedContent,
             onShow(instance) {
                 triggerElement.setAttribute('aria-expanded', 'true');

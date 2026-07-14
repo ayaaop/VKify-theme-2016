@@ -874,10 +874,10 @@
     .tippy-content:has(.tippy-menu) {
         padding: 12px 0;
     }
-    .post .tippy-menu a, .tippy-menu a, #ctx_menu a {
+    .post .tippy-menu a, .tippy-menu a, #ctx_menu a, .tippy-menu form button {
         padding: 8px 16px;
+        height: unset;
         font-size: 16px;
-        line-height: 20px;
         color: var(--text-color);
     }
     .tippy-box[data-theme~="light"] .tippy-arrow {
@@ -1748,6 +1748,10 @@
         width: calc(50% - 5px);
     }
 
+    .archive_actions_button {
+        margin: 0;
+    }
+
 
     /* mobile hover effects */
     .mobile-info-row, .mobile-scroll-card,.ui_tabs .ui_tab,.sidebar_inner .link,
@@ -1755,11 +1759,11 @@
         transition: background-color 250ms;
     }
     .mobile-info-row:hover,.mobile-scroll-card:hover,.ui_tabs .ui_tab:hover,.sidebar_inner .link:hover,
-    .tippy-menu a:hover, #ctx_menu a:hover {
+    .tippy-menu a:hover, #ctx_menu a:hover,.tippy-menu form button:hover {
         background-color: rgba(122,122,122,.1);
     }
     .mobile-info-row:active,.mobile-scroll-card:active,.ui_tabs .ui_tab:active,.sidebar_inner .link:active,
-    .tippy-menu a:active, #ctx_menu a:active {
+    .tippy-menu a:active, #ctx_menu a:active,.tippy-menu form button:active {
         background-color: rgba(122,122,122,.2);
     }
 }

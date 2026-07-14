@@ -8,6 +8,7 @@
 {var $repostsCount = $post->getRepostCount()}
 {var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
 {var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
+{var $canBeArchived = $post->canBeArchivedBy($thisUser ?? NULL)}
 {var $wallOwner = $post->getWallOwner()}
 {var $feedIgnoreButton = isset($thisUser) && $wallOwner->getRealId() !== $thisUser->getId() && !$post->canBeDeletedBy($thisUser)}
 {if $post->isDeactivationMessage() && $post->getText()}
@@ -85,6 +86,13 @@
                         <a class="edit" id="editPost">{_edit}</a>
                     {/if}
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false)" class="delete" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
+                    {if $canBeArchived && !($forceNoDeleteLink ?? false)}
+                        {if $post->isArchived()}
+                            <a class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_unarchive_action}</a>
+                        {else}
+                            <a class="archive_post" href="/wall{$post->getPrettyId()}/archive?hash={rawurlencode($csrfToken)}">{_archive_action}</a>
+                        {/if}
+                    {/if}
                     {if $canBePinned && !($forceNoPinLink ?? false)}
                         {if $post->isPinned()}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>

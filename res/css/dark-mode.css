@@ -133,7 +133,7 @@ body.dark-mode input[type="radio"] {
 	filter: invert(1) hue-rotate(180deg) brightness(140%);
 }
 
-body.dark-mode .tippy-menu a,.ovk-diag-head a,.ovk-diag-head .divider::before {
+body.dark-mode .tippy-menu a,body.dark-mode .tippy-menu form button,.ovk-diag-head a,.ovk-diag-head .divider::before {
 	color: var(--text-color)
 }
 body.dark-mode .ovk-diag-head {

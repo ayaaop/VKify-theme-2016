@@ -34,6 +34,17 @@
     ]
 ]}
 
+{if isset($thisUser) && $owner > 0 && $thisUser->getId() === $oObj->getId()}
+    {var $archiveCount = $type == 'archive' ? $count : (new \openvk\Web\Models\Repositories\Posts())->getArchivedCountOnUserWall($owner)}
+    {var $tabs = array_merge($tabs, [[
+        'url' => "/wall{$owner}?type=archive",
+        'title' => 'archived_posts',
+        'active' => $type == 'archive',
+        'id' => 'wall_tab_archive',
+        'count' => $archiveCount
+    ]])}
+{/if}
+
 {ifset $club}
     {if isset($thisUser) && $club->getWallType() == 2}
         {var $suggestedWallCount = $club->getSuggestedPostsCount($thisUser) ?? 0}
