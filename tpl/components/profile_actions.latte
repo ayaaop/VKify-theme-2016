@@ -101,7 +101,7 @@
 		{if $user->getId() != $thisUser->getId()}
 			{var $isBlacklisted = $user->isBlacklistedBy($thisUser)}
 			{if !$user->isDeleted() || $isBlacklisted}
-				<a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="{if $isBlacklisted}0{else}1{/if}" data-id="{$user->getRealId()}">
+				<a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false, false)}" data-val="{if $isBlacklisted}0{else}1{/if}" data-id="{$user->getRealId()}">
 					{if $isBlacklisted}{_bl_remove}{else}{_bl_add}{/if}
 				</a>
 			{/if}

@@ -9,7 +9,7 @@
     {if $isMy}
         {var $pageTitle = tr('my_playlists')}
     {elseif $ownerId > 0}
-        {var $pageTitle = tr('playlists') . ' ' . $owner->getMorphedName('genitive', false)}
+        {var $pageTitle = tr('playlists') . ' ' . $owner->getMorphedName('genitive', false, false)}
     {else}
         {var $pageTitle = tr('playlists_club')}
     {/if}
@@ -24,7 +24,7 @@
 {elseif $isMy}
     {var $pageTitle = tr('my_music')}
 {elseif $ownerId > 0}
-    {var $pageTitle = tr('audios') . ' ' . $owner->getMorphedName('genitive', false)}
+    {var $pageTitle = tr('audios') . ' ' . $owner->getMorphedName('genitive', false, false)}
 {else}
     {var $pageTitle = tr('music_club')}
 {/if}
