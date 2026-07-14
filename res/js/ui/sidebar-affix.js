@@ -57,7 +57,7 @@ vkify.once("updateNarrow", () => {
         }
 
         const allKeys = ['top', 'bottom', 'marginTop', 'marginLeft'];
-        const same = JSON.stringify(styles) === JSON.stringify(lastStyles);
+        const same = allKeys.every((key) => (styles[key] || '') === (lastStyles[key] || ''));
         if (!same) {
             for (let i = 0; i < allKeys.length; i++) {
                 bar.style[allKeys[i]] = styles[allKeys[i]] || '';

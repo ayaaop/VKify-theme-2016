@@ -840,10 +840,11 @@ function bindSliderTipPositionFixOnce() {
         '.audioEntry .subTracks .volumeTrack .selectableTrack',
         '#aj_player_volume .selectableTrack'
     ];
+    const seekSelectorStr = seekSelectors.join(', ');
+    const volumeSelectorStr = volumeSelectors.join(', ');
+    const combinedSelectorStr = `${seekSelectorStr}, ${volumeSelectorStr}`;
 
-    const handleSeekTooltip = e => {
-        const track = e.target?.closest?.(seekSelectors.join(', '));
-        if (!track) return;
+    const handleSeekTooltip = (e, track) => {
         if (!window.player?.currentTrack) return;
         if (window.player.isAtAudiosPage?.() && window.player.current_track_id === 0) return;
         if (document.querySelector('.ui-draggable-dragging')) return;
@@ -878,9 +879,7 @@ function bindSliderTipPositionFixOnce() {
         tip.style.left = `${left}px`;
     };
 
-    const handleVolumeTooltip = e => {
-        const track = e.target?.closest?.(volumeSelectors.join(', '));
-        if (!track) return;
+    const handleVolumeTooltip = (e, track) => {
         if (window.player?.isAtAudiosPage?.() && window.player.current_track_id === 0) return;
         if (document.querySelector('.ui-draggable-dragging')) return;
 
@@ -918,9 +917,19 @@ function bindSliderTipPositionFixOnce() {
         if (tip) tip.remove();
     };
 
+    const handleTrackPointer = e => {
+        const track = e.target?.closest?.(combinedSelectorStr);
+        if (!track) return;
+
+        if (track.matches(seekSelectorStr)) {
+            handleSeekTooltip(e, track);
+        } else if (track.matches(volumeSelectorStr)) {
+            handleVolumeTooltip(e, track);
+        }
+    };
+
     ['mousemove', 'click', 'mouseup'].forEach(evt => {
-        document.addEventListener(evt, handleSeekTooltip, true);
-        document.addEventListener(evt, handleVolumeTooltip, true);
+        document.addEventListener(evt, handleTrackPointer, true);
     });
     document.addEventListener('mouseout', handleMouseout, true);
 }

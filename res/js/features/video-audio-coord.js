@@ -8,8 +8,14 @@ function pauseAudioForVideo() {
     }
 }
 
+const boundMediaElements = new Set();
+
 function pauseOtherMedia(currentMedia) {
-    document.querySelectorAll('video, audio').forEach(media => {
+    boundMediaElements.forEach(media => {
+        if (!media.isConnected) {
+            boundMediaElements.delete(media);
+            return;
+        }
         if (media !== currentMedia && !media.paused) {
             media.pause();
         }
@@ -19,6 +25,7 @@ function pauseOtherMedia(currentMedia) {
 function bindMediaListeners(media) {
     if (!media || media.__vkifyAudioCoordBound) return;
     media.__vkifyAudioCoordBound = true;
+    boundMediaElements.add(media);
 
     media.addEventListener('play', function() {
         if (media.tagName === 'VIDEO') {

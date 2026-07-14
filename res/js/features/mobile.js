@@ -85,7 +85,7 @@
 
         document.body.classList.add('has-transparent-appbar');
         const heroHeight = hero ? hero.offsetHeight : 200;
-        window.__profileAppbarScrollHandler = function() {
+        const applyAppbarScrollState = function() {
             const scrollY = window.scrollY || window.pageYOffset;
             const progress = Math.min(scrollY / Math.max(heroHeight - 56, 1), 1);
             appbar.style.setProperty('--appbar-bg-alpha', progress);
@@ -99,7 +99,17 @@
                 appbar.classList.remove('appbar--transparent', 'appbar--scrolled');
             }
         };
-        window.__profileAppbarScrollHandler();
+
+        let appbarScrollRafPending = false;
+        window.__profileAppbarScrollHandler = function() {
+            if (appbarScrollRafPending) return;
+            appbarScrollRafPending = true;
+            requestAnimationFrame(() => {
+                appbarScrollRafPending = false;
+                applyAppbarScrollState();
+            });
+        };
+        applyAppbarScrollState();
         window.addEventListener('scroll', window.__profileAppbarScrollHandler, {'passive': true});
     }
 

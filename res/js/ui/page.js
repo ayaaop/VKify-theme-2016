@@ -169,7 +169,15 @@ window.updateToTopArea = function () {
     }
 };
 
-window.addEventListener('resize', window.updateToTopArea);
+let toTopAreaRafPending = false;
+window.addEventListener('resize', () => {
+    if (toTopAreaRafPending) return;
+    toTopAreaRafPending = true;
+    requestAnimationFrame(() => {
+        toTopAreaRafPending = false;
+        window.updateToTopArea();
+    });
+});
 vkify.onPage(window.updateToTopArea);
 
 function initLocalStorageCheckboxes() {
