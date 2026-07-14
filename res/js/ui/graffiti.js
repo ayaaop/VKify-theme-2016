@@ -236,19 +236,42 @@ vkify.once("graffiti", function () {
         </div>
         <div id="graffiti_resizer" style="margin-top: 5px;"></div>
     </div>
-    <div style="padding: 12px 20px 6px">
-        <canvas id="graffiti_controls" width="586" height="70"></canvas>
+    <div id="graffiti_controls_wrapper">
+        <div id="graffiti_controls">
+            <canvas id="graffiti_sample" width="66" height="66"></canvas>
+            <div class="graffiti_control_group graffiti_color_group">
+                <span class="graffiti_label" data-key="graffiti_flash_color">${window.vkifylang ? window.vkifylang.graffiticolor : "Color:"}</span>
+                <button type="button" class="graffiti_color_btn" id="graffiti_color_btn" aria-label="${window.vkifylang ? window.vkifylang.graffiticolor : "Color"}">
+                    <span class="graffiti_color_preview"></span>
+                </button>
+            </div>
+            <div class="graffiti_control_group graffiti_size_group">
+                <span class="graffiti_label" data-key="graffiti_flash_thickness">${window.vkifylang ? window.vkifylang.graffitithickness : "Thickness:"}</span>
+                <div class="graffiti_slider" id="graffiti_size_slider" data-min="1" data-max="64"></div>
+            </div>
+            <div class="graffiti_control_group graffiti_opacity_group">
+                <span class="graffiti_label" data-key="graffiti_flash_opacity">${window.vkifylang ? window.vkifylang.graffitiopacity : "Opacity:"}</span>
+                <div class="graffiti_slider" id="graffiti_opacity_slider" data-min="1" data-max="100"></div>
+            </div>
+        </div>
+    </div>
+    <div id="graffiti_cpwrap" style="display:none;">
+        <div id="graffiti_cpicker">
+            <div class="graffiti_color_grid"></div>
+            <label class="graffiti_color_native" aria-label="${window.vkifylang ? window.vkifylang.graffiticolor : "Color"}">
+                <input type="color" id="graffiti_color_native" value="#336699" aria-label="${window.vkifylang ? window.vkifylang.graffiticolor : "Color"}">
+                <span class="graffiti_color_native_preview"></span>
+            </label>
+        </div>
     </div>
     <canvas id="graffiti_hist_helper" width="1172" height="350" style="display:none;"></canvas>
-    <div id="graffiti_cpwrap" style="display:none; top:-210px;">
-        <canvas id="graffiti_cpicker" width="252" height="168"></canvas>
-    </div>
     <script src="${getResourceAsset("/vkgraffiti/graffiti.js")}"></script>
     <script>
         var cur = {"lang": {
             "graffiti_flash_color": "${window.vkifylang ? window.vkifylang.graffiticolor : "Color:"} ",
             "graffiti_flash_opacity": "${window.vkifylang ? window.vkifylang.graffitiopacity : "Opacity:"} ",
             "graffiti_flash_thickness": "${window.vkifylang ? window.vkifylang.graffitithickness : "Thickness:"} ",
+            "graffiti_color": "${window.vkifylang ? window.vkifylang.graffiticolor : "Color"}",
             "graffiti_undo": "${window.vkifylang ? window.vkifylang.graffitibackhistory : "Undo"}",
             "graffiti_clear": "${window.vkifylang ? window.vkifylang.graffitiflushhistory : "Clear"}"
         }};
@@ -319,11 +342,18 @@ vkify.once("graffiti", function () {
       ],
     });
 
+    const isMobile = window.matchMedia("(max-width: 620px)").matches;
     const msgboxsel = document.querySelector(
       `.ovk-diag-cont.ovk-msg-all[data-id="${msgbox.id}"]`,
     );
     if (msgboxsel) {
-      msgboxsel.style.width = "800px";
+      msgboxsel.style.width = isMobile ? "100%" : "800px";
+      msgboxsel.style.maxWidth = isMobile ? "100vw" : "";
+      msgboxsel.classList.add("vkify-graffiti-diag");
+    }
+    const diagBody = msgbox.getNode().find(".ovk-diag-body").nodes[0];
+    if (diagBody) {
+      diagBody.classList.add("vkify-graffiti-body");
     }
     msgbox
       .getNode()

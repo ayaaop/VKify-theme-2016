@@ -615,6 +615,11 @@
         padding: 8px;
     }
 
+
+    .ovk-diag-body.vkify-graffiti-body {
+        height: 420px!important
+    }
+
     /* search */
     .ui_search:not(.ui_search_new) {
         border: 0;

@@ -874,14 +874,15 @@ function ce(tagName, attr, style) {
 var Graffiti = {
   init: function () {
     var useragent = navigator.userAgent.toLowerCase();
-    if (/android|iphone|ipod|ipad|opera mini|opera mobi/i.test(useragent)) {
-    }
+    this.isMobile = /android|iphone|ipod|ipad|opera mini|opera mobi/i.test(
+      useragent,
+    );
     this.W = 586;
     this.H = 350;
     this.factor = 1;
     this.brush = {
-      size: 0,
-      opacity: 0,
+      size: (20 / 95) * 64,
+      opacity: 80 / 95,
       color: "51, 102, 153",
     };
     this.resizing = false;
@@ -899,36 +900,17 @@ var Graffiti = {
     this.overlayCtx = this.overlayCanv.getContext("2d");
     this.helpCanv = ge("graffiti_helper");
     this.helpCtx = this.helpCanv.getContext("2d");
-    this.controlsCanv = ge("graffiti_controls");
-    this.controlsCtx = this.controlsCanv.getContext("2d");
+    this.controlsCanv = null;
+    this.controlsCtx = null;
     this.grWrapper = ge("graffiti_wrapper");
     this.cpWrapper = ge("graffiti_cpwrap");
-    this.cpCanv = ge("graffiti_cpicker");
+    this.cpCanv = null;
+    this.cpCtx = null;
+    this.sampleCanv = ge("graffiti_sample");
+    this.sampleCtx = this.sampleCanv.getContext("2d");
 
-    this.cpCtx = this.cpCanv.getContext("2d");
-    this.addSlider("size", this.controlsCtx, 267, 31, 20);
-    this.addSlider("opacity", this.controlsCtx, 483, 31, 80);
-    this.redrawColorPickerButton(
-      this.controlsCtx,
-      147,
-      30,
-      "51, 102, 153",
-      false,
-    );
-    this.addText(this.controlsCtx, cur.lang["graffiti_flash_color"], 100, 35.5);
-    this.addText(
-      this.controlsCtx,
-      cur.lang["graffiti_flash_opacity"],
-      390,
-      35.5,
-    );
-    this.addText(
-      this.controlsCtx,
-      cur.lang["graffiti_flash_thickness"],
-      206,
-      35.5,
-    );
-    this.drawColorPicker(this.cpCtx);
+    this.buildControls();
+    this.buildColorPicker();
     this.attachEvents();
     this.canvWrapper.style.width = this.W + "px";
     this.canvWrapper.style.height = this.H + "px";
@@ -949,8 +931,7 @@ var Graffiti = {
 
   events: {
     controls: function (e) {
-      Graffiti.handleControlsEvents(e);
-      return cancelEvent(e);
+      return Graffiti.handleControlsEvents.call(this, e);
     },
     drawing: function (e) {
       Graffiti.handleDrawingEvents(e);
@@ -958,13 +939,11 @@ var Graffiti = {
     },
     all: function (e) {
       Graffiti.handleDrawingEvents(e);
-      Graffiti.handleControlsEvents(e);
       Graffiti.handleResize(e);
       return cancelEvent(e);
     },
     color: function (e) {
-      Graffiti.handleColorPickerEvents(e);
-      return cancelEvent(e);
+      return Graffiti.handleColorPickerEvents(e);
     },
     controlsF: function (e) {
       Graffiti.handleControlsEvents(e);
@@ -988,15 +967,11 @@ var Graffiti = {
 
   attachEvents: function () {
     var evs = Graffiti.events;
-    addEvent(Graffiti.controlsCanv, "mousedown click", evs.controls);
-    addEvent(window, "mousemove mouseup", evs.all);
-    addEvent(Graffiti.overlayCanv, "mousedown click", evs.drawing);
-    addEvent(Graffiti.cpCanv, "mousemove click", evs.color);
-    addEvent(Graffiti.controlsCanv, "DOMMouseScroll mousewheel", evs.controlsF);
+    addEvent(window, "mousemove mouseup touchmove touchend", evs.all);
+    addEvent(Graffiti.overlayCanv, "mousedown click touchstart touchmove touchend", evs.drawing);
     addEvent(document, "keydown keyup", evs.keyboard);
     // Only cancel context menu on the drawing canvas, not the entire document
     addEvent(Graffiti.overlayCanv, "contextmenu", evs.cancel);
-    addEvent(Graffiti.controlsCanv, "contextmenu", evs.cancel);
     addEvent(document.body, "selectstart", evs.cancel);
     addEvent(Graffiti.resizer, "mousedown", evs.resize);
 
@@ -1012,20 +987,12 @@ var Graffiti = {
 
   detachEvents: function () {
     var evs = Graffiti.events;
-    removeEvent(Graffiti.controlsCanv, "mousedown click", evs.controls);
-    removeEvent(window, "mousemove mouseup", evs.all);
-    removeEvent(Graffiti.overlayCanv, "mousedown click", evs.drawing);
-    removeEvent(Graffiti.cpCanv, "mousemove click", evs.color);
-    removeEvent(
-      Graffiti.controlsCanv,
-      "DOMMouseScroll mousewheel",
-      evs.controlsF,
-    );
+    removeEvent(window, "mousemove mouseup touchmove touchend", evs.all);
+    removeEvent(Graffiti.overlayCanv, "mousedown click touchstart touchmove touchend", evs.drawing);
     removeEvent(document, "keydown keyup", evs.keyboard);
     removeEvent(document.body, "selectstart", evs.cancel);
     removeEvent(Graffiti.resizer, "mousedown", evs.resize);
     removeEvent(Graffiti.overlayCanv, "contextmenu", evs.cancel);
-    removeEvent(Graffiti.controlsCanv, "contextmenu", evs.cancel);
 
     // Clean up parent window listeners if they exist
     if (window.parent && window.parent !== window) {
@@ -1044,7 +1011,6 @@ var Graffiti = {
     switch (e.type) {
       case "mousedown":
         document.body.style.cursor = "s-resize";
-        Graffiti.controlsCanv.style.cursor = "s-resize";
         var mouse = Graffiti.getMouseXY(e, window);
         Graffiti.resDif = mouse.y;
         Graffiti.resizing = true;
@@ -1098,7 +1064,6 @@ var Graffiti = {
         if (Graffiti.resizing) {
           Graffiti.resizing = false;
           Graffiti.resDif = 0;
-          Graffiti.controlsCanv.style.cursor = "default";
           document.body.style.cursor = "default";
           Graffiti.factor = Graffiti.resH / 350;
           Graffiti.W = Graffiti.resW;
@@ -1233,14 +1198,42 @@ var Graffiti = {
   },
 
   handleControlsEvents: function (e) {
-    switch (e.type) {
+    var eventType = e.type;
+    if (eventType.indexOf("touch") === 0) {
+      if (eventType === "touchstart") {
+        eventType = "mousedown";
+        e.which = 1;
+      } else if (eventType === "touchmove") {
+        eventType = "mousemove";
+      } else if (eventType === "touchend") {
+        eventType = this === Graffiti.controlsCanv ? "click" : "mouseup";
+      }
+    }
+
+    var isMobile = window.innerWidth <= 620;
+    var sliderPad = isMobile ? 20 : 10.5;
+    var sliderPadBottom = isMobile ? 20 : 6;
+    var sliderXPad = isMobile ? 10 : 0;
+    var colorPadX = isMobile ? 16 : 8;
+    var colorPadYTop = isMobile ? 16 : 5;
+    var colorPadYBottom = isMobile ? 36 : 25;
+
+    switch (eventType) {
       case "mousedown":
+        if (e.which != 1) return false;
         var mouse = Graffiti.getMouseXY(e, Graffiti.controlsCanv);
         var sl = Graffiti.sliders;
         for (var i = 0; i < sl.length; i++) {
-          if (mouse.x >= sl[i].x && mouse.x <= sl[i].x + 100) {
-            if (mouse.y >= sl[i].y - 10.5 && mouse.y <= sl[i].y + 6) {
-              if (mouse.x > sl[i].x + 95) mouse.x -= 4;
+          if (
+            mouse.x >= sl[i].x - sliderXPad &&
+            mouse.x <= sl[i].x + 100 + sliderXPad
+          ) {
+            if (
+              mouse.y >= sl[i].y - sliderPad &&
+              mouse.y <= sl[i].y + sliderPadBottom
+            ) {
+              if (mouse.x > sl[i].x + 95) mouse.x = sl[i].x + 95;
+              if (mouse.x < sl[i].x) mouse.x = sl[i].x;
               Graffiti.redrawSlider(
                 sl[i].id,
                 Graffiti.controlsCtx,
@@ -1253,13 +1246,15 @@ var Graffiti = {
             }
           }
         }
-        break;
+        return false;
       case "mousemove":
         if (!Graffiti.mouse.pressed && !Graffiti.resizing) {
           var mouse = Graffiti.getMouseXY(e, Graffiti.controlsCanv);
           if (Graffiti.aboveSlider.status) {
             var cs = Graffiti.sliders[Graffiti.aboveSlider.index];
-            if (mouse.x > cs.x && mouse.x < cs.x + 95) {
+            if (mouse.x > cs.x - sliderXPad && mouse.x < cs.x + 95 + sliderXPad) {
+              if (mouse.x > cs.x + 95) mouse.x = cs.x + 95;
+              if (mouse.x < cs.x) mouse.x = cs.x;
               Graffiti.redrawSlider(
                 cs.id,
                 Graffiti.controlsCtx,
@@ -1303,8 +1298,14 @@ var Graffiti = {
                 Graffiti.hoveredButton = null;
               }
               var xy = Graffiti.cpbXY;
-              if (mouse.x >= xy.x - 8 && mouse.x <= xy.x + 23) {
-                if (mouse.y >= xy.y - 5 && mouse.y <= xy.y + 25) {
+              if (
+                mouse.x >= xy.x - colorPadX &&
+                mouse.x <= xy.x + colorPadX + 15
+              ) {
+                if (
+                  mouse.y >= xy.y - colorPadYTop &&
+                  mouse.y <= xy.y + colorPadYBottom
+                ) {
                   Graffiti.controlsCanv.style.cursor = "pointer";
                   Graffiti.redrawColorPickerButton(
                     Graffiti.controlsCtx,
@@ -1336,17 +1337,27 @@ var Graffiti = {
             }
           }
         }
-        break;
+        return false;
       case "click":
+        if (Graffiti.aboveSlider.status) {
+          Graffiti.aboveSlider.status = false;
+          return false;
+        }
         var mouse = Graffiti.getMouseXY(e, Graffiti.controlsCanv);
         var btn = Graffiti.getButtonAt(mouse.x, mouse.y);
         if (btn && btn.action) {
           btn.action();
-          return;
+          return false;
         }
         var xy = Graffiti.cpbXY;
-        if (mouse.x >= xy.x - 8 && mouse.x <= xy.x + 23) {
-          if (mouse.y >= xy.y - 5 && mouse.y <= xy.y + 25) {
+        if (
+          mouse.x >= xy.x - colorPadX &&
+          mouse.x <= xy.x + colorPadX + 15
+        ) {
+          if (
+            mouse.y >= xy.y - colorPadYTop &&
+            mouse.y <= xy.y + colorPadYBottom
+          ) {
             if (!Graffiti.cpActive) {
               Graffiti.cpActive = true;
               Graffiti.cpWrapper.style.display = "block";
@@ -1364,21 +1375,20 @@ var Graffiti = {
             }
           }
         }
-        break;
+        return false;
       case "mouseup":
         if (Graffiti.aboveSlider.status) {
           Graffiti.aboveSlider.status = false;
         }
-        break;
+        return false;
       case "DOMMouseScroll":
         Graffiti.handleWheelAboveSlider(e);
-        break;
+        return false;
       case "mousewheel":
         Graffiti.handleWheelAboveSlider(e);
-        break;
+        return false;
       default:
         throw new Error(e.type);
-        break;
     }
   },
 
@@ -1452,9 +1462,19 @@ var Graffiti = {
       dif = delta;
       var mouse = Graffiti.getMouseXY(e, Graffiti.controlsCanv);
       var sl = Graffiti.sliders;
+      var isMobile = window.innerWidth <= 620;
+      var sliderPad = isMobile ? 20 : 10.5;
+      var sliderPadBottom = isMobile ? 20 : 6;
+      var sliderXPad = isMobile ? 10 : 0;
       for (var i = 0; i < sl.length; i++) {
-        if (mouse.x >= sl[i].x && mouse.x <= sl[i].x + 100) {
-          if (mouse.y >= sl[i].y - 10.5 && mouse.y <= sl[i].y + 6) {
+        if (
+          mouse.x >= sl[i].x - sliderXPad &&
+          mouse.x <= sl[i].x + 100 + sliderXPad
+        ) {
+          if (
+            mouse.y >= sl[i].y - sliderPad &&
+            mouse.y <= sl[i].y + sliderPadBottom
+          ) {
             if (sl[i].holder + delta < sl[i].x) {
               dif = sl[i].x - sl[i].holder;
             }
@@ -1503,16 +1523,7 @@ var Graffiti = {
     var currentSize = Graffiti.brush.size;
     var newSize = Math.max(1, Math.min(64, currentSize + delta));
     Graffiti.brush.size = newSize;
-
-    var sizeSlider = Graffiti.sliders[0];
-    var newPos = sizeSlider.x + (newSize / 64) * 95;
-    Graffiti.redrawSlider(
-      "size",
-      Graffiti.controlsCtx,
-      { x: sizeSlider.x, y: sizeSlider.y },
-      newPos,
-    );
-    Graffiti.sliders[0].holder = newPos;
+    Graffiti.updateSlider("size", newSize / 64);
     Graffiti.updateSample();
   },
 
@@ -1520,44 +1531,20 @@ var Graffiti = {
     var currentOpacity = Graffiti.brush.opacity;
     var newOpacity = Math.max(0.01, Math.min(1, currentOpacity + delta));
     Graffiti.brush.opacity = newOpacity;
-
-    var opacitySlider = Graffiti.sliders[1];
-    var newPos = opacitySlider.x + newOpacity * 95;
-    Graffiti.redrawSlider(
-      "opacity",
-      Graffiti.controlsCtx,
-      { x: opacitySlider.x, y: opacitySlider.y },
-      newPos,
-    );
-    Graffiti.sliders[1].holder = newPos;
+    Graffiti.updateSlider("opacity", newOpacity);
     Graffiti.updateSample();
   },
 
   setBrushSize: function (ratio) {
     var newSize = ratio * 64;
     Graffiti.brush.size = newSize;
-
-    var sizeSlider = Graffiti.sliders[0];
-    var newPos = sizeSlider.x + ratio * 95;
-    Graffiti.redrawSlider(
-      "size",
-      Graffiti.controlsCtx,
-      { x: sizeSlider.x, y: sizeSlider.y },
-      newPos,
-    );
-    Graffiti.sliders[0].holder = newPos;
+    Graffiti.updateSlider("size", ratio);
     Graffiti.updateSample();
   },
 
   setColor: function (color) {
     Graffiti.brush.color = color;
-    Graffiti.redrawColorPickerButton(
-      Graffiti.controlsCtx,
-      Graffiti.gpXY.x,
-      Graffiti.gpXY.y,
-      color,
-      false,
-    );
+    Graffiti.updateColorPreview(color);
     Graffiti.updateSample();
   },
 
@@ -1595,7 +1582,7 @@ var Graffiti = {
   updateSample: function () {
     var size = Graffiti.brush.size;
     var opacity = Graffiti.brush.opacity;
-    var ctx = Graffiti.controlsCtx;
+    var ctx = Graffiti.sampleCtx;
     ctx.clearRect(0, 0, 66, 66);
     ctx.strokeStyle = "rgba(" + Graffiti.brush.color + ", " + opacity + ")";
     ctx.lineWidth = size;
@@ -1606,6 +1593,257 @@ var Graffiti = {
     ctx.lineTo(63.5 / 2 + 0.51, 63.5 / 2 + 2);
     ctx.stroke();
     ctx.closePath();
+  },
+
+  buildControls: function () {
+    Graffiti.controls = ge("graffiti_controls");
+    Graffiti.controlsWrapper = Graffiti.controls.parentNode;
+    var sizeSliderEl = ge("graffiti_size_slider");
+    var opacitySliderEl = ge("graffiti_opacity_slider");
+
+    Graffiti.sizeSlider = Graffiti.buildSlider(
+      sizeSliderEl,
+      function (ratio) {
+        Graffiti.brush.size = Math.max(1, ratio * 64);
+        Graffiti.updateSample();
+      },
+    );
+    Graffiti.opacitySlider = Graffiti.buildSlider(
+      opacitySliderEl,
+      function (ratio) {
+        Graffiti.brush.opacity = Math.max(0.01, ratio);
+        Graffiti.updateSample();
+      },
+    );
+
+    Graffiti.colorBtn = ge("graffiti_color_btn");
+    Graffiti.colorPreview = Graffiti.colorBtn.querySelector(
+      ".graffiti_color_preview",
+    );
+    Graffiti.updateColorPreview(Graffiti.brush.color);
+    addEvent(Graffiti.colorBtn, "click", function (e) {
+      Graffiti.toggleColorPicker();
+      return cancelEvent(e);
+    });
+
+    Graffiti.updateSlider("size", Graffiti.brush.size / 64);
+    Graffiti.updateSlider("opacity", Graffiti.brush.opacity);
+    Graffiti.updateSample();
+  },
+
+  buildSlider: function (container, onChange) {
+    var track = ce("div", { className: "graffiti_slider_track" });
+    var fill = ce("div", { className: "graffiti_slider_fill" });
+    var thumb = ce("div", {
+      className: "graffiti_slider_thumb",
+      tabIndex: 0,
+    });
+    var ticks = ce("div", { className: "graffiti_slider_ticks" });
+    for (var i = 0; i < 9; i++) {
+      ticks.appendChild(ce("span", { className: "graffiti_slider_tick" }));
+    }
+    var inner = ce("div", { className: "graffiti_slider_inner" });
+    inner.appendChild(ticks);
+    inner.appendChild(track);
+    inner.appendChild(fill);
+    inner.appendChild(thumb);
+    container.appendChild(inner);
+
+    var state = { dragging: false, ratio: 0 };
+
+    function setRatio(ratio, fire) {
+      ratio = Math.max(0, Math.min(1, ratio));
+      state.ratio = ratio;
+      thumb.style.left = ratio * 100 + "%";
+      fill.style.width = ratio * 100 + "%";
+      if (fire !== false && onChange) onChange(ratio);
+    }
+
+    function pointerToRatio(e) {
+      var rect = track.getBoundingClientRect();
+      var clientX = e.touches && e.touches[0] ? e.touches[0].clientX : e.clientX;
+      return (clientX - rect.left) / rect.width;
+    }
+
+    function onPointerDown(e) {
+      state.dragging = true;
+      setRatio(pointerToRatio(e));
+      if (e.target.setPointerCapture && e.pointerId !== undefined) {
+        e.target.setPointerCapture(e.pointerId);
+      }
+      return cancelEvent(e);
+    }
+
+    function onPointerMove(e) {
+      if (!state.dragging) return;
+      setRatio(pointerToRatio(e));
+      return cancelEvent(e);
+    }
+
+    function onPointerUp(e) {
+      if (!state.dragging) return;
+      state.dragging = false;
+      return cancelEvent(e);
+    }
+
+    addEvent(inner, "pointerdown mousedown touchstart", onPointerDown);
+    addEvent(window, "pointermove mousemove touchmove", onPointerMove);
+    addEvent(window, "pointerup mouseup touchend", onPointerUp);
+
+    return { set: setRatio, get: function () { return state.ratio; } };
+  },
+
+  updateSlider: function (id, ratio) {
+    if (id === "size" && Graffiti.sizeSlider) {
+      Graffiti.sizeSlider.set(ratio, false);
+    } else if (id === "opacity" && Graffiti.opacitySlider) {
+      Graffiti.opacitySlider.set(ratio, false);
+    }
+  },
+
+  updateColorPreview: function (color) {
+    if (!Graffiti.colorPreview) return;
+    Graffiti.colorPreview.style.backgroundColor = "rgb(" + color + ")";
+    var nativeInput = ge("graffiti_color_native");
+    if (nativeInput) {
+      nativeInput.value = Graffiti.rgbToHex(color);
+    }
+  },
+
+  rgbToHex: function (rgb) {
+    var parts = rgb.split(",").map(function (s) {
+      return parseInt(s.trim(), 10);
+    });
+    return (
+      "#" +
+      parts
+        .map(function (n) {
+          var hex = Math.max(0, Math.min(255, n)).toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        })
+        .join("")
+    );
+  },
+
+  hexToRgb: function (hex) {
+    var m = hex.replace("#", "").match(/^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (!m) return null;
+    return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)].join(
+      ", ",
+    );
+  },
+
+  buildColorPicker: function () {
+    var grid = ge("graffiti_cpicker").querySelector(".graffiti_color_grid");
+    var colors = [];
+    for (var r = 0; r < 6; r++) {
+      for (var g = 0; g < 6; g++) {
+        for (var b = 0; b < 6; b++) {
+          colors[r * 36 + g * 6 + b] =
+            "rgb(" +
+            (r / 5) * 255 +
+            "," +
+            (g / 5) * 255 +
+            "," +
+            (b / 5) * 255 +
+            ")";
+        }
+      }
+    }
+    for (var j = 0; j < 12; j++) {
+      var row = ce("div", { className: "graffiti_color_row" });
+      for (var i = 0; i < 18; i++) {
+        var _r = Math.floor(i / 6) + 3 * Math.floor(j / 6);
+        var _g = i % 6;
+        var _b = j % 6;
+        var _n = _r * 36 + _g * 6 + _b;
+        var cell = ce("button", {
+          type: "button",
+          className: "graffiti_color_cell",
+          title: colors[_n],
+        });
+        cell.style.backgroundColor = colors[_n];
+        cell.setAttribute("data-color", colors[_n]);
+        addEvent(cell, "click", function (e) {
+          var color = e.target.getAttribute("data-color");
+          var rgb = color
+            .replace("rgb(", "")
+            .replace(")", "")
+            .split(",")
+            .map(function (s) {
+              return Math.round(parseFloat(s.trim()));
+            })
+            .join(", ");
+          Graffiti.setColor(rgb);
+          Graffiti.toggleColorPicker(false);
+          return cancelEvent(e);
+        });
+        row.appendChild(cell);
+      }
+      grid.appendChild(row);
+    }
+
+    var nativeInput = ge("graffiti_color_native");
+    addEvent(nativeInput, "input change", function (e) {
+      var rgb = Graffiti.hexToRgb(e.target.value);
+      if (rgb) {
+        Graffiti.setColor(rgb);
+        Graffiti.toggleColorPicker(false);
+      }
+    });
+
+    addEvent(document, "click", function (e) {
+      if (
+        Graffiti.cpActive &&
+        !Graffiti.cpWrapper.contains(e.target) &&
+        e.target !== Graffiti.colorBtn &&
+        !Graffiti.colorBtn.contains(e.target)
+      ) {
+        Graffiti.toggleColorPicker(false);
+      }
+    });
+
+    if (Graffiti.controlsWrapper) {
+      addEvent(Graffiti.controlsWrapper, "scroll", function () {
+        if (Graffiti.cpActive) Graffiti.toggleColorPicker(false);
+      });
+    }
+    addEvent(window, "resize", function () {
+      if (Graffiti.cpActive) Graffiti.toggleColorPicker(false);
+    });
+  },
+
+  positionColorPicker: function () {
+    var btnRect = Graffiti.colorBtn.getBoundingClientRect();
+    var popupWidth = Graffiti.cpWrapper.offsetWidth || 268;
+    var popupHeight = Graffiti.cpWrapper.offsetHeight || 214;
+    var left = btnRect.left;
+    var top = btnRect.top - popupHeight - 8;
+    if (left + popupWidth > window.innerWidth) {
+      left = window.innerWidth - popupWidth - 8;
+    }
+    if (left < 0) left = 8;
+    Graffiti.cpWrapper.style.left = left + "px";
+    Graffiti.cpWrapper.style.top = top + "px";
+  },
+
+  toggleColorPicker: function (show) {
+    if (typeof show !== "boolean") show = !Graffiti.cpActive;
+    if (show === Graffiti.cpActive) return;
+
+    Graffiti.cpActive = show;
+    if (show) {
+      Graffiti.cpWrapper.style.display = "block";
+      Graffiti.positionColorPicker();
+      Graffiti.cpWrapper.offsetHeight;
+      Graffiti.cpWrapper.classList.add("shown");
+    } else {
+      Graffiti.cpWrapper.classList.remove("shown");
+      if (Graffiti.cpHideTimeout) clearTimeout(Graffiti.cpHideTimeout);
+      Graffiti.cpHideTimeout = setTimeout(function () {
+        if (!Graffiti.cpActive) Graffiti.cpWrapper.style.display = "none";
+      }, 200);
+    }
   },
 
   labels: [],
@@ -1656,13 +1894,17 @@ var Graffiti = {
   },
 
   getButtonAt: function (x, y) {
+    var isMobile = window.innerWidth <= 620;
+    var xPad = isMobile ? 10 : 2;
+    var yTopPad = isMobile ? 18 : 11;
+    var yBottomPad = isMobile ? 8 : 3;
     for (var i = 0; i < this.buttons.length; i++) {
       var btn = this.buttons[i];
       if (
-        x >= btn.x - 2 &&
-        x <= btn.x + btn.width &&
-        y >= btn.y - 11 &&
-        y <= btn.y + 3
+        x >= btn.x - xPad &&
+        x <= btn.x + btn.width + xPad &&
+        y >= btn.y - yTopPad &&
+        y <= btn.y + yBottomPad
       ) {
         return btn;
       }
@@ -1902,13 +2144,23 @@ var Graffiti = {
   drawPath: false,
 
   handleDrawingEvents: function (e) {
+    var eventType = e.type;
+    if (eventType.indexOf("touch") === 0) {
+      eventType =
+        eventType === "touchstart"
+          ? "mousedown"
+          : eventType === "touchmove"
+            ? "mousemove"
+            : "mouseup";
+      e.which = 1;
+    }
     var mouse = Graffiti.getMouseXY(e, Graffiti.overlayCanv);
     if (!e.which && e.button) {
       if (e.button & 1) e.which = 1;
       else if (e.button & 4) e.which = 2;
       else if (e.button & 2) e.which = 3;
     }
-    switch (e.type) {
+    switch (eventType) {
       case "mousedown":
         if (e.which == 1) {
           if (!Graffiti.drawPath) {
@@ -1985,13 +2237,18 @@ var Graffiti = {
   },
 
   handleColorPickerEvents: function (e) {
-    switch (e.type) {
+    var eventType = e.type;
+    if (eventType === "touchstart") {
+      eventType = "click";
+    }
+
+    switch (eventType) {
       case "mousemove":
         var mouse = Graffiti.getMouseXY(e, Graffiti.cpCanv);
         var cellX = Math.floor(mouse.x / 14);
         var cellY = Math.floor(mouse.y / 14);
-        if (cellY > 11) return;
-        if (cellX > 17) return;
+        if (cellY > 11) return false;
+        if (cellX > 17) return false;
         var ctx = Graffiti.cpCtx;
         ctx.lineWidth = 1;
         ctx.lineJoin = "miter";
@@ -2011,12 +2268,14 @@ var Graffiti = {
         Graffiti.cpLastCell.push({ x: cellX, y: cellY });
         Graffiti.cpActiveCell.cellX = cellX;
         Graffiti.cpActiveCell.cellY = cellY;
-        break;
+        return false;
       case "click":
+        var mouse = Graffiti.getMouseXY(e, Graffiti.cpCanv);
+        var cellX = Math.min(17, Math.max(0, Math.floor(mouse.x / 14)));
+        var cellY = Math.min(11, Math.max(0, Math.floor(mouse.y / 14)));
         var ctx = Graffiti.cpCtx;
-        var ac = Graffiti.cpActiveCell;
-        var pixelX = ac.cellX * 14 + 7;
-        var pixelY = ac.cellY * 14 + 7;
+        var pixelX = cellX * 14 + 7;
+        var pixelY = cellY * 14 + 7;
         var _ = ctx.getImageData(pixelX, pixelY, 1, 1).data;
         var color = [].slice.call(_, 0, 3).join();
         Graffiti.brush.color = color;
@@ -2037,10 +2296,9 @@ var Graffiti = {
             Graffiti.cpWrapper.style.display = "none";
           },
         );
-        break;
+        return false;
       default:
         throw new Error(e.type);
-        break;
     }
   },
 
@@ -2215,8 +2473,17 @@ var Graffiti = {
   getMouseXY: function (e, obj) {
     var cursor = {};
     var objpos = getXY(obj);
-    cursor.x = e.pageX - objpos[0];
-    cursor.y = e.pageY - objpos[1];
+    var touch =
+      (e.touches && e.touches[0]) ||
+      (e.changedTouches && e.changedTouches[0]);
+    var pageX = touch ? touch.pageX : e.pageX;
+    var pageY = touch ? touch.pageY : e.pageY;
+    cursor.x = pageX - objpos[0];
+    cursor.y = pageY - objpos[1];
+    if (obj && obj.tagName === "CANVAS" && obj.width && obj.clientWidth) {
+      cursor.x *= obj.width / obj.clientWidth;
+      cursor.y *= obj.height / obj.clientHeight;
+    }
     /*if (browser.opera && (obj == Graffiti.controlsCanv)) {
         cursor.y += scrollGetY();
       }*/
