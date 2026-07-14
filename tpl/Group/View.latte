@@ -12,7 +12,7 @@
 </div>
 {/block}
 
-{define mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain}
+{define mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain, $docs}
     {include '../components/mobile_profile_hero.latte', entity => $club, name => $club->getName(), status => tr('group_type_open'), verified => $club->isVerified()}
 
     <div class="mobileonly mobile-group-content">
@@ -45,7 +45,7 @@
             <div class="mobile-info-rows">
                 {var $descPlain = $club->getDescription() ?? ''}
                 {if $club->getWebsite()}
-                    <a class="mobile-info-row" href="{$club->getWebsite()}" rel="ugc" target="_blank">
+                    <a class="mobile-info-row mir-link" href="{$club->getWebsite()}" rel="ugc" target="_blank">
                         <svg class="mir-icon" viewBox="0 0 24 24"><use href="#globe-outline-24"></use></svg>
                         <div class="mir-text">{$club->getWebsite()}</div>
                     </a>
@@ -141,9 +141,30 @@
                             <span class="header_count fl_l">{$docsCount}</span>
                         </h3>
                     </a>
-                    <a href="/docs{$club->getRealId()}" class="module_body msm-docs-body">
-                        <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" style="opacity:0.35"><use href="#document-24"></use></svg>
-                    </a>
+                    {if sizeof($docs) === 1}
+                        {var $doc = $docs[0]}
+                        {var $docPreview = $doc->hasPreview() ? $doc->getPreview() : null}
+                        <a href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}" class="module_body" title="{$doc->getName()}">
+                            {if $docPreview}
+                                <img src="{$docPreview->getURLBySizeId('normal')}" class="msm-album-cover" alt="" />
+                            {else}
+                                <div class="msm-placeholder"><span class="msm-doc-ext">{$doc->getFileExtension()}</span></div>
+                            {/if}
+                        </a>
+                    {else}
+                        <div class="module_body msm-grid">
+                            {foreach array_slice($docs, 0, 3) as $doc}
+                                {var $docPreview = $doc->hasPreview() ? $doc->getPreview() : null}
+                                <a href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}" class="msm-grid__cell msm-doc-cell" title="{$doc->getName()}">
+                                    {if $docPreview}
+                                        <img class="msm-grid__img" src="{$docPreview->getURLBySizeId('tiny')}" alt="" />
+                                    {else}
+                                        <span class="msm-doc-ext">{$doc->getFileExtension()}</span>
+                                    {/if}
+                                </a>
+                            {/foreach}
+                        </div>
+                    {/if}
                 </div>
             {elseif $canEdit}
                 <div class="module clear topics_module notes_module mobile-scroll-card">
@@ -195,12 +216,6 @@
     <div id="mobile_group_more_info_content" style="display:none;">
         {var $moreInfoBlocks = []}
 
-        {if $docsCount > 0}
-            {capture $moreInfoBlock}
-                <a class="mobile-more-row" href="/docs{$club->getRealId()}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#more-horizontal-24"></use></svg> {tr('documents', $docsCount)}</a>
-            {/capture}
-            {var $moreInfoBlocks = array_merge($moreInfoBlocks, [$moreInfoBlock])}
-		{/if}
         {if $descPlain !== ''}
             {capture $moreInfoBlock}
                 <div class="form_group clear_fix">
@@ -287,15 +302,13 @@
     {var $audios = iterator_to_array($audios)}
     {var $albums = iterator_to_array($albums)}
     {var $topics = iterator_to_array($topics)}
+    {var $docs   = iterator_to_array($docs)}
     {var $followersCount = $club->getFollowersCount()}
     {var $owner = $club->getOwner()}
     {var $descPlain = $club->getDescription() ?? ''}
     {var $descHtml = $club->getDescriptionHtml()}
     {var $pinnedPost = (new \openvk\Web\Models\Repositories\Posts())->getPinnedPost($club->getId() * -1)}
     {var $hasMoreInfo = false}
-    {if $docsCount > 0}
-        {var $hasMoreInfo = true}
-    {/if}
     {if $descPlain !== ''}
         {var $hasMoreInfo = true}
     {/if}
@@ -303,7 +316,7 @@
         {var $hasMoreInfo = true}
     {/if}
 
-    {include #mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain}
+    {include #mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain, $docs}
 
     {if $hasMoreInfo}
     <script>
@@ -495,7 +508,7 @@
 								</h3>
 							</a>
 							<div class="module_body">
-								{foreach $docs as $doc}
+								{foreach array_slice($docs, 0, 3) as $doc}
 									{include "../Documents/components/doc.latte", doc => $doc, hideButtons => true, noTags => true}
 								{/foreach}
 							</div>

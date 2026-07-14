@@ -1246,6 +1246,9 @@
     a.mobile-info-row:active {
         opacity: 0.8;
     }
+    a.mobile-info-row.mir-link div {
+        color: var(--link-color)
+    }
     .mobile-info-row .divider {
         margin-left: 4px;
     }
@@ -1362,6 +1365,26 @@
         width: 100%;
         height: 100%;
         border-radius: 0;
+        object-fit: cover;
+        object-position: center;
+    }
+    .msm-doc-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--module-background-color--secondary);
+        color: inherit;
+        text-decoration: none;
+    }
+    .msm-doc-cell img {
+        object-fit: cover;
+    }
+    .msm-doc-ext {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: var(--muted-text-color);
+        line-height: 1;
     }
     .msm-album-cover {
         width: 100%;
