@@ -333,8 +333,10 @@
 .page_square_photo {
   position: relative;
   display: inline-block;
-  height: 123px;
-  width: 123px;
+  width: calc((100% - 18px) / 4);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   margin-left: 6px;
   background-size: cover;
   background-repeat: no-repeat;

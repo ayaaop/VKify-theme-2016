@@ -58,7 +58,7 @@
                 {/if}
                 {if $hasMoreInfo}
                 <div class="mobile-info-row mobile-info-row-more" onclick="__mobileGroupShowMore()">
-                    <svg class="mir-icon" viewBox="0 0 24 24"><use href="#more-horizontal-24"></use></svg>
+                    <svg class="mir-icon" viewBox="0 0 24 24"><use href="#info-24"></use></svg>
                     <div class="mir-text">{_additional_information}</div>
                 </div>
                 {/if}
@@ -83,11 +83,12 @@
                             <span class="header_count fl_l">{$albumsCount}</span>
                         </h3>
                     </a>
-                    <a href="{if $firstAlbum}/album{$firstAlbum->getPrettyId()}{else}/albums{$club->getId() * -1}{/if}" class="module_body">
+                    <a href="{if $firstAlbum}/album{$firstAlbum->getPrettyId()}{else}/albums{$club->getId() * -1}{/if}" n:class="module_body, !($firstAlbum && $firstAlbum->getCoverPhoto()) ? msm-placeholder">
                         {if $firstAlbum && $firstAlbum->getCoverPhoto()}
                             <img src="{$firstAlbum->getCoverPhoto()->getURLBySizeId('normal')}" class="msm-album-cover" alt="" />
                         {else}
-                            <div class="msm-placeholder"><svg width="40" height="40" fill="currentColor" viewBox="0 0 24 24"><use href="#picture-24"></use></svg></div>
+                            <svg width="28" height="28" fill="currentColor" viewBox="0 0 28 28"><use href="#camera-28"></use></svg>
+                            <span class="msm-placeholder-label">{_upload_photo}</span>
                         {/if}
                     </a>
                 </div>

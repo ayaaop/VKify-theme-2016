@@ -98,7 +98,7 @@
 				{/if}
 				{if $hasMoreInfo}
 				<div class="mobile-info-row mobile-info-row-more" onclick="__mobileProfileShowMore()">
-					<svg class="mir-icon" viewBox="0 0 24 24"><use href="#more-horizontal-24"></use></svg>
+					<svg class="mir-icon" viewBox="0 0 24 24"><use href="#info-24"></use></svg>
 					<div class="mir-text">{_additional_information}</div>
 				</div>
 				{/if}
@@ -265,7 +265,7 @@
 
 		{if $notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)}
 			{capture $moreInfoBlock}
-				<a class="mobile-more-row" href="/notes{$user->getId()}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#article-outline-24"></use></svg> {tr('notes', $notesCount)}</a>
+				<a class="mobile-info-row" href="/notes{$user->getId()}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#article-outline-24"></use></svg><div class="mir-text">{tr('notes', $notesCount)}</div></a>
 			{/capture}
 			{var $moreInfoBlocks = array_merge($moreInfoBlocks, [$moreInfoBlock])}
 		{/if}
@@ -276,9 +276,9 @@
 			{var $mWebsite = $user->getWebsite()}
 			{if $mEmail || $mTelegram || $mWebsite}
 				{capture $moreInfoBlock}
-					{if $mEmail}<a class="mobile-more-row" href="mailto:{$mEmail}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#mail-outline-24"></use></svg> {$mEmail}</a>{/if}
-					{if $mTelegram}<a class="mobile-more-row" href="https://t.me/{$mTelegram|replace:'@',''}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#send-24"></use></svg> {$mTelegram}</a>{/if}
-					{if $mWebsite}<a class="mobile-more-row" href="{$mWebsite}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#globe-outline-24"></use></svg> {$mWebsite}</a>{/if}
+					{if $mEmail}<a class="mobile-info-row mir-link" href="mailto:{$mEmail}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#mail-outline-24"></use></svg><div class="mir-text">{$mEmail}</div></a>{/if}
+					{if $mTelegram}<a class="mobile-info-row mir-link" href="https://t.me/{$mTelegram|replace:'@',''}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#send-24"></use></svg><div class="mir-text">{$mTelegram}</div></a>{/if}
+					{if $mWebsite}<a class="mobile-info-row mir-link" href="{$mWebsite}"><svg class="mir-icon" viewBox="0 0 24 24"><use href="#globe-outline-24"></use></svg><div class="mir-text">{$mWebsite}</div></a>{/if}
 				{/capture}
 				{var $moreInfoBlocks = array_merge($moreInfoBlocks, [$moreInfoBlock])}
 			{/if}
