@@ -2410,9 +2410,9 @@ table,
 	color: var(--muted-text-color-2);
 }
 .archive_actions_button {
-	padding: 8px;
+	padding: 8px 6px;
 	margin-top: 7px;
-	margin-right: 7px;
+	margin-right: 4px;
 	color: var(--link-color);
 	font-size: 12px;
     cursor: pointer;
