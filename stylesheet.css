@@ -1739,6 +1739,9 @@ div.container_gray > form > table {
     margin: 0;
     text-align: end;
 }
+.audiosContainer .vkify-paginator {
+    margin: 8px 0 0!important;
+}
 .audiosContainer .loadMore {
     padding: 7px 0;
     display: block;
@@ -1802,7 +1805,7 @@ div.container_gray > form > table {
     margin: 0 0 0 10px;
     float: right;
     text-align: right;
-    width: 185px;
+    width: 155px;
     order: 3;
 }
 .search_row .controls form + form {
@@ -2434,7 +2437,7 @@ table,
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 400px;
+    max-width: calc(100% - 40px);
     margin: 0;
     display: inline-block;
 }
@@ -2834,15 +2837,12 @@ table,
     text-align: center;
 }
 .gift_image {
-    border-radius: 10px;
-    background-color: var(--module-background-color--secondary);
     margin: 0 0 9px;
     width: 256px;
     height: 256px;
     display: inline-block;
 }
 .gift_image img {
-    border-radius: 10px;
     width: 256px;
     height: 100%;
     object-fit: contain;

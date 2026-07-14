@@ -510,6 +510,20 @@
         width: calc(100% - 32px);
     }
 
+    .model_content_textarea textarea {
+        margin-left: 44px;
+        width: calc(100% - 44px);
+    }
+    .post_field_user_link {
+        left: 16px;
+    }
+    .model_content_textarea:not(.shown) #wallAttachmentMenu {
+        padding: 15px 16px;
+    }
+    .model_content_textarea.shown .post-bottom-acts {
+        padding: 16px;
+    }
+
     /* buttons */
     .button, input[class="button"], .profile_link {
         padding: 7px 16px 9px;
@@ -896,7 +910,7 @@
 
     /* audio page */
     .audiosDiv {
-        padding: 0 6px 8px!important;
+        padding: 8px 6px!important;
     }
     .bigPlayer:not(.tidy) {
         width: 100% !important;
