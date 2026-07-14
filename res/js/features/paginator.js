@@ -188,7 +188,8 @@ const canLoadNextPage = (paginatorEl) => {
 };
 
 const shouldAllowAutoScroll = () => {
-    const autoScrollDisabled = Number(localStorage.getItem('ux.auto_scroll') ?? 0) === 0;
+    const autoScrollSetting = localStorage.getItem('ux.auto_scroll');
+    const autoScrollDisabled = autoScrollSetting !== null && Number(autoScrollSetting) === 0;
     const ajaxRoutingDisabled = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0) === 1
         || window.openvk?.current_id === 0
         || window.openvk?.disable_ajax === 1;
