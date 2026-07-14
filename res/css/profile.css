@@ -1028,3 +1028,10 @@ a.page_module_upload:hover .page_upload_label,
 #group_tab_pinned_content .post .wall_fixed_label {
   display: none
 }
+
+.module .docListViewItem a {
+	width: unset;
+}
+.module_body .docListViewItem:not(:last-child) {
+	margin-bottom: 6px;
+}

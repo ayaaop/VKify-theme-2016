@@ -33,17 +33,17 @@
             </div>
             <div class="wide_column_wrap">
                 <div class="wide_column">
-                    <div class="page_block wall_posts_tabs">
+                    <div class="page_block">
                         {include "../components/page_block_header.latte", title => "statistics"}
-                    </div>
-                    <div class="page_block page_padding">
-                        <h4>{_coverage}</h4>
-                        <p>{_coverage_this_week}</p>
-                        <div id="reachChart" style="width: 100%; height: 280px;"></div>
+                        <div class="page_padding">
+                            <h4>{_coverage}</h4>
+                            <p>{_coverage_this_week}</p>
+                            <div id="reachChart" style="width: 100%; height: 280px;"></div>
                         
-                        <h4>{_views}</h4>
-                        <p>{_views_this_week}</p>
-                        <div id="viewsChart" style="width: 100%; height: 280px;"></div>
+                            <h4>{_views}</h4>
+                            <p>{_views_this_week}</p>
+                            <div id="viewsChart" style="width: 100%; height: 280px;"></div>
+                        </div>
                     </div>
                 </div>
             </div>

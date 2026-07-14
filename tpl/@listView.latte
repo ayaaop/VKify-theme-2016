@@ -11,7 +11,7 @@
     <div class="wide_column_wrap">
         <div class="wide_column">
 {/ifset}
-            <div class="page_block wall_posts_tabs">
+            <div class="page_block">
                 {ifset specpage}
                     {include specpage, x => $dat}
                 {else}
@@ -31,8 +31,7 @@
                {ifset tabs}
                     {include tabs}
                {/ifset}
-               </div>
-                <div class="page_block list_view scroll_container">
+                <div class="list_view scroll_container">
                     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
                     {ifset top}
@@ -77,6 +76,7 @@
                         {/ifset}
                     {/if}
                 </div>
+            </div>
             {/ifset}
 {ifset narrow}
         </div>

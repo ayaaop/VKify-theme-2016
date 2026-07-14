@@ -7,15 +7,13 @@
 {/block}
 
 {block content}
-    <div class="page_block wall_posts_tabs">
+    <div class='page_block PE_wrapper'>
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => $owner->getURL(), 'title' => $owner->getCanonicalName()],
             ['href' => "/playlists{$ownerId}", 'title' => tr("playlists")],
             ['href' => "/playlist" . $playlist->getPrettyId(), 'title' => tr("playlist")],
             ['title' => tr("edit_playlist")]
         ]}
-    </div>
-    <div class='page_block PE_wrapper'>
         <div class="audio_pl_edit_box PE_playlistEditPage">
             <!-- Header section containing cover & input fields -->
             <div class="ape_header">

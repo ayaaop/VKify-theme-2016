@@ -5,7 +5,7 @@
 {/block}
 
 {block content}
-    <div class="page_block wall_posts_tabs">
+    <div class="page_block">
         {if !$playlist}
             {if !is_null($group)}
                 {include "../components/page_crumb_header.latte", crumbs: [
@@ -28,34 +28,34 @@
                 ['title' => tr("upload_audio")]
             ]}
         {/if}
-    </div>
-    <div class="page_block page_padding">
-        <div id="upload_container" class="audio_upload_wrap">
-            <div id="firstStep" class="audio_upload_step">
-                <div class="audio_upload_header">
-                    <h2>{_select_audio}</h2>
-                    <div class="information audio_upload_limits" style="margin: 0">
-                        <span class="limits_toggle">{_limits}</span>
-                        <ul class="limits_list">
-                            <li>{tr("audio_requirements", 1, 30, 25)}</li>
-                            <li>{tr("audio_requirements_2")}</li>
-                        </ul>
+        <div class="page_padding">
+            <div id="upload_container" class="audio_upload_wrap">
+                <div id="firstStep" class="audio_upload_step">
+                    <div class="audio_upload_header">
+                        <h2>{_select_audio}</h2>
+                        <div class="information audio_upload_limits" style="margin: 0">
+                            <span class="limits_toggle">{_limits}</span>
+                            <ul class="limits_list">
+                                <li>{tr("audio_requirements", 1, 30, 25)}</li>
+                                <li>{tr("audio_requirements_2")}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="audio_upload" class="audio_upload_area">
+                        <input id="audio_input" multiple type="file" name="blob" accept="audio/*" />
+                        <button type="button" class="button" onclick="document.querySelector('#audio_input').click()">{_upload_button}</button>
+                    </div>
+                    <div class="audio_upload_hint">
+                        <span>{_you_can_also_add_audio_using} <a href="/search?section=audios">{_search_audio_inst}</a></span>
                     </div>
                 </div>
-                <div id="audio_upload" class="audio_upload_area">
-                    <input id="audio_input" multiple type="file" name="blob" accept="audio/*" />
-                    <button type="button" class="button" onclick="document.querySelector('#audio_input').click()">{_upload_button}</button>
-                </div>
-                <div class="audio_upload_hint">
-                    <span>{_you_can_also_add_audio_using} <a href="/search?section=audios">{_search_audio_inst}</a></span>
-                </div>
-            </div>
 
-            <div id="lastStep" class="audio_upload_step" style="display:none;">
-                <div id="lastStepContainers" class="audio_upload_forms"></div>
-                <div id="lastStepButtons" class="audio_upload_actions">
-                    <button type="button" class="button" id="uploadMusic">{_upload_button}</button>
-                    <button type="button" class="button button_gray" id="backToUpload" onclick="document.querySelector('#audio_input').click()">{_select_another_file}</button>
+                <div id="lastStep" class="audio_upload_step" style="display:none;">
+                    <div id="lastStepContainers" class="audio_upload_forms"></div>
+                    <div id="lastStepButtons" class="audio_upload_actions">
+                        <button type="button" class="button" id="uploadMusic">{_upload_button}</button>
+                        <button type="button" class="button button_gray" id="backToUpload" onclick="document.querySelector('#audio_input').click()">{_select_another_file}</button>
+                    </div>
                 </div>
             </div>
         </div>

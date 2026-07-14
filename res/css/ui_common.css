@@ -728,6 +728,7 @@ h2.page_block_h2.tabs_header {
   margin: 0;
   list-style: none;
   user-select: none;
+  z-index: 1;
 }
 .ui_tabs li {
   list-style: none;

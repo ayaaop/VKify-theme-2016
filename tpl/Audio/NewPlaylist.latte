@@ -10,14 +10,12 @@
 
 {block content}
     {var $playlistsHref = !$_GET["gid"] ? "/playlists" . $thisUser->getId() : "/playlists-" . $club->getId()}
-    <div class="page_block wall_posts_tabs">
+    <div class='page_block PE_wrapper'>
         {include "../components/page_crumb_header.latte", crumbs: [
             ['href' => (!$_GET["gid"] ? $thisUser : $club)->getURL(), 'title' => (!$_GET["gid"] ? $thisUser : $club)->getCanonicalName()],
             ['href' => $playlistsHref, 'title' => tr("playlists")],
             ['title' => tr("new_playlist")]
         ]}
-    </div>
-    <div class='page_block PE_wrapper'>
         <div class="audio_pl_edit_box PE_playlistEditPage">
             <!-- Header section containing cover & input fields -->
             <div class="ape_header">

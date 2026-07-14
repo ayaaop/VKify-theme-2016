@@ -3,11 +3,8 @@
 
 {block content}
 	{var $sendMessageButton = '<a href="/friends' . $thisUser->getId() . '" class="button">' . tr('send_message') . '</a>'}
-	<div class="page_block wall_posts_tabs">
+	<div class="page_block">
 		{include "../components/page_block_header.latte", title => "my_messages", count => sizeof($corresps), extra => $sendMessageButton}
-	</div>
-
-    <div class="page_block">
 
         <div class="scroll_container" style="min-height: 430px;">
 		    {if sizeof($corresps) > 0}

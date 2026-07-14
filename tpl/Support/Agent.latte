@@ -93,11 +93,9 @@
     </div>
 </div>
 {else}
-    <div class="page_block wall_posts_tabs">
+    <div class="page_block">
         {include "../components/page_block_header.latte", title => "create"}
-    </div>
-    <div class="page_block page_padding">
-        <div class="form_group settings_padding" style="padding: 0;">
+        <div class="form_group page_padding" style="margin: 0">
             <form method="post" action="/support/agent{$agent_id}/edit">
                 <div class="form_field">
                     <div class="form_label">{_helpdesk_showing_name}</div>

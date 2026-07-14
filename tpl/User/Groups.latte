@@ -19,38 +19,36 @@
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block tabs}
-    <div class="page_block wall_posts_tabs">
-        {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-            {var $count = $user->getClubCount()}
-            {var $tabs = [
-                [
-                    'url' => "/groups{$user->getId()}",
-                    'title' => 'groups',
-                    'active' => !$admin,
-                    'id' => 'groups_tab_all',
-                    'count' => $count
-                ],
-                [
-                    'url' => "/groups{$user->getId()}?act=managed",
-                    'title' => 'managed',
-                    'active' => $admin,
-                    'id' => 'groups_tab_managed',
-                    'count' => $user->getClubCount(true)
-                ]
-            ]}
-            {var $createGroupButton = '<a class="button nomobile" href="/groups_create" onclick="showCreateGroupModal(event)">' . tr('create_group') . '</a>'}
-            {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'groups_top_tabs', extra => $createGroupButton}
-        {else}
-            {include "../components/page_block_header.latte", title => 'groups'}
-        {/if}
-        {include "../components/search_bar.latte",
-            id => 'groups_search_header',
-            placeholder => tr('search_by_groups'),
-            action => '/search',
-            section => 'groups',
-            class => 'groups_search_header'
-        }
-    </div>
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {var $count = $user->getClubCount()}
+        {var $tabs = [
+            [
+                'url' => "/groups{$user->getId()}",
+                'title' => 'groups',
+                'active' => !$admin,
+                'id' => 'groups_tab_all',
+                'count' => $count
+            ],
+            [
+                'url' => "/groups{$user->getId()}?act=managed",
+                'title' => 'managed',
+                'active' => $admin,
+                'id' => 'groups_tab_managed',
+                'count' => $user->getClubCount(true)
+            ]
+        ]}
+        {var $createGroupButton = '<a class="button nomobile" href="/groups_create" onclick="showCreateGroupModal(event)">' . tr('create_group') . '</a>'}
+        {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'groups_top_tabs', extra => $createGroupButton}
+    {else}
+        {include "../components/page_block_header.latte", title => 'groups'}
+    {/if}
+    {include "../components/search_bar.latte",
+        id => 'groups_search_header',
+        placeholder => tr('search_by_groups'),
+        action => '/search',
+        section => 'groups',
+        class => 'groups_search_header'
+    }
 {/block}
 
 {block link|strip|stripHtml}

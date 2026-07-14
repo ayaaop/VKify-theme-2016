@@ -33,55 +33,53 @@
             'id' => 'apps_tab_dev'
         ]
     ]}
-    {if $act === 'dev'}
-        <div class="page_block wall_posts_tabs">
+    <div class="page_block">
+        {if $act === 'dev'}
             {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs', extra => '<a class="button nomobile" href="/editapp?act=create">' . tr('create') . '</a>'}
-        </div>
-    {else}
-        <div class="page_block wall_posts_tabs">
+        {else}
             {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'apps_top_tabs'}
-        </div>
-    {/if}
-    <div class="page_block list_view">
-        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        {/if}
+        <div class="list_view">
+            {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
-        {if sizeof($data) > 0}
-            <div class="search_row" n:foreach="$data as $x">
-                <div class="img">
-                    <a href="/app{$x->getId()}">
-                        <img style="max-width: 80px;" src="{if str_contains($x->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$x->getAvatarUrl()}{/if}" />
-                    </a>
-                </div>
-                <div class="info">
-                    <div class="labeled name">
+            {if sizeof($data) > 0}
+                <div class="search_row" n:foreach="$data as $x">
+                    <div class="img">
                         <a href="/app{$x->getId()}">
-                            <b>
-                                {$x->getName()}
-                            </b>
+                            <img style="max-width: 80px;" src="{if str_contains($x->getAvatarUrl(), 'camera_200.png')}/themepack/vkify16/{$theme->getVersion()}/resource/camera_200.png{else}{$x->getAvatarUrl()}{/if}" />
                         </a>
                     </div>
-                    <div class="labeled">
-                        {$x->getDescription()}
+                    <div class="info">
+                        <div class="labeled name">
+                            <a href="/app{$x->getId()}">
+                                <b>
+                                    {$x->getName()}
+                                </b>
+                            </a>
+                        </div>
+                        <div class="labeled">
+                            {$x->getDescription()}
+                        </div>
+                        <div class="labeled message">
+                            <a n:if="$x->isInstalledBy($thisUser)" href="/apps/uninstall?hash={rawurlencode($csrfToken)}&app={$x->getId()}">{_app_uninstall|firstUpper}</a><!--
+                            -->{if $thisUser->getId() == $x->getOwner()->getId() && $x->isInstalledBy($thisUser)}<span class="divider"></span>{/if}<!--
+                            --><a n:if="$thisUser->getId() == $x->getOwner()->getId()" href="javascript:showEditAppModal({$x->getId()})">{_app_edit|firstUpper}</a>
+                        </div>
                     </div>
-                    <div class="labeled message">
-                        <a n:if="$x->isInstalledBy($thisUser)" href="/apps/uninstall?hash={rawurlencode($csrfToken)}&app={$x->getId()}">{_app_uninstall|firstUpper}</a><!--
-                        -->{if $thisUser->getId() == $x->getOwner()->getId() && $x->isInstalledBy($thisUser)}<span class="divider"></span>{/if}<!--
-                        --><a n:if="$thisUser->getId() == $x->getOwner()->getId()" href="javascript:showEditAppModal({$x->getId()})">{_app_edit|firstUpper}</a>
+                    <div class="action_links controls">
+                        <a href="/app{$x->getId()}" class="button button_wide">{_app_play|firstUpper}</a>
                     </div>
                 </div>
-                <div class="action_links controls">
-                    <a href="/app{$x->getId()}" class="button button_wide">{_app_play|firstUpper}</a>
-                </div>
-            </div>
-            {include "../components/paginator.latte", conf => (object) [
-                "page"     => $page,
-                "count"    => $count,
-                "amount"   => sizeof($data),
-                "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
-                "atBottom" => true,
-            ]}
-        {else}
-            {include "../components/nothing.latte"}
-        {/if}
+                {include "../components/paginator.latte", conf => (object) [
+                    "page"     => $page,
+                    "count"    => $count,
+                    "amount"   => sizeof($data),
+                    "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+                    "atBottom" => true,
+                ]}
+            {else}
+                {include "../components/nothing.latte"}
+            {/if}
+        </div>
     </div>
 {/block}

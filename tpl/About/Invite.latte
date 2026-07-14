@@ -44,16 +44,16 @@
         </div>
         <div class="wide_column_wrap">
             <div class="wide_column">
-                <div class="page_block wall_posts_tabs">
+                <div class="page_block">
                     {include "../components/page_block_header.latte", title => "invite"}
-                </div>
-                <div class="invitebox page_block page_padding">
-                    {_you_can_invite}<br />
-                    <br />
-                    <center>
-                        <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
-                    </center>
-                    <p>{_you_can_invite_2}</p>
+                    <div class="invitebox page_padding">
+                        {_you_can_invite}<br />
+                        <br />
+                        <center>
+                            <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
+                        </center>
+                        <p>{_you_can_invite_2}</p>
+                    </div>
                 </div>
             </div>
         </div>

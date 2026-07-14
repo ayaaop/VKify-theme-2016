@@ -6,13 +6,11 @@
 {/block}
 
 {block content}
-<div class="page_block wall_posts_tabs">
+<div class="page_block notifications">
     {include "../components/page_crumb_header.latte", crumbs => [
         ['href' => $thisUser->getURL(), 'title' => $thisUser->getCanonicalName()],
         ['title' => tr("feedback")]
     ]}
-</div>
-<div class="page_block notifications">
     {include "../components/page_tabs_header.latte", white => true, tabs => [
         [
             'url' => '/notifications?act=new',

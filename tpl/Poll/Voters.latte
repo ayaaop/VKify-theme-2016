@@ -12,18 +12,16 @@
 {/block}
 
 {block tabs}
-    <div class="page_block wall_posts_tabs">
-        {var $tabs = []}
-        {foreach $options as $optionId => $optionName}
-            {var $tabs[] = [
-                'url' => '/poll' . $pollId . '/voters?option=' . base_convert(''.$optionId, 10, 32),
-                'title' => $optionName,
-                'active' => $optionId == $option[0],
-                'translate' => false,
-            ]}
-        {/foreach}
-        {include "../components/page_tabs_header.latte", tabs => $tabs, white => true}
-    </div>
+    {var $tabs = []}
+    {foreach $options as $optionId => $optionName}
+        {var $tabs[] = [
+            'url' => '/poll' . $pollId . '/voters?option=' . base_convert(''.$optionId, 10, 32),
+            'title' => $optionName,
+            'active' => $optionId == $option[0],
+            'translate' => false,
+        ]}
+    {/foreach}
+    {include "../components/page_tabs_header.latte", tabs => $tabs, white => true}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

@@ -8,13 +8,11 @@
 {block title}{_followers} {$club->getCanonicalName()}{/block}
 
 {block tabs}
-    <div class="page_block wall_posts_tabs">
-        {capture $extraContent}
-            <a n:if="!$onlyShowManagers" class="button" href="/club{$club->getId()}/followers?onlyAdmins=1">{_only_administrators}</a>
-            <a n:if="$onlyShowManagers" class="button" href="/club{$club->getId()}/followers">{_all_followers}</a>
-        {/capture}
-        {include "../components/page_block_header.latte", title => "followers", extra => $extraContent}
-    </div>
+    {capture $extraContent}
+        <a n:if="!$onlyShowManagers" class="button" href="/club{$club->getId()}/followers?onlyAdmins=1">{_only_administrators}</a>
+        <a n:if="$onlyShowManagers" class="button" href="/club{$club->getId()}/followers">{_all_followers}</a>
+    {/capture}
+    {include "../components/page_block_header.latte", title => "followers", extra => $extraContent}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
