@@ -207,13 +207,17 @@ vkify.once('mediaModals', function () {
 
                 msgbox.hide();
 
+                const videoBlockLayout = msgbox.getNode().find('.video_block_layout').nodes[0];
+                const originalParent = videoBlockLayout.parentNode;
+                const originalNextSibling = videoBlockLayout.nextSibling;
+
                 u('body').append(miniplayer);
-                miniplayer.find('.miniplayer-body').nodes[0].append(msgbox.getNode().find('.video_block_layout').nodes[0]);
+                miniplayer.find('.miniplayer-body').nodes[0].append(videoBlockLayout);
                 miniplayer.attr('style', 'left:100px;top:0px;');
 
                 miniplayer.find('#__miniplayer_return').on('click', () => {
                     msgbox.reveal();
-                    msgbox.getNode().find('.page_block').nodes[0].prepend(miniplayer.find('.video_block_layout').nodes[0]);
+                    originalParent.insertBefore(videoBlockLayout, originalNextSibling);
                     miniplayer.remove();
                 });
 
