@@ -43,29 +43,29 @@
                         ['href' => "/notes{$thisUser->getId()}", 'title' => tr("notes")],
                         ['title' => $title]
                     ]}
-                </div>
-                <div class="page_block post note_post">
-                    <div class="post_header">
-                        <a class="post_image{if $thisUser->isOnline()} online{/if}" href="{$thisUser->getURL()}">
-                            {include '../components/avatar.latte', author => $thisUser, size => 'miniscule', width => 50, class => 'post-avatar'}
-                        </a>
-                        <div class="post_header_info">
-                            <div class="post_author">
-                                <a class="author" href="{$thisUser->getURL()}">
-                                    {$thisUser->getCanonicalName()}
-                                </a>
-                            </div>
-                            <div class="post_date">
-                                <a href="#" class="post_link">
-                                    {_time_just_now}
-                                </a>
+                    <div class="post note_post">
+                        <div class="post_header">
+                            <a class="post_image{if $thisUser->isOnline()} online{/if}" href="{$thisUser->getURL()}">
+                                {include '../components/avatar.latte', author => $thisUser, size => 'miniscule', width => 50, class => 'post-avatar'}
+                            </a>
+                            <div class="post_header_info">
+                                <div class="post_author">
+                                    <a class="author" href="{$thisUser->getURL()}">
+                                        {$thisUser->getCanonicalName()}
+                                    </a>
+                                </div>
+                                <div class="post_date">
+                                    <a href="#" class="post_link">
+                                        {_time_just_now}
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="post-content">
-                        <div class="text wall_text" id="text">
-                            <div class="wall_note_type">{$title}</div>
-                            <div n:ifcontent class="really_text wall_post_text note_text">{$html|noescape}</div>
+                        <div class="post-content">
+                            <div class="text wall_text" id="text">
+                                <div class="wall_note_type">{$title}</div>
+                                <div n:ifcontent class="really_text wall_post_text note_text">{$html|noescape}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
