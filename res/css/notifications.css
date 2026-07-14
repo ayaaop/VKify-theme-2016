@@ -167,6 +167,9 @@
 	max-height: 400px;
 	overflow-y:auto;
 }
+.tippy-box[data-theme~="notifications"] .page_block_h2:not(.tabs_header) {
+	display: none;
+}
 .top_notify_show_all {
 	display: block;
 	padding: 10px 0 12px;
