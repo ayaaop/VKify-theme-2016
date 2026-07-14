@@ -1,22 +1,12 @@
-/* =========================================================
-   BASE / GLOBAL
-   ========================================================= */
-
 .bsdn-player {
     font-family: var(--font-family);
     position: relative;
     width: 100%;
     height: 100%;
 }
-
 .bsdn_player * {
     box-sizing: border-box;
 }
-
-
-/* =========================================================
-   ICONS (SIZE + DEFAULT STATES)
-   ========================================================= */
 
 .bsdn-player .bsdn_playIcon,
 .bsdn-player .bsdn_volumeIcon,
@@ -25,83 +15,53 @@
     width: 24px;
     height: 24px;
 }
-
 .bsdn_teaserButton .bsdn_playIcon {
     width: 48px;
     height: 48px;
 }
 
-
-/* =========================================================
-   PLAY BUTTON STATES
-   ========================================================= */
-
 .bsdn_playButton .bsdn_playIcon ._pause,
 .bsdn_playButton .bsdn_playIcon ._replay {
     display: none;
 }
-
 ._bsdn_playing .bsdn_playButton .bsdn_playIcon ._play {
     display: none;
 }
-
 ._bsdn_playing .bsdn_playButton .bsdn_playIcon ._pause {
     display: block;
 }
-
 .bsdn-player[data-ended="true"] .bsdn_playButton .bsdn_playIcon ._play,
 .bsdn-player[data-ended="true"] .bsdn_playButton .bsdn_playIcon ._pause {
     display: none;
 }
-
 .bsdn-player[data-ended="true"] .bsdn_playButton .bsdn_playIcon ._replay {
     display: block;
 }
-
-
-/* =========================================================
-   VOLUME STATES
-   ========================================================= */
 
 .bsdn_volumeIcon ._cross,
 .bsdn_volumeIcon ._wave2 {
     display: none;
 }
-
 .bsdn-player[data-muted="true"] .bsdn_volumeIcon ._wave1,
 .bsdn-player[data-muted="true"] .bsdn_volumeIcon ._wave2 {
     display: none;
 }
-
 .bsdn-player[data-muted="true"] .bsdn_volumeIcon ._cross {
     display: block;
 }
-
 .bsdn-player[data-volume="high"] .bsdn_volumeIcon ._wave2 {
     display: block;
 }
 
-
-/* =========================================================
-   FULLSCREEN STATES
-   ========================================================= */
-
 .bsdn_fullscreenIcon ._exit {
     display: none;
 }
-
 :fullscreen .bsdn_fullscreenIcon ._enter {
     display: none;
 }
-
 :fullscreen .bsdn_fullscreenIcon ._exit {
     display: block;
 }
-
-
-/* =========================================================
-   CONTROLS BAR
-   ========================================================= */
 
 .bsdn_controls {
     background: none;
@@ -110,8 +70,6 @@
     padding: 0;
     gap: 0;
 }
-
-/* gradient overlay */
 .bsdn_controls::before {
     content: '';
     position: absolute;
@@ -121,16 +79,9 @@
     right: 0;
     bottom: 0;
     height: 110px;
-
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAADcCAYAAACxtct4AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVpJREFUeNqEVMtywjAMtNZOUgoz3JkcuHPk/z8MiO3q4Rdh2uqg0UbatY0knHOO3JsRxP/p6LdvhPv9rnrTUHe73VR5wfV61ewX1nXV6IDL5UJ4vV6w4pwzIaWkDjidTpbwnPjG8XiElXw6NEeY59kbfDweDtM0FchRqXs+n0AIoUA5e1Cp0MOztQjYto094IcSdR3KbU1FuTFGISA05QAiKnWdpqIchfbTFZU37sdBapU2vqPqYUjsSiqkpkz2rd6vdEE7w5YkysKNEhXILrYoCTe17Og0wXpxX8Jwk0QyKYZdPjba1mjltEr7YNT7bQOXO5GkFXFQ6TSNOlRRno0ojJKt3Dg8pr9DI56NJKNXIA91jyKWZXEGefRUKg8qFQ7OszvgfD5n2wBuwGJdkI5bnXaGhzrZMvFaOVswXrWydLx+WaK57WqWNdVsaH3Lu532//4L7Ix+BBgA0mT6Yrg5bBMAAAAASUVORK5CYII=') repeat-x;
-
     transition: opacity 0.25s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
-
-
-/* =========================================================
-   BUTTON LAYOUT
-   ========================================================= */
 
 button.bsdn_playButton {
     height: 100%;
@@ -142,7 +93,6 @@ button.bsdn_playButton {
     transition: opacity 0.2s;
     will-change: opacity;
 }
-
 .bsdn_soundIcon {
     height: 100%;
     padding: 0 10px 0 8px;
@@ -152,7 +102,6 @@ button.bsdn_playButton {
     transition: opacity 0.2s;
     will-change: opacity;
 }
-
 .bsdn_fullScreenButton,
 .bsdn_repeatButton {
     height: 100%;
@@ -163,11 +112,9 @@ button.bsdn_playButton {
     transition: opacity 0.2s;
     will-change: opacity;
 }
-
 .bsdn_repeatButton {
     position: relative;
 }
-
 .bsdn_repeatButton::after {
     content: '';
     position: absolute;
@@ -182,38 +129,27 @@ button.bsdn_playButton {
     transform-origin: center;
     transition: transform .22s cubic-bezier(.2, .7, .2, 1), opacity .16s ease;
 }
-
 .bsdn_repeatButton.is-on::after {
     opacity: 1;
     transform: scaleX(1);
 }
-
 .bsdn_repeatButton .bsdn_repeatIcon ._replay {
     transition: fill .2s ease;
 }
-
 .bsdn_fullScreenButton {
     padding-right: 16px;
     transition: opacity 0.2s;
     will-change: opacity;
 }
-
 .bsdn_repeatButton.is-on {
     opacity: 1;
 }
-
 .bsdn_repeatButton.is-on:hover {
     opacity: 1;
 }
-
 button.bsdn_playButton:hover, .bsdn_soundIcon:hover, .bsdn_fullScreenButton:hover, .bsdn_repeat:hover {
     opacity: .8;
 }
-
-
-/* =========================================================
-   TIME DISPLAY
-   ========================================================= */
 
 .bsdn_controls .bsdn_timeWrap {
     display: flex;
@@ -225,18 +161,12 @@ button.bsdn_playButton:hover, .bsdn_soundIcon:hover, .bsdn_fullScreenButton:hove
     color: #fff;
     white-space: nowrap;
 }
-
 time.bsdn_timeFull,
 .bsdn_timeSeparator {
     margin-left: 0;
     color: #fff;
     opacity: 0.7;
 }
-
-
-/* =========================================================
-   PROGRESS BAR (SEEK)
-   ========================================================= */
 
 .bsdn_terebilkaLowerWrap,
 .bsdn_soundControlSubWrap {
@@ -246,16 +176,12 @@ time.bsdn_timeFull,
     background-color: hsla(0, 0%, 100%, 0.4);
     border: none;
 }
-
 .bsdn_terebilkaWrap {
     height: 100%;
     padding: 0 11px;
     justify-content: center;
     cursor: pointer;
 }
-
-
-/* progress fill */
 .bsdn_terebilkaPlayed,
 .bsdn_soundControlPlayed {
     position: absolute;
@@ -267,9 +193,6 @@ time.bsdn_timeFull,
     border-radius: 2.5px;
     pointer-events: none;
 }
-
-
-/* draggable knob */
 .bsdn_terebilkaBrick,
 .bsdn_soundControlBrick {
     width: 13px;
@@ -282,18 +205,11 @@ time.bsdn_timeFull,
     transition: transform 0.2s ease, opacity 0.2s ease;
     will-change: opacity, transform;
 }
-
-/* show knob on hover */
 .bsdn_terebilkaWrap:hover .bsdn_terebilkaBrick,
 .bsdn_soundControl:hover .bsdn_soundControlBrick {
     transform: scale(1);
     opacity: 1;
 }
-
-
-/* =========================================================
-   VOLUME CONTROL
-   ========================================================= */
 
 .bsdn_soundControl {
     display: flex;
@@ -305,11 +221,9 @@ time.bsdn_timeFull,
     padding-right: 8px;
     cursor: pointer;
 }
-
 .bsdn_soundControlPadding {
     height: 0;
 }
-
 .bsdn_contextMenu {
     border-radius: 3px;
     background: rgba(0, 0, 0, .9);
@@ -351,11 +265,9 @@ time.bsdn_timeFull,
 .bsdn_teaser {
     background-color: rgba(0, 0, 0, .9);
 }
-
 .tippy-box[data-theme~='vkify-player'] {
     padding: 7px 12px 8px;
 }
-
 .tippy-box[data-theme~='vkify-player'] .tippy-content {
     font-size: 13px;
     padding: 0;
@@ -383,7 +295,6 @@ time.bsdn_timeFull,
     white-space: nowrap;
     transition: opacity .16s ease, transform .16s cubic-bezier(.2, .7, .2, 1);
 }
-
 .vkifySliderValueTip::after {
     content: '';
     position: absolute;
@@ -394,12 +305,10 @@ time.bsdn_timeFull,
     border-style: solid;
     border-color: var(--tooltip-background-color) transparent transparent;
 }
-
 .vkifySliderValueTip.is-visible {
     opacity: 1;
     transform: translate(-50%, calc(-100% - 8px));
 }
-
 :fullscreen .vkifySliderValueTip {
     font-size: 16px;
     line-height: 22px;
@@ -417,32 +326,23 @@ time.bsdn_timeFull,
     display: block;
     box-sizing: border-box;
 }
-
 .bsdn-player.bsdn-dirty .bsdn_teaser {
     background: transparent !important;
 }
-
 .video_item {
     cursor: pointer;
 }
 .video_thumb_play {
     transition: transform 0.12s ease-out, background-color 100ms linear, opacity 60ms ease !important;
 }
-
 .video_item:hover .video_thumb_play,
 .bsdn_teaser:hover .video_thumb_play {
     transform: scale(1.08) !important;
 }
-
 .bsdn-player .bsdn_teaser .video_thumb_play {
     opacity: 1 !important;
     cursor: pointer;
 }
-
-
-/* =========================================================
-   LOADING INDICATOR
-   ========================================================= */
 
 .bsdn_loader {
     display: none;
@@ -459,14 +359,12 @@ time.bsdn_timeFull,
     justify-content: center;
     pointer-events: none;
 }
-
 .bsdn-player.bsdn_loading .bsdn_loader {
     display: flex;
 }
 .bsdn-player.bsdn_loading .bsdn_controls {
     z-index: 6;
 }
-
 
 .bsdn-player:fullscreen video,
 .bsdn-player:fullscreen .media,
@@ -477,17 +375,14 @@ time.bsdn_timeFull,
     width: 100% !important;
     object-fit: contain !important;
 }
-
 .bsdn-player:fullscreen .bsdn_fullscreenIcon ._enter,
 .bsdn-fullscreen .bsdn_fullscreenIcon ._enter {
     display: none;
 }
-
 .bsdn-player:fullscreen .bsdn_fullscreenIcon ._exit,
 .bsdn-fullscreen .bsdn_fullscreenIcon ._exit {
     display: block;
 }
-
 .bsdn-player.bsdn_loading .bsdn_teaser .video_thumb_play {
     opacity: 0 !important;
     transform: scale(0.5) !important;
@@ -512,54 +407,53 @@ time.bsdn_timeFull,
     text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     font-family: inherit;
 }
-
 .bsdn-player:fullscreen .bsdn_controls,
 .bsdn-fullscreen .bsdn_controls {
     height: 55px;
 }
-
 .bsdn-player:fullscreen .bsdn_titleBar,
 .bsdn-fullscreen .bsdn_titleBar {
     display: block;
 }
-
 .bsdn-player._bsdn_playing .bsdn_titleBar {
     opacity: 0;
     pointer-events: none;
     transition: 1s opacity ease-in-out;
     transition-delay: 2s;
 }
-
 .bsdn-player._bsdn_playing:hover .bsdn_titleBar {
     opacity: 1;
     pointer-events: none;
     transition: .2s opacity ease-in-out;
     transition-delay: 0;
 }
+
 .bsdn-player {
     container-type: inline-size;
 }
-
-@container (max-width: 480px) {
+@container (max-width: 320px) {
     .bsdn_titleBar,
     .bsdn_settingsButton,
-    .bsdn_fullScreenButton,
-    .bsdn_repeatButton,
+    .bsdn_volumeWrap,
     .bsdn_timeWrap,
-    .bsdn_volumeWrap {
+    .bsdn_repeatButton {
         display: none !important;
     }
-    
+
     .bsdn_controls {
         height: 40px !important;
         padding: 0 8px !important;
     }
 }
-
-@container (min-width: 481px) and (max-width: 600px) {
+@container (min-width: 321px) and (max-width: 480px) {
     .bsdn_titleBar,
     .bsdn_settingsButton,
     .bsdn_volumeWrap {
+        display: none !important;
+    }
+}
+@container (min-width: 481px) and (max-width: 600px) {
+    .bsdn_titleBar {
         display: none !important;
     }
 }
