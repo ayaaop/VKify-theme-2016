@@ -18,7 +18,7 @@
                 </div>
                 <div class="video_thumb_actions" n:if="isset($thisUser) && $thisUser->getId() === $video->getOwner()->getId()">
                     <div>
-                        <a href="/video{$video->getPrettyId()}/edit" class="video_thumb_action_edit" title="{tr('edit')}">
+                        <a href="/video{$video->getPrettyId()}/edit" onclick="event.preventDefault(); showEditVideoModal({$video->getPrettyId()})" class="video_thumb_action_edit" title="{tr('edit')}">
                             <div class="icon"></div>
                         </a>
                     </div>
