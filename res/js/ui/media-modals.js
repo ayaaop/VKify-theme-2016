@@ -261,10 +261,14 @@ vkify.once('mediaModals', function () {
             <div class="mobile-photo-body pv_photo" style="overflow: hidden; position: relative; touch-action: none;">
                 <img src="${photo}" id="pv_photo_img" style="transform-origin: center center;" />
                 <div class="pv_nav_left" id="pv_nav_left" style="display: none;">
-                    <div class="pv_nav_arrow"></div>
+                    <div class="pv_nav_btn">
+                        <div class="pv_nav_arrow"></div>
+                    </div>
                 </div>
                 <div class="pv_nav_right" id="pv_nav_right" style="display: none;">
-                    <div class="pv_nav_arrow"></div>
+                    <div class="pv_nav_btn">
+                        <div class="pv_nav_arrow"></div>
+                    </div>
                 </div>
             </div>
 
@@ -282,10 +286,14 @@ vkify.once('mediaModals', function () {
                 <div class="pv_photo">
                     <img src="${photo}" id="pv_photo_img" />
                     <div class="pv_nav_left" id="pv_nav_left" style="display: none;">
-                        <div class="pv_nav_arrow"></div>
+                        <div class="pv_nav_btn">
+                            <div class="pv_nav_arrow"></div>
+                        </div>
                     </div>
                     <div class="pv_nav_right" id="pv_nav_right" style="display: none;">
-                        <div class="pv_nav_arrow"></div>
+                        <div class="pv_nav_btn">
+                            <div class="pv_nav_arrow"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="pv_bottom_info">

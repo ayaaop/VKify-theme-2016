@@ -1671,6 +1671,14 @@
         position: sticky;
     }
 
+    /* video modal */
+    .ovk-modal-video-window .video_block_layout {
+        padding: 16px 16px 0
+    }
+    .video_info {
+        margin: 0 16px;
+    }
+
     /* messages */
     .messenger-app--messages---message {
         position: relative;
