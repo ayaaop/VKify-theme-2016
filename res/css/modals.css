@@ -300,6 +300,9 @@
   transition: 0.2s;
 }
 
+.pv_right #standaloneCommentBox {
+  border-bottom-left-radius: 0;
+}
 .pv_right .model_content_textarea textarea {
   margin-left: 40px;
   padding: 16px 15px 16px 12px;
@@ -309,6 +312,7 @@
 }
 .pv_right .model_content_textarea:not(.shown) #wallAttachmentMenu {
   padding: 15px 11px;
+  position: static;
 }
 .pv_right .model_content_textarea.shown .post-bottom-acts {
   padding: 15px;

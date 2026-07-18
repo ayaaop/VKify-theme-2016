@@ -505,7 +505,7 @@
         margin: -16px -16px 0;
         padding: 16px;
     }
-    .settings_padding,.settings_block_msg {
+    .settings_padding,.settings_block_msg,.audio_pl_edit_box .ape_header {
         padding-block: 16px;
     }
     .form_group,.post_full_like_wrap {
@@ -514,7 +514,7 @@
     .page_padding .form_group {
         margin-inline: 0;
     }
-    .settings_block_msg,.post .wall_text {
+    .settings_block_msg,.post .wall_text,.post_replies_header,.audio_pl_edit_box .box_controls,.audio_pl_edit_box .ape_item_list,.audio_pl_edit_box .ape_header {
         padding-inline: 16px;
     }
     .post .post_header {
@@ -523,6 +523,9 @@
     .post-nsfw .post-content::after, .deleted_content .content_page_error {
         margin: 0 16px;
         width: calc(100% - 32px);
+    }
+    .post_view_page .comments {
+        border-top: 1px solid var(--border-color)!important;
     }
 
     .model_content_textarea textarea {

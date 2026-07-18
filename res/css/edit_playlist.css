@@ -139,6 +139,7 @@
     height: 400px;
     display: block;
     background-color: var(--module-background-color);
+    overflow-y: auto;
 }
 
 .audio_pl_edit_box .ape_audios_empty_list {
