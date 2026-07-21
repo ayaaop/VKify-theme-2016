@@ -91,6 +91,7 @@ window.Profile = {
             const placement = isAppbar ? 'bottom-end' : 'start-end';
 
             try {
+                const zIndex = button.closest('.ovk-msg-all') ? 9999 : 99;
                 tippy(button, {
                     theme: 'light vk',
                     placement,
@@ -102,6 +103,7 @@ window.Profile = {
                     animation: isAppbar ? 'up_down' : 'none',
                     duration: isAppbar ? [150, 100] : 0,
                     allowHTML: true,
+                    zIndex,
                     content: clonedContent,
                     onShow: (instance) => {
                         button.setAttribute('aria-expanded', 'true');

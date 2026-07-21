@@ -14,13 +14,52 @@ const defaultTippyConfig = {
     animation: 'up_down',
     duration: [100, 100],
     offset: [0, 8],
-    allowHTML: true
+    allowHTML: true,
+    zIndex: 99,
+    popperOptions: {
+        modifiers: [
+            { name: 'flip', options: { rootBoundary: 'visualViewport' } },
+            { name: 'preventOverflow', options: { rootBoundary: 'visualViewport' } }
+        ]
+    }
 };
 
 const TIPPY_PRESETS = {};
 
 function hasTippyInstance(element) {
     return element && (element._tippy || element.hasAttribute('aria-describedby'));
+}
+
+function getOptimalPlacement(element) {
+    const rect = element.getBoundingClientRect();
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    const space = {
+        top: rect.top,
+        bottom: viewportHeight - rect.bottom,
+        left: rect.left,
+        right: viewportWidth - rect.right,
+    };
+
+    const minSpace = 100;
+    let placement = 'top';
+
+    if (space.bottom > space.top && space.bottom > minSpace) {
+        placement = 'bottom';
+    } else if (space.top > minSpace) {
+        placement = 'top';
+    } else if (space.right > space.left && space.right > minSpace) {
+        placement = 'right';
+    } else if (space.left > minSpace) {
+        placement = 'left';
+    }
+
+    if (rect.top < 50 && placement === 'top') {
+        placement = 'bottom';
+    }
+
+    return placement;
 }
 
 function escapeCssId(id) {
@@ -79,6 +118,10 @@ function cloneTooltipContent(triggerElement, contentId) {
 
 const templateRegistry = new Map();
 
+function getTippyZIndex(triggerElement) {
+    return triggerElement?.closest('.ovk-msg-all') ? 9999 : 99;
+}
+ 
 function findTemplateNode(triggerElement, contentId) {
     const escapedId = escapeCssId(contentId);
 
@@ -175,23 +218,37 @@ function initializeTooltip(triggerElement) {
     const presetName = triggerElement.getAttribute('data-tippy-preset');
     const presetConfig = presetName && TIPPY_PRESETS[presetName] ? TIPPY_PRESETS[presetName] : {};
 
-    const placement = triggerElement.getAttribute('data-tippy-placement') || presetConfig.placement || defaultTippyConfig.placement;
-    
+    const placement = triggerElement.getAttribute('data-tippy-placement') || presetConfig.placement || getOptimalPlacement(triggerElement) || defaultTippyConfig.placement;
+
+    let appendTo = defaultTippyConfig.appendTo;
+    const appendToAttr = triggerElement.getAttribute('data-tippy-append-to');
+    if (appendToAttr === 'body') {
+        appendTo = document.body;
+    } else if (appendToAttr && appendToAttr !== 'parent') {
+        appendTo = document.querySelector(appendToAttr) || appendTo;
+    }
+
     try {
         const config = {
             ...defaultTippyConfig,
             ...presetConfig,
             placement,
+            appendTo,
+            zIndex: getTippyZIndex(triggerElement),
             content: clonedContent,
             onShow(instance) {
                 triggerElement.setAttribute('aria-expanded', 'true');
+                if (instance.popper) {
+                    instance.popper.setAttribute('data-tippy-content-id', contentId);
+                }
+                triggerElement.dispatchEvent(new CustomEvent('tippyshow', { bubbles: true }));
                 defaultTippyConfig.onShow?.(instance);
             },
             onHide(instance) {
                 triggerElement.setAttribute('aria-expanded', 'false');
                 defaultTippyConfig.onHide?.(instance);
             },
-            onDestroy() {
+            onDestroy(instance) {
                 if (movedContent) {
                     restoreTemplateNode(movedContent);
                 }
@@ -199,7 +256,7 @@ function initializeTooltip(triggerElement) {
             }
         };
 
-        tippy(triggerElement, config);
+        const instance = tippy(triggerElement, config);
         return true;
     } catch (error) {
         console.error('[Tooltips] Error creating Tippy instance:', error);
@@ -498,6 +555,7 @@ function createDismissablePopup(options) {
         appendTo: document.body,
         content: contentEl,
         offset,
+        zIndex: getTippyZIndex(triggerEl),
         showOnCreate: autoShow,
         onShow(tippyInst) {
             const closeBtn = tippyInst.popper.querySelector(closeSelector);

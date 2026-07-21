@@ -1415,6 +1415,17 @@ select:focus {
   display: block;
 }
 
+/* Applied by tooltips.js to the trigger's nearest .post/.reply/
+   .model_content_textarea ancestor for as long as its tooltip is visible
+   (see elevateStackContext/restoreStackContext), so a tooltip appended to
+   its parent isn't painted over by a later sibling (e.g. the next post in
+   a feed). Scoped to show/hide rather than a static state class, since
+   several siblings can share a state (e.g. multiple posts being edited at
+   once) but only one tooltip is ever visible at a time. */
+.tippy-stack-elevated {
+  z-index: 3;
+}
+
 .home_navigation .tippy-box[data-theme~="vk"] .tippy-content {
   padding: 0;
 }
