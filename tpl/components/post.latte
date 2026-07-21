@@ -64,7 +64,7 @@
                         </a>
                     {/if}
                     <span n:if="$post->isPinned()" class="wall_fixed_label">{_pinned}</span>
-                    <span n:if="$post->canBeEditedBy($thisUser)" class="wall_edit_label">{_logs_editing|lower}</span>
+                    <span n:if="$post->canBeEditedBy($thisUser)" class="wall_edit_label"><span class="divider"></span>{_logs_editing|lower}</span>
                 </span>
             </div>
             <div class="post_date">

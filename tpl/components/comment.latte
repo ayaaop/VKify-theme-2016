@@ -22,6 +22,7 @@
                     <b class="post-author-name">{$author->getCanonicalName()}</b>
                 </a>
                 <a class="page_verified" n:if="$author->isVerified()" href="/verify"></a>
+                <span n:if="$comment->canBeEditedBy($thisUser)" class="wall_edit_label"><span class="divider"></span>{_logs_editing|lower}</span>
             </div>
             <div class="post-content" id="{$comment->getId()}">
                 <div class="text reply_text" id="text{$comment->getId()}">
