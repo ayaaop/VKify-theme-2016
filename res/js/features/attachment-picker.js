@@ -2,6 +2,7 @@
 
 const tr = window.tr;
 const LoaderUtils = window.LoaderUtils;
+const CF = window.ContentFetcher;
 const MAX_ATTACHMENTS = window.openvk?.max_attachments || 10;
 const DEFAULT_PER_PAGE = window.openvk?.default_per_page || 10;
 
@@ -386,6 +387,7 @@ class AttachmentPicker extends AttachmentPickerBase {
         this._preRendered = null;
         this.updateAttachButton();
         this.adapter.afterLoad?.(this, preRendered);
+        this._setupInfiniteScroll();
     }
 
     _preRenderInitialData() {
@@ -425,24 +427,14 @@ class AttachmentPicker extends AttachmentPickerBase {
             if (!cache.loaded) {
                 await this.load();
             } else if (this._isCacheStaleFor(this.viewingUser)) {
-                this.load();
+                await this.load();
             }
+            this._infiniteScroll?.reset();
             this.updateAttachButton();
         });
 
         node.on('mouseenter', '.picker-toggle-link', () => {
             this._preloadAlternateContainer();
-        });
-
-        node.on('click', '.picker-show-more', async (e) => {
-            e.preventDefault();
-            const btn = u(e.target).closest('.picker-show-more');
-            if (this.loading) return;
-            this.page = Number(btn.attr('data-page')) || this.page + 1;
-            await LoaderUtils.withAsyncButton(btn, async () => {
-                await this.load(true);
-            });
-            btn.remove();
         });
 
         node.on('click', '.picker-item-select', (e) => {
@@ -474,14 +466,28 @@ class AttachmentPicker extends AttachmentPickerBase {
         const searchEl = node.find('.picker-search').nodes[0];
         if (searchEl && window.uiSearch) {
             window.uiSearch.init(searchEl, {
-                onInput: (q) => { this.query = q; this.page = 0; this.load(); },
-                onReset: () => { this.query = ''; this.page = 0; this.load(); },
+                onInput: async (q) => { this.query = q; this.page = 0; await this.load(); this._infiniteScroll?.reset(); },
+                onReset: async () => { this.query = ''; this.page = 0; await this.load(); this._infiniteScroll?.reset(); },
                 timeout: 400
             });
         }
     }
 
-    async load(append = false, useInitial = false) {
+    _combinedAbortSignal(controller, signal) {
+        if (!signal) return controller.signal;
+        if (controller.signal.aborted || signal.aborted) {
+            const ac = new AbortController();
+            ac.abort();
+            return ac.signal;
+        }
+        const ac = new AbortController();
+        const abort = () => ac.abort();
+        controller.signal.addEventListener('abort', abort, { once: true });
+        signal.addEventListener('abort', abort, { once: true });
+        return ac.signal;
+    }
+
+    async load(append = false, useInitial = false, signal = null) {
         const generation = ++this._loadGeneration;
         this.loading = true;
         this.abortController?.abort();
@@ -493,7 +499,6 @@ class AttachmentPicker extends AttachmentPickerBase {
 
         let rowsContainer = rowsClass ? container.find(`.${rowsClass}`) : container;
         if (rowsClass && !rowsContainer.length) {
-            // Ensure there is always an inner grid wrapper when rowsClass is defined
             container.html(`<div class="${rowsClass}"></div>`);
             rowsContainer = container.find(`.${rowsClass}`);
         }
@@ -508,9 +513,10 @@ class AttachmentPicker extends AttachmentPickerBase {
         const isStale = () => generation !== this._loadGeneration;
 
         try {
+            const fetchSignal = this._combinedAbortSignal(this.abortController, signal);
             const result = useInitial && this._initialData
                 ? this._initialData
-                : await this.adapter.fetch(this, this.abortController.signal);
+                : await this.adapter.fetch(this, fetchSignal);
             this._initialData = null;
             if (isStale() || !result) return;
 
@@ -522,7 +528,7 @@ class AttachmentPicker extends AttachmentPickerBase {
                 cache.hasMore = false;
                 this._markCacheFresh();
                 this.adapter.afterLoad?.(this, result);
-                return;
+                return result;
             }
 
             if (rowsClass) targetContainer.addClass(rowsClass);
@@ -530,7 +536,7 @@ class AttachmentPicker extends AttachmentPickerBase {
             targetContainer.append(html);
 
             cache.loaded = true;
-            cache.page = append ? cache.page + 1 : 0;
+            cache.page = append ? cache.page : 0;
             cache.hasMore = result.hasMore;
             this._markCacheFresh();
 
@@ -541,6 +547,7 @@ class AttachmentPicker extends AttachmentPickerBase {
 
             this.updateAttachButton();
             this.adapter.afterLoad?.(this, result);
+            return result;
         } catch (err) {
             if (isStale() || err.name === 'AbortError') return;
             console.error(`[AttachmentPicker] Load error:`, err);
@@ -548,12 +555,35 @@ class AttachmentPicker extends AttachmentPickerBase {
                 if (rowsClass) targetContainer.removeClass(rowsClass);
                 targetContainer.html(`<div class="information">${tr('error')}</div>`);
             }
+            if (append) throw err;
         } finally {
             if (!isStale()) this.loading = false;
         }
     }
 
+    _setupInfiniteScroll() {
+        if (!this.msgbox) return;
+
+        if (this._infiniteScroll) {
+            this._infiniteScroll.disconnect();
+        }
+
+        this._infiniteScroll = CF.infiniteScroll('.picker-show-more', {
+            container: () => this._getContainer(),
+            load: async (page, signal) => {
+                const container = this._getContainer();
+                const btn = container.find('.picker-show-more');
+                this.page = Number(btn.attr('data-page')) || this.page + 1;
+                return await this.load(true, false, signal);
+            },
+            render: () => {},
+            hasMore: (result) => !!result && result.hasMore,
+            onError: () => {}
+        });
+    }
+
     close() {
+        this._infiniteScroll?.disconnect();
         this.abortController?.abort();
         super.close();
     }
@@ -564,8 +594,8 @@ const ALBUMS_PER_PAGE = 2;
 
 const renderPhotoItem = (photo, isSelected) => {
     const id = `${photo.owner_id}_${photo.id}`;
-    const thumb = photo.sizes[1]?.url || photo.sizes[0]?.url;
-    const preview = photo.sizes[1]?.url || photo.sizes[0]?.url;
+    const thumb = photo.sizes[4]?.url || photo.sizes[1]?.url || photo.sizes[0]?.url;
+    const preview = photo.sizes[4]?.url || photo.sizes[1]?.url || photo.sizes[0]?.url;
     const fullsize = photo.sizes[9]?.url || photo.sizes[photo.sizes.length - 1]?.url;
     return `<a class="photos_choose_row picker-item-attach ${isSelected ? 'selected' : ''}" href="javascript:void(0)" 
                data-picker-id="${id}" data-preview="${preview}" data-fullsize="${fullsize}">
@@ -666,37 +696,51 @@ class PhotoMainView {
             await this.picker.switchToAlbumView(albumId, title);
         });
 
-        node.on('click', '.picker-albums-more', async (e) => {
-            e.preventDefault();
-            const btn = u(e.target).closest('.picker-albums-more');
-            this.albumsPage++;
-            await LoaderUtils.withAsyncButton(btn, async () => {
+        this._albumsScroller = CF.infiniteScroll('.picker-albums-more', {
+            container: () => node.find('#albums_content'),
+            load: async (page, signal) => {
+                this.albumsPage++;
                 const moreAlbums = await fetchAlbums(this.ownerId, this.albumsPage);
-                const container = node.find('#albums_content .photos_choose_album_rows');
-                container.append(moreAlbums.items.map(renderAlbumHTML).join(''));
-                btn.remove();
-                if ((this.albumsPage + 1) * ALBUMS_PER_PAGE < moreAlbums.count) {
-                    node.find('#albums_content').append(`<div class="show_more button button_gray picker-albums-more">${tr('show_more')}</div>`);
+                return { items: moreAlbums.items, count: moreAlbums.count, page: this.albumsPage };
+            },
+            render: (result, container) => {
+                const rows = container.find('.photos_choose_album_rows');
+                rows.append(result.items.map(renderAlbumHTML).join(''));
+                container.find('.picker-albums-more').remove();
+                if ((result.page + 1) * ALBUMS_PER_PAGE < result.count) {
+                    container.append(`<div class="show_more button button_gray picker-albums-more">${tr('show_more')}</div>`);
                 }
-            });
+            },
+            hasMore: (result) => (result.page + 1) * ALBUMS_PER_PAGE < result.count,
+            onError: (err) => console.error('[PhotoMainView] Failed to load albums:', err)
         });
 
         if (this.showRecentPhotos) {
-            node.on('click', '#photos_content .picker-show-more', async (e) => {
-                e.preventDefault();
-                const btn = u(e.target).closest('.picker-show-more');
-                this.photosPage++;
-                await LoaderUtils.withAsyncButton(btn, async () => {
-                    const morePhotos = await fetchPhotos(this.ownerId, null, this.photosPage);
-                    const container = node.find('#photos_content .photos_choose_rows');
-                    container.append(morePhotos.items.map(p => renderPhotoItem(p, this.picker.isSelected(`${p.owner_id}_${p.id}`))).join(''));
-                    btn.remove();
-                    if (morePhotos.hasMore) {
-                        node.find('#photos_content').append(`<div class="show_more button button_gray picker-show-more" data-page="${this.photosPage + 1}">${tr('show_more')}</div>`);
+            this._photosScroller = CF.infiniteScroll('.picker-show-more', {
+                container: () => node.find('#photos_content'),
+                load: async (page, signal) => {
+                    this.photosPage++;
+                    return await fetchPhotos(this.ownerId, null, this.photosPage);
+                },
+                render: (result, container) => {
+                    const rows = container.find('.photos_choose_rows');
+                    rows.append(result.items.map(p => renderPhotoItem(p, this.picker.isSelected(`${p.owner_id}_${p.id}`))).join(''));
+                    container.find('.picker-show-more').remove();
+                    if (result.hasMore) {
+                        container.append(`<div class="show_more button button_gray picker-show-more" data-page="${this.photosPage + 1}">${tr('show_more')}</div>`);
                     }
-                });
+                },
+                hasMore: (result) => result.hasMore,
+                onError: (err) => console.error('[PhotoMainView] Failed to load photos:', err)
             });
         }
+    }
+
+    disconnectScrollers() {
+        this._albumsScroller?.disconnect();
+        this._photosScroller?.disconnect();
+        this._albumsScroller = null;
+        this._photosScroller = null;
     }
 
     _setupDragDrop(node) {
@@ -757,20 +801,28 @@ class PhotoAlbumView {
     }
 
     setupHandlers(node) {
-        node.on('click', '#photos_content .picker-show-more', async (e) => {
-            e.preventDefault();
-            const btn = u(e.target).closest('.picker-show-more');
-            this.page++;
-            await LoaderUtils.withAsyncButton(btn, async () => {
-                const morePhotos = await fetchPhotos(this.ownerId, this.albumId, this.page);
-                const container = node.find('#photos_content .photos_choose_rows');
-                container.append(morePhotos.items.map(p => renderPhotoItem(p, this.picker.isSelected(`${p.owner_id}_${p.id}`))).join(''));
-                btn.remove();
-                if (morePhotos.hasMore) {
-                    node.find('#photos_content').append(`<div class="show_more button button_gray picker-show-more" data-page="${this.page + 1}">${tr('show_more')}</div>`);
+        this._photosScroller = CF.infiniteScroll('.picker-show-more', {
+            container: () => node.find('#photos_content'),
+            load: async (page, signal) => {
+                this.page++;
+                return await fetchPhotos(this.ownerId, this.albumId, this.page);
+            },
+            render: (result, container) => {
+                const rows = container.find('.photos_choose_rows');
+                rows.append(result.items.map(p => renderPhotoItem(p, this.picker.isSelected(`${p.owner_id}_${p.id}`))).join(''));
+                container.find('.picker-show-more').remove();
+                if (result.hasMore) {
+                    container.append(`<div class="show_more button button_gray picker-show-more" data-page="${this.page + 1}">${tr('show_more')}</div>`);
                 }
-            });
+            },
+            hasMore: (result) => result.hasMore,
+            onError: (err) => console.error('[PhotoAlbumView] Failed to load photos:', err)
         });
+    }
+
+    disconnectScrollers() {
+        this._photosScroller?.disconnect();
+        this._photosScroller = null;
     }
 
     getButtons() {
@@ -840,6 +892,12 @@ class PhotoPicker extends AttachmentPickerBase {
         this.viewingUser = !this.viewingUser;
         this.selected.clear();
         await this._showMainView();
+    }
+
+    close() {
+        this._currentView?.disconnectScrollers?.();
+        this._currentView = null;
+        super.close();
     }
 
     _showMessageBox(view, title, buttons, callbacks) {
@@ -1476,7 +1534,23 @@ window.attachmentAdapters = adapters;
 window.openAttachmentPicker = openPicker;
 
 vkify.bindOnce('pickerButtons', () => {
-    const getForm = (e) => u(e.target).closest('form');
+    const resolveForm = (el) => {
+        if (!el) return u();
+        let form = u(el).closest('form');
+        if (form.length) return form;
+
+        const tippyBox = el.closest?.('.tippy-box');
+        if (tippyBox) {
+            const contentId = tippyBox.getAttribute('data-tippy-content-id');
+            if (contentId) {
+                const escaped = window.CSS?.escape ? window.CSS.escape(contentId) : contentId.replace(/[^a-zA-Z0-9_\u00A0-\uFFFF-]/g, '\\$&');
+                const trigger = document.querySelector(`[data-tippy-content-id="${escaped}"]:not(.tippy-box)`);
+                if (trigger) form = u(trigger).closest('form');
+            }
+        }
+        return form;
+    };
+    const getForm = (e) => resolveForm(e.currentTarget && e.currentTarget !== document ? e.currentTarget : e.target);
 
     u(document).on('click', '#__vkifyPhotoAttachment', async (e) => {
         if (e.__vkifyHandled) return;
@@ -1513,7 +1587,7 @@ vkify.bindOnce('pickerButtons', () => {
         if (!docBtn || e.__vkifyHandled) return;
         e.__vkifyHandled = true;
         const club = Number(docBtn.dataset.club ?? 0);
-        const form = u(docBtn).closest('form').length ? u(docBtn).closest('form') : u(e.target).closest('form');
+        const form = resolveForm(docBtn);
         openPicker('document', form, club);
     }, true);
 
@@ -1521,7 +1595,7 @@ vkify.bindOnce('pickerButtons', () => {
         const noteBtn = e.target.closest('#__vkifyNotesAttachment, .attach_note');
         if (!noteBtn || e.__vkifyHandled) return;
         e.__vkifyHandled = true;
-        const form = u(noteBtn).closest('form').length ? u(noteBtn).closest('form') : u(e.target).closest('form');
+        const form = resolveForm(noteBtn);
         openPicker('note', form);
     }, true);
 });

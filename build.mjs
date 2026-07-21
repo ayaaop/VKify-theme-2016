@@ -20,9 +20,9 @@ const outFile = path.join(jsRoot, 'dist', 'vkify16.bundle.js');
 
 // Load order, relative to res/js/.
 const modules = [
-    'utils/modal-content-fetcher.js',
+    'utils/content-fetcher.js',
 
-    'ui/loader-utils.js',
+    'utils/loader-utils.js',
     'ui/textarea-autosize.js',
     'ui/message-box-overrides.js',
     'ui/choice-labels.js',
@@ -39,6 +39,7 @@ const modules = [
 
     'ui/search.js',
     'ui/music-popup.js',
+    'utils/modal-utils.js',
     'ui/media-modals.js',
     'ui/graffiti.js',
 

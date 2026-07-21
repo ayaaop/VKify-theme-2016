@@ -262,8 +262,10 @@ vkify.once("showAudioUploadPopup", () => {
                 fd.append('hash', window.router?.csrf || u('meta[name=csrf]').attr('value'));
 
                 try {
-                    const res = await fetch(uploadPage, { method: 'POST', body: fd });
-                    const result = await res.json();
+                    const result = await ContentFetcher.postForm(uploadPage, fd, {
+                        responseType: 'json',
+                        csrf: false
+                    });
 
                     if (result.success) {
                         endRedir = result.redirect_link;
@@ -287,7 +289,7 @@ vkify.once("showAudioUploadPopup", () => {
                 const separator = baseFetchUrl.includes('?') ? '&' : '?';
                 const fetchUrl = `${baseFetchUrl}${separator}_t=${Date.now()}`;
                 try {
-                    const doc = await window.ContentFetcher.fetchPageContent(fetchUrl, null);
+                    const doc = await window.ContentFetcher.fetchPageContent(fetchUrl, null, { showLoader: true });
                     const newAudioEmbeds = Array.from(doc.querySelectorAll('.audioEmbed')).slice(0, uploadedCount);
                     
                     const playlistEditPage = document.querySelector('.PE_playlistEditPage');
