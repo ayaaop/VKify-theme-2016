@@ -1,6 +1,8 @@
 (function () {
 'use strict';
 
+let cachedNotificationsContent = null;
+
 function formatNotifyCount(count) {
     return count > 99 ? '99+' : String(count);
 }
@@ -25,6 +27,8 @@ vkify.ready(() => {
 
 
     vkify.hook(window, 'incrementNotificationsCounter', function () {
+        cachedNotificationsContent = null;
+
         const btn = document.querySelector('#top_notify_btn');
         if (!btn) return;
 
@@ -56,27 +60,48 @@ vkify.ready(() => {
             mobileLink.querySelector('object b').textContent = formatNotifyCount(mobileCount);
         }
     }, 'replace');
+
+    const topNotifyBtn = document.querySelector('#top_notify_btn');
+    if (topNotifyBtn) {
+        const notifyObserver = new MutationObserver(() => {
+            cachedNotificationsContent = null;
+        });
+        notifyObserver.observe(topNotifyBtn, { childList: true, subtree: true, characterData: true });
+    }
 });
 
 vkify.once("initNotificationsPopup", () => {
     async function fetchNotificationsContent() {
-        try {
-            const notificationsContainer = await window.ContentFetcher.fetchPageContent('/notifications', '.notifications', { ajaxQuery: false });
+        const notificationsContainer = await window.ContentFetcher.fetchPageContent('/notifications', '.notifications', { ajaxQuery: false });
 
-            if (notificationsContainer) {
-                const paginator = notificationsContainer.querySelector('.vkify-paginator');
-                if (paginator) {
-                    const wrap = paginator.closest('.clear_fix');
-                    if (wrap && wrap.children.length === 1) {
-                        wrap.remove();
-                    } else {
-                        paginator.remove();
-                    }
+        if (notificationsContainer) {
+            const paginator = notificationsContainer.querySelector('.vkify-paginator');
+            if (paginator) {
+                const wrap = paginator.closest('.clear_fix');
+                if (wrap && wrap.children.length === 1) {
+                    wrap.remove();
+                } else {
+                    paginator.remove();
                 }
-                return notificationsContainer.innerHTML + `<a href="/notifications" class="top_notify_show_all">${tr('show_more')}</a>`;
             }
+            return notificationsContainer.innerHTML + `<a href="/notifications" class="top_notify_show_all">${tr('show_more')}</a>`;
+        }
 
-            return `<div class="no_notifications">${tr('no_data_description')}</div>`;
+        return `<div class="no_notifications">${tr('no_data_description')}</div>`;
+    }
+
+    function isNotificationsCacheValid() {
+        return cachedNotificationsContent !== null;
+    }
+
+    async function getNotificationsContent() {
+        if (isNotificationsCacheValid()) {
+            return cachedNotificationsContent;
+        }
+
+        try {
+            cachedNotificationsContent = await fetchNotificationsContent();
+            return cachedNotificationsContent;
         } catch (error) {
             console.error('Failed to fetch notifications:', error);
             return `<div class="notifications_error">${tr('error')}</div>`;
@@ -106,6 +131,7 @@ vkify.once("initNotificationsPopup", () => {
             theme: 'light vk notifications',
             maxWidth: 470,
             arrow: false,
+            zIndex: 99,
             appendTo: 'parent',
             popperOptions: {
                 modifiers: [{
@@ -122,9 +148,12 @@ vkify.once("initNotificationsPopup", () => {
                 document.querySelector('#top_notify_btn')?.classList.add('top_nav_btn_active');
                 document.querySelector('#top_notify_btn')?.classList.remove('has_notify');
                 document.querySelector('a.my_feedback.mobileonly object')?.remove();
-                instance.setContent(loadingContent);
-                const freshNotificationsContent = await fetchNotificationsContent();
-                instance.setContent(freshNotificationsContent);
+
+                if (!isNotificationsCacheValid()) {
+                    instance.setContent(loadingContent);
+                }
+
+                instance.setContent(await getNotificationsContent());
             }
         });
     };
