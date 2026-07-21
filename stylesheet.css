@@ -2038,6 +2038,13 @@ table,
     margin-left: 10px;
     border-left: 1px solid var(--border-color);
 }
+.model_content_textarea .post-opts-trigger {
+    margin-left: 6px;
+    display: none;
+}
+.model_content_textarea.shown .post-opts-trigger {
+    display: block;
+}
 
 .tippy-box .post-opts {
     margin: 5px 0 0;
@@ -2101,6 +2108,7 @@ table,
     justify-content: space-between;
     align-items: center;
     padding-top: 20px;
+    clear: both;
 }
 .reply .post-bottom-acts {
     padding-top: 5px;

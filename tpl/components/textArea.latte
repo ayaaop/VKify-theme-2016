@@ -192,6 +192,19 @@
                             <div class="post-attach-menu__icon"></div>
                         </a>
                     {/if}
+                    {if $showCommentAsGroup}
+                        <div class="post-opts-trigger">
+                            <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}" data-tippy-append-to="body">
+                                <div class="common_icon"></div>
+                            </div>
+                            <div class="post-opts tippy-content-template" id="postOptsTooltip{$textAreaId}">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="as_group" form="write-form-{$textAreaId}" onchange="window.onWallAsGroupClick(this)" />
+                                    <span>{_comment_as_group}</span>
+                                </label>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
 
                 <div class="post-bottom-buttons">
@@ -228,16 +241,6 @@
                                     {_set_source}
                                 </a>
                             {/if}
-                        </div>
-                    {elseif $showCommentAsGroup}
-                        <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}" data-tippy-append-to="body">
-                            <div class="common_icon"></div>
-                        </div>
-                        <div class="post-opts tippy-content-template" id="postOptsTooltip{$textAreaId}">
-                            <label class="checkbox">
-                                <input type="checkbox" name="as_group" form="write-form-{$textAreaId}" onchange="window.onWallAsGroupClick(this)" />
-                                <span>{_comment_as_group}</span>
-                            </label>
                         </div>
                     {/if}
 
