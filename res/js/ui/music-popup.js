@@ -679,6 +679,7 @@ async function initMusicPopupTippyOnce() {
         placement: 'bottom-start',
         theme: 'musicpopup',
         arrow: false,
+        zIndex: 99,
         getReferenceClientRect: () => {
             const searchBox = document.querySelector('.home_search');
             if (!searchBox) {
@@ -992,19 +993,20 @@ vkify.bindOnce('playlistBookmark', () => {
 
         const wasUnbookmark = el.id === 'unbookmarkPlaylist';
 
-        $.ajax({
-            type: 'POST',
-            url: `/playlist${el.dataset.id}/action?act=${wasUnbookmark ? 'unbookmark' : 'bookmark'}`,
-            data: { hash: vkify.getCsrf() },
-            beforeSend: () => el.classList.add('lagged'),
-            success: (response) => {
-                if (response.success) {
-                    updatePlaylistBookmarkButton(el, wasUnbookmark);
-                    el.classList.remove('lagged');
-                } else {
-                    fastError(response.flash.message);
-                }
-            },
+        const formData = new FormData();
+        formData.append('hash', vkify.getCsrf());
+
+        el.classList.add('lagged');
+        ky.post(`/playlist${el.dataset.id}/action?act=${wasUnbookmark ? 'unbookmark' : 'bookmark'}`, { body: formData }).json().then((response) => {
+            if (response.success) {
+                updatePlaylistBookmarkButton(el, wasUnbookmark);
+                el.classList.remove('lagged');
+            } else {
+                fastError(response.flash.message);
+            }
+        }).catch((err) => {
+            console.error(err);
+            el.classList.remove('lagged');
         });
     }, true);
 });

@@ -293,10 +293,9 @@ vkify.onPage(() => {
                     const params = Number(id) > 0
                         ? `user_ids=${encodeURIComponent(id)}`
                         : `group_ids=${encodeURIComponent(Math.abs(id))}`;
-                    const res = await fetch(`/method/newsfeed.deleteBan?auth_mechanism=roaming&${params}`);
-                    const resp = await res.json();
-                    if (resp.error_code) {
-                        console.error(resp.error_msg);
+                    const resp = await ky.get(`/method/newsfeed.deleteBan?auth_mechanism=roaming&${params}`).json().catch(() => null);
+                    if (!resp || resp.error_code) {
+                        console.error(resp?.error_msg);
                         btn.disabled = false;
                         btn.classList.remove('lagged');
                         return;

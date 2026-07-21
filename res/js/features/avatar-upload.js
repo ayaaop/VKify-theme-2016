@@ -76,7 +76,7 @@
                     fillColor: '#fff',
                     imageSmoothingEnabled: false,
                     imageSmoothingQuality: 'high',
-                }).toBlob((blob) => {
+                }).toBlob(async (blob) => {
                     document.querySelector("#_uploadImg").classList.add("lagged");
                     console.log('[AvatarUpload] cropped blob', { size: blob?.size, type: blob?.type });
                     const formdata = new FormData();
@@ -87,106 +87,104 @@
                     const uploadUrl = isGroup ? "/club" + clubId + "/al_avatar" : "/al_avatars";
                     console.log('[AvatarUpload] uploading to', uploadUrl, 'hash present:', !!vkify.getCsrf());
 
-                    $.ajax({
-                        type: "POST",
-                        url: uploadUrl,
-                        data: formdata,
-                        processData: false,
-                        contentType: false,
-                        error: (xhr, textStatus, errorThrown) => {
+                    try {
+                        const res = await ky.post(uploadUrl, { body: formdata, throwHttpErrors: false });
+
+                        let response;
+                        try {
+                            response = await res.json();
+                        } catch (e) {
+                            response = null;
+                        }
+
+                        if (!res.ok || !response?.success) {
                             document.querySelector("#_uploadImg")?.classList.remove("lagged");
-                            console.error('[AvatarUpload] upload error', { status: xhr.status, statusText: xhr.statusText, textStatus, errorThrown, responseText: xhr.responseText });
-                            let errorMsg = "Upload failed";
-                            try {
-                                const res = JSON.parse(xhr.responseText);
-                                errorMsg = res.flash?.message || res.message || errorMsg;
-                            } catch (e) {}
-                            fastError(errorMsg);
-                        },
-                        success: (response) => {
-                            document.querySelector("#_uploadImg")?.classList.remove("lagged");
-                            console.log('[AvatarUpload] upload response', response);
-                            u("body").removeClass("dimmed");
-                            document.querySelector("html").style.overflowY = "scroll";
-                            u(".ovk-diag-cont").remove();
+                            console.error('[AvatarUpload] upload error', { status: res.status, statusText: res.statusText, response });
+                            fastError(response?.flash?.message || response?.message || "Upload failed");
+                            return;
+                        }
 
-                            if (!response.success) {
-                                fastError(response.flash?.message || "Upload failed");
-                                return;
-                            }
+                        console.log('[AvatarUpload] upload response', response);
+                        document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                        u("body").removeClass("dimmed");
+                        document.querySelector("html").style.overflowY = "scroll";
+                        u(".ovk-diag-cont").remove();
 
-                            // 1. Update big avatar (profile main photo)
-                            const bigAvatar = document.querySelector("#bigAvatar");
-                            if (bigAvatar) {
-                                bigAvatar.src = response.url;
-                                if (bigAvatar.parentNode && bigAvatar.parentNode.tagName === 'A') {
-                                    bigAvatar.parentNode.href = "/photo" + response.new_photo;
-                                }
-                            }
-
-                            // 1.5 Update mobile hero avatar and make it open the new photo
-                            const mobileHeroImg = document.querySelector(".mobile-hero-img");
-                            if (mobileHeroImg) {
-                                mobileHeroImg.src = response.url;
-                            }
-                            const mobileHeroWrap = document.querySelector(".mobile-hero-img-wrap");
-                            if (mobileHeroWrap) {
-                                mobileHeroWrap.classList.add("has-avatar-photo");
-                                mobileHeroWrap.onclick = (event) => {
-                                    event.preventDefault();
-                                    OpenMiniature(event, response.url, null, response.new_photo, null);
-                                };
-                            }
-                            const mobileHeroEdit = document.querySelector(".mobile-hero-avatar-edit");
-                            if (mobileHeroEdit && typeof tr === 'function') {
-                                mobileHeroEdit.textContent = tr('upload_new_picture');
-                            }
-
-                            // 2. Toggle avatar control buttons visibility on profile page
-                            const addImageText = document.querySelector(".add_image_text");
-                            if (addImageText) addImageText.style.display = "none";
-                            const avatarControls = document.querySelector(".avatar_controls");
-                            if (avatarControls) avatarControls.style.display = "block";
-
-                            // 3. Update global top menu and sidebar avatars for the current user
-                            if (!isGroup) {
-                                const sidebarImg = document.querySelector(".ui_ownblock_img");
-                                if (sidebarImg) sidebarImg.src = response.url;
-
-                                const menuAvatar = document.querySelector("#userMenuAvatar");
-                                if (menuAvatar) menuAvatar.src = response.url;
-                            }
-
-                            // 4. Update post/comment/list avatars for this entity, verifying they are actual avatars
-                            const entityUrl = isGroup ? `/club${clubId}` : `/id${window.openvk?.current_id}`;
-                            const links = document.querySelectorAll(`a[href="${entityUrl}"], a[href="/${entityUrl.substring(1)}"]`);
-                            links.forEach(link => {
-                                const img = link.querySelector('img');
-                                if (img) {
-                                    const isAvatar = img.classList.contains('post-avatar') ||
-                                                     img.classList.contains('reply_img') ||
-                                                     img.classList.contains('cell_img') ||
-                                                     img.classList.contains('people_cell_img') ||
-                                                     img.closest('.people_cell_img') ||
-                                                     img.closest('.search_row .img') ||
-                                                     img.classList.contains('ui_ownblock_img') ||
-                                                     img.classList.contains('post_field_user_image') ||
-                                                     img.classList.contains('feedback_image') ||
-                                                     img.closest('.feedback_image') ||
-                                                     img.id === 'userMenuAvatar' ||
-                                                     img.id === 'bigAvatar';
-                                    if (isAvatar) {
-                                        img.src = response.url;
-                                    }
-                                }
-                            });
-
-                            if (window.vkifyShowSavedLabel) {
-                                const form = btn.closest('form') || btn.closest('.page_block');
-                                if (form) vkifyShowSavedLabel(form);
+                        // 1. Update big avatar (profile main photo)
+                        const bigAvatar = document.querySelector("#bigAvatar");
+                        if (bigAvatar) {
+                            bigAvatar.src = response.url;
+                            if (bigAvatar.parentNode && bigAvatar.parentNode.tagName === 'A') {
+                                bigAvatar.parentNode.href = "/photo" + response.new_photo;
                             }
                         }
-                    });
+
+                        // 1.5 Update mobile hero avatar and make it open the new photo
+                        const mobileHeroImg = document.querySelector(".mobile-hero-img");
+                        if (mobileHeroImg) {
+                            mobileHeroImg.src = response.url;
+                        }
+                        const mobileHeroWrap = document.querySelector(".mobile-hero-img-wrap");
+                        if (mobileHeroWrap) {
+                            mobileHeroWrap.classList.add("has-avatar-photo");
+                            mobileHeroWrap.onclick = (event) => {
+                                event.preventDefault();
+                                OpenMiniature(event, response.url, null, response.new_photo, null);
+                            };
+                        }
+                        const mobileHeroEdit = document.querySelector(".mobile-hero-avatar-edit");
+                        if (mobileHeroEdit && typeof tr === 'function') {
+                            mobileHeroEdit.textContent = tr('upload_new_picture');
+                        }
+
+                        // 2. Toggle avatar control buttons visibility on profile page
+                        const addImageText = document.querySelector(".add_image_text");
+                        if (addImageText) addImageText.style.display = "none";
+                        const avatarControls = document.querySelector(".avatar_controls");
+                        if (avatarControls) avatarControls.style.display = "block";
+
+                        // 3. Update global top menu and sidebar avatars for the current user
+                        if (!isGroup) {
+                            const sidebarImg = document.querySelector(".ui_ownblock_img");
+                            if (sidebarImg) sidebarImg.src = response.url;
+
+                            const menuAvatar = document.querySelector("#userMenuAvatar");
+                            if (menuAvatar) menuAvatar.src = response.url;
+                        }
+
+                        // 4. Update post/comment/list avatars for this entity, verifying they are actual avatars
+                        const entityUrl = isGroup ? `/club${clubId}` : `/id${window.openvk?.current_id}`;
+                        const links = document.querySelectorAll(`a[href="${entityUrl}"], a[href="/${entityUrl.substring(1)}"]`);
+                        links.forEach(link => {
+                            const img = link.querySelector('img');
+                            if (img) {
+                                const isAvatar = img.classList.contains('post-avatar') ||
+                                                 img.classList.contains('reply_img') ||
+                                                 img.classList.contains('cell_img') ||
+                                                 img.classList.contains('people_cell_img') ||
+                                                 img.closest('.people_cell_img') ||
+                                                 img.closest('.search_row .img') ||
+                                                 img.classList.contains('ui_ownblock_img') ||
+                                                 img.classList.contains('post_field_user_image') ||
+                                                 img.classList.contains('feedback_image') ||
+                                                 img.closest('.feedback_image') ||
+                                                 img.id === 'userMenuAvatar' ||
+                                                 img.id === 'bigAvatar';
+                                if (isAvatar) {
+                                    img.src = response.url;
+                                }
+                            }
+                        });
+
+                        if (window.vkifyShowSavedLabel) {
+                            const form = btn.closest('form') || btn.closest('.page_block');
+                            if (form) vkifyShowSavedLabel(form);
+                        }
+                    } catch (err) {
+                        document.querySelector("#_uploadImg")?.classList.remove("lagged");
+                        console.error('[AvatarUpload] upload error', err);
+                        fastError("Upload failed");
+                    }
                 });
             };
 
