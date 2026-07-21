@@ -300,6 +300,9 @@
   transition: 0.2s;
 }
 
+.pv_right .pr { 
+  margin: auto;
+}
 .pv_right #standaloneCommentBox {
   border-bottom-left-radius: 0;
 }

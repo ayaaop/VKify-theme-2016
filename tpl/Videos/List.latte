@@ -39,9 +39,8 @@
                         "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
                         "atBottom" => true,
                     ]}
-            {else}
-                {include "../components/nothing.latte", icon => 'video_empty.png'}
             {/if}
+            {include "../components/nothing.latte", icon => 'video_empty.png', className => sizeof($data) !== 0 ? 'hidden' : ''}
         </div>
     </div>
 {/block}
