@@ -20,6 +20,11 @@
 			'active' => $section === 'groups'
 		],
 		[
+			'url' => '/search?section=events&q=' . urlencode($query),
+			'title' => 's_events',
+			'active' => $section === 'events'
+		],
+		[
 			'url' => '/search?section=posts&q=' . urlencode($query),
 			'title' => 's_posts',
 			'active' => $section === 'posts'
@@ -183,6 +188,38 @@
                                                 <input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
                                             </form>
                                         {/if}
+                                    </div>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_search', ['text', ".name"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
+                            {elseif $section === 'events'}
+                                <div class='scroll_node search_row' data-uniqueid="event-{$dat->getId()}" n:foreach="$data as $dat">
+                                    <a href="{$dat->getURL()}" class="img">
+                                        {include '../components/avatar.latte', author => $dat, size => 'miniscule', width => 75, alt => tr('photo'), class => ''}
+                                    </a>
+                                    <div class="info">
+                                        <div class="labeled name">
+                                            <a href="{$dat->getURL()}">
+                                                {$dat->getCanonicalName()}
+                                            </a>
+                                            <a class="page_verified"
+                                                n:if="$dat->isVerified()" href="/verify"></a>
+                                        </div>
+                                        <div class="labeled">
+                                            {tr("participants", $dat->getFollowersCount())}
+                                        </div>
+                                        <div class="labeled" n:if="!is_null($dat->getStartDate())">
+                                            {_event_start_date}: {$dat->getStartDate()->relative(-1)}
+                                        </div>
+                                        <div class="labeled" n:if="!empty($dat->getDescription())">
+                                            {$dat->getDescription()|truncate:70}
+                                        </div>
                                     </div>
                                 </div>
 
