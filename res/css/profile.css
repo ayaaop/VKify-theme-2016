@@ -1037,3 +1037,67 @@ a.page_module_upload:hover .page_upload_label,
 .module_body .docListViewItem:not(:last-child) {
 	margin-bottom: 6px;
 }
+
+/* events */
+.profile_actions_split .profile_sub_wrapper {
+	flex: 1;
+	margin-right: 7px;
+}
+.profile_actions .button_wide.button_gray,
+.mobile_profile_actions .button_wide.button_gray {
+	padding-right: 8px;
+}
+.profile_sub_arrow {
+	display: inline-block;
+	width: 10px;
+	height: 6px;
+	background-image: url(/themepack/vkify16/3.3.5.2/resource/icons/contour_arrow.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 10px 6px;
+	vertical-align: middle;
+}
+.profile_sub_wrapper {
+	position: relative;
+}
+.profile_sub_wrapper.profile_sub_active {
+	position: absolute;
+	width: 100%;
+	border: 1px solid var(--border-color-2);
+	border-radius: var(--button-border-radius);
+	z-index: 10;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	margin: -1px -0.5px 0;
+	background: var(--button-background-color);
+}
+.profile_sub_wrapper.profile_sub_active .button {
+	position: relative;
+	z-index: 11;
+	border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
+}
+.profile_sub_active .profile_sub_arrow {
+  transform: rotate(180deg);
+}
+.group_counters_wrap {
+	padding: 0 15px 15px;
+}
+.group_counters {
+	margin: 0 -5px;
+	text-align: center;
+}
+.group_counters .page_counter {
+	padding: 14px 17px 0;
+}
+.group_counters .page_counter .label {
+	color: var(--muted-text-color);
+	font-size: 12px;
+}
+.group_counters.full .page_counter {
+	padding: 14px 4px 0;
+}
+.group_counters.full .page_counter:first-child {
+	float: left;
+}
+.group_counters.full .page_counter:last-child {
+	float: right;
+}

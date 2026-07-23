@@ -1,0 +1,48 @@
+{extends "../@layout.latte"}
+{block title}{_create_event}{/block}
+
+{block content}
+<div class="page_block">
+    {include "../components/page_block_header.latte", title: "create_event"}
+    <div class="form_group page_padding">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form_field">
+                <div class="form_label">{_name}</div>
+                <div class="form_data">
+                    <input type="text" name="name" value="" />
+                </div>
+            </div>
+            <div class="form_field">
+                <div class="form_label">{_description}</div>
+                <div class="form_data">
+                    <textarea type="text" name="about"></textarea>
+                </div>
+            </div>
+            <div class="form_field">
+                <div class="form_label">{_event_start_date}</div>
+                <div class="form_data">
+                    <input type="date" name="start_date" style="width:49%;" />
+                    <input type="time" name="start_time" style="width:49%;" />
+                </div>
+            </div>
+            <div class="form_field">
+                <div class="form_label">{_event_finish_date}</div>
+                <div class="form_data">
+                    <label class="checkbox">
+                        <input type="checkbox" name="end_date_checked" value="1" onclick="u('#finish_date_block').nodes[0].style.display = this.checked == true ? 'block' : 'none';" />
+                        <span>{_event_enable_finish_date}</span>
+                    </label>
+                    <div id="finish_date_block" style="display: none;">
+                        <input type="date" name="finish_date" style="width:49%;" />
+                        <input type="time" name="finish_time" style="width:49%;" />
+                    </div>
+                </div>
+            </div>
+            <div class="settings_save_footer">
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" value="{_create}" class="button" />
+            </div>
+        </form>
+    </div>
+</div>
+{/block}

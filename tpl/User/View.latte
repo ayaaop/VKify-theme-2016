@@ -198,6 +198,35 @@
 					</a>
 				</div>
 			{/if}
+			{if $user->getEventsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
+				<div class="module clear page_list_module mobile-scroll-card">
+					<a href="/events{$user->getId()}" class="module_header">
+						<h3 class="header_top clear_fix">
+							<span class="header_label fl_l">{_meetings}</span>
+							<span class="header_count fl_l">{$user->getEventsCount()}</span>
+						</h3>
+					</a>
+					<div class="module_body msm-grid">
+						{foreach array_slice(iterator_to_array($user->getEvents(1)), 0, 6) as $event}
+							<a href="{$event->getURL()}" class="msm-grid__cell">
+								{include '../components/avatar.latte', author => $event, size => 'miniscule', width => 50, height => 50, alt => $event->getCanonicalName(), class => 'msm-grid__img'}
+							</a>
+						{/foreach}
+					</div>
+				</div>
+			{elseif $thatIsThisUser && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
+				<div class="module clear page_list_module mobile-scroll-card">
+					<a href="/events{$user->getId()}" class="module_header">
+						<h3 class="header_top clear_fix">
+							<span class="header_label fl_l">{_meetings}</span>
+						</h3>
+					</a>
+					<a href="/events{$user->getId()}" class="module_body msm-placeholder">
+						<svg width="28" height="28" fill="currentColor" viewBox="0 0 28 28"><use href="#users-28"></use></svg>
+						<span class="msm-placeholder-label">{_meetings}</span>
+					</a>
+				</div>
+			{/if}
 			{if $canSeeAlbums}
 				{var $firstAlbum = $albums[0] ?? null}
 				<div class="module clear album_module mobile-scroll-card">
@@ -571,14 +600,14 @@
 								</div>
 							</div>
 						</div>
-						<div class="module clear page_list_module" n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-							<a href="/groups{$user->getId()}?act=meetings" class="module_header">
+						<div class="module clear page_list_module" n:if="$user->getMeetingsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+							<a href="/events{$user->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
 									<span class="header_label fl_l">
 										{_meetings}
 									</span>
 									<span class="header_count fl_l">
-										{$user->getMeetingCount()}
+										{$user->getMeetingsCount()}
 									</span>
 								</h3>
 							</a>

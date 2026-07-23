@@ -1246,6 +1246,10 @@
         display: none;
     }
 
+    .mobile_profile_actions .profile_sub_wrapper {
+        width: 100%;
+    }
+
     /* profile info rows */
     .mobile-info-rows {
         padding: 8px 0;

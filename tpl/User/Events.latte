@@ -1,0 +1,111 @@
+{extends "../@listView.latte"}
+{var $iterator = $user->getEvents($page, $admin)}
+{var $count    = $user->getEventsCount($admin)}
+
+{block title}
+    {_meetings}
+{/block}
+
+{block noscroll}{/block}
+
+{block appbar_extra}
+<div n:if="$user->getId() === $thisUser->getId()" class="mobileonly" id="events_appbar_extra">
+    <a class="appbar-extra-btn" href="/events_create" aria-label="{_create_event}">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><use href="#add-outline-24"></use></svg>
+    </a>
+</div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {var $eventsCount = $user->getEventsCount()}
+        {var $tabs = [
+            [
+                'url' => "/events{$user->getId()}",
+                'title' => 'meetings',
+                'active' => !$admin,
+                'id' => 'events_tab_all',
+                'count' => $eventsCount
+            ],
+            [
+                'url' => "/events{$user->getId()}?act=managed",
+                'title' => 'managed',
+                'active' => $admin,
+                'id' => 'events_tab_managed',
+                'count' => $user->getEventsCount(true)
+            ]
+        ]}
+        {var $createEventButton = '<a class="button nomobile" href="/events_create">' . tr('create_event') . '</a>'}
+        {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'events_top_tabs', extra => $createEventButton}
+    {else}
+        {include "../components/page_block_header.latte", title => 'meetings'}
+    {/if}
+    {include "../components/search_bar.latte",
+        id => 'events_search_header',
+        placeholder => tr('search_by_events'),
+        action => '/search',
+        section => 'events',
+        class => 'events_search_header'
+    }
+{/block}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+    {include '../components/avatar.latte', author => $x, size => 'miniscule', width => 80, alt => $x->getName()}
+{/block}
+
+{block name}{/block}
+
+{block infotable}
+    <div class="labeled name">
+        <a href="{$x->getURL()}" {if mb_strlen($x->getName()) > 100}title="{$x->getName()}"{/if}>{$x->getName()|truncate:100}</a>
+        <a class="page_verified" n:if="$x->isVerified()" href="/verify"></a>
+    </div>
+    <div class="labeled">
+        <a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a>
+    </div>
+    <div class="labeled" n:if="!is_null($x->getStartDate())">
+        {_event_start_date}: {$x->getStartDate()->relative(-1)}
+    </div>
+    <div class="labeled" n:if="!is_null($x->getFinishDate())">
+        {_event_finish_date}: {$x->getFinishDate()->relative(-1)}
+    </div>
+{/block}
+
+{block actions}
+    <div class="post_actions">
+        <div class="post_actions_icon" data-tippy-placement="bottom-end" data-tippy-content-id="event_actions_menu_{$x->getId()}"></div>
+        <div id="event_actions_menu_{$x->getId()}" class="tippy-menu tippy-content-template">
+            {if $x->canBeModifiedBy($thisUser ?? NULL)}
+                {var $clubPinned = $thisUser->isClubPinned($x)}
+                <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                    {if $clubPinned}
+                        {_remove_from_left_menu}
+                    {else}
+                        {_add_to_left_menu}
+                    {/if}
+                </a>
+            {/if}
+            {if $x->getSubscriptionStatus($thisUser) == false}
+                <a href="javascript:void(0)" onclick="this.closest('.tippy-menu').querySelector('form[data-action=add]').submit()">{_join_community}</a>
+                <form style="display: none" data-action="add" action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="add" />
+                    <input type="hidden" name="id" value="{$x->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                </form>
+            {else}
+                <a href="javascript:void(0)" onclick="this.closest('.tippy-menu').querySelector('form[data-action=rem]').submit()">{_leave_community}</a>
+                <form style="display: none" data-action="rem" action="/setSub/club" method="post">
+                    <input type="hidden" name="act" value="rem" />
+                    <input type="hidden" name="id" value="{$x->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                </form>
+            {/if}
+        </div>
+    </div>
+{/block}
