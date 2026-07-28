@@ -27,7 +27,7 @@
 
 ## Сборка JS-бандла
 
-JS-модули темы (`res/js/ui/*`, `res/js/features/*`, и т.д., за исключением `core/vkify.js`, `core/settings-config.js`, `core/router.js`, `i18n/localizator.js`, `ui/page.js`, `ui/tooltips.js` и сезонных скриптов вроде `features/doge.js`) собираются в один минифицированный файл `res/js/dist/vkify16.bundle.js`.
+JS-модули темы (`res/js/ui/*`, `res/js/features/*`, и т.д., за исключением `core/vkify.js`, `core/settings-config.js`, `core/router.js`, `ui/page.js`, `ui/tooltips.js` и сезонных скриптов вроде `features/doge.js`) собираются в один минифицированный файл `res/js/dist/vkify16.bundle.js`.
 
 Собранный бандл коммитится в репозиторий, поэтому для обычной установки Node.js не требуется. Пересобирать нужно только при изменении исходников JS:
 

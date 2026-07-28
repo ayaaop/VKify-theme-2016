@@ -1,3 +1,4 @@
+{php if (!function_exists('vkifyTr')) require_once \OPENVK_ROOT . '/themepacks/vkify16/res/php/vkify_i18n.php';}
 {var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 {var $darkModeEnabled = ($_COOKIE['vkify16_darkmode'] ?? '0') === '1'}
 {var $mode2018Enabled = ($_COOKIE['vkify16_2018mode'] ?? '0') === '1'}
@@ -406,7 +407,7 @@
                         {elseif $thisUser->isDeleted()}
                             <div class="deactivated">
                                 {_profile_deactivated_status}.
-                                <a href="/settings/reactivate"><vkifyloc name="restore" />.</a>    
+                                <a href="/settings/reactivate">{=vkifyTr('restore')|noescape}.</a>    
                             </div>
                         {/if}
                         <div class="sidebar_audio_player mobileonly" id="sidebar_audio_player">
@@ -633,11 +634,10 @@
             }
         </script>
 
+        <script>window.vkifylang = {=json_encode(vkifyGetLang(), 15)|noescape}</script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/vkify.js"></script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/settings-config.js"></script>
-        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/i18n/localizator.js" crossorigin="anonymous"></script>
         <script>
-            window.vkifylocalize("{php echo getLanguage()}");
         </script>
         {script "js/al_wall.js"}
 

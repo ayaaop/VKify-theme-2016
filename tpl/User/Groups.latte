@@ -110,7 +110,7 @@
             {include '../components/avatar.latte', author => $user, size => 'miniscule', class => 'ui_ownblock_img'}
             <div class="ui_ownblock_info">
                 <div class="ui_ownblock_label">{$user->getCanonicalName()}</div>
-                <div class="ui_ownblock_hint"><vkifyloc name="back_to_page"></vkifyloc></div>
+                <div class="ui_ownblock_hint">{=vkifyTr('back_to_page')|noescape}</div>
             </div>
         </a>
     </div>
@@ -119,7 +119,7 @@
             <a href="/search?section=groups" class="module_header">
                 <h3 class="header_top clear_fix">
                     <span class="header_label fl_l">
-                        <vkifyloc name="recommended_groups"/>
+                        {=vkifyTr('recommended_groups')|noescape}
                     </span>
                 </h3>
             </a>

@@ -214,7 +214,7 @@ vkify.onPage(initLocalStorageCheckboxes);
 vkify.hook(vkify, 'onPageReady', () => {
     window.initializeSearchFastTips?.();
     window.hideSearchFastTips?.();
-    setTimeout(window.initTabSlider, 150);
+    window.initTabSlider?.();
 
     if (window.location.pathname.includes('/albums') && !ge('photos-section')?.dataset?.initialized) {
         setTimeout(window.initAlbumPhotosLoader, 100);

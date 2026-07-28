@@ -102,7 +102,7 @@
 
                 <div class="AudioPlaylistSnippet__body">
                     <button n:if="$count >= 1" class="AudioPlaylistSnippet__actionButton ActionButton--shuffle" id="playlistShuffleBtn">
-                        <span class="ActionButton--shuffle__text"><vkifyloc name="shuffle_all" fallback="shuffle_tip"></vkifyloc></span>
+                        <span class="ActionButton--shuffle__text">{=vkifyTr('shuffle_all')|noescape}</span>
                     </button>
 
                     <div class="AudioPlaylistSnippet__list audiosContainer scroll_container infContainer">
