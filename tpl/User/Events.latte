@@ -10,7 +10,7 @@
 
 {block appbar_extra}
 <div n:if="$user->getId() === $thisUser->getId()" class="mobileonly" id="events_appbar_extra">
-    <a class="appbar-extra-btn" href="/events_create" aria-label="{_create_event}">
+    <a class="appbar-extra-btn" href="/events_create" onclick="showCreateEventModal(event)" aria-label="{_create_event}">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><use href="#add-outline-24"></use></svg>
     </a>
 </div>
@@ -37,7 +37,7 @@
                 'count' => $user->getEventsCount(true)
             ]
         ]}
-        {var $createEventButton = '<a class="button nomobile" href="/events_create">' . tr('create_event') . '</a>'}
+        {var $createEventButton = '<a class="button nomobile" href="/events_create" onclick="showCreateEventModal(event)">' . tr('create_event') . '</a>'}
         {include "../components/page_tabs_header.latte", tabs => $tabs, id => 'events_top_tabs', extra => $createEventButton}
     {else}
         {include "../components/page_block_header.latte", title => 'meetings'}
@@ -108,4 +108,27 @@
             {/if}
         </div>
     </div>
+{/block}
+
+{block narrow}
+    {var $menuItems = [
+        [
+            'url' => '/groups' . $user->getId(),
+            'title' => 'groups'
+        ],
+        [
+            'url' => '/events' . $user->getId(),
+            'title' => 's_events',
+            'active' => true
+        ],
+        [
+            'url' => '/search?section=events',
+            'title' => 'search_for_events',
+            'condition' => $user->getId() === $thisUser->getId()
+        ]
+    ]}
+    {include "../components/ui_rmenu.latte",
+        items => $menuItems,
+        ownblockData => $user->getId() !== $thisUser->getId() ? $user : null
+    }
 {/block}

@@ -117,7 +117,8 @@
         ],
         [
             'url' => '/search?section=groups',
-            'title' => 'search_for_groups'
+            'title' => 'search_for_groups',
+            'condition' => $user->getId() === $thisUser->getId()
         ]
     ]}
     {include "../components/ui_rmenu.latte",

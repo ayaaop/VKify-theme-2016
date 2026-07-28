@@ -877,6 +877,12 @@ div.avatar_block:hover .avatar_variants {
 .group_info_row.site:before {
   background-position: 0 -96px;
 }
+.group_info_row.time:before {
+  background-position: 0 -20px;
+}
+.group_info_row.soon:before {
+  background-position: 0 -40px;
+}
 @media (-webkit-min-device-pixel-ratio: 2),
   (-o-min-device-pixel-ratio: 2/1),
   (min-resolution: 192dpi) {
@@ -1074,6 +1080,7 @@ a.page_module_upload:hover .page_upload_label,
 	position: relative;
 	z-index: 11;
 	border-radius: var(--button-border-radius) var(--button-border-radius) 0 0;
+  float: none;
 }
 .profile_sub_active .profile_sub_arrow {
   transform: rotate(180deg);
