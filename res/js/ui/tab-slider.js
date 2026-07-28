@@ -198,4 +198,30 @@ if (window.initTabSlider !== window.__vkifyInitTabSliderSafe) {
     window.initTabSlider = window.__vkifyInitTabSliderSafe;
 }
 
+function getTabScrollKey(el, index) {
+    return el.id || `__vkify_tab_${index}`;
+}
+
+window.__vkifyCaptureTabScrolls = function (container) {
+    const scrolls = {};
+    if (!container) return scrolls;
+
+    container.querySelectorAll('.ui_tabs').forEach((el, i) => {
+        scrolls[getTabScrollKey(el, i)] = el.scrollLeft;
+    });
+
+    return scrolls;
+};
+
+window.__vkifyRestoreTabScrolls = function (container, scrolls) {
+    if (!container || !scrolls) return;
+
+    container.querySelectorAll('.ui_tabs').forEach((el, i) => {
+        const key = getTabScrollKey(el, i);
+        if (key in scrolls) {
+            el.scrollLeft = scrolls[key];
+        }
+    });
+};
+
 })();

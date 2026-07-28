@@ -4,9 +4,9 @@
     <div class="contanier">
         <div class="text" id="http-warning-text">
             {if str_contains($_SERVER['HTTP_HOST'] ?? '', 'openvk.xyz')}
-                <vkifyloc name="httpwarnovk" args="openvk.org" />
+                {=vkifyTr('httpwarnovk', 'openvk.org')|noescape}
             {else}
-                <vkifyloc name="httpwarn" />
+                {=vkifyTr('httpwarn')|noescape}
             {/if}
         </div>
         <div class="buttons">

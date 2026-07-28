@@ -36,7 +36,7 @@
                         {/if}
                     {else}
                         <div class="guest_actions">
-                            <vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+                            {=vkifyTr('guest_actions_group', $club->getName())|noescape}
                         </div>
                     {/ifset}
                 </div>
@@ -404,7 +404,7 @@
 							</div>
 						{else}
 							<div class="guest_actions">
-								<vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+								{=vkifyTr('guest_actions_group', $club->getName())|noescape}
 							</div>
 						{/ifset}
 					</div>

@@ -4,8 +4,8 @@
 // single IIFE bundle at res/js/dist/vkify16.bundle.js.
 //
 // core/vkify.js is NOT bundled: it loads non-deferred in @layout.latte so
-// that synchronous consumers (core/settings-config.js, i18n/localizator.js,
-// and the inline vkifylocalize call) see window.vkify immediately. All
+// that synchronous consumers (core/settings-config.js and the inline
+// vkifylang setup) see window.vkify immediately. All
 // bundled modules are deferred and therefore execute after that script, so
 // they can safely reference window.vkify at runtime.
 
