@@ -198,6 +198,35 @@
 					</a>
 				</div>
 			{/if}
+			{if $user->getEventsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
+				<div class="module clear page_list_module mobile-scroll-card">
+					<a href="/events{$user->getId()}" class="module_header">
+						<h3 class="header_top clear_fix">
+							<span class="header_label fl_l">{_meetings}</span>
+							<span class="header_count fl_l">{$user->getEventsCount()}</span>
+						</h3>
+					</a>
+					<div class="module_body msm-grid">
+						{foreach array_slice(iterator_to_array($user->getEvents(1)), 0, 6) as $event}
+							<a href="{$event->getURL()}" class="msm-grid__cell">
+								{include '../components/avatar.latte', author => $event, size => 'miniscule', width => 50, height => 50, alt => $event->getCanonicalName(), class => 'msm-grid__img'}
+							</a>
+						{/foreach}
+					</div>
+				</div>
+			{elseif $thatIsThisUser && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)}
+				<div class="module clear page_list_module mobile-scroll-card">
+					<a href="/events{$user->getId()}" class="module_header">
+						<h3 class="header_top clear_fix">
+							<span class="header_label fl_l">{_meetings}</span>
+						</h3>
+					</a>
+					<a href="/events{$user->getId()}" class="module_body msm-placeholder">
+						<svg width="28" height="28" fill="currentColor" viewBox="0 0 28 28"><use href="#users-28"></use></svg>
+						<span class="msm-placeholder-label">{_meetings}</span>
+					</a>
+				</div>
+			{/if}
 			{if $canSeeAlbums}
 				{var $firstAlbum = $albums[0] ?? null}
 				<div class="module clear album_module mobile-scroll-card">
@@ -571,14 +600,14 @@
 								</div>
 							</div>
 						</div>
-						<div class="module clear page_list_module" n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-							<a href="/groups{$user->getId()}?act=meetings" class="module_header">
+						<div class="module clear page_list_module" n:if="$user->getMeetingsCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
+							<a href="/events{$user->getId()}" class="module_header">
 								<h3 class="header_top clear_fix">
 									<span class="header_label fl_l">
 										{_meetings}
 									</span>
 									<span class="header_count fl_l">
-										{$user->getMeetingCount()}
+										{$user->getMeetingsCount()}
 									</span>
 								</h3>
 							</a>
@@ -932,24 +961,25 @@
 						{/if}
 					</div>
 					<div class="counts_module" n:ifcontent>
+						{var $fmtCount = fn($n) => $n >= 1000000 ? round($n / 1000000, 1) . 'M' : ($n >= 1000 ? round($n / 1000, 1) . 'K' : (string)$n)}
 						<a class="page_counter" n:if="$user->getFollowersCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)" href="/friends{$user->getId()}?act=incoming">
-							<div class="count">{$user->getFollowersCount()}</div>
+							<div class="count">{$fmtCount($user->getFollowersCount())}</div>
 							<div class="label">{tr("followers", $user->getFollowersCount())|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user) > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)" href="/albums{$user->getId()}">
-							<div class="count" id="profile_photos_counter_val">{(new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user)}</div>
+							<div class="count" id="profile_photos_counter_val">{$fmtCount((new \openvk\Web\Models\Repositories\Photos())->getUserPhotosCount($user))}</div>
 							<div class="label">{tr("mobile_photos")}</div>
 						</a>
 						<a class="page_counter" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0" href="/gifts{$user->getId()}">
-							<div class="count">{$giftCount}</div>
+							<div class="count">{$fmtCount($giftCount)}</div>
 							<div class="label">{tr("gifts", $giftCount)|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user) > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)" href="/videos{$user->getId()}">
-							<div class="count">{(new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user)}</div>
+							<div class="count">{$fmtCount((new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user))}</div>
 							<div class="label">{tr("videos", (new \openvk\Web\Models\Repositories\Videos())->getUserVideosCount($user))|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 						<a class="page_counter" n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)" href="/audios{$user->getId()}">
-							<div class="count">{$audiosCount}</div>
+							<div class="count">{$fmtCount($audiosCount)}</div>
 							<div class="label">{tr("audios_count", $audiosCount)|replaceRE: '/^[^\s]+\s+/', ''}</div>
 						</a>
 					</div>

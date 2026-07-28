@@ -184,7 +184,8 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
         onSuccess,
         runScripts = false,
         onReady,
-        validateResponse
+        validateResponse,
+        skipRedirectError = false
     } = opts;
 
     const onModalSuccess = onSuccess || window._currentMediaModalRefresh;
@@ -264,9 +265,21 @@ window.showFormModal = vkify.once('showFormModal', () => async (url, opts = {}) 
                 responseType: 'response',
                 showLoader: true,
                 errorMessage: errorMsg,
-                validate: validateResponse,
-                ajaxQuery: false
+                ajaxQuery: false,
+                skipRedirectError
             });
+
+            if (typeof validateResponse === 'function' && !validateResponse(res)) {
+                try {
+                    const html = await res.text();
+                    const flash = extractFlashMessage(html);
+                    NewNotification(window.tr('error'), flash?.message || errorMsg, null);
+                } catch (e) {
+                    NewNotification(window.tr('error'), errorMsg, null);
+                }
+                interactive.forEach(el => { el.disabled = false; });
+                return;
+            }
 
             window.messagebox_stack?.at(-1)?.close();
 
@@ -352,13 +365,46 @@ window.showEditAppModal = (appId) => window.showFormModal(`/editapp?app=${encode
     errorMsg: 'Failed to update app'
 });
 
+const extractFlashMessage = (html) => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const pageBody = doc.querySelector('.page_body');
+    if (!pageBody) return null;
+
+    const scripts = pageBody.querySelectorAll(':scope > script');
+    for (const script of scripts) {
+        const text = script.textContent;
+        const match = text.match(/NewNotification\s*\(\s*(["'])(.*?)\1\s*,\s*(["'])(.*?)\3\s*\)/s)
+                   || text.match(/MessageBox\s*\(\s*(["'])(.*?)\1\s*,\s*(["'])(.*?)\3\s*,/s);
+        if (match) {
+            return { title: match[2], message: match[4] };
+        }
+    }
+    return null;
+};
+
 window.showCreateGroupModal = (e) => {
     e?.preventDefault();
     window.showFormModal('/groups_create', {
         requiredField: 'name',
         requiredError: tr('error_no_group_name'),
         submitText: tr('create'),
-        errorMsg: 'Failed to create group'
+        errorMsg: 'Failed to create group',
+        skipRedirectError: true,
+        validateResponse: (res) => /\/club\d+/.test(res.url || '')
+    });
+    return false;
+};
+
+window.showCreateEventModal = (e) => {
+    e?.preventDefault();
+    window.showFormModal('/events_create', {
+        requiredField: 'name',
+        requiredError: tr('error_no_event_name'),
+        submitText: tr('create'),
+        errorMsg: 'Failed to create event',
+        skipRedirectError: true,
+        validateResponse: (res) => /\/event\d+/.test(res.url || '')
     });
     return false;
 };

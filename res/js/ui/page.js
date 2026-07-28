@@ -159,11 +159,10 @@ window.updateToTopArea = function () {
     if (!layout) return;
 
     const leftOffset = layout.getBoundingClientRect().left;
-    if (leftOffset > 114) {
-        document.documentElement.style.setProperty('--to-top-width', leftOffset + 'px');
-    } else {
-        document.documentElement.style.setProperty('--to-top-width', '114px');
-    }
+    document.documentElement.style.setProperty(
+        '--to-top-width',
+        (leftOffset > 114 ? leftOffset : 114) + 'px'
+    );
 };
 
 let toTopAreaRafPending = false;
@@ -175,7 +174,13 @@ window.addEventListener('resize', () => {
         window.updateToTopArea();
     });
 });
-vkify.onPage(window.updateToTopArea);
+
+// Defer until after paint so the post-navigation layout (async stylesheets, fonts,
+// scrollbar) has settled, then re-check shortly after to catch late shifts.
+vkify.onPage(() => {
+    requestAnimationFrame(window.updateToTopArea);
+    setTimeout(window.updateToTopArea, 300);
+});
 
 window.updateToTopOpacity = function () {
     const scrollY = window.scrollY || window.pageYOffset;
