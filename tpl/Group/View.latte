@@ -491,7 +491,7 @@
 					<div class="group_counters_wrap clear_fix">
 						<div class="group_counters full">
 							<a class="page_counter" href="/club{$club->getId()}/followers">
-								<div class="count">{$fmtCount(1000000)}</div>
+								<div class="count">{$fmtCount($club->getFollowersCount())}</div>
 								<div class="label">{_event_comers}</div>
 							</a>
 							<a class="page_counter" href="/club{$club->getId()}/followers?mightcome=1">
