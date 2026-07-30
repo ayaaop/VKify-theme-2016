@@ -195,7 +195,7 @@
                             {if $docPreview}
                                 <img src="{$docPreview->getURLBySizeId('normal')}" class="msm-album-cover" alt="" />
                             {else}
-                                <div class="msm-placeholder"><span class="msm-doc-ext">{$doc->getFileExtension()}</span></div>
+                                <div class="msm-placeholder"><div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}"></div></div>
                             {/if}
                         </a>
                     {else}
@@ -206,7 +206,7 @@
                                     {if $docPreview}
                                         <img class="msm-grid__img" src="{$docPreview->getURLBySizeId('tiny')}" alt="" />
                                     {else}
-                                        <span class="msm-doc-ext">{$doc->getFileExtension()}</span>
+                                        <div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}"></div>
                                     {/if}
                                 </a>
                             {/foreach}
@@ -349,7 +349,7 @@
     {var $audios = iterator_to_array($audios)}
     {var $albums = iterator_to_array($albums)}
     {var $topics = iterator_to_array($topics)}
-    {var $docs   = iterator_to_array($docs)}
+    {var $docs   = iterator_to_array((new \openvk\Web\Models\Repositories\Documents())->getDocumentsByOwner($club->getRealId())->offsetLimit(0, 6))}
     {var $followersCount = $club->getFollowersCount()}
     {var $potentialCount = $club->getPotentialFollowersCount()}
     {var $owner = $club->getOwner()}
