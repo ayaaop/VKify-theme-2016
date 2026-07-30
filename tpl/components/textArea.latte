@@ -147,7 +147,7 @@
                             <div class="post-attach-menu__icon"></div>
                         </a>
                         <a class="post-attach-menu__trigger" id="moreAttachTrigger{$textAreaId}" data-tippy-content-id="moreAttachTooltip{$textAreaId}" data-tippy-append-to="body">
-                            <vkifyloc name="more" fallback="show_more" />
+                            {=vkifyTr('more')}
                         </a>
                         <div class="tippy-menu tippy-content-template" id="moreAttachTooltip{$textAreaId}">
                             <a n:if="$docsEnabled" id="__vkifyDocumentAttachment" class="attach_document" n:attr="data-club => $clubDataRealId">

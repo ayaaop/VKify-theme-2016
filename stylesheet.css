@@ -2102,6 +2102,18 @@ table,
 .post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger[aria-expanded="true"] {
     opacity: .75;
 }
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger {
+    background: url(/themepack/vkify16/3.3.5.1/resource/icons/chats.png) no-repeat 0 -55px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 6px 0 5px;
+    opacity: .7;
+    cursor: pointer;
+}
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger:hover,
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger[aria-expanded="true"] {
+    opacity: 1;
+}
 
 .post-bottom-acts {
     display: flex;
@@ -3254,6 +3266,9 @@ h4.gifts_section_header {
 }
 
 /* paginator */
+.button.lagged {
+    filter: none;
+}
 .vkify-paginator {
     margin: 15px 0;
     float: none;
