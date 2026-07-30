@@ -900,7 +900,11 @@ function showAjaxWallContent(tabId) {
         window.__resetPaginatorState(allPostsContainer);
     }
 
-    ky.get(tabLink.href, {
+    const fetchUrl = tabId === 'wall_tab_owners'
+        ? tabLink.href + (tabLink.href.includes('?') ? '&' : '?') + '__vkify16_tab=1'
+        : tabLink.href;
+
+    ky.get(fetchUrl, {
         hooks: {
             beforeRequest: [() => {
                 insertThere.insertAdjacentHTML('afterbegin', '<div class="page_block page_padding loader_wrapper" style="text-align: center;"></div>');
