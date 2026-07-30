@@ -425,6 +425,10 @@
                             </div>
                         </div>
                     {else}
+                        <a href="/" class="home_button mobileonly" title="{$instance_name}">
+                            <span class="home_button_bg"></span>
+                            <span n:if="$instance_name != \OPENVK_DEFAULT_INSTANCE_NAME && !$ovkHatEnabled" class="instance_name">{$instance_name}</span>
+                        </a>
                         <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
                             <label class="field" for="login"><span>{_email}:</span></label>
                             <input id="login" type="text" name="login" required />

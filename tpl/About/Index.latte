@@ -66,7 +66,7 @@
             {/if}
         </div>
     </div>
-    <div class="login_mobile_promo_wrap clear_fix">
+    <div class="login_mobile_promo_wrap clear_fix nomobile">
         <div class="login_mobile_apps">
             <div class="login_mobile_header">
                 {=vkifyTr('loginPromo')|noescape}
@@ -244,6 +244,24 @@
         }
         .login_app_device_wp .login_app_download_icon {
             background-position:0px -44px
+        }
+
+        @media (max-width: 768px) {
+            .page_content {
+                padding: 0;
+            }
+            .index_rcolumn {
+                width: 100%;
+            }
+            .index_rcolumn .page_block {
+                margin: 8px 0;
+            }
+            .index_rcolumn .page_block {
+                padding: 16px;
+            }
+            .ij_header {
+                margin: 5px 0 0;
+            }
         }
         </style>
     {/block}
