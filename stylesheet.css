@@ -2462,9 +2462,6 @@ table,
 .tippy-menu form {
     margin: 0;
 }
-.archived_repost_unavailable {
-    color: var(--muted-text-color);
-}
 
 .post_view_page.with_comments .post:not(.reply) {
     border-bottom-left-radius: 0;
