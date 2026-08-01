@@ -14,8 +14,18 @@
 </div>
 {/capture}
 
+{var $pinnedPost = isset($club) ? (new \openvk\Web\Models\Repositories\Posts())->getPinnedPost($owner) : null}
 {var $allCount = $type == 'all' ? $count : (new \openvk\Web\Models\Repositories\Posts())->getPostCountOnUserWall($owner)}
 {var $ownersCount = $type == 'owners' ? $count : (new \openvk\Web\Models\Repositories\Posts())->getOwnersCountOnUserWall($owner)}
+
+{ifset $club}
+    {if $pinnedPost}
+        {var $allCount = max(0, $allCount - 1)}
+        {if $pinnedPost->isPostedOnBehalfOfGroup() || $pinnedPost->isSigned()}
+            {var $ownersCount = max(0, $ownersCount - 1)}
+        {/if}
+    {/if}
+{/ifset}
 {var $tabs = [
     [
         'url' => "/wall{$owner}",

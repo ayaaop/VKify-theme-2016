@@ -1,3 +1,4 @@
+{php if (!function_exists('vkifyTr')) require_once \OPENVK_ROOT . '/themepacks/vkify16/res/php/vkify_i18n.php';}
 {var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 {var $darkModeEnabled = ($_COOKIE['vkify16_darkmode'] ?? '0') === '1'}
 {var $mode2018Enabled = ($_COOKIE['vkify16_2018mode'] ?? '0') === '1'}
@@ -381,7 +382,7 @@
                             <div class="left_menu_nav_wrap">
                                 <a href="/club1">{_footer_blog|firstUpper}</a>
                                 <a href="/terms">{_footer_rules|firstUpper}</a>
-                                <a href="javascript:void(0);" id="moreOptionsLink" data-tippy-content-id="moreOptionsContent" data-tippy-placement="bottom-start"><vkifyloc name="more" fallback="show_more" /></a>
+                                <a href="javascript:void(0);" id="moreOptionsLink" data-tippy-content-id="moreOptionsContent" data-tippy-placement="bottom-start">{=vkifyTr('more')}</a>
                                 
                                 <div id="moreOptionsContent" class="tippy-content-template">
                                     <div class="tippy-menu">
@@ -406,7 +407,7 @@
                         {elseif $thisUser->isDeleted()}
                             <div class="deactivated">
                                 {_profile_deactivated_status}.
-                                <a href="/settings/reactivate"><vkifyloc name="restore" />.</a>    
+                                <a href="/settings/reactivate">{=vkifyTr('restore')|noescape}.</a>    
                             </div>
                         {/if}
                         <div class="sidebar_audio_player mobileonly" id="sidebar_audio_player">
@@ -424,6 +425,10 @@
                             </div>
                         </div>
                     {else}
+                        <a href="/" class="home_button mobileonly" title="{$instance_name}">
+                            <span class="home_button_bg"></span>
+                            <span n:if="$instance_name != \OPENVK_DEFAULT_INSTANCE_NAME && !$ovkHatEnabled" class="instance_name">{$instance_name}</span>
+                        </a>
                         <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
                             <label class="field" for="login"><span>{_email}:</span></label>
                             <input id="login" type="text" name="login" required />
@@ -633,11 +638,10 @@
             }
         </script>
 
+        <script>window.vkifylang = {=json_encode(vkifyGetLang(), 15)|noescape}</script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/vkify.js"></script>
         <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/core/settings-config.js"></script>
-        <script src="/themepack/vkify16/{$theme->getVersion()}/resource/js/i18n/localizator.js" crossorigin="anonymous"></script>
         <script>
-            window.vkifylocalize("{php echo getLanguage()}");
         </script>
         {script "js/al_wall.js"}
 

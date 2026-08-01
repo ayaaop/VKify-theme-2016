@@ -19,8 +19,8 @@
         </div>
             
         <div class="page_block register-block">
-            <h2 class="ij_header"><vkifyloc name="newUserQuestionMark"></vkifyloc></h2>
-            <div class="ij_subheader"><vkifyloc name="newUserSubhead"></vkifyloc></div>
+            <h2 class="ij_header">{=vkifyTr('newUserQuestionMark')|noescape}</h2>
+            <div class="ij_subheader">{=vkifyTr('newUserSubhead')|noescape}</div>
             {if \OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] || isset($referer)}
                 <form id="reg_form" method="POST" action="/reg" enctype="multipart/form-data">
                     <input class="big_text" type="text" name="first_name" required placeholder="{_name}" />
@@ -66,13 +66,13 @@
             {/if}
         </div>
     </div>
-    <div class="login_mobile_promo_wrap clear_fix">
+    <div class="login_mobile_promo_wrap clear_fix nomobile">
         <div class="login_mobile_apps">
             <div class="login_mobile_header">
-                <vkifyloc name="loginPromo"></vkifyloc>
+                {=vkifyTr('loginPromo')|noescape}
             </div>
             <div class="login_mobile_info">
-                <vkifyloc name="loginPromoInfo"></vkifyloc>
+                {=vkifyTr('loginPromoInfo')|noescape}
             </div>
             <div class="login_app_devices">
                 <a href="https://github.com/openvk/mobile-android-legacy/releases/latest" rel="noopener noreferrer" target="_blank" class="login_app_device login_app_device_android">
@@ -82,7 +82,7 @@
                     <div class="login_app_download_wrap">
                         <button class="button button_light">
                             <span class="login_app_download_icon"></span>
-                            <vkifyloc name="loginPromoAndroid"></vkifyloc>
+                            {=vkifyTr('loginPromoAndroid')|noescape}
                         </button>
                     </div>
                 </a>
@@ -93,7 +93,7 @@
                     <div class="login_app_download_wrap">
                         <button class="button button_light">
                             <span class="login_app_download_icon"></span>
-                            <vkifyloc name="loginPromoWp"></vkifyloc>
+                            {=vkifyTr('loginPromoWp')|noescape}
                         </button>
                     </div>
                 </a>
@@ -104,7 +104,7 @@
                     <div class="login_app_download_wrap">
                         <button class="button button_light">
                             <span class="login_app_download_icon"></span>
-                            <vkifyloc name="loginPromoIos"></vkifyloc>
+                            {=vkifyTr('loginPromoIos')|noescape}
                         </button>
                     </div>
                 </a>
@@ -244,6 +244,24 @@
         }
         .login_app_device_wp .login_app_download_icon {
             background-position:0px -44px
+        }
+
+        @media (max-width: 768px) {
+            .page_content {
+                padding: 0;
+            }
+            .index_rcolumn {
+                width: 100%;
+            }
+            .index_rcolumn .page_block {
+                margin: 8px 0;
+            }
+            .index_rcolumn .page_block {
+                padding: 16px;
+            }
+            .ij_header {
+                margin: 5px 0 0;
+            }
         }
         </style>
     {/block}

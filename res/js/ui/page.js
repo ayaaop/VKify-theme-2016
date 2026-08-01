@@ -21,13 +21,15 @@ window.toggle_comment_textarea = window.toggle_comment_textarea || function (id)
 };
 
 window.setTip = window.setTip || function (obj, text, interactive = false) {
+    const zIndex = obj?.closest('.ovk-msg-all') ? 9999 : 99;
     tippy(obj, {
         content: `<text style="font-size: 11px;">${text}</text>`,
         allowHTML: true,
         placement: 'top',
         theme: 'light vk',
         animation: 'up_down',
-        interactive: interactive
+        interactive: interactive,
+        zIndex: zIndex
     });
 };
 
@@ -56,19 +58,15 @@ window.showBlueWarning = window.showBlueWarning || function (content) {
 };
 window.allLangsPopup = window.allLangsPopup || async function () {
     const CF = window.ContentFetcher;
-    const loader = CF.createLoader();
-    loader.show();
 
     try {
-        const content = await CF.fetchPageContent('/language', '#all_languages_list');
+        const content = await CF.fetchPageContent('/language', '#all_languages_list', { showLoader: true });
         const returnTo = encodeURI(window.location.pathname + window.location.search);
         content.querySelectorAll('a[href^="/language?lg="]').forEach(link => {
             const url = new URL(link.href);
             url.searchParams.set('jReturnTo', returnTo);
             link.href = url.pathname + url.search;
         });
-
-        loader.hide();
 
         window.langPopup = new CMessageBox({
             title: tr('select_language'),
@@ -84,7 +82,6 @@ window.allLangsPopup = window.allLangsPopup || async function () {
             window.reinitializeTooltips?.();
         }, 0);
     } catch (e) {
-        loader.hide();
         console.error('Failed to load languages:', e);
     }
 };
@@ -162,11 +159,10 @@ window.updateToTopArea = function () {
     if (!layout) return;
 
     const leftOffset = layout.getBoundingClientRect().left;
-    if (leftOffset > 114) {
-        document.documentElement.style.setProperty('--to-top-width', leftOffset + 'px');
-    } else {
-        document.documentElement.style.setProperty('--to-top-width', '114px');
-    }
+    document.documentElement.style.setProperty(
+        '--to-top-width',
+        (leftOffset > 114 ? leftOffset : 114) + 'px'
+    );
 };
 
 let toTopAreaRafPending = false;
@@ -178,7 +174,30 @@ window.addEventListener('resize', () => {
         window.updateToTopArea();
     });
 });
-vkify.onPage(window.updateToTopArea);
+
+// Defer until after paint so the post-navigation layout (async stylesheets, fonts,
+// scrollbar) has settled, then re-check shortly after to catch late shifts.
+vkify.onPage(() => {
+    requestAnimationFrame(window.updateToTopArea);
+    setTimeout(window.updateToTopArea, 300);
+});
+
+window.updateToTopOpacity = function () {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const opacity = Math.min(Math.max((scrollY - 200) / 300, 0), 1);
+    document.documentElement.style.setProperty('--to-top-opacity', opacity);
+};
+
+let toTopOpacityRafPending = false;
+window.addEventListener('scroll', () => {
+    if (toTopOpacityRafPending) return;
+    toTopOpacityRafPending = true;
+    requestAnimationFrame(() => {
+        toTopOpacityRafPending = false;
+        window.updateToTopOpacity();
+    });
+}, { passive: true });
+vkify.onPage(window.updateToTopOpacity);
 
 function initLocalStorageCheckboxes() {
     document.querySelectorAll('input[data-act="localstorage_item"]').forEach((input) => {
@@ -195,7 +214,7 @@ vkify.onPage(initLocalStorageCheckboxes);
 vkify.hook(vkify, 'onPageReady', () => {
     window.initializeSearchFastTips?.();
     window.hideSearchFastTips?.();
-    setTimeout(window.initTabSlider, 150);
+    window.initTabSlider?.();
 
     if (window.location.pathname.includes('/albums') && !ge('photos-section')?.dataset?.initialized) {
         setTimeout(window.initAlbumPhotosLoader, 100);

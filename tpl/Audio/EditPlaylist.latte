@@ -27,7 +27,7 @@
                                 <path fill="currentColor" fill-rule="nonzero" d="M14 4a1 1 0 0 1 1 1v8h8a1 1 0 0 1 0 2h-8v8a1 1 0 0 1-2 0v-8H5a1 1 0 0 1 0-2h8V5a1 1 0 0 1 1-1"></path>
                             </g>
                         </svg>
-                        <span class="ape_cover_title"><vkifyloc name="change_cover" fallback="Change cover"></vkifyloc></span>
+                        <span class="ape_cover_title">{=vkifyTr('change_cover')|noescape}</span>
                     </div>
                 </div>
 
@@ -60,7 +60,7 @@
                         </g>
                     </svg>
                 </span>
-                <vkifyloc name="add_tracks" fallback="add_audio_verb"></vkifyloc>
+                {=vkifyTr('add_tracks')|noescape}
                 <span class="ape_add_audios_btn_chevron_icon">
                     <svg width="16" height="24" viewBox="0 0 16 24" xmlns="http://www.w3.org/2000/svg">
                         <g id="chevron_24__Page-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -94,7 +94,7 @@
                         </g>
                     </svg>
                 </div>
-                <vkifyloc name="empty_playlist_desc" fallback="empty_playlist"></vkifyloc>
+                {=vkifyTr('empty_playlist_desc')|noescape}
             </div>
 
             <!-- Bottom control buttons -->

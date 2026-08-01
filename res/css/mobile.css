@@ -233,6 +233,16 @@
     body.menu-expanded {
         overflow: hidden;
     }
+    .home_button {
+        width: 100%;
+        padding: 8px 16px;
+        margin-bottom: 8px;
+        height: fit-content;
+        box-sizing: border-box;
+    }
+    .home_button .home_button_bg {
+        margin: 0;
+    }
 
     #votesBalance, #news {
         background: none;
@@ -498,14 +508,14 @@
         display: block;
         margin: 16px auto;
     }
-    .page_block_sub_header, .page_padding, .audios_padding, .deactivated {
+    .page_block_sub_header, .page_padding, #auth.page_block, .audios_padding, .deactivated, #fastLogin {
         padding: 16px!important;
     }
     .messagebox-content-header, .mb_tabs {
         margin: -16px -16px 0;
         padding: 16px;
     }
-    .settings_padding,.settings_block_msg {
+    .settings_padding,.settings_block_msg,.audio_pl_edit_box .ape_header {
         padding-block: 16px;
     }
     .form_group,.post_full_like_wrap {
@@ -514,7 +524,7 @@
     .page_padding .form_group {
         margin-inline: 0;
     }
-    .settings_block_msg,.post .wall_text {
+    .settings_block_msg,.post .wall_text,.post_replies_header,.audio_pl_edit_box .box_controls,.audio_pl_edit_box .ape_item_list,.audio_pl_edit_box .ape_header {
         padding-inline: 16px;
     }
     .post .post_header {
@@ -523,6 +533,9 @@
     .post-nsfw .post-content::after, .deleted_content .content_page_error {
         margin: 0 16px;
         width: calc(100% - 32px);
+    }
+    .post_view_page .comments {
+        border-top: 1px solid var(--border-color)!important;
     }
 
     .model_content_textarea textarea {
@@ -577,7 +590,7 @@
         line-height: 22px;
         margin-left: 0;
     }
-    .form_field input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"]), .form_field:not(.settings_privacy_row) select, .form_field textarea {
+    #login_form, .form_field input:not([type="submit"], [type="checkbox"], [type="radio"], [type="button"]), .form_field:not(.settings_privacy_row) select, .form_field textarea {
         width: 100%;
     }
     .label_end .form_label {
@@ -1177,6 +1190,12 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        display: flex;
+        align-items: last baseline;
+    }
+    .mobile-hero-name .page_verified {
+        max-width: 16px;
+        width: 100%;
     }
     .mobile-hero-status {
         font-size: 15px;
@@ -1241,6 +1260,13 @@
     }
     .tippy-menu ._add_image::before {
         display: none;
+    }
+    .guest_actions {
+        padding-bottom: 8px;
+    }
+
+    .mobile_profile_actions .profile_sub_wrapper {
+        width: 100%;
     }
 
     /* profile info rows */
@@ -1328,7 +1354,7 @@
     }
     .mobile-scroll-card .module_body {
         width: 100%;
-        height: 95px;
+        height: 89px;
         padding: 0;
         overflow: hidden;
         position: relative;
@@ -1368,7 +1394,7 @@
         object-fit: cover;
         object-position: center;
     }
-    .msm-doc-cell {
+    a.msm-doc-cell {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1385,6 +1411,37 @@
         text-transform: uppercase;
         color: var(--muted-text-color);
         line-height: 1;
+    }
+    .mobile-scroll-card .doc_icon.page_doc_icon {
+        display: block;
+        width: 30px;
+        height: 30px;
+        border-radius: 3px;
+        background: url(/themepack/vkify16/3.3.5.5/resource/icons/doc_icons.png) no-repeat;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        box-sizing: border-box;
+    }
+    .mobile-scroll-card .doc_icon.page_doc_icon_mp3,
+    .mobile-scroll-card .doc_icon.page_doc_icon_flac {
+        background-position: left -90px;
+    }
+    .mobile-scroll-card .doc_icon.page_doc_icon_zip,
+    .mobile-scroll-card .doc_icon.page_doc_icon_7z,
+    .mobile-scroll-card .doc_icon.page_doc_icon_rar {
+        background-position: left -30px;
+    }
+    .mobile-scroll-card .doc_icon.page_doc_icon_webm,
+    .mobile-scroll-card .doc_icon.page_doc_icon_mp4,
+    .mobile-scroll-card .doc_icon.page_doc_icon_avi {
+        background-position: left -120px;
+    }
+    .mobile-scroll-card .doc_icon.page_doc_icon_djvu,
+    .mobile-scroll-card .doc_icon.page_doc_icon_ps,
+    .mobile-scroll-card .doc_icon.page_doc_icon_pdf,
+    .mobile-scroll-card .doc_icon.page_doc_icon_fb2 {
+        background-position: left -150px;
     }
     .msm-album-cover {
         width: 100%;

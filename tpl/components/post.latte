@@ -65,6 +65,7 @@
                         </a>
                     {/if}
                     <span n:if="$post->isPinned()" class="wall_fixed_label">{_pinned}</span>
+                    <span n:if="$post->canBeEditedBy($thisUser)" class="wall_edit_label"><span class="divider"></span>{_logs_editing|lower}</span>
                 </span>
             </div>
             <div class="post_date">
@@ -140,7 +141,9 @@
             {* Handle case when post has no text and no attachments *}
             {if !$post->isDeactivationMessage() && !$post->getText(false) && (!$attachmentsLayout->tiles || sizeof($attachmentsLayout->tiles) == 0) && (!$attachmentsLayout->extras || sizeof($attachmentsLayout->extras) == 0)}
                 <div class="really_text wall_post_text deleted_content">
-                    {include "content_error.latte", title => '<vkifyloc name="deleted_attachment"></vkifyloc>', description => '<vkifyloc name="deleted_attachment_2"></vkifyloc>'}
+                    {capture $deletedTitle}{=vkifyTr('deleted_attachment')|noescape}{/capture}
+                    {capture $deletedDescription}{=vkifyTr('deleted_attachment_2')|noescape}{/capture}
+                    {include "content_error.latte", title => $deletedTitle, description => $deletedDescription}
                 </div>
             {/if}
         </div>

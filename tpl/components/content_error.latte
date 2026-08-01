@@ -6,13 +6,15 @@
  * @param bool|string|null $icon     - Path to icon image, false to hide icon, null/undefined for default
  * @param string|null      $title    - Error title text (optional)
  * @param string           $description - Error description text
+ * @param string|null      $className - Additional CSS class for the container
  *}
 
 {var $icon = $icon ?? 'no_posts.png'}
 {var $title = $title ?? null}
 {var $description = $description ?? ''}
+{var $className = $className ?? ''}
 
-<div class='content_page_error'>
+<div class='content_page_error{if $className} {$className}{/if}'>
     <img n:if="$icon !== false" class="icon" src="/themepack/vkify16/{$theme->getVersion()}/resource/icons/{$icon}" alt="{$description ?: 'Error'}" loading="lazy"/>
     <span class="text">
         <b n:if="$title">{$title|noescape}</b>

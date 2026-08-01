@@ -217,8 +217,6 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
         if (checkExhaustion(paginatorEl, page)) return;
 
         try {
-            const parser = new DOMParser();
-
             let fetchUrlStr = location.href;
             const fetchUrlNode = paginatorEl?.closest('[data-fetch-url]');
             if (fetchUrlNode && fetchUrlNode.dataset.fetchUrl) {
@@ -237,9 +235,11 @@ window.__processPaginatorNextPage = async function (page, targetPaginator = null
             const replaceUrl = new URL(fetchUrlStr, location.origin);
             replaceUrl.searchParams.set('p', page);
 
-            const response = await fetch(replaceUrl.href);
-            const htmlText = await response.text();
-            const doc = parser.parseFromString(htmlText, 'text/html');
+            const res = await ky(replaceUrl.href, { throwHttpErrors: false });
+            if (res.redirected || !res.ok) {
+                throw new Error(res.redirected ? 'Page redirected' : `HTTP ${res.status}`);
+            }
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
 
             const newNodes = doc.querySelectorAll('.scroll_node');
             newNodes.forEach(node => appendScrollNode(containerEl, paginatorEl, node));

@@ -41,7 +41,6 @@ body {
     /* Background colors */
     --body-background-color: #edeef0;
     --module-background-color: var(--white);
-    --page-background-color: var(--module-background-color) /* to avoid confusion */;
     --module-background-color--secondary: #f0f2f5;
     --module-header-background-color: #fafbfc;
     --header-background-color: #507299;
@@ -477,11 +476,10 @@ textarea:focus {
     font-weight: 700;
     font-size: 12.5px;
     z-index: 1;
-    opacity: 1;
     padding-top: 13px;
     transition: .5s padding-top;
     visibility: visible;
-    opacity: 1;
+    opacity: var(--to-top-opacity, 0);
 }
 .toTop::before {
     content: '';
@@ -494,7 +492,7 @@ textarea:focus {
 }
 .toTop nobr {
     padding: 0 24px;
-    background: url("/themepack/vkify16/3.3.5.1/resource/icons/dev_toplink.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.5.5/resource/icons/dev_toplink.png") no-repeat;
     margin-left: 7px;
 }
 .toTop #wrap {
@@ -554,7 +552,7 @@ body.scrolled .toTop:hover #wrap {
 }
 
 .home_button .home_button_bg {
-    background: url("/themepack/vkify16/3.3.5.1/resource/icons/head_icons.png") no-repeat;
+    background: url("/themepack/vkify16/3.3.5.5/resource/icons/head_icons.png") no-repeat;
     background-position: 0px -107px;
     height: 19px;
     width: 32px;
@@ -643,7 +641,7 @@ body.scrolled .toTop:hover #wrap {
 .home_navigation .top_nav_btn_icon {
     display: block;
     margin: 11px auto;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/head_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/head_icons.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     height: 20px;
@@ -709,7 +707,7 @@ body.scrolled .toTop:hover #wrap {
     object-fit: cover;
 }
 .end_navigation #userMenuArrow {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/head_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/head_arrow.png) no-repeat;
     background-position: right 0;
     margin: 1px 8px 0 7px;
     width: 8px;
@@ -760,7 +758,7 @@ body.scrolled .toTop:hover #wrap {
 .top_audio_player .top_audio_player_btn > div {
     width: 14px;
     height: 14px;
-    background-image: url(/themepack/vkify16/3.3.5.1/resource/icons/head_icons.png);
+    background-image: url(/themepack/vkify16/3.3.5.5/resource/icons/head_icons.png);
     opacity: 0.65;
     -o-transition: opacity 60ms linear;
     transition: opacity 60ms linear;
@@ -949,7 +947,7 @@ body.scrolled .toTop:hover #wrap {
     gap: 8px;
 }
 .musicIcon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/audio_player_controls.png) no-repeat;
     height: 10px;
     width: 12px;
 }
@@ -963,7 +961,7 @@ body.scrolled .toTop:hover #wrap {
 .bigPlayer .playButtons .playButton .playIcon {
     width: 28px;
     height: 28px;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/audio_player_controls.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/audio_player_controls.png) no-repeat;
     background-position: left top;
 }
 .bigPlayer .playButtons .playButton.pause .playIcon {
@@ -1003,13 +1001,13 @@ body.scrolled .toTop:hover #wrap {
     right: 8px;
 }
 .audioEntry .buttons .musicIcon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/common.png) no-repeat;
     height: 13px !important;
     width: 13px !important;
     box-sizing: border-box;
 }
 .audioEntry .buttons .musicIcon.download-icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/download_icon.png) no-repeat !important;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/download_icon.png) no-repeat !important;
 }
 .audioEntry .buttons .musicIcon.add-icon,
 .audioEntry .buttons .musicIcon.add-icon-group {
@@ -1250,7 +1248,7 @@ body.scrolled .toTop:hover #wrap {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: var(--accent-color-2) url(/themepack/vkify16/3.3.5.1/resource/icons/audio_playpause.png) no-repeat 8px 7px;
+    background: var(--accent-color-2) url(/themepack/vkify16/3.3.5.5/resource/icons/audio_playpause.png) no-repeat 8px 7px;
 }
 .audioEntry.nowPlaying .playIcon {
     background-position-y: -15px !important;
@@ -1315,7 +1313,7 @@ body.scrolled .toTop:hover #wrap {
     margin: 0;
     width: 100% !important;
 }
-.ovk-diag-body .page_padding:not(#__content) {
+.ovk-diag-body .page_padding:not(#__content, #_content) {
     padding: 0!important;
 }
 .ovk-diag #upload_container .upload_container_element .upload_container_name {
@@ -1351,7 +1349,7 @@ body.scrolled .toTop:hover #wrap {
     transition:
         background-color 0.05s,
         color 0.05s;
-    background: var(--search-color) url(/themepack/vkify16/3.3.5.1/resource/icons/dev_head_magglass.png) no-repeat;
+    background: var(--search-color) url(/themepack/vkify16/3.3.5.5/resource/icons/dev_head_magglass.png) no-repeat;
     background-position: left 8px;
     line-height: 16px;
     border-left: 8px solid transparent;
@@ -1410,7 +1408,7 @@ body.scrolled .toTop:hover #wrap {
 }
 
 .sidebar_inner .link .link_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/menu_icon.png) no-repeat 7px -441px;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/menu_icon.png) no-repeat 7px -441px;
     height: 25px;
     width: 35px;
     opacity: 0.75;
@@ -1448,7 +1446,7 @@ body.scrolled .toTop:hover #wrap {
     background-position: 7px -106px;
 }
 .sidebar_inner .link[href="/donate"] .link_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_icon.png) no-repeat;
     background-position: 6px -305px;
 }
 .sidebar_inner .link.my_docs .link_icon {
@@ -1478,10 +1476,10 @@ body.scrolled .toTop:hover #wrap {
     white-space: nowrap;
 }
 .left_menu_nav_wrap #moreOptionsLink:after,
-.post-attach-menu__trigger:after {
+.post-attach-menu--inline .post-attach-menu__trigger:after {
     display: inline-block;
     content: "";
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/menu_arrow.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/menu_arrow.png) no-repeat;
     background-position-x: 0%;
     background-position-y: 0%;
     background-position: right 0;
@@ -1489,6 +1487,9 @@ body.scrolled .toTop:hover #wrap {
     height: 5px;
     opacity: 0.65;
     margin-right: -10px;
+}
+.post-attach-menu--inline .post-attach-menu__trigger::after {
+    margin-right: 0;
 }
 .left_menu_nav_wrap #moreOptionsLink:hover::after,
 .post-attach-menu__trigger:hover:after,
@@ -1755,7 +1756,7 @@ div.container_gray > form > table {
 }
 
 .common_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/common.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/common.png) no-repeat;
     width: 14px;
     height: 14px;
 }
@@ -2004,6 +2005,7 @@ table,
     position: static;
     margin: 0;
     align-items: center;
+    z-index: 0;
 }
 
 .model_content_textarea #wallAttachmentMenu img {
@@ -2031,6 +2033,19 @@ table,
     background-position: 0 -60px;
 }
 
+.post-opts-trigger {
+    padding: 0 10px;
+    margin-left: 10px;
+    border-left: 1px solid var(--border-color);
+}
+.model_content_textarea .post-opts-trigger {
+    margin-left: 6px;
+    display: none;
+}
+.model_content_textarea.shown .post-opts-trigger {
+    display: block;
+}
+
 .tippy-box .post-opts {
     margin: 5px 0 0;
 }
@@ -2047,7 +2062,7 @@ table,
     padding: 15px 20px;
 }
 
-.model_content_textarea:not(.shown) #wallAttachmentMenu a:not(#__vkifyPhotoAttachment, #__vkifyVideoAttachment, #__vkifyAudioAttachment),
+.model_content_textarea:not(.shown) #wallAttachmentMenu a:not(#__vkifyPhotoAttachment, #__vkifyVideoAttachment, #__vkifyAudioAttachment, .tippy-box a),
 .model_content_textarea #wallAttachmentMenu .header,
 .model_content_textarea .menu_toggler_vkify {
     display: none;
@@ -2059,7 +2074,7 @@ table,
 
 .post-source #remove_source_button,
 #small_remove_button {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/attach_icons.png?4) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/attach_icons.png?4) no-repeat 0 0;
     width: 9px;
     height: 9px;
     margin: 5px 0 5px 10px;
@@ -2079,12 +2094,33 @@ table,
     overflow: hidden;
     white-space: nowrap;
 }
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger {
+    color: var(--link-color);
+    opacity: .5;
+}
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger:hover,
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger[aria-expanded="true"] {
+    opacity: .75;
+}
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger {
+    background: url(/themepack/vkify16/3.3.5.1/resource/icons/chats.png) no-repeat 0 -55px;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 6px 0 5px;
+    opacity: .7;
+    cursor: pointer;
+}
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger:hover,
+.post-attach-menu:not(.post-attach-menu--inline) .post-attach-menu__trigger[aria-expanded="true"] {
+    opacity: 1;
+}
 
 .post-bottom-acts {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 20px;
+    clear: both;
 }
 .reply .post-bottom-acts {
     padding-top: 5px;
@@ -2103,7 +2139,7 @@ table,
 .post-has-geo.appended-geo::before {
     width: 22px;
     height: 22px;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_icon.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_icon.png) no-repeat;
     opacity: 0.7;
     content: "";
     display: inline-block;
@@ -2256,7 +2292,7 @@ table,
     width: 30px;
     height: 30px;
     border-radius: 3px;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/doc_icons.png) no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/doc_icons.png) no-repeat;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -2325,6 +2361,8 @@ table,
 }
 .page_block + .page_block.comments {
     margin-top: -15px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .sort_link_icon {
@@ -2407,14 +2445,14 @@ table,
     margin-bottom: 4px;
 }
 .archive_banner_description {
-	color: var(--muted-text-color-2);
+    color: var(--muted-text-color-2);
 }
 .archive_actions_button {
-	padding: 8px 6px;
-	margin-top: 7px;
-	margin-right: 4px;
-	color: var(--link-color);
-	font-size: 12px;
+    padding: 8px 6px;
+    margin-top: 7px;
+    margin-right: 4px;
+    color: var(--link-color);
+    font-size: 12px;
     cursor: pointer;
 }
 
@@ -2423,6 +2461,16 @@ table,
 }
 .archived_repost_unavailable {
     color: var(--muted-text-color);
+}
+
+.post_view_page.with_comments .post:not(.reply) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow:
+        0 -1px 0 0 var(--shadow-outline-color),
+        -1px 0 0 0 var(--shadow-outline-color),
+        1px 0 0 0 var(--shadow-outline-color),
+        0 1px 0 0 var(--border-color);
 }
 
 /* posts */
@@ -2435,9 +2483,13 @@ table,
 .post-content {
     border: 0;
 }
+.post-content .text {
+    line-height: 1.462;
+}
 .post:not(.editing) > .post_edit,
 .reply:not(.editing) .post_edit,
-.reply.editing .reply_footer {
+.reply.editing .reply_footer,
+.reply.editing .reply_text {
     display: none;
 }
 .post.editing .reply .post-content {
@@ -2598,6 +2650,17 @@ table,
     align-items: center;
     justify-content: space-between;
 }
+.wall_edit_label {
+    display: none;
+    color: var(--muted-text-color);
+}
+.post.editing .post_full_like_wrap {
+    display: none;
+}
+.post.editing .post_header .wall_edit_label,
+.reply.editing .wall_edit_label {
+	display: inline;
+}
 
 .post_full_like {
     display: flex;
@@ -2664,7 +2727,7 @@ table,
 }
 
 .action_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_icon.png) no-repeat 0 0;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_icon.png) no-repeat 0 0;
     width: 16px;
     height: 13px;
     margin: 2px 0 1px;
@@ -2802,7 +2865,7 @@ table,
 }
 
 .post_actions_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_more.png) no-repeat 50%;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_more.png) no-repeat 50%;
     position: absolute;
     width: 22px;
     height: 24px;
@@ -2968,6 +3031,7 @@ h4.gifts_section_header {
 /* replies */
 .reply {
     padding: 0 20px;
+    line-height: 14px;
 }
 .reply_wrap {
     padding: 12px 0;
@@ -2995,17 +3059,20 @@ h4.gifts_section_header {
     float: left;
 }
 .reply_content {
-    margin-left: 52px;
+    margin-left: 44px;
     word-wrap: break-word;
-    min-height: 40px;
+    min-height: 34px;
+}
+.reply_content .post-content .text {
+    line-height: 1.36;
 }
 .reply_img {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     vertical-align: top;
 }
 .reply .action_icon {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_icon.png) no-repeat 0 -29px;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_icon.png) no-repeat 0 -29px;
     width: 12px;
     height: 10px;
     margin: 2px 0 0;
@@ -3052,7 +3119,7 @@ h4.gifts_section_header {
     display: inline-flex;
 }
 .reply_action {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_icon.png) no-repeat 1px -52px;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_icon.png) no-repeat 1px -52px;
     opacity: 0;
     cursor: pointer;
     height: 13px;
@@ -3072,7 +3139,7 @@ h4.gifts_section_header {
     opacity: 1;
 }
 .reply_action.reply_report_action {
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/common.png) 0px -454px;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/common.png) 0px -454px;
     background-size: 24px;
 }
 .reply .reply_action.reply_report_action:hover {
@@ -3226,6 +3293,9 @@ h4.gifts_section_header {
 }
 
 /* paginator */
+.button.lagged {
+    filter: none;
+}
 .vkify-paginator {
     margin: 15px 0;
     float: none;
@@ -3490,7 +3560,7 @@ h4.gifts_section_header {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.5.1/resource/video_play_small.png?1) 19px 13px no-repeat;
+    background: rgba(0, 0, 0, 0.5) url(/themepack/vkify16/3.3.5.5/resource/video_play_small.png?1) 19px 13px no-repeat;
     margin: auto;
     width: 50px;
     height: 50px;
@@ -3591,7 +3661,7 @@ h4.gifts_section_header {
     width: 16px;
     height: 16px;
     background-repeat: no-repeat;
-    background-image: url(/themepack/vkify16/3.3.5.1/resource/icons/photo_edit_actions.png);
+    background-image: url(/themepack/vkify16/3.3.5.5/resource/icons/photo_edit_actions.png);
 }
 .video_thumb_actions .video_thumb_action_edit .icon {
     background-position: 0 -65px;
@@ -3806,7 +3876,7 @@ a.poll-retract-vote,
 .docListViewItem .doc_volume .doc_action {
     height: 13px;
     width: 13px;
-    background: url("/themepack/vkify16/3.3.5.1/resource/icons/common.png");
+    background: url("/themepack/vkify16/3.3.5.5/resource/icons/common.png");
 }
 .docListViewItem .doc_volume .doc_action,
 .docGalleryItem .doc_top_panel > div {
@@ -4358,7 +4428,7 @@ ul.im-page--dcontent {
 .messenger-app-header--more-actions--trigger {
     height: 48px;
     width: 48px;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/post_more.png) no-repeat center center;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/post_more.png) no-repeat center center;
     cursor: pointer;
 }
 
@@ -4795,7 +4865,7 @@ hr {
     right: 8px;
     width: 16px;
     height: 16px;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/cross.png) center no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/cross.png) center no-repeat;
     background-size: 10px;
 }
 .popup-close:hover {
@@ -4899,7 +4969,7 @@ hr {
     width: 16px;
     height: 16px;
     cursor: pointer;
-    background: url(/themepack/vkify16/3.3.5.1/resource/icons/cross.png) center no-repeat;
+    background: url(/themepack/vkify16/3.3.5.5/resource/icons/cross.png) center no-repeat;
     opacity: 0.5;
     transition: opacity 150ms;
 }

@@ -30,7 +30,8 @@
         )
     ]
 ]}
-
+{var $visiblePosts = (isset($club) && $type == 'owners' && !empty($_GET['__vkify16_tab'])) ? array_filter($posts, fn($post) => !$post->isPinned()) : $posts}
+{var $wallPosts = $type == 'archive' ? $posts : $visiblePosts}
     <div class="wide_column_left">
         <div class="narrow_column_wrap">
             <div class="narrow_column">
@@ -57,8 +58,8 @@
                                 hidden_fields => ['type' => 'search'],
                                 class => '_wrap ui_search_old'}
                         </div>
-                        {if sizeof($posts) > 0}
-                            {foreach $posts as $post}
+                        {if sizeof($wallPosts) > 0}
+                            {foreach $wallPosts as $post}
                                 {include "../components/post.latte", post => $post, commentSection => true}
                             {/foreach}
                             {include "../components/paginator.latte", conf => $paginatorConf}

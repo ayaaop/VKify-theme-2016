@@ -5,6 +5,12 @@ const tr = window.tr;
 const u = window.u;
 const LoaderUtils = window.LoaderUtils;
 
+// al_wall.js registers a global delegated input listener on every textarea that
+// collapses the field to measure it on every keystroke. In Safari that temporary
+// collapse pulls the viewport up. vkify16 uses textarea-autosize.js instead,
+// so drop the legacy umbrella input listener before it can interfere.
+u(document).off('input');
+
 if (!window.wallCheckboxStates) {
     window.wallCheckboxStates = {
         as_group: false,
@@ -33,7 +39,23 @@ function syncGlobalWallCheckboxState(state) {
 }
 
 function resolveWallFormContext(el) {
+    // Post-opts checkboxes carry an explicit `form` attribute so they stay
+    // associated with their composer/edit form even when tippy moves them
+    // into a tooltip appended to <body> (see textArea.latte / renderEditMenuLayout).
+    // The native `.form` property resolves that association regardless of
+    // where the element currently lives in the DOM.
+    if (el?.form) return el.form;
     return el?.closest?.('form') || document.querySelector('#write form') || null;
+}
+
+// Like `form.querySelector('input[name="..."]')`, but also finds controls
+// that are associated with the form via the `form="..."` attribute rather
+// than by being an actual DOM descendant (e.g. post-opts checkboxes living
+// inside a tooltip appended to <body>).
+function findWallFormControl(form, name) {
+    if (!form) return null;
+    const control = form.elements.namedItem(name);
+    return control instanceof RadioNodeList ? control[0] : control;
 }
 
 function getActiveTippyBox(el) {
@@ -44,65 +66,108 @@ function queryInActiveTippyBox(el, selector) {
     const tippyBox = getActiveTippyBox(el);
     return tippyBox?.querySelector(selector) || null;
 }
-
 function renderEditMenuLayout(apiPost, type, postId) {
     const clubId = apiPost.owner_id < 0 ? Math.abs(apiPost.owner_id) : 0;
+    const editFormId = `write-edit-form-${postId}`;
+
+    const nsfwOpt = type === 'post'
+        ? `<label class="checkbox"><input type="checkbox" name="nsfw" form="${editFormId}" ${apiPost.is_explicit ? 'checked' : ''} /><span>${tr('contains_nsfw')}</span></label>`
+        : '';
+
+    const asGroupOpt = type === 'post' && apiPost.owner_id < 0 && apiPost.can_pin
+        ? `<label class="checkbox"><input type="checkbox" name="as_group" form="${editFormId}" ${apiPost.from_id < 0 ? 'checked' : ''} /><span>${tr('post_as_group')}</span></label>`
+        : '';
+
+    const postOptsItems = `${nsfwOpt}${asGroupOpt}`;
+    const postOptsTrigger = type === 'post' && postOptsItems
+        ? `<div class="post-opts-trigger">
+            <div class="post_settings" id="postOptsTrigger${postId}" role="button" data-tippy-content-id="postOptsTooltip${postId}" data-tippy-append-to="body">
+                <div class="common_icon"></div>
+            </div>
+       </div>`
+        : '';
+    const postOptsTooltip = type === 'post' && postOptsItems
+        ? `<div class="post-opts tippy-menu tippy-content-template" id="postOptsTooltip${postId}">${postOptsItems}</div>`
+        : '';
+
+    const inlineAttachButtons = type === 'post'
+        ? `
+            <a class="attach_photo" id="__vkifyPhotoAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('photo')}">
+                <div class="post-attach-menu__icon"></div>
+            </a>
+            <a class="attach_video" id="__vkifyVideoAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('video')}">
+                <div class="post-attach-menu__icon"></div>
+            </a>
+            <a class="attach_audio" id="__vkifyAudioAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('audio')}">
+                <div class="post-attach-menu__icon"></div>
+            </a>
+        `
+        : '';
+
+    const dropdownTrigger = type === 'post'
+        ? `<a class="post-attach-menu__trigger" id="moreAttachTrigger${postId}" data-tippy-content-id="moreAttachTooltip${postId}" data-tippy-append-to="body">
+                ${window.vkifylang?.more ?? tr('show_more')}
+           </a>`
+        : `<span class="post-attach-menu__trigger" id="moreAttachTrigger${postId}" tabindex="0" role="button" data-tippy-content-id="moreAttachTooltip${postId}" data-tippy-append-to="body"></span>`;
+
+    const dropdownItems = type === 'post'
+        ? `
+            <a class="attach_document" id="__vkifyDocumentAttachment" data-club="${clubId}">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('document')}
+            </a>
+            <a class="attach_note" id="__vkifyNotesAttachment">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('note')}
+            </a>
+            <a class="attach_source" id="__sourceAttacher">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('source')}
+            </a>
+        `
+        : `
+            <a class="attach_photo" id="__vkifyPhotoAttachment" data-club="${clubId}">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('photo')}
+            </a>
+            <a class="attach_video" id="__vkifyVideoAttachment" data-club="${clubId}">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('video')}
+            </a>
+            <a class="attach_audio" id="__vkifyAudioAttachment" data-club="${clubId}">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('audio')}
+            </a>
+            <a class="attach_document" id="__vkifyDocumentAttachment" data-club="${clubId}">
+                <div class="post-attach-menu__icon"></div>
+                ${tr('document')}
+            </a>
+        `;
+
+    const attachMenuHtml = `
+        <div id="wallAttachmentMenu" class="page_add_media post-attach-menu ${type === 'post' ? 'post-attach-menu--inline' : ''}">
+            ${inlineAttachButtons}
+            ${dropdownTrigger}
+            ${postOptsTrigger}
+            ${postOptsTooltip}
+            <div class="tippy-menu tippy-content-template" id="moreAttachTooltip${postId}">
+                ${dropdownItems}
+            </div>
+        </div>
+    `;
 
     return `
         <div class='edit_menu module_body'>
-            <form id="write">
+            <form id="${editFormId}">
                 <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${apiPost.text}</textarea>
                 <div class='post-buttons'>
                     <div class="post-horizontal"></div>
                     <div class="post-vertical"></div>
                     <div class="post-repost"></div>
                     <div class="post-source"></div>
-                    <div class='post-opts'>
-                        ${type === 'post' ? `<label class="checkbox">
-                            <input type="checkbox" name="nsfw" ${apiPost.is_explicit ? 'checked' : ''} /><span>${tr('contains_nsfw')}</span>
-                        </label>` : ''}
-                        ${apiPost.owner_id < 0 && apiPost.can_pin ? `<label class="checkbox">
-                            <input type="checkbox" name="as_group" ${apiPost.from_id < 0 ? 'checked' : ''} /><span>${tr('post_as_group')}</span>
-                        </label>` : ''}
-                    </div>
                     <input type="hidden" id="source" name="source" value="none" />
                     <div class="post-bottom-acts">
-                        <div id="wallAttachmentMenu" class="page_add_media post-attach-menu">
-                            <a class="attach_photo" id="__vkifyPhotoAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('photo')}">
-                                <div class="post-attach-menu__icon"></div>
-                            </a>
-                            <a class="attach_video" id="__vkifyVideoAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('video')}">
-                                <div class="post-attach-menu__icon"></div>
-                            </a>
-                            <a class="attach_audio" id="__vkifyAudioAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('audio')}">
-                                <div class="post-attach-menu__icon"></div>
-                            </a>
-                            ${type === 'post' ? `
-                            <a class="post-attach-menu__trigger" id="moreAttachTrigger${postId}" data-tippy-content-id="moreAttachTooltip${postId}">
-                                ${tr('show_more')}
-                            </a>
-                            ` : `
-                            <a class="attach_document" id="__vkifyDocumentAttachment" data-club="${clubId}" data-tip="simple-black" data-align="bottom-start" data-tiptitle="${tr('document')}">
-                                <div class="post-attach-menu__icon"></div>
-                            </a>
-                            `}
-                            ${type === 'post' ? `
-                            <div class="tippy-menu tippy-content-template" id="moreAttachTooltip${postId}">
-                                <a class="attach_document" id="__vkifyDocumentAttachment" data-club="${clubId}">
-                                    <div class="post-attach-menu__icon"></div>
-                                    ${tr('document')}
-                                </a>
-                                <a class="attach_note" id="__notesAttachment">
-                                    <div class="post-attach-menu__icon"></div>
-                                    ${tr('note')}
-                                </a>
-                                <a class="attach_source" id='__sourceAttacher'>
-                                    <div class="post-attach-menu__icon"></div>
-                                    ${tr('source')}
-                                </a>
-                            </div>
-                            ` : ''}
-                        </div>
+                        ${attachMenuHtml}
                         <div class='edit_menu_buttons post-bottom-buttons'>
                             <input class='button button_light' type='button' id='__edit_cancel' value='${tr('cancel')}'>
                             <input class='button' type='button' id='__edit_save' value='${tr('save')}'>
@@ -173,6 +238,35 @@ function resetWallCheckboxStates(formOrEl) {
         state[key] = false;
     });
     syncGlobalWallCheckboxState(state);
+}
+
+function resetWallComposer(form) {
+    if (!form) return;
+
+    form.reset();
+
+    const textarea = form.querySelector('textarea.small-textarea');
+    if (textarea) {
+        textarea.classList.remove('expanded-textarea');
+        textarea.blur();
+    }
+
+    const composer = form.closest('.model_content_textarea');
+    if (composer) {
+        composer.classList.remove('shown');
+    }
+
+    const horizontal = form.querySelector('.post-horizontal');
+    const vertical = form.querySelector('.post-vertical');
+    const source = form.querySelector('.post-source');
+    const geo = form.querySelector('.post-has-geo');
+
+    if (horizontal) horizontal.innerHTML = '';
+    if (vertical) vertical.innerHTML = '';
+    if (source) source.innerHTML = '';
+    if (geo) geo.innerHTML = '';
+
+    resetWallCheckboxStates(form);
 }
 
 function getWallCheckboxPayload(formOrEl) {
@@ -331,14 +425,14 @@ function setupTooltipCheckboxListeners() {
         if (e.target.checked) {
             state.anon = false;
             const formContext = resolveWallFormContext(e.target);
-            const anonCheckbox = formContext?.querySelector('input[name="anon"]') || null;
+            const anonCheckbox = findWallFormControl(formContext, 'anon');
             if (anonCheckbox) {
                 anonCheckbox.checked = false;
             }
         } else {
             state.force_sign = false;
             const formContext = resolveWallFormContext(e.target);
-            const forceSignCheckbox = formContext?.querySelector('input[name="force_sign"]') || null;
+            const forceSignCheckbox = findWallFormControl(formContext, 'force_sign');
             if (forceSignCheckbox) {
                 forceSignCheckbox.checked = false;
             }
@@ -367,7 +461,7 @@ function setupTooltipCheckboxListeners() {
         if (e.target.checked) {
             state.as_group = false;
             const formContext = resolveWallFormContext(e.target);
-            const asGroupCheckbox = formContext?.querySelector('input[name="as_group"]') || null;
+            const asGroupCheckbox = findWallFormControl(formContext, 'as_group');
             if (asGroupCheckbox) {
                 asGroupCheckbox.checked = false;
             }
@@ -396,8 +490,30 @@ function setupTooltipCheckboxListeners() {
     });
 }
 
+function setupPostTooltipExclusivity() {
+    if (!vkify.bindOnce('wallPostTooltipExclusivity', setupPostTooltipExclusivity)) return;
+
+    document.addEventListener('tippyshow', (e) => {
+        const trigger = e.target;
+        if (!trigger || !trigger.id || !trigger.hasAttribute('data-tippy-content-id')) return;
+
+        let siblingId = null;
+        if (trigger.id.startsWith('postOptsTrigger')) {
+            siblingId = 'moreAttachTrigger' + trigger.id.slice('postOptsTrigger'.length);
+        } else if (trigger.id.startsWith('moreAttachTrigger')) {
+            siblingId = 'postOptsTrigger' + trigger.id.slice('moreAttachTrigger'.length);
+        }
+        if (!siblingId) return;
+
+        const sibling = document.getElementById(siblingId);
+        if (sibling && sibling !== trigger && sibling._tippy?.state?.isVisible) {
+            sibling._tippy.hide();
+        }
+    });
+}
+
 function switchAvatar(el, targetType) {
-    const formContext = el.closest('#write') || el.closest('form');
+    const formContext = resolveWallFormContext(el);
     const userImg = formContext ? formContext.querySelector('.post_field_user_image') : document.querySelector('.post_field_user_image');
     const groupImg = formContext ? formContext.querySelector('.post_field_user_image_group') : document.querySelector('.post_field_user_image_group');
     const anonImg = formContext ? formContext.querySelector('.post_field_user_image_anon') : document.querySelector('.post_field_user_image_anon');
@@ -484,14 +600,14 @@ window.handleWallAsGroupClick = window.handleWallAsGroupClick || ((el) => {
             state.anon = false;
         } else {
             state.force_sign = false;
-            const formContext = el.closest('#write') || el.closest('form') || document;
-            const forceSignCheckbox = formContext ? formContext.querySelector('input[name="force_sign"]') : null;
+            const formContext = resolveWallFormContext(el);
+            const forceSignCheckbox = findWallFormControl(formContext, 'force_sign');
             if (forceSignCheckbox) {
                 forceSignCheckbox.checked = false;
             }
         }
 
-        const form = el.closest('form') || document.querySelector('#write form');
+        const form = resolveWallFormContext(el);
         if (form) {
             if (!form.dataset.originalAction) {
                 form.dataset.originalAction = form.action;
@@ -522,7 +638,7 @@ window.handleWallAnonClick = window.handleWallAnonClick || ((el) => {
             state.as_group = false;
         }
 
-        const form = el.closest('form') || document.querySelector('#write form');
+        const form = resolveWallFormContext(el);
         if (form) {
             if (!form.dataset.originalAction) {
                 form.dataset.originalAction = form.action;
@@ -630,6 +746,17 @@ function bindComposerSubmitOnce() {
     });
 }
 
+function bindCommentCancelOnce() {
+    if (!vkify.bindOnce('commentCancel', bindCommentCancelOnce)) return;
+
+    u(document).on('click', '.wall-comment-cancel', (e) => {
+        e.preventDefault();
+        const button = e.target.closest('.wall-comment-cancel');
+        const form = button?.closest('form');
+        resetWallComposer(form);
+    });
+}
+
 vkify.once('initTextareaInteraction', () => {
     window.initTextareaInteraction = () => {
         if (!vkify.bindOnce('textareaInteraction', window.initTextareaInteraction)) return;
@@ -637,6 +764,9 @@ vkify.once('initTextareaInteraction', () => {
         const showComposer = (target) => {
             if (target.tagName === 'TEXTAREA' || target.classList?.contains('submit_post_field')) {
                 target.closest('.model_content_textarea')?.classList.add('shown');
+                if (target.classList?.contains('small-textarea')) {
+                    target.classList.add('expanded-textarea');
+                }
             }
         };
 
@@ -662,7 +792,9 @@ vkify.once('initTextareaInteraction', () => {
 });
 
 setupTooltipCheckboxListeners();
+setupPostTooltipExclusivity();
 bindComposerSubmitOnce();
+bindCommentCancelOnce();
 bindSourceAttacherOnce();
 
 let _groupInfoTabsInitialized = false;
@@ -768,7 +900,11 @@ function showAjaxWallContent(tabId) {
         window.__resetPaginatorState(allPostsContainer);
     }
 
-    ky.get(tabLink.href, {
+    const fetchUrl = tabId === 'wall_tab_owners'
+        ? tabLink.href + (tabLink.href.includes('?') ? '&' : '?') + '__vkify16_tab=1'
+        : tabLink.href;
+
+    ky.get(fetchUrl, {
         hooks: {
             beforeRequest: [() => {
                 insertThere.insertAdjacentHTML('afterbegin', '<div class="page_block page_padding loader_wrapper" style="text-align: center;"></div>');
@@ -1047,9 +1183,8 @@ vkify.once('reportPost', () => {
 
                 try {
                     const params = new URLSearchParams({ reason, type: 'post' });
-                    const response = await fetch(`/report/${postId}?${params.toString()}`, { method: 'GET' });
-                    const body = await response.text();
-                    if (!response.ok || body.indexOf('reason') === -1) {
+                    const body = await ky.get(`/report/${postId}?${params.toString()}`).text();
+                    if (body.indexOf('reason') === -1) {
                         MessageBox(tr('error'), tr('error_sending_report'), ['OK'], [Function.noop]);
                         return;
                     }
@@ -1104,7 +1239,8 @@ function bindPostDeleteConfirmOnce() {
                     postElement.appendChild(contentWrapper);
                     
                     LoaderUtils.show(postElement, { className: 'vkify-post-loader' });
-                    await fetch(href, { method: 'POST' });
+                    const deleteRes = await ky.post(href, { throwHttpErrors: false });
+                    if (!deleteRes.ok && !deleteRes.redirected) throw new Error('Delete failed');
 
                     const contentDiv = contentWrapper.querySelector('.post-content') || contentWrapper;
                     const originalHeight = postElement.offsetHeight;
@@ -1357,14 +1493,21 @@ function bindPostEditOnce() {
                         post_id: id[1],
                         message: edit_place.find('.edit_menu textarea').nodes[0].value
                     };
-                    const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`);
-                    const as_group = edit_place.find(`.edit_menu input[name='as_group']`);
+                    // The nsfw/as_group checkboxes live in a post-opts tooltip that's
+                    // appended to <body> (to avoid being clipped by later posts in the
+                    // feed), so they're not necessarily descendants of edit_place. They
+                    // carry an explicit `form` attribute pointing at this edit form, so
+                    // the form's native `.elements` collection finds them regardless of
+                    // where they currently live in the DOM.
+                    const editForm = edit_place.find('.edit_menu form').nodes[0];
+                    const nsfw_mark = editForm?.elements.namedItem('nsfw') || null;
+                    const as_group = editForm?.elements.namedItem('as_group') || null;
                     const copyright = edit_place.find(`.edit_menu input[name='source']`);
                     const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',');
 
-                    if (nsfw_mark.length > 0) p.explicit = Number(nsfw_mark.nodes[0].checked);
+                    if (nsfw_mark) p.explicit = Number(nsfw_mark.checked);
                     p.attachments = collected_attachments.length < 1 ? 'remove' : collected_attachments;
-                    if (as_group.length > 0 && as_group.nodes[0].checked) p.from_group = 1;
+                    if (as_group?.checked) p.from_group = 1;
                     if (copyright.length && copyright.nodes[0].value !== 'none') p.copyright = copyright.nodes[0].value;
 
                     u(ev.target).addClass('lagged');
@@ -1381,7 +1524,11 @@ function bindPostEditOnce() {
                         return;
                     }
 
-                    const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, { method: 'POST' })).text();
+                    const new_post_html = await ContentFetcher.request(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
+                        method: 'POST',
+                        responseType: 'text',
+                        ajaxQuery: false
+                    });
                     u(ev.target).removeClass('lagged');
                     post.removeClass('editing');
                     post.nodes[0].outerHTML = u(new_post_html).last().outerHTML;

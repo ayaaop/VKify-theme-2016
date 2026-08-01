@@ -13,6 +13,22 @@
         <a n:if="$onlyShowManagers" class="button" href="/club{$club->getId()}/followers">{_all_followers}</a>
     {/capture}
     {include "../components/page_block_header.latte", title => "followers", extra => $extraContent}
+    {if $club->isEvent()}
+        {var $isPotentialTab = isset($mightcome) && $mightcome === 1}
+        {var $eventTabs = [
+            [
+                'url' => "/club{$club->getId()}/followers",
+                'title' => 'event_comers',
+                'active' => !$isPotentialTab
+            ],
+            [
+                'url' => "/club{$club->getId()}/followers?mightcome=1",
+                'title' => 'event_potential_comers',
+                'active' => $isPotentialTab
+            ]
+        ]}
+        {include "../components/page_tabs_header.latte", tabs => $eventTabs, id => 'events_followers_tabs', white => true}
+    {/if}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

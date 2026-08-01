@@ -1,31 +1,78 @@
 {php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
 {php $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
+
+{var $attachMenuInTooltip = $attachMenuInTooltip ?? false}
+{var $isPostComposer = $postOpts ?? true}
+{var $docsEnabled = $docs ?? true}
+{var $notesEnabled = ($notes ?? false) === true}
+{var $graffitiEnabled = ($graffiti ?? false) === true}
+{var $pollsEnabled = ($polls ?? false) === true}
+{var $geoEnabled = ($geo ?? false) === true}
+{var $sourceEnabled = $hasSource ?? false}
+
 {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
 {var $anonAccountId = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['account'] ?? 100}
 {var $anonUser = $anonEnabled ? (new \openvk\Web\Models\Repositories\Users())->get($anonAccountId) : NULL}
 
-<div id="write" class='model_content_textarea'>
-    <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
-    {if $thisUser ?? NULL}
-        <a class="post_field_user_link" href="{$thisUser->getURL()}">
-            {include 'avatar.latte', author => $thisUser, size => 'miniscule', class => 'post_field_user_image', width => 28, height => 28, alt => $thisUser->getCanonicalName(), data => ['user-url' => $thisUser->getURL()]}
-            {if !is_null($club ?? NULL)}
-            {include 'avatar.latte', author => $club, size => 'miniscule', class => 'post_field_user_image post_field_user_image_group', width => 28, height => 28, alt => $club->getCanonicalName(), style => 'opacity: 0;', data => ['group-url' => $club->getURL()]}
-            {/if}
-            {if $anonEnabled && ($postOpts ?? true) && $anonUser}
-            {include 'avatar.latte', author => $anonUser, size => 'miniscule', class => 'post_field_user_image post_field_user_image_anon', width => 28, height => 28, alt => $anonUser->getCanonicalName(), style => 'opacity: 0;', data => ['anon-url' => $anonUser->getURL()]}
-            {/if}
-        </a>
-    {/if}
-        <textarea id="wall-post-input{$textAreaId}" placeholder="{ifset $placeholder}{$placeholder}{else}{_write}{/ifset}" name="text"
-            style="resize: none;" class="small-textarea"></textarea>
-        <div id="post-buttons{$textAreaId}" class='post-buttons'>
+{var $hasClub = !is_null($club ?? NULL)}
+{var $canModifyClub = $hasClub && !is_null($thisUser ?? NULL) && $club->canBeModifiedBy($thisUser)}
+{var $clubDataId = $canModifyClub ? $club->getId() : null}
+{var $clubDataRealId = $canModifyClub ? $club->getRealId() : null}
+{var $showGroupPostOpts = $isPostComposer && $canModifyClub && ($owner ?? 0) < 0}
+{var $showCommentAsGroup = !$isPostComposer && $canModifyClub}
+
+<div id="write" class="model_content_textarea">
+    <form id="write-form-{$textAreaId}" action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
+        {if $thisUser ?? NULL}
+            <a class="post_field_user_link" href="{$thisUser->getURL()}">
+                {include 'avatar.latte',
+                    author => $thisUser,
+                    size => 'miniscule',
+                    class => 'post_field_user_image',
+                    width => 28,
+                    height => 28,
+                    alt => $thisUser->getCanonicalName(),
+                    data => ['user-url' => $thisUser->getURL()]}
+
+                {if $hasClub}
+                    {include 'avatar.latte',
+                        author => $club,
+                        size => 'miniscule',
+                        class => 'post_field_user_image post_field_user_image_group',
+                        width => 28,
+                        height => 28,
+                        alt => $club->getCanonicalName(),
+                        style => 'opacity: 0;',
+                        data => ['group-url' => $club->getURL()]}
+                {/if}
+
+                {if $anonEnabled && $isPostComposer && $anonUser}
+                    {include 'avatar.latte',
+                        author => $anonUser,
+                        size => 'miniscule',
+                        class => 'post_field_user_image post_field_user_image_anon',
+                        width => 28,
+                        height => 28,
+                        alt => $anonUser->getCanonicalName(),
+                        style => 'opacity: 0;',
+                        data => ['anon-url' => $anonUser->getURL()]}
+                {/if}
+            </a>
+        {/if}
+
+        <textarea
+            id="wall-post-input{$textAreaId}"
+            name="text"
+            class="small-textarea"
+            style="resize: none;"
+            placeholder="{ifset $placeholder}{$placeholder}{else}{_write}{/ifset}"
+        ></textarea>
+
+        <div id="post-buttons{$textAreaId}" class="post-buttons">
             <div class="post-horizontal"></div>
             <div class="post-vertical"></div>
-            <div class="post-has-poll">
-                {_poll}
-            </div>
+            <div class="post-has-poll">{_poll}</div>
             <div class="post-has-geo"></div>
             <div class="post-source"></div>
 
@@ -36,82 +83,158 @@
             <input type="hidden" name="geo" value="" autocomplete="off" />
             <input type="hidden" name="type" value="1" autocomplete="off" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
-            <div class="post-bottom-acts">
-                <div class="post-attach-menu">
-                    <div id="wallAttachmentMenu">
-                        <a id="__vkifyPhotoAttachment" class="attach_photo" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_photo}"
-                           {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
-                            <div class="post-attach-menu__icon"></div>
-                        </a>
-                        <a id="__vkifyVideoAttachment" class="attach_video" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_video}">
-                            <div class="post-attach-menu__icon"></div>
-                        </a>
-                        <a id="__vkifyAudioAttachment" class="attach_audio" data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_audio}"
-                            {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
-                            <div class="post-attach-menu__icon"></div>
-                        </a>
 
-                        {if ($postOpts ?? true)}
-                        <a class="post-attach-menu__trigger" id="moreAttachTrigger{$textAreaId}" data-tippy-content-id="moreAttachTooltip{$textAreaId}">
-                            <vkifyloc name="more" fallback="show_more" />
-                        </a>
+            <div class="post-bottom-acts">
+                <div id="wallAttachmentMenu" class="page_add_media post-attach-menu {if !$attachMenuInTooltip}post-attach-menu--inline{/if}">
+                    {if $attachMenuInTooltip}
+                        <span
+                            class="post-attach-menu__trigger"
+                            id="moreAttachTrigger{$textAreaId}"
+                            tabindex="0"
+                            role="button"
+                            data-tippy-content-id="moreAttachTooltip{$textAreaId}"
+                            data-tippy-append-to="body"
+                        ></span>
                         <div class="tippy-menu tippy-content-template" id="moreAttachTooltip{$textAreaId}">
-                            <a n:if="$docs ?? true" id="__vkifyDocumentAttachment" class="attach_document"
-                               {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
+                            <a id="__vkifyPhotoAttachment" class="attach_photo" n:attr="data-club => $clubDataId">
+                                <div class="post-attach-menu__icon"></div>
+                                {_photo}
+                            </a>
+                            <a id="__vkifyVideoAttachment" class="attach_video">
+                                <div class="post-attach-menu__icon"></div>
+                                {_video}
+                            </a>
+                            <a id="__vkifyAudioAttachment" class="attach_audio" n:attr="data-club => $clubDataId">
+                                <div class="post-attach-menu__icon"></div>
+                                {_audio}
+                            </a>
+                            <a n:if="$docsEnabled" id="__vkifyDocumentAttachment" class="attach_document" n:attr="data-club => $clubDataRealId">
                                 <div class="post-attach-menu__icon"></div>
                                 {_document}
                             </a>
-                            <a n:if="($notes ?? false) === true" id="__vkifyNotesAttachment" class="attach_note">
+                            {if $isPostComposer}
+                                <a n:if="$notesEnabled" id="__vkifyNotesAttachment" class="attach_note">
+                                    <div class="post-attach-menu__icon"></div>
+                                    {_note}
+                                </a>
+                                <a n:if="$graffitiEnabled" class="attach_graffiti" onclick="window.vkifyGraffiti(event);">
+                                    <div class="post-attach-menu__icon"></div>
+                                    {_graffiti}
+                                </a>
+                                <a n:if="$pollsEnabled" class="attach_poll" onclick="initPoll(event);">
+                                    <div class="post-attach-menu__icon"></div>
+                                    {_poll}
+                                </a>
+                                <a n:if="$geoEnabled" id="__geoAttacher" class="attach_geo">
+                                    <div class="post-attach-menu__icon"></div>
+                                    {_geo_place}
+                                </a>
+                            {/if}
+                        </div>
+                    {elseif $isPostComposer}
+                        <a id="__vkifyPhotoAttachment" class="attach_photo"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_photo}"
+                           n:attr="data-club => $clubDataId">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                        <a id="__vkifyVideoAttachment" class="attach_video"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_video}">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                        <a id="__vkifyAudioAttachment" class="attach_audio"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_audio}"
+                           n:attr="data-club => $clubDataId">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                        <a class="post-attach-menu__trigger" id="moreAttachTrigger{$textAreaId}" data-tippy-content-id="moreAttachTooltip{$textAreaId}" data-tippy-append-to="body">
+                            {=vkifyTr('more')}
+                        </a>
+                        <div class="tippy-menu tippy-content-template" id="moreAttachTooltip{$textAreaId}">
+                            <a n:if="$docsEnabled" id="__vkifyDocumentAttachment" class="attach_document" n:attr="data-club => $clubDataRealId">
+                                <div class="post-attach-menu__icon"></div>
+                                {_document}
+                            </a>
+                            <a n:if="$notesEnabled" id="__vkifyNotesAttachment" class="attach_note">
                                 <div class="post-attach-menu__icon"></div>
                                 {_note}
                             </a>
-                            <a n:if="($graffiti ?? false) === true" class="attach_graffiti" onclick="window.vkifyGraffiti(event);">
+                            <a n:if="$graffitiEnabled" class="attach_graffiti" onclick="window.vkifyGraffiti(event);">
                                 <div class="post-attach-menu__icon"></div>
                                 {_graffiti}
                             </a>
-                            <a n:if="($polls ?? false) === true" class="attach_poll" onclick="initPoll(event);">
+                            <a n:if="$pollsEnabled" class="attach_poll" onclick="initPoll(event);">
                                 <div class="post-attach-menu__icon"></div>
                                 {_poll}
                             </a>
-                            <a n:if="($geo ?? false) === true" id="__geoAttacher" class="attach_geo">
+                            <a n:if="$geoEnabled" id="__geoAttacher" class="attach_geo">
                                 <div class="post-attach-menu__icon"></div>
                                 {_geo_place}
                             </a>
                         </div>
-                        {else}
-                        <a n:if="$docs ?? true" id="__vkifyDocumentAttachment" class="attach_document"
-                           {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}
-                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_document}">
+                    {else}
+                        <a id="__vkifyPhotoAttachment" class="attach_photo"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_photo}"
+                           n:attr="data-club => $clubDataId">
                             <div class="post-attach-menu__icon"></div>
                         </a>
-                        {/if}
-                    </div>
+                        <a id="__vkifyVideoAttachment" class="attach_video"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_video}">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                        <a id="__vkifyAudioAttachment" class="attach_audio"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_audio}"
+                           n:attr="data-club => $clubDataId">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                        <a n:if="$docsEnabled" id="__vkifyDocumentAttachment" class="attach_document"
+                           data-tip="simple-black" data-align="bottom-start" data-tiptitle="{_document}"
+                           n:attr="data-club => $clubDataRealId">
+                            <div class="post-attach-menu__icon"></div>
+                        </a>
+                    {/if}
+                    {if $showCommentAsGroup}
+                        <div class="post-opts-trigger">
+                            <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}" data-tippy-append-to="body">
+                                <div class="common_icon"></div>
+                            </div>
+                            <div class="post-opts tippy-content-template" id="postOptsTooltip{$textAreaId}">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="as_group" form="write-form-{$textAreaId}" onchange="window.onWallAsGroupClick(this)" />
+                                    <span>{_comment_as_group}</span>
+                                </label>
+                            </div>
+                        </div>
+                    {/if}
                 </div>
+
                 <div class="post-bottom-buttons">
-                    {if $postOpts ?? true}
-                        <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}">
+                    {if $isPostComposer}
+                        <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}" data-tippy-append-to="body">
                             <div class="common_icon"></div>
                         </div>
-                
                         <div class="post-opts tippy-menu tippy-content-template" id="postOptsTooltip{$textAreaId}">
-                            {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
+                            {if $showGroupPostOpts}
                                 <label class="checkbox">
-                                    <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
+                                    <input type="checkbox" name="as_group" form="write-form-{$textAreaId}" onchange="window.onWallAsGroupClick(this)" />
                                     <span>{_post_as_group}</span>
                                 </label>
                                 <label class="checkbox" id="forceSignOpt" style="display: none;">
-                                    <input type="checkbox" name="force_sign" /><span>{_add_signature}</span>
+                                    <input type="checkbox" name="force_sign" form="write-form-{$textAreaId}" />
+                                    <span>{_add_signature}</span>
                                 </label>
                             {/if}
-                
-                            <label class="checkbox" n:if="$anonEnabled" id="octoberAnonOpt">
-                                <input type="checkbox" name="anon" onchange="window.onWallAnonClick(this)" /><span>{_as_anonymous}</span>
+
+                            <label n:if="$anonEnabled" class="checkbox" id="octoberAnonOpt">
+                                <input type="checkbox" name="anon" form="write-form-{$textAreaId}" onchange="window.onWallAnonClick(this)" />
+                                <span>{_as_anonymous}</span>
                             </label>
-                
+
                             <label class="checkbox">
-                                <input type="checkbox" name="nsfw" /><span>{_contains_nsfw}</span>
+                                <input type="checkbox" name="nsfw" form="write-form-{$textAreaId}" />
+                                <span>{_contains_nsfw}</span>
                             </label>
-                            {if $hasSource}
+
+                            {if $sourceEnabled}
                                 <div class="separator"></div>
                                 <a id="__sourceAttacher" class="attach_source">
                                     <div class="post-attach-menu__icon"></div>
@@ -120,19 +243,12 @@
                             {/if}
                         </div>
                     {/if}
-                    {if !($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}
-                        <div class="post_settings" id="postOptsTrigger{$textAreaId}" role="button" data-tippy-content-id="postOptsTooltip{$textAreaId}">
-                            <div class="common_icon"></div>
-                        </div>
 
-                        <div class="post-opts tippy-content-template" id="postOptsTooltip{$textAreaId}">
-                            <label class="checkbox">
-                                <input type="checkbox" name="as_group" onchange="window.onWallAsGroupClick(this)" />
-                                <span>{_comment_as_group}</span>
-                            </label>
-                        </div>
+                    {if !$isPostComposer}
+                        <input type="button" value="{_cancel}" class="button button_light wall-comment-cancel" />
                     {/if}
-                     <input type="submit" value="{_write}" class="button" />
+
+                    <input type="submit" value="{_send}" class="button" />
                 </div>
             </div>
         </div>

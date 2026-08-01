@@ -12,8 +12,8 @@
 </div>
 {/block}
 
-{define mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain, $docs}
-    {include '../components/mobile_profile_hero.latte', entity => $club, name => $club->getName(), status => tr('group_type_open'), verified => $club->isVerified()}
+{define mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $potentialCount, $pinnedPost, $descHtml, $descPlain, $docs}
+    {include '../components/mobile_profile_hero.latte', entity => $club, name => $club->getName(), status => $club->isEvent() ? tr('event_type_open') : tr('group_type_open'), verified => $club->isVerified()}
 
     <div class="mobileonly mobile-group-content">
 
@@ -22,21 +22,51 @@
                 <div class="mobile_profile_actions">
                     {ifset $thisUser}
                         {var $subStatus = $club->getSubscriptionStatus($thisUser)}
-                        {var $joinActions = [
-                            0 => ['act' => 'add', 'label' => tr('join_community')],
-                            1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
-                        ]}
-                        {if isset($joinActions[$subStatus ? 1 : 0])}
+                        {var $isMaybe = $thisUser ? $club->getFollowersQuery()->where(['follower' => $thisUser->getId(), 'flags' => 1])->fetch() : null}
+                        {var $eventFlag = $subStatus ? ($isMaybe ? 1 : 0) : -1}
+                        {if !$subStatus}
                             <form action="/setSub/club" method="post" class="mobile_profile_action_primary">
-                                <input type="hidden" name="act" value="{$joinActions[$subStatus ? 1 : 0]['act']}" />
+                                <input type="hidden" name="act" value="add" />
                                 <input type="hidden" name="id" value="{$club->getId()}" />
                                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                                <input type="submit" value="{$joinActions[$subStatus ? 1 : 0]['label']}" class="button button_wide mobile_profile_action_btn {if isset($joinActions[$subStatus ? 1 : 0]['class'])}{$joinActions[$subStatus ? 1 : 0]['class']}{/if}" />
+                                <input type="submit" value="{if $club->isEvent()}{_ill_come_to_meeting}{else}{_join_community}{/if}" class="button button_wide mobile_profile_action_btn" />
                             </form>
+                        {else}
+                            <div class="profile_sub_wrapper">
+                            <button class="profile_sub_btn button button_wide mobile_profile_action_btn button_gray" id="mobile_profile_sub_btn">
+                                {if $club->isEvent()}{if $eventFlag == 1}{_i_might_come_to_meeting}{else}{_ill_come_to_meeting}{/if}{else}{_leave_community}{/if} <span class="profile_sub_arrow"></span>
+                            </button>
+                            <div id="mobile_profile_sub_tooltip" class="tippy-menu tippy-content-template" data-club-id="{$club->getId()}" data-current-flag="{$eventFlag}">
+                                <form style="display:none" data-action="going" action="/setSub/club" method="post">
+                                    <input type="hidden" name="act" value="add" />
+                                    <input type="hidden" name="flag" value="0" />
+                                    <input type="hidden" name="id" value="{$club->getId()}" />
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                </form>
+                                <form style="display:none" data-action="maybe" action="/setSub/club" method="post">
+                                    <input type="hidden" name="act" value="add" />
+                                    <input type="hidden" name="flag" value="1" />
+                                    <input type="hidden" name="id" value="{$club->getId()}" />
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                </form>
+                                <form style="display:none" data-action="notgoing" action="/setSub/club" method="post">
+                                    <input type="hidden" name="act" value="rem" />
+                                    <input type="hidden" name="id" value="{$club->getId()}" />
+                                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                                </form>
+                                {if $club->isEvent()}
+                                    <a href="javascript:void(0)" data-event-action="going">{_ill_come_to_meeting}</a>
+                                    <a href="javascript:void(0)" data-event-action="maybe">{_i_might_come_to_meeting}</a>
+                                    <a href="javascript:void(0)" data-event-action="notgoing">{_ill_not_come_to_meeting}</a>
+                                {else}
+                                    <a href="javascript:void(0)" data-event-action="notgoing">{_leave_community}</a>
+                                {/if}
+                            </div>
+                            </div>
                         {/if}
                     {else}
                         <div class="guest_actions">
-                            <vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+                            {=vkifyTr('guest_actions_group', $club->getName())|noescape}
                         </div>
                     {/ifset}
                 </div>
@@ -50,11 +80,27 @@
                         <div class="mir-text">{$club->getWebsite()}</div>
                     </a>
                 {/if}
-                {if $followersCount > 0}
+                {if $followersCount > 0 || $potentialCount > 0}
                     <a class="mobile-info-row" href="/club{$club->getId()}/followers">
                         <svg class="mir-icon" viewBox="0 0 24 24"><use href="#users-24"></use></svg>
-                        <div class="mir-text">{tr('participants', $followersCount)}</div>
+                        <div class="mir-text">
+                            {if $followersCount > 0}{tr('participants', $followersCount)}{/if}
+                            {if $followersCount > 0 && $potentialCount > 0}<span class="divider"></span>{/if}
+                            {if $potentialCount > 0}{$potentialCount} {_event_potential_comers|lower}{/if}
+                        </div>
                     </a>
+                {/if}
+                {if $club->isEvent() && !is_null($club->getStartDate())}
+                    {var $eventStartTs = $club->getStartDate()->timestamp()}
+                    {var $eventFinish = $club->getFinishDate()}
+                    {var $fmtSameYear = "%e %h " . tr("time_at_sp") . " %R"}
+                    {var $fmtWithYear = "%e %B %Y " . tr("time_at_sp") . " %R"}
+                    <div class="mobile-info-row">
+                        <svg class="mir-icon" viewBox="0 0 24 24"><use href="#clock-24"></use></svg>
+                        <div class="mir-text">
+                            {$club->getStartDate()->format(date("Y", $eventStartTs) === date("Y") ? $fmtSameYear : $fmtWithYear)}{if !is_null($eventFinish)} — {$eventFinish->format(date("Y", $eventFinish->timestamp()) === date("Y") ? $fmtSameYear : $fmtWithYear)}{/if}
+                        </div>
+                    </div>
                 {/if}
                 {if $hasMoreInfo}
                 <div class="mobile-info-row mobile-info-row-more" onclick="__mobileGroupShowMore()">
@@ -149,7 +195,7 @@
                             {if $docPreview}
                                 <img src="{$docPreview->getURLBySizeId('normal')}" class="msm-album-cover" alt="" />
                             {else}
-                                <div class="msm-placeholder"><span class="msm-doc-ext">{$doc->getFileExtension()}</span></div>
+                                <div class="msm-placeholder"><div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}"></div></div>
                             {/if}
                         </a>
                     {else}
@@ -160,7 +206,7 @@
                                     {if $docPreview}
                                         <img class="msm-grid__img" src="{$docPreview->getURLBySizeId('tiny')}" alt="" />
                                     {else}
-                                        <span class="msm-doc-ext">{$doc->getFileExtension()}</span>
+                                        <div class="doc_icon page_doc_icon page_doc_icon_{$doc->getFileExtension()}"></div>
                                     {/if}
                                 </a>
                             {/foreach}
@@ -303,8 +349,9 @@
     {var $audios = iterator_to_array($audios)}
     {var $albums = iterator_to_array($albums)}
     {var $topics = iterator_to_array($topics)}
-    {var $docs   = iterator_to_array($docs)}
+    {var $docs   = iterator_to_array((new \openvk\Web\Models\Repositories\Documents())->getDocumentsByOwner($club->getRealId())->offsetLimit(0, 6))}
     {var $followersCount = $club->getFollowersCount()}
+    {var $potentialCount = $club->getPotentialFollowersCount()}
     {var $owner = $club->getOwner()}
     {var $descPlain = $club->getDescription() ?? ''}
     {var $descHtml = $club->getDescriptionHtml()}
@@ -317,7 +364,7 @@
         {var $hasMoreInfo = true}
     {/if}
 
-    {include #mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $pinnedPost, $descHtml, $descPlain, $docs}
+    {include #mobileProfile, $hasMoreInfo, $albums, $audios, $topics, $followersCount, $potentialCount, $pinnedPost, $descHtml, $descPlain, $docs}
 
     {if $hasMoreInfo}
     <script>
@@ -355,18 +402,52 @@
 					<div class="profile_actions clear_fix">
 						{ifset $thisUser}
 							{var $subStatus = $club->getSubscriptionStatus($thisUser)}
+							{var $isMaybe = $thisUser ? $club->getFollowersQuery()->where(['follower' => $thisUser->getId(), 'flags' => 1])->fetch() : null}
+							{var $eventFlag = $subStatus ? ($isMaybe ? 1 : 0) : -1}
 							<div class="profile_actions_split">
-								{var $actions = [
-									0 => ['act' => 'add', 'label' => tr('join_community')],
-									1 => ['act' => 'rem', 'label' => tr('leave_community'), 'class' => 'button_gray']
-								]}
-								{if isset($actions[$subStatus ? 1 : 0])}
+								{if !$subStatus}
 									<form action="/setSub/club" method="post" class="profile_link_form fl_l">
-										<input type="hidden" name="act" value="{$actions[$subStatus ? 1 : 0]['act']}" />
+										<input type="hidden" name="act" value="add" />
 										<input type="hidden" name="id"  value="{$club->getId()}" />
 										<input type="hidden" name="hash" value="{$csrfToken}" />
-										<input type="submit" value="{$actions[$subStatus ? 1 : 0]['label']}" class="button button_wide {if isset($actions[$subStatus ? 1 : 0]['class'])}{$actions[$subStatus ? 1 : 0]['class']}{/if}" />
+										<input type="submit" value="{if $club->isEvent()}{_ill_come_to_meeting}{else}{_join_community}{/if}" class="button button_wide" />
 									</form>
+								{else}
+									<div class="profile_sub_wrapper">
+										<button class="button button_wide button_gray fl_l profile_sub_btn" id="profile_sub_btn">
+											{if $club->isEvent()}{if $eventFlag == 1}{_i_might_come_to_meeting}{else}{_ill_come_to_meeting}{/if}{else}{_leave_community}{/if} <span class="profile_sub_arrow"></span>
+										</button>
+										<div id="profile_sub_tooltip" class="tippy-menu tippy-content-template" data-club-id="{$club->getId()}" data-current-flag="{$eventFlag}">
+											<form style="display:none" data-action="going" action="/setSub/club" method="post">
+												<input type="hidden" name="act" value="add" />
+												<input type="hidden" name="flag" value="0" />
+												<input type="hidden" name="id"  value="{$club->getId()}" />
+												<input type="hidden" name="hash" value="{$csrfToken}" />
+											</form>
+											<form style="display:none" data-action="maybe" action="/setSub/club" method="post">
+												<input type="hidden" name="act" value="add" />
+												<input type="hidden" name="flag" value="1" />
+												<input type="hidden" name="id"  value="{$club->getId()}" />
+												<input type="hidden" name="hash" value="{$csrfToken}" />
+											</form>
+											<form style="display:none" data-action="notgoing" action="/setSub/club" method="post">
+												<input type="hidden" name="act" value="rem" />
+												<input type="hidden" name="id"  value="{$club->getId()}" />
+												<input type="hidden" name="hash" value="{$csrfToken}" />
+											</form>
+											{if $club->isEvent()}
+												<a href="javascript:void(0)" data-event-action="going">{_ill_come_to_meeting}</a>
+												<a href="javascript:void(0)" data-event-action="maybe">{_i_might_come_to_meeting}</a>
+												<a href="javascript:void(0)" data-event-action="notgoing">{_ill_not_come_to_meeting}</a>
+											{else}
+												<a href="javascript:void(0)" data-event-action="notgoing">{_leave_community}</a>
+											{/if}
+											<div class="separator"></div>
+											<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+												{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
+											</a>
+										</div>
+									</div>
 								{/if}
 								<div class="profile_more_wrapper">
 									<button class="button button_gray profile_more_btn fl_r" id="profile_more_btn">
@@ -391,11 +472,7 @@
 											{if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
 												<a href="/admin/clubs/id{$club->getId()}">{_manage_group_action}</a>
 												<a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club">{_last_actions}</a>
-												<div class="separator"></div>
 											{/if}
-											<a n:if="!$club->isHideFromGlobalFeedEnabled()" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
-												{if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
-											</a>
 											{var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
 											<a n:if="$canReport" href="javascript:reportClub({$club->getId()})">{_report}</a>
 										</div>
@@ -404,9 +481,24 @@
 							</div>
 						{else}
 							<div class="guest_actions">
-								<vkifyloc name="guest_actions_group" args="{$club->getName()}" />
+								{=vkifyTr('guest_actions_group', $club->getName())|noescape}
 							</div>
 						{/ifset}
+					</div>
+				</div>
+				<div class="page_block" id="group_counters" n:if="$thisUser && $club->isEvent()">
+					{var $fmtCount = fn($n) => $n >= 1000000 ? round($n / 1000000, 1) . 'M' : ($n >= 1000 ? round($n / 1000, 1) . 'K' : (string)$n)}
+					<div class="group_counters_wrap clear_fix">
+						<div class="group_counters full">
+							<a class="page_counter" href="/club{$club->getId()}/followers">
+								<div class="count">{$fmtCount($club->getFollowersCount())}</div>
+								<div class="label">{_event_comers}</div>
+							</a>
+							<a class="page_counter" href="/club{$club->getId()}/followers?mightcome=1">
+								<div class="count">{$fmtCount($club->getPotentialFollowersCount())}</div>
+								<div class="label">{_event_potential_comers}</div>
+							</a>
+						</div>
 					</div>
 				</div>
 				<div n:if="$followersCount > 0" class="page_block module people_module">
@@ -423,6 +515,28 @@
 						</a>
 						<div class="module_body">
 							<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getFollowers(1)), 0, 6), 3) as $followerRow">
+								<div class="people_cell" n:foreach="$followerRow as $follower">
+									<a class="people_cell_ava" href="{$follower->getURL()}">
+										{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName(), class => 'people_cell_img'}
+									</a>
+									<div class="people_cell_name"><a href="{$follower->getURL()}">{$follower->getFirstName()}</a></div>
+								</div>
+							</div>
+						</div>
+				</div>
+				<div n:if="$thisUser && $club->isEvent() && $club->getPotentialFollowersCount() > 0" class="page_block module people_module">
+						<a href="/club{$club->getId()}/followers?mightcome=1" class="module_header">
+							<h3 class="header_top clear_fix">
+								<span class="header_label fl_l">
+									{_event_potential_comers}
+								</span>
+								<span class="header_count fl_l">
+									{$club->getPotentialFollowersCount()}
+								</span>
+							</h3>
+						</a>
+						<div class="module_body">
+							<div class="search_row" n:foreach="array_chunk(array_slice(iterator_to_array($club->getPotentialFollowers(1)), 0, 6), 3) as $followerRow">
 								<div class="people_cell" n:foreach="$followerRow as $follower">
 									<a class="people_cell_ava" href="{$follower->getURL()}">
 										{include '../components/avatar.latte', author => $follower, size => 'miniscule', width => 50, height => 50, alt => $follower->getFirstName(), class => 'people_cell_img'}
@@ -671,6 +785,15 @@
 											<a href="/club{$club->getId()}/edit">{_admin_banned_link_not_specified}</a>
 										{/if}
 									</div>
+									{if $club->isEvent() && !is_null($club->getStartDate())}
+									{var $eventStartTs = $club->getStartDate()->timestamp()}
+									{var $eventFinish = $club->getFinishDate()}
+									{var $fmtSameYear = "%e %h " . tr("time_at_sp") . " %R"}
+									{var $fmtWithYear = "%e %B %Y " . tr("time_at_sp") . " %R"}
+									<div n:class="group_info_row, $eventStartTs <= strtotime('+2 days') ? soon : time" title="{_event_start_date}">
+										{$club->getStartDate()->format(date("Y", $eventStartTs) === date("Y") ? $fmtSameYear : $fmtWithYear)}{if !is_null($eventFinish)} — {$eventFinish->format(date("Y", $eventFinish->timestamp()) === date("Y") ? $fmtSameYear : $fmtWithYear)}{/if}
+									</div>
+									{/if}
 								</div>
 							</div>
 						</div>

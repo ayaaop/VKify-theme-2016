@@ -9,33 +9,69 @@ if (window.vkifyTextareaAutosize.__initialized) return;
 window.vkifyTextareaAutosize.__initialized = true;
 
 const BOOST = 5;
+const MOBILE_MAX_TOTAL = 120;
 
-function parseMaxHeight(el) {
-    const cs = window.getComputedStyle(el);
-    const max = cs.maxHeight;
-    return max === 'none' ? Infinity : parseFloat(max);
+function toPx(value) {
+    const n = parseFloat(value);
+    return Number.isNaN(n) ? 0 : n;
+}
+
+function getMaxTotal(el, isBorderBox, paddingY, borderY) {
+    const raw = window.getComputedStyle(el).maxHeight;
+    let max = (raw === 'none' || raw === '') ? Infinity : toPx(raw);
+    if (max === 0) {
+        max = Infinity;
+    }
+
+    if (max === Infinity && window.isMobile && window.isMobile()) {
+        max = MOBILE_MAX_TOTAL;
+    }
+
+    if (max === Infinity) {
+        return Infinity;
+    }
+
+    return isBorderBox ? max : max + paddingY + borderY;
 }
 
 function applyAutosize(el) {
-    requestAnimationFrame(function () {
-        el.style.height = 'auto';
+    if (!el || el.tagName !== 'TEXTAREA') return;
 
-        const required = el.scrollHeight;
-        let max = parseMaxHeight(el);
-        if (max === Infinity && window.isMobile && window.isMobile()) {
-            max = 120;
-        }
-        const needed = required + BOOST;
+    const cs = window.getComputedStyle(el);
+    if (cs.display === 'none') return;
 
-        if (max === Infinity) {
-            el.style.height = needed + 'px';
+    const isBorderBox = cs.boxSizing === 'border-box';
+    const paddingY = toPx(cs.paddingTop) + toPx(cs.paddingBottom);
+    const borderY = toPx(cs.borderTopWidth) + toPx(cs.borderBottomWidth);
+    const maxTotal = getMaxTotal(el, isBorderBox, paddingY, borderY);
+
+    const currentTotal = el.clientHeight + borderY;
+    const scrollTotal = el.scrollHeight + borderY;
+
+    if (scrollTotal <= currentTotal + BOOST) {
+        const visibleTotal = el.clientHeight + borderY;
+        if (el.style.overflowY === 'auto' && visibleTotal >= scrollTotal) {
             el.style.overflowY = 'hidden';
-        } else {
-            const finalH = Math.min(needed, max);
-            el.style.height = finalH + 'px';
-            el.style.overflowY = needed > max ? 'auto' : 'hidden';
         }
-    });
+        return;
+    }
+
+    let neededTotal = scrollTotal + BOOST;
+
+    if (maxTotal !== Infinity && neededTotal > maxTotal) {
+        neededTotal = maxTotal;
+    }
+
+    const newHeight = isBorderBox
+        ? neededTotal
+        : neededTotal - paddingY - borderY;
+
+    el.style.height = Math.max(newHeight, 0) + 'px';
+
+    // If the height could not actually grow (e.g. an !important CSS rule),
+    // keep the scrollbar so content remains reachable.
+    const visibleTotal = el.clientHeight + borderY;
+    el.style.overflowY = visibleTotal < scrollTotal ? 'auto' : 'hidden';
 }
 
 function initAll(container) {

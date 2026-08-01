@@ -54,7 +54,7 @@
         {/if}
     {else}
         <div class="guest_actions">
-            <vkifyloc name="guest_actions" args="{$user->getFirstName()}" />
+            {=vkifyTr('guest_actions', $user->getFirstName())|noescape}
         </div>
     {/ifset}
 {/capture}

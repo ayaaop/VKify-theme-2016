@@ -103,6 +103,7 @@ vkify.once('simpleTooltips', () => {
             const theme = getTheme(element);
             const offset = getOffset(element);
             const boundary = getBoundary(element);
+            const zIndex = element.closest('.ovk-msg-all') ? 9999 : 99;
 
             element.dataset.vkifySimpleTipInit = '1';
             tippy(element, {
@@ -113,6 +114,7 @@ vkify.once('simpleTooltips', () => {
                 duration: [100, 100],
                 delay: [delayMs, 0],
                 offset: offset,
+                zIndex: zIndex,
                 appendTo: () => getAppendTo(element),
                 popperOptions: {
                     strategy: 'fixed',

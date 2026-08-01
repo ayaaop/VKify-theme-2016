@@ -547,12 +547,12 @@
                                         </label>
                                         <label class="checkbox">
                                             <input type='checkbox' data-act='localstorage_item' name='ux.gif_autoplay' id="ux.gif_autoplay">
-                                            <span><vkifyloc name="gif_autoplay" /></span>
+                                            <span>{=vkifyTr('gif_autoplay')|noescape}</span>
                                         </label>
                                         <label class="checkbox">
                                             <input class="hidden" type="hidden" name="rating" value="0">
                                             <input type="checkbox" name="rating" value="1" n:attr="checked => !$user->prefersNotToSeeRating()">
-                                            <span><vkifyloc name="profile_recommendations"/></span>
+                                            <span>{=vkifyTr('profile_recommendations')|noescape}</span>
                                         </label>
                                         <script n:syntax="off">
                                             (function() {
@@ -575,12 +575,12 @@
                                 <input type="hidden" name="hash" value="{$csrfToken}" />
                                 <div class="form_separator"></div>
                                 <div id="vkifySettings" class="form_field">
-                                    <div class="form_label"><vkifyloc name="vkify_settings"></vkifyloc></div>
+                                    <div class="form_label">{=vkifyTr('vkify_settings')|noescape}</div>
                                     <div class="form_data" dir="auto">
-                                        <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"><span><vkifyloc name="dark_mode"></vkifyloc></span></label>
-                                        <label class="checkbox"><input type="checkbox" name="mode_2018" value="1"><span><vkifyloc name="mode_2018"></vkifyloc></span></label>
-                                        <label class="checkbox"><input type="checkbox" name="vkgraffiti" value="0"><span><vkifyloc name="graffitiswitch"></vkifyloc></span></label>
-                                        <label class="checkbox"><input type="checkbox" name="ovkhat" value="0"><span><vkifyloc name="ovkhat"></vkifyloc></span></label>
+                                        <label class="checkbox"><input type="checkbox" name="theme_mode" value="1"><span>{=vkifyTr('dark_mode')|noescape}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="mode_2018" value="1"><span>{=vkifyTr('mode_2018')|noescape}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="vkgraffiti" value="0"><span>{=vkifyTr('graffitiswitch')|noescape}</span></label>
+                                        <label class="checkbox"><input type="checkbox" name="ovkhat" value="0"><span>{=vkifyTr('ovkhat')|noescape}</span></label>
                                     </div>
                                 </div>
                             </form>
@@ -609,7 +609,7 @@
                     </div>
                     <div class="page_block">
                         {include "../components/page_block_header.latte", title => "ui_settings_sidebar"}
-                        <div class="settings_block_msg"><vkifyloc name="sidebar_note" /></div>
+                        <div class="settings_block_msg">{=vkifyTr('sidebar_note')|noescape}</div>
                         <div class="form_group clear_fix settings_padding">
                             <form action="/settings?act=lMenu" method="POST" enctype="multipart/form-data" data-autosave="true">
                                 <div class="form_field">

@@ -112,6 +112,7 @@ vkify.bindOnce('likesTooltip', () => {
         allowHTML: true,
         interactive: true,
         interactiveDebounce: 350,
+        zIndex: 99,
         onCreate: async function (that) {
             that._vkifyLikesKey = null;
             that._vkifyLoadingLikesTooltip = false;
@@ -129,6 +130,9 @@ vkify.bindOnce('likesTooltip', () => {
         onShow: function (that) {
             const likesNow = that.reference?.getAttribute('data-likes');
             if (!likesNow || likesNow === '0') return false;
+            if (that.popper) {
+                that.popper.style.zIndex = that.reference?.closest('.ovk-msg-all') ? '9999' : '99';
+            }
         },
         onMount: async function (that) {
 

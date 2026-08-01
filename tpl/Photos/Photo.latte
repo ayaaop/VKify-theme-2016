@@ -106,7 +106,7 @@
             </div>
             {/if}
             <div class="pv_comments"> 
-                {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo}
+                {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, attachMenuInTooltip => true}
             </div>
         </div>
     </div>

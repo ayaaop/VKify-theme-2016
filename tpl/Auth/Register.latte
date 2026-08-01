@@ -29,7 +29,7 @@
                     {tr("invites_you_to", $referer->getFullName(), \OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
                 </p>
             {/if}
-            <h2 class="login_header">{_registration}</h2>
+            <h2 class="login_header nomobile">{_registration}</h2>
             <form id="login_form" method="POST" enctype="multipart/form-data">
                 <h4>{_main}</h4>
                 <input class="big_text" type="text" name="first_name" required placeholder="{_name}" />
