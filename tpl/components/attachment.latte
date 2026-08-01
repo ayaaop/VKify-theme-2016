@@ -75,7 +75,25 @@
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $nesAttGloCou = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1; $GLOBALS["_nesAttGloCou"] = $nesAttGloCou; }
-    {if $nesAttGloCou > 2}
+    {if $attachment->isArchived()}
+        {var $archivedPostAuthor = $attachment->getOwner()}
+        <div class="post copy_quote archived_repost">
+            <div class="post_header">
+                <a class="post_image" href="{$archivedPostAuthor->getURL()}">
+                    {include 'avatar.latte', author => $archivedPostAuthor, size => 'miniscule', width => 40, class => 'post-avatar'}
+                </a>
+                <div class="post_header_info">
+                    <div class="post_author">
+                        <a class="author" href="{$archivedPostAuthor->getURL()}">{$archivedPostAuthor->getCanonicalName()}</a>
+                        <a class="page_verified" n:if="$archivedPostAuthor->isVerified()" href="/verify"></a>
+                    </div>
+                    <div class="post_date">
+                        <span class="archived_repost_unavailable">{_archived_repost_unavailable}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {elseif $nesAttGloCou > 2}
         <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
     {else}
         {include "../components/post.latte", post => $attachment, compact => true}

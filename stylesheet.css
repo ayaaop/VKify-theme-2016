@@ -2436,6 +2436,33 @@ table,
     z-index: 1;
 }
 
+.archive_banner {
+    padding: 14px 16px;
+    line-height: 1.462;
+}
+.archive_banner_title {
+    display: block;
+    margin-bottom: 4px;
+}
+.archive_banner_description {
+    color: var(--muted-text-color-2);
+}
+.archive_actions_button {
+    padding: 8px 6px;
+    margin-top: 7px;
+    margin-right: 4px;
+    color: var(--link-color);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.tippy-menu form {
+    margin: 0;
+}
+.archived_repost_unavailable {
+    color: var(--muted-text-color);
+}
+
 .post_view_page.with_comments .post:not(.reply) {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;

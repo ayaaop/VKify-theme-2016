@@ -874,7 +874,7 @@ function isAjaxWallOpen() {
 
 function showAjaxWallContent(tabId) {
     const insertThere = document.querySelector('.wall_module .insertThere');
-    const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
+    const allPostsContainer = document.querySelector('.wall_module #underHeader > #all_posts') || document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
     const tabLink = document.querySelector(`#${tabId} a`);
     if (!insertThere || !allPostsContainer || !tabLink) return;
 
@@ -896,7 +896,7 @@ function showAjaxWallContent(tabId) {
     insertThere.dataset.loadedTab = tabId;
 
     if (typeof window.__resetPaginatorState === 'function') {
-        const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
+        const allPostsContainer = document.querySelector('.wall_module #underHeader > #all_posts') || document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
         window.__resetPaginatorState(allPostsContainer);
     }
 
@@ -923,11 +923,13 @@ function showAjaxWallContent(tabId) {
                     result = doc.querySelector('.infContainer');
                 } else if (tabId === 'wall_tab_owners') {
                     result = doc.getElementById('owner_posts') || doc.querySelector('.wall_posts.content.scroll_container') || doc.querySelector('.content.scroll_container');
+                } else if (tabId === 'wall_tab_archive') {
+                    result = doc.getElementById('archive_posts_container');
                 }
 
                 if (!result) return;
                 
-                if (tabId === 'wall_tab_owners' || tabId === 'wall_tab_suggested') {
+                if (tabId === 'wall_tab_owners' || tabId === 'wall_tab_suggested' || tabId === 'wall_tab_archive') {
                     const loadedSearch = result.querySelector('#wall_search');
                     // The search bar is wrapped in a page_block, it's better to hide the whole block if it exists
                     if (loadedSearch) {
@@ -941,11 +943,16 @@ function showAjaxWallContent(tabId) {
                 }
 
                 result.querySelectorAll('.bsdn').forEach(bsdnInitElement);
-                // For owners, we inject outerHTML so the #owner_posts wrapper is preserved
-                if (tabId === 'wall_tab_owners') {
+                // For owners and archive, we inject outerHTML so the wrapper is preserved
+                if (tabId === 'wall_tab_owners' || tabId === 'wall_tab_archive') {
                     insertThere.innerHTML = result.outerHTML;
                 } else {
                     insertThere.innerHTML = result.innerHTML;
+                }
+
+                if (tabId === 'wall_tab_archive') {
+                    window.__vkifyInitTabSliderSafe?.();
+                    window.reinitializeTooltips?.();
                 }
             }],
         },
@@ -1066,7 +1073,7 @@ function initSuggestionsAdapterOnce() {
 
     window.__vkifyOnWallTabSwitch = (tab) => {
         const tabId = tab.closest('li')?.id;
-        if (tabId === 'wall_tab_suggested' || tabId === 'wall_tab_owners') {
+        if (tabId === 'wall_tab_suggested' || tabId === 'wall_tab_owners' || tabId === 'wall_tab_archive') {
             showAjaxWallContent(tabId);
             return true;
         }
@@ -1334,6 +1341,80 @@ vkify.hook(vkify, 'onPageReady', () => {
         window.postPopupManager.checkInitialUrl();
         bindPostDeleteConfirmOnce();
     }
+}, 'after');
+
+function bindPostArchiveOnce() {
+    if (!vkify.bindOnce('postArchive', bindPostArchiveOnce)) return;
+
+    document.addEventListener('click', (e) => {
+        const archiveLink = e.target.closest('a.archive_post');
+        if (!archiveLink || archiveLink.dataset.archiving) return;
+
+        const href = archiveLink.getAttribute('href');
+        if (!href?.includes('/wall')) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        const postElement = archiveLink.closest('.post');
+        if (!postElement) return;
+
+        archiveLink.dataset.archiving = '1';
+
+        (async () => {
+            try {
+                LoaderUtils.show(postElement, { className: 'vkify-post-loader' });
+
+                const url = new URL(href, location.origin);
+                url.searchParams.set('ajax', '1');
+
+                const response = await fetch(url, { method: 'POST' });
+                const data = await response.json().catch(() => null);
+                if (!response.ok || !data?.success) {
+                    throw new Error('Failed to toggle post archive state');
+                }
+
+                LoaderUtils.hide(postElement);
+
+                const originalHeight = postElement.offsetHeight;
+                postElement.style.overflow = 'hidden';
+                postElement.style.height = `${originalHeight}px`;
+                postElement.style.transition = 'opacity 200ms ease, height 250ms ease, margin 250ms ease, padding 250ms ease';
+                postElement.style.opacity = '0';
+
+                void postElement.offsetHeight;
+
+                postElement.style.height = '0px';
+                postElement.style.marginTop = '0';
+                postElement.style.marginBottom = '0';
+                postElement.style.paddingTop = '0';
+                postElement.style.paddingBottom = '0';
+
+                await new Promise(resolve => setTimeout(resolve, 260));
+
+                postElement.remove();
+
+                const countEl = document.querySelector('.ui_tab_sel .ui_tab_count');
+                if (countEl) {
+                    const count = parseInt(countEl.textContent, 10);
+                    if (!Number.isNaN(count)) countEl.textContent = Math.max(0, count - 1);
+                }
+
+                window.dispatchEvent(new CustomEvent('archive:changed', { detail: data }));
+            } catch (err) {
+                console.error('Failed to toggle post archive state:', err);
+                LoaderUtils.hide(postElement);
+                archiveLink.dataset.archiving = '';
+            }
+        })();
+    }, true);
+}
+
+bindPostArchiveOnce();
+
+vkify.hook(vkify, 'onPageReady', () => {
+    bindPostArchiveOnce();
 }, 'after');
 
 vkify.once('editMenuLayout', () => {
