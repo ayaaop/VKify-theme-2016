@@ -953,6 +953,13 @@ function showAjaxWallContent(tabId) {
                 if (tabId === 'wall_tab_archive') {
                     window.__vkifyInitTabSliderSafe?.();
                     window.reinitializeTooltips?.();
+
+                    const archiveBanner = insertThere.querySelector('.page_block.archive_banner');
+                    if (archiveBanner && !archiveBanner.querySelector('.archive_banner_link')) {
+                        const archiveUrl = tabLink.href.split('?')[0] + '?type=archive';
+                        const label = window.vkifylang?.manage_archive ?? 'Manage archive';
+                        archiveBanner.insertAdjacentHTML('beforeend', `<a class="button archive_banner_link" href="${archiveUrl}">${label}</a>`);
+                    }
                 }
             }],
         },
@@ -1720,17 +1727,16 @@ function bindWallSearchOnce() {
         const toggle = e.target.closest('.ui_tab_search');
         if (!toggle) return;
 
-        const tabs = toggle.closest('.ui_tabs');
-        if (!tabs) return;
+        const header = toggle.closest('.tabs_header');
+        if (!header) return;
 
-        if (tabs.classList.contains('ui_tabs_search_opened')) return;
+        if (header.classList.contains('ui_tabs_search_opened')) return;
 
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        tabs.classList.add('ui_tabs_search_opened');
-        resetTabsScrollPosition(tabs);
-        const input = tabs.querySelector('.ui_search_field');
+        header.classList.add('ui_tabs_search_opened');
+        const input = header.querySelector('.ui_search_field');
         if (input) input.focus();
     }, true);
 
@@ -1738,11 +1744,11 @@ function bindWallSearchOnce() {
         const reset = e.target.closest('.ui_tab_search_wrap .ui_search_reset');
         if (!reset) return;
 
-        const tabs = reset.closest('.ui_tabs');
-        if (!tabs) return;
+        const header = reset.closest('.tabs_header');
+        if (!header) return;
 
-        tabs.classList.remove('ui_tabs_search_opened');
-        const input = tabs.querySelector('.ui_search_field');
+        header.classList.remove('ui_tabs_search_opened');
+        const input = header.querySelector('.ui_search_field');
         if (input) {
             input.value = '';
             toggleSearchFieldEmptyState(input);
@@ -1755,10 +1761,9 @@ function bindWallSearchOnce() {
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('type') === 'search') {
-        const tabs = document.querySelector('#wall_top_tabs');
-        if (tabs) {
-            tabs.classList.add('ui_tabs_search_opened');
-            resetTabsScrollPosition(tabs);
+        const header = document.querySelector('#wall_top_tabs')?.closest('.tabs_header');
+        if (header) {
+            header.classList.add('ui_tabs_search_opened');
         }
     }
 }

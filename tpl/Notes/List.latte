@@ -20,6 +20,12 @@
         'url' => "/notes" . $owner->getId(),
         'title' => 'notes',
         'active' => true
+    ],
+    [
+        'url' => "/wall" . $owner->getId() . "?type=archive",
+        'title' => 'archived_posts',
+        'active' => false,
+        'condition' => isset($thisUser) && $thisUser->getId() === $owner->getId() && $owner->getId() > 0
     ]
 ]}
     <div class="wide_column_left">

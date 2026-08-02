@@ -2,6 +2,55 @@
 {block title}{_wall}{/block}
 
 {block content}
+{var $archiveYearExtraItem = fn($year) => [
+        'url' => '#',
+        'class' => 'archive_actions',
+        'condition' => $type == 'archive' && ($archiveYear ?? null) === $year,
+        'content' => '<span class="archive_actions_icon" data-tippy-content-id="archive_year_actions_' . $year . '" data-tippy-placement="bottom-end" data-tippy-append-to="body"></span>',
+        'onclick' => 'event.preventDefault(); event.stopPropagation();'
+    ]}
+{var $archiveMenuSubitems = array_map(fn($year) => [
+        'url' => '/wall' . $owner . '?type=archive&year=' . $year,
+        'title' => (string) $year,
+        'translate' => false,
+        'active' => $type == 'archive' && ($archiveYear ?? null) === $year,
+        'extraItem' => $archiveYearExtraItem($year)
+    ], $archiveYears ?? [])
+}
+{capture $archiveAllActionsMenu}
+    <div id="archive_all_actions_menu" class="tippy-menu tippy-content-template">
+        <form method="post" action="/wall{$owner}/archive/manage">
+            <input type="hidden" name="hash" value="{$csrfToken}">
+            <input type="hidden" name="action" value="archive_all">
+            <button type="submit" data-confirm="{_archive_confirm_all}" onclick="return confirm(this.dataset.confirm)">{_archive_all_posts}</button>
+        </form>
+    </div>
+{/capture}
+{capture $archiveYearActionsMenus}
+    {foreach $archiveYears ?? [] as $year}
+        <div id="archive_year_actions_{$year}" class="tippy-menu tippy-content-template">
+            <form method="post" action="/wall{$owner}/archive/manage">
+                <input type="hidden" name="hash" value="{$csrfToken}">
+                <input type="hidden" name="action" value="archive_year">
+                <input type="hidden" name="year" value="{$year}">
+                <button type="submit" data-confirm="{tr('archive_confirm_year', $year)}" onclick="return confirm(this.dataset.confirm)">{tr('archive_all_posts_from_year', $year)}</button>
+            </form>
+            <form method="post" action="/wall{$owner}/archive/manage">
+                <input type="hidden" name="hash" value="{$csrfToken}">
+                <input type="hidden" name="action" value="restore_year">
+                <input type="hidden" name="year" value="{$year}">
+                <button type="submit" data-confirm="{tr('restore_confirm_year', $year)}" onclick="return confirm(this.dataset.confirm)">{tr('restore_all_posts_from_year', $year)}</button>
+            </form>
+        </div>
+    {/foreach}
+{/capture}
+{var $archiveActionsExtraItem = [
+    'url' => '#',
+    'class' => 'archive_actions',
+    'condition' => $type == 'archive',
+    'content' => '<span class="archive_actions_icon" data-tippy-content-id="archive_all_actions_menu" data-tippy-placement="bottom-end" data-tippy-append-to="body"></span>',
+    'onclick' => 'event.preventDefault(); event.stopPropagation();'
+]}
 {var $menuItems = [
     [
         'url' => '/wall' . $owner . '?type=owners',
@@ -23,7 +72,9 @@
     [
         'url' => '/wall' . $owner . '?type=archive',
         'title' => 'archived_posts',
-        'active' => $type == 'archive',
+        'active' => $type == 'archive' && ($archiveYear ?? null) === null,
+        'subitems' => $archiveMenuSubitems,
+        'extraItem' => $archiveActionsExtraItem,
         'condition' => isset($thisUser) && (
             ($owner > 0 && $thisUser->getId() === $oObj->getId()) ||
             ($owner < 0 && isset($club) && $club->canBeModifiedBy($thisUser))
@@ -43,7 +94,7 @@
                 <div n:if="$canPost && $type != 'archive'" class="page_block postFeedWrapperMicroblog">
                     {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
                 </div>
-                <div n:if="$type != 'archive'" class="page_block wall_posts_tabs">
+                <div class="page_block wall_posts_tabs">
                     {include "../components/page_block_header.latte", title => $type == 'search' ? 'search_results' : 'wall', extra => '<a href="/wall'.$owner.'/rss" class="button">'.tr('read_in_rss').'</a>'}
                 </div>
                 {capture $wallPostsContent}
@@ -76,6 +127,8 @@
                 {/capture}
 
                 {if $type == 'archive'}
+                    {$archiveAllActionsMenu|noescape}
+                    {$archiveYearActionsMenus|noescape}
                     <div id="archive_posts_container">
                     <div class="page_block archive_banner">
                         <div class="archive_banner_text">
@@ -84,56 +137,6 @@
                         </div>
                     </div>
 
-                    {var $currentArchiveYear = $archiveYear ?? ($archiveYears[0] ?? NULL)}
-                    {if sizeof($archiveYears) > 0}
-                        {var $postsRepo = new \openvk\Web\Models\Repositories\Posts()}
-                        {var $archiveAllCount = ($type == 'archive' && is_null($archiveYear)) ? $count : $postsRepo->getArchivedCountOnUserWall($owner)}
-                        {var $archiveCounts = array_combine($archiveYears, array_map(fn($year) => ($type == 'archive' && !is_null($archiveYear) && $year === $archiveYear) ? $count : $postsRepo->getArchivedCountOnUserWall($owner, $year), $archiveYears))}
-
-                        {var $archiveTabs = array_merge(
-                            [[
-                                'url' => "/wall{$owner}?type=archive",
-                                'title' => 'archive_all_years',
-                                'active' => is_null($archiveYear),
-                                'count' => $archiveAllCount
-                            ]],
-                            array_map(fn($year) => [
-                                'url' => "/wall{$owner}?type=archive&year={$year}",
-                                'title' => (string) $year,
-                                'translate' => false,
-                                'active' => !is_null($archiveYear) && $year === $archiveYear,
-                                'count' => $archiveCounts[$year] ?? 0
-                            ], $archiveYears)
-                        )}
-
-                        {capture $archiveActionsExtra}
-                            <div class="fl_r archive_actions_button sort_link" data-tippy-content-id="archive_actions_menu" data-tippy-placement="bottom-end" data-tippy-append-to="body">{_actions} <div class="sort_link_icon sort_link_icon_asc"></div></div>
-                            <div id="archive_actions_menu" class="tippy-menu tippy-content-template">
-                                <form method="post" action="/wall{$owner}/archive/manage">
-                                    <input type="hidden" name="hash" value="{$csrfToken}">
-                                    <input type="hidden" name="action" value="archive_year">
-                                    <input type="hidden" name="year" value="{$currentArchiveYear}">
-                                    <button type="submit" data-confirm="{tr('archive_confirm_year', $currentArchiveYear)}" onclick="return confirm(this.dataset.confirm)">{tr('archive_all_posts_from_year', $currentArchiveYear)}</button>
-                                </form>
-                                <form method="post" action="/wall{$owner}/archive/manage">
-                                    <input type="hidden" name="hash" value="{$csrfToken}">
-                                    <input type="hidden" name="action" value="restore_year">
-                                    <input type="hidden" name="year" value="{$currentArchiveYear}">
-                                    <button type="submit" data-confirm="{tr('restore_confirm_year', $currentArchiveYear)}" onclick="return confirm(this.dataset.confirm)">{tr('restore_all_posts_from_year', $currentArchiveYear)}</button>
-                                </form>
-                                <div class="separator"></div>
-                                <form method="post" action="/wall{$owner}/archive/manage">
-                                    <input type="hidden" name="hash" value="{$csrfToken}">
-                                    <input type="hidden" name="action" value="archive_all">
-                                    <button type="submit" data-confirm="{_archive_confirm_all}" onclick="return confirm(this.dataset.confirm)">{_archive_all_posts}</button>
-                                </form>
-                            </div>
-                        {/capture}
-
-                        <div class="page_block wall_posts_tabs">
-                            {include "../components/page_tabs_header.latte", tabs => $archiveTabs, id => 'archive_top_tabs', white => true, extra => $archiveActionsExtra}
-                        </div>
-                    {/if}
                     {$wallPostsContent|noescape}
                 </div>
                 {else}
