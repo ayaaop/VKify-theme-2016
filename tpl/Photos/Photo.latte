@@ -40,7 +40,7 @@
                         <span class="divider"></span>
                     {/if}
                     <span class="pv_actions_more" role="button" data-tippy-content-id="pv_actions_more_menu" data-tippy-theme="dark vk">
-                        {_show_more}
+                        {=vkifyTr('more')}
                     </span>
                     <div id="pv_actions_more_menu" class="tippy-menu tippy-content-template">
                         <a n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">{_edit}</a>
