@@ -86,7 +86,7 @@ vkify.once("updateNarrow", () => {
         window.addEventListener('scroll', throttledScroll, { passive: true });
         window.addEventListener('resize', throttledScroll);
 
-        vkify.hook(vkify, 'onPageReady', () => setTimeout(window.updateNarrow, 0), 'after');
+        vkify.onPageLifecycle('afterPageReady', () => setTimeout(window.updateNarrow, 0), 'after');
 
         if (document.readyState === 'complete') {
             setTimeout(window.updateNarrow, 0);
@@ -235,7 +235,7 @@ vkify.once('affixedNavigation', () => {
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', init);
 
-    vkify.hook(vkify, 'onPageReady', () => setTimeout(init, 50), 'after');
+    vkify.onPageLifecycle('afterPageReady', () => setTimeout(init, 50), 'after');
 
     vkify.ready(() => {
         if (document.readyState === 'complete') {

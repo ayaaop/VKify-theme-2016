@@ -61,10 +61,10 @@
         </div>
     </div>
 
-    <script type="module" n:syntax='off'>
+    <script type="module" n:syntax='off' data-vkify-route-script="audio-upload">
         import * as id3 from "/assets/packages/static/openvk/js/node_modules/id3js/lib/id3.js";
 
-        window.__audio_upload_page = new class {
+        vkify.audioUploadPage = new class {
             files_list = []
 
             hideFirstPage() {
@@ -227,17 +227,17 @@
                     return
                 }
 
-                window.__audio_upload_page.files_list.forEach(el => {
+                vkify.audioUploadPage.files_list.forEach(el => {
                     if(el && file.name == el.file.name) {
                         has_duplicates = true
                     }
                 })
 
                 if(!has_duplicates) {
-                    window.__audio_upload_page.appendFile(appender)
+                    vkify.audioUploadPage.appendFile(appender)
                 }
             })
-            window.__audio_upload_page.hideFirstPage()
+            vkify.audioUploadPage.hideFirstPage()
         })
     </script>
 {/block}

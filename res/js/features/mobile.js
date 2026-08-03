@@ -1,4 +1,7 @@
 (function() {
+    vkify.musicPopup = vkify.musicPopup || {};
+    let profileAppbarScrollHandler = null;
+
     window.vkify.ready(() => {
         const body = document.body;
 
@@ -101,7 +104,10 @@
         };
 
         let appbarScrollRafPending = false;
-        window.__profileAppbarScrollHandler = function() {
+        if (profileAppbarScrollHandler) {
+            window.removeEventListener('scroll', profileAppbarScrollHandler);
+        }
+        profileAppbarScrollHandler = function() {
             if (appbarScrollRafPending) return;
             appbarScrollRafPending = true;
             requestAnimationFrame(() => {
@@ -110,10 +116,17 @@
             });
         };
         applyAppbarScrollState();
-        window.addEventListener('scroll', window.__profileAppbarScrollHandler, {'passive': true});
+        window.addEventListener('scroll', profileAppbarScrollHandler, {'passive': true});
     }
 
-    vkify.hook(vkify, 'onPageReady', setupTransparentAppbar, 'after');
+    vkify.onPageLifecycle('beforePageLeave', () => {
+        if (profileAppbarScrollHandler) {
+            window.removeEventListener('scroll', profileAppbarScrollHandler);
+            profileAppbarScrollHandler = null;
+        }
+        document.body.classList.remove('has-transparent-appbar');
+    });
+    vkify.onPageLifecycle('afterPageReady', setupTransparentAppbar);
 
     function setupSidebarPlayerOnce() {
         if (!vkify.bindOnce('sidebarPlayerSetup', setupSidebarPlayerOnce)) return;
@@ -153,7 +166,7 @@
             }
         }
 
-        window.__vkifyMusicPopupUpdateSidebarPlayer = updateSidebarPlayer;
+        vkify.musicPopup.updateSidebarPlayer = updateSidebarPlayer;
 
         function attachAudioListeners() {
             if (!window.player?.audioPlayer) return;
@@ -182,7 +195,7 @@
         tryWrapUpdateFace();
         updateSidebarPlayer();
 
-        window.__vkifyMusicPopupTryWrapUpdateFaceSidebar = tryWrapUpdateFace;
+        vkify.musicPopup.tryWrapUpdateFaceSidebar = tryWrapUpdateFace;
     }
 
     function bindSidebarPlayerDOM() {
@@ -203,8 +216,8 @@
                 } else {
                     window.player.pause();
                 }
-                if (typeof window.__vkifyMusicPopupUpdateSidebarPlayer === 'function') {
-                    window.__vkifyMusicPopupUpdateSidebarPlayer();
+                if (typeof vkify.musicPopup.updateSidebarPlayer === 'function') {
+                    vkify.musicPopup.updateSidebarPlayer();
                 }
             });
         }
@@ -222,11 +235,11 @@
                     }
                     window.player.current_track_id = null;
                     window.player.pause();
-                    if (typeof window.__vkifyMusicPopupUpdateSidebarPlayer === 'function') {
-                        window.__vkifyMusicPopupUpdateSidebarPlayer();
+                    if (typeof vkify.musicPopup.updateSidebarPlayer === 'function') {
+                        vkify.musicPopup.updateSidebarPlayer();
                     }
-                    if (typeof window.__vkifyMusicPopupUpdateTopPlayer === 'function') {
-                        window.__vkifyMusicPopupUpdateTopPlayer();
+                    if (typeof vkify.musicPopup.updateTopPlayer === 'function') {
+                        vkify.musicPopup.updateTopPlayer();
                     }
                     if (typeof window.player.__updateFace === 'function') {
                         window.player.__updateFace();
@@ -251,11 +264,11 @@
             });
         }
 
-        if (typeof window.__vkifyMusicPopupUpdateSidebarPlayer === 'function') {
-            window.__vkifyMusicPopupUpdateSidebarPlayer();
+        if (typeof vkify.musicPopup.updateSidebarPlayer === 'function') {
+            vkify.musicPopup.updateSidebarPlayer();
         }
-        if (typeof window.__vkifyMusicPopupTryWrapUpdateFaceSidebar === 'function') {
-            window.__vkifyMusicPopupTryWrapUpdateFaceSidebar();
+        if (typeof vkify.musicPopup.tryWrapUpdateFaceSidebar === 'function') {
+            vkify.musicPopup.tryWrapUpdateFaceSidebar();
         }
     }
 })();

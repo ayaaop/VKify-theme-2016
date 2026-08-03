@@ -95,9 +95,9 @@ const bindInputHandlerOnce = () => {
     });
 };
 
-vkify.hook(vkify, 'onPageReady', (container) => {
+vkify.onPageLifecycle('afterPageReady', ({ container = document }) => {
     bindInputHandlerOnce();
-    initAll(container || document);
+    initAll(container);
 }, 'after');
 
 vkify.ready(() => {

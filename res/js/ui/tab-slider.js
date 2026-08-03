@@ -64,7 +64,7 @@ function moveTabSlider(container, tabAnchor, animate = true) {
     scrollActiveTabIntoView(container, tabAnchor, animate);
 }
 
-window.__vkifyMoveTabSlider = moveTabSlider;
+vkify.moveTabSlider = moveTabSlider;
 
 function repositionInitializedTabSliders() {
     document.querySelectorAll('.ui_tabs[data-vkify-tab-slider-init="1"]').forEach(container => {
@@ -75,8 +75,8 @@ function repositionInitializedTabSliders() {
     });
 }
 
-if (!window.__vkifyTabSliderResizeBound) {
-    window.__vkifyTabSliderResizeBound = true;
+if (!vkify.tabSliderResizeBound) {
+    vkify.tabSliderResizeBound = true;
     let resizeRafPending = false;
     window.addEventListener('resize', () => {
         if (resizeRafPending) return;
@@ -88,7 +88,7 @@ if (!window.__vkifyTabSliderResizeBound) {
     });
 }
 
-window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function () {
+vkify.initTabSliderSafe = vkify.initTabSliderSafe || function () {
     const tabContainers = document.querySelectorAll('.ui_tabs');
 
     tabContainers.forEach(container => {
@@ -136,8 +136,8 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
             const href = targetTab.getAttribute('href');
             let handled = false;
 
-            if (typeof window.__vkifyOnWallTabSwitch === 'function') {
-                handled = window.__vkifyOnWallTabSwitch(targetTab) === true;
+            if (typeof vkify.onWallTabSwitch === 'function') {
+                handled = vkify.onWallTabSwitch(targetTab) === true;
             }
 
             if (!handled && href && !href.startsWith('#')) {
@@ -194,15 +194,15 @@ window.__vkifyInitTabSliderSafe = window.__vkifyInitTabSliderSafe || function ()
     });
 };
 
-if (window.initTabSlider !== window.__vkifyInitTabSliderSafe) {
-    window.initTabSlider = window.__vkifyInitTabSliderSafe;
+if (window.initTabSlider !== vkify.initTabSliderSafe) {
+    window.initTabSlider = vkify.initTabSliderSafe;
 }
 
 function getTabScrollKey(el, index) {
     return el.id || `__vkify_tab_${index}`;
 }
 
-window.__vkifyCaptureTabScrolls = function (container) {
+vkify.captureTabScrolls = function (container) {
     const scrolls = {};
     if (!container) return scrolls;
 
@@ -213,7 +213,7 @@ window.__vkifyCaptureTabScrolls = function (container) {
     return scrolls;
 };
 
-window.__vkifyRestoreTabScrolls = function (container, scrolls) {
+vkify.restoreTabScrolls = function (container, scrolls) {
     if (!container || !scrolls) return;
 
     container.querySelectorAll('.ui_tabs').forEach((el, i) => {

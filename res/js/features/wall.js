@@ -819,7 +819,7 @@ function initGroupInfoTabs() {
             const tab = li.querySelector('.ui_tab');
             if (tab) tab.classList.toggle('ui_tab_sel', li.id === tabId);
         });
-        window.__vkifyMoveTabSlider?.(container, tabLink, true);
+        vkify.moveTabSlider?.(container, tabLink, true);
         
         const infoContent = document.getElementById('group_tab_info_content');
         const pinnedContent = document.getElementById('group_tab_pinned_content');
@@ -864,7 +864,7 @@ function setWallTabSelected(tabId, animate = true) {
         tab.classList.toggle('ui_tab_sel', li.id === tabId);
     });
 
-    window.__vkifyMoveTabSlider?.(container, targetTab, animate);
+    vkify.moveTabSlider?.(container, targetTab, animate);
 }
 
 function isAjaxWallOpen() {
@@ -872,7 +872,7 @@ function isAjaxWallOpen() {
     return insertThere?.style.display === 'block';
 }
 
-function showAjaxWallContent(tabId) {
+function showAjaxWallContent(tabId, updateHistory = true) {
     const insertThere = document.querySelector('.wall_module .insertThere');
     const allPostsContainer = document.querySelector('.wall_module #underHeader > #all_posts') || document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
     const tabLink = document.querySelector(`#${tabId} a`);
@@ -888,7 +888,7 @@ function showAjaxWallContent(tabId) {
     }
 
     
-    history.pushState({}, '', tabLink.href);
+    if (updateHistory) window.router?.updateHistory(tabLink.href, { kind: 'tab' });
 
     if (insertThere.dataset.loadedTab === tabId) return;
     
@@ -951,7 +951,7 @@ function showAjaxWallContent(tabId) {
                 }
 
                 if (tabId === 'wall_tab_archive') {
-                    window.__vkifyInitTabSliderSafe?.();
+                    vkify.initTabSliderSafe?.();
                     window.reinitializeTooltips?.();
 
                     const archiveBanner = insertThere.querySelector('.page_block.archive_banner');
@@ -966,7 +966,7 @@ function showAjaxWallContent(tabId) {
     });
 }
 
-function hideAjaxWallContent() {
+function hideAjaxWallContent(updateHistory = true) {
     const insertThere = document.querySelector('.wall_module .insertThere');
     const allPostsContainer = document.getElementById('all_posts') || document.querySelector('.wall_module #underHeader') || document.getElementById('underHeader');
     if (!insertThere || !allPostsContainer) return;
@@ -983,7 +983,7 @@ function hideAjaxWallContent() {
     const allTabLink = document.querySelector('#wall_tab_all a');
     const url = allTabLink ? allTabLink.href : getClubPageUrl();
     
-    history.pushState({}, '', url);
+    if (updateHistory) window.router?.updateHistory(url, { kind: 'tab' });
 }
 
 function updateSuggestionCounts(newCount) {
@@ -1044,7 +1044,7 @@ function loadMoreSuggestedPostsVkify() {
                     const page = Number(url.searchParams.get('p') || 1);
                     if (page < 2) return;
                     url.searchParams.set('p', String(page - 1));
-                    history.pushState({}, '', url);
+                    window.router?.updateHistory(url, { kind: 'tab' });
                     loadMoreSuggestedPostsVkify();
                     return;
                 }
@@ -1078,7 +1078,7 @@ function initSuggestionsAdapterOnce() {
 
     window.loadMoreSuggestedPosts = loadMoreSuggestedPostsVkify;
 
-    window.__vkifyOnWallTabSwitch = (tab) => {
+    vkify.onWallTabSwitch = (tab) => {
         const tabId = tab.closest('li')?.id;
         if (tabId === 'wall_tab_suggested' || tabId === 'wall_tab_owners' || tabId === 'wall_tab_archive') {
             showAjaxWallContent(tabId);
@@ -1090,6 +1090,16 @@ function initSuggestionsAdapterOnce() {
         }
         return false;
     };
+
+    window.addEventListener('popstate', (event) => {
+        if (event.state?.vkify?.kind !== 'tab') return;
+        const activeTab = Array.from(document.querySelectorAll('#wall_top_tabs > li a')).find(link => link.href === location.href)?.closest('li');
+        if (activeTab?.id && activeTab.id !== 'wall_tab_all') {
+            showAjaxWallContent(activeTab.id, false);
+        } else if (isAjaxWallOpen()) {
+            hideAjaxWallContent(false);
+        }
+    });
 
     document.addEventListener('click', (e) => {
         const declineBtn = e.target.closest('#decline_post');
@@ -1343,7 +1353,7 @@ function bindPostDeleteConfirmOnce() {
 
 bindPostDeleteConfirmOnce();
 
-vkify.hook(vkify, 'onPageReady', () => {
+vkify.onPageLifecycle('afterPageReady', () => {
     if (window.postPopupManager && !window.postPopupManager.currentModal) {
         window.postPopupManager.checkInitialUrl();
         bindPostDeleteConfirmOnce();
@@ -1420,12 +1430,12 @@ function bindPostArchiveOnce() {
 
 bindPostArchiveOnce();
 
-vkify.hook(vkify, 'onPageReady', () => {
+vkify.onPageLifecycle('afterPageReady', () => {
     bindPostArchiveOnce();
 }, 'after');
 
 vkify.once('editMenuLayout', () => {
-    window.__vkifyEditMenuLayout = (api_post, type, postId) => renderEditMenuLayout(api_post, type, postId);
+    vkify.editMenuLayout = (api_post, type, postId) => renderEditMenuLayout(api_post, type, postId);
 });
 
 function bindPostEditOnce() {
@@ -1459,7 +1469,7 @@ function bindPostEditOnce() {
                 const api_req = await window.OVKAPI.call(`wall.${type === 'post' ? 'getById' : 'getComment'}`, params);
                 const api_post = api_req.items[0];
 
-                edit_place.html(window.__vkifyEditMenuLayout(api_post, type, rawId));
+                edit_place.html(vkify.editMenuLayout(api_post, type, rawId));
 
                 if (api_post.copyright) {
                     edit_place.find('.post-source').html(`

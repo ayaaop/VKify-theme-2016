@@ -130,7 +130,7 @@ vkify.once("graffiti", function () {
     }
   }
 
-  window.__vkifyStockInitGraffiti = openStockGraffiti;
+  vkify.stockInitGraffiti = openStockGraffiti;
 
   function graffitiDispatcher(event) {
     try {
@@ -163,17 +163,11 @@ vkify.once("graffiti", function () {
   }
 
   function getThemeAsset(path) {
-    return (
-      window.vkify?.themeUrl?.(path) ||
-      (window.__vkifyThemeBase ? window.__vkifyThemeBase + path : path)
-    );
+    return window.vkify?.themeUrl?.(path) ?? path;
   }
 
   function getResourceAsset(path) {
-    return (
-      window.vkify?.resourceUrl?.(path) ||
-      (window.__vkifyResourceBase ? window.__vkifyResourceBase + path : path)
-    );
+    return window.vkify?.resourceUrl?.(path) ?? path;
   }
 
   function resolveWriteContainer(event) {
@@ -321,8 +315,6 @@ vkify.once("graffiti", function () {
 
               if (typeof window.__uploadToTextarea === "function") {
                 window.__uploadToTextarea(image, writeContainer);
-              } else if (typeof window.__vkifyUploadToTextarea === "function") {
-                window.__vkifyUploadToTextarea(image, writeContainer);
               }
             });
           } catch (e) {}

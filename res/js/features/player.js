@@ -1,12 +1,14 @@
 // Wrap bsdnInitElement to track the currently hydrating element
+let currentlyHydratingBsdnElement = null;
+
 if (window.bsdnInitElement) {
     var originalBsdnInitElement = window.bsdnInitElement;
     window.bsdnInitElement = function(el) {
-        window.__currentlyHydratingBsdnElement = el;
+        currentlyHydratingBsdnElement = el;
         try {
             originalBsdnInitElement(el);
         } finally {
-            window.__currentlyHydratingBsdnElement = null;
+            currentlyHydratingBsdnElement = null;
         }
     };
 }
@@ -18,7 +20,7 @@ vkify.hook(window, '_bsdnTpl', function(name, author) {
         return (window.vkifylang && window.vkifylang[k]) || fallback || k;
     };
 
-    var currentEl = window.__currentlyHydratingBsdnElement;
+    var currentEl = currentlyHydratingBsdnElement;
     var duration = currentEl ? currentEl.dataset.duration : '';
 
     return `

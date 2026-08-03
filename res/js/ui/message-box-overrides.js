@@ -19,7 +19,7 @@ vkify.bindOnce('messageBoxOverrides', () => {
             return U(
                 `<div class="ovk-diag-cont ovk-msg-all" data-id="${this.id}">
   <div class="ovk-diag">
-     <div class="ovk-diag-head">${this.title}<div class="ovk-diag-head-close" onclick="window.__vkifyCloseDialog()"></div></div>
+     <div class="ovk-diag-head">${this.title}<div class="ovk-diag-head-close" onclick="window.vkify.closeDialog()"></div></div>
      <div class="ovk-diag-body">${this.body}</div>
      <div class="ovk-diag-action"></div>
   </div>
@@ -65,7 +65,7 @@ vkify.bindOnce('messageBoxOverrides', () => {
             }
         };
         closeFn.__vkifyPatched = true;
-        window.__vkifyCloseDialog = closeFn;
+        vkify.closeDialog = closeFn;
 
         vkify.bindOnce("dimmerClose", () => {
             document.addEventListener('click', (e) => {
@@ -73,7 +73,7 @@ vkify.bindOnce('messageBoxOverrides', () => {
                 if (!t) return;
                 if (document.body?.classList.contains('dimmed') && t.classList?.contains('dimmer')) {
                     e.stopImmediatePropagation();
-                    window.__vkifyCloseDialog?.();
+                    vkify.closeDialog?.();
                 }
             }, true);
         });
@@ -82,7 +82,7 @@ vkify.bindOnce('messageBoxOverrides', () => {
             document.addEventListener('keyup', (e) => {
                 if (e.key === 'Escape' || e.keyCode === 27) {
                     if (window.messagebox_stack?.length) {
-                        window.__vkifyCloseDialog?.();
+                        vkify.closeDialog?.();
                     }
                 }
             }, true);
@@ -148,7 +148,7 @@ vkify.bindOnce('messageBoxOverrides', () => {
     };
 
     applyOverrides();
-    vkify.hook(vkify, 'onPageReady', applyOverrides, 'after');
+    vkify.onPageLifecycle('afterPageReady', applyOverrides, 'after');
 });
 
 function replaceMbTabs(mbTabs) {

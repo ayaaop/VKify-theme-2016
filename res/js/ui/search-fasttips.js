@@ -35,7 +35,7 @@ const resultsTpl = Hb.compile(
 );
 
 vkify.once("initializeSearchFastTips", () => {
-    window.__vkifyInitializeSearchFastTipsSafe = function () {
+    vkify.initializeSearchFastTipsSafe = function () {
         const searchInput = u('#search_box input[type="search"]');
         const fastTipsContainer = u('#searchBoxFastTips');
 
@@ -152,8 +152,8 @@ vkify.once("initializeSearchFastTips", () => {
     };
 });
 
-if (window.initializeSearchFastTips !== window.__vkifyInitializeSearchFastTipsSafe) {
-    window.initializeSearchFastTips = window.__vkifyInitializeSearchFastTipsSafe;
+if (window.initializeSearchFastTips !== vkify.initializeSearchFastTipsSafe) {
+    window.initializeSearchFastTips = vkify.initializeSearchFastTipsSafe;
 }
 
 window.hideSearchFastTips = window.hideSearchFastTips || function () {

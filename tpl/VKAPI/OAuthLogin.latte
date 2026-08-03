@@ -148,7 +148,7 @@
 
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
         {script "js/al_api.js"}
-        <script>
+        <script data-vkify-route-script="vkapi-oauth-login">
             //<![CDATA[
             let clientName     = {$clientName};
             let usePostMessage = {$usePostMessage} && window.opener != null;

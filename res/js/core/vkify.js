@@ -252,9 +252,38 @@
 
     function onPageReady() {}
 
+    const pageLifecycleCallbacks = {
+        beforePageLeave: { before: [], after: [] },
+        afterPageSwap: { before: [], after: [] },
+        afterPageReady: { before: [], after: [] },
+    };
+
+    function onPageLifecycle(phase, callback, priority = 'after') {
+        const bucket = pageLifecycleCallbacks[phase];
+        if (!bucket || typeof callback !== 'function') return () => {};
+        const group = priority === 'before' ? bucket.before : bucket.after;
+        const entry = { callback };
+        group.push(entry);
+        return () => {
+            const idx = group.indexOf(entry);
+            if (idx !== -1) group.splice(idx, 1);
+        };
+    }
+
+    async function runPageLifecycle(phase, context = {}) {
+        const bucket = pageLifecycleCallbacks[phase];
+        if (!bucket) return;
+        for (const { callback } of bucket.before) {
+            await callback(context);
+        }
+        for (const { callback } of bucket.after) {
+            await callback(context);
+        }
+    }
+
     function onPage(fn) {
         ready(fn);
-        hookFunc(window.vkify, 'onPageReady', fn, 'after');
+        return onPageLifecycle('afterPageReady', fn);
     }
 
     const domObserverCallbacks = [];
@@ -299,6 +328,8 @@
     window.vkify = {
         onPageReady: onPageReady,
         onPage: onPage,
+        onPageLifecycle: onPageLifecycle,
+        runPageLifecycle: runPageLifecycle,
 
         hook: hookFunc,
         unhook: unhookFunc,

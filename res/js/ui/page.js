@@ -98,7 +98,7 @@ window.changeLangPopup = window.changeLangPopup || function () {
 
     let body = langs.map(lang => `
     <a href="/language?lg=${lang.code}&hash=${encodeURIComponent(window.router.csrf)}&jReturnTo=${encodeURI(window.location.pathname + window.location.search)}">
-       <div class="langSelect${currentLang === lang.code ? ' selected' : ''}"><img src="/themepack/vkify16/3.3.2.5/resource/lang_flags/${lang.flag}" style="margin-right: 14px;"><b>${lang.name}</b></div>
+       <div class="langSelect${currentLang === lang.code ? ' selected' : ''}"><img src="${vkify.resourceUrl('lang_flags/' + lang.flag)}" style="margin-right: 14px;"><b>${lang.name}</b></div>
     </a>`).join('');
 
     body += `
@@ -210,13 +210,32 @@ function initLocalStorageCheckboxes() {
 
 vkify.onPage(initLocalStorageCheckboxes);
 
+vkify.onPageLifecycle('beforePageLeave', () => {
+    const smallBlock = document.querySelector('div[class$="_small_block"]');
+    if (smallBlock && typeof smallBlockObserver !== 'undefined') {
+        smallBlockObserver.unobserve(smallBlock);
+    }
+});
+
+vkify.onPageLifecycle('afterPageSwap', async () => {
+    const smallBlock = document.querySelector('div[class$="_small_block"]');
+    if (smallBlock && typeof smallBlockObserver !== 'undefined') {
+        smallBlockObserver.observe(smallBlock);
+    }
+
+    if (window.player) {
+        window.player.dump();
+        await window.player._handlePageTransition();
+    }
+});
+
 // Orchestrator: trigger per-page initializers provided by extracted modules.
-vkify.hook(vkify, 'onPageReady', () => {
+vkify.onPageLifecycle('afterPageReady', () => {
     window.initializeSearchFastTips?.();
     window.hideSearchFastTips?.();
     window.initTabSlider?.();
 
-    if (window.location.pathname.includes('/albums') && !ge('photos-section')?.dataset?.initialized) {
+    if (ge('photos-section') && !ge('photos-section').dataset?.initialized) {
         setTimeout(window.initAlbumPhotosLoader, 100);
     }
 
@@ -227,6 +246,6 @@ vkify.hook(vkify, 'onPageReady', () => {
     if (document.querySelector('.album-flex') && window.Masonry) {
         Masonry.initAll('.album-flex', { itemSelector: '.masonry-item', columns: 3, gap: 10, breakpoints: { 600: 2, 450: 1 } });
     }
-}, 'after');
+}, 'before');
 
 })();

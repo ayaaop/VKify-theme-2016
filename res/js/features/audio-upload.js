@@ -92,7 +92,7 @@ vkify.once("showAudioUploadPopup", () => {
             }
         }
 
-        window.__audio_upload_page = new class {
+        vkify.audioUploadPage = new class {
             files_list = [];
             ownerId = ownerId;
 
@@ -224,17 +224,17 @@ vkify.once("showAudioUploadPopup", () => {
                     return;
                 }
 
-                window.__audio_upload_page.files_list.forEach(el => {
+                vkify.audioUploadPage.files_list.forEach(el => {
                     if (el && file.name === el.file.name) {
                         has_duplicates = true;
                     }
                 });
 
                 if (!has_duplicates) {
-                    window.__audio_upload_page.appendFile(appender);
+                    vkify.audioUploadPage.appendFile(appender);
                 }
             });
-            window.__audio_upload_page.hideFirstPage();
+            vkify.audioUploadPage.hideFirstPage();
         });
 
         u('#uploadMusicPopup').on('click', async () => {
@@ -251,7 +251,7 @@ vkify.once("showAudioUploadPopup", () => {
 
                 const elemU = u(elem);
                 const index = elem.dataset.index;
-                const file = window.__audio_upload_page.files_list[index];
+                const file = vkify.audioUploadPage.files_list[index];
                 if (!file || !index) continue;
 
                 elemU.addClass('lagged').find('.upload_container_name').addClass('uploading');

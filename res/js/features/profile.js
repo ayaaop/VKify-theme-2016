@@ -238,7 +238,7 @@ window.Profile = {
 
 };
 
-vkify.hook(vkify, 'onPageReady', (container) => {
+vkify.onPageLifecycle('afterPageReady', () => {
     Profile.initProfileSubMenu();
     Profile.initProfileMoreMenu();
     Profile.initEventStatus();

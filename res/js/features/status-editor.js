@@ -2,11 +2,14 @@
 'use strict';
 
 vkify.bindOnce('statusEditorOverrides', () => {
+    let setStatusEditorShownHooked = false;
+    let changeStatusHooked = false;
+
     const hookStatusEditor = () => {
         const LoaderUtils = window.LoaderUtils;
 
-        if (typeof window.setStatusEditorShown === 'function' && !window.__vkifySetStatusEditorShownHooked) {
-            window.__vkifySetStatusEditorShownHooked = true;
+        if (typeof window.setStatusEditorShown === 'function' && !setStatusEditorShownHooked) {
+            setStatusEditorShownHooked = true;
             vkify.hook(window, 'setStatusEditorShown', function (shown) {
                 const editor = ge('status_editor');
                 if (!editor) return;
@@ -18,8 +21,8 @@ vkify.bindOnce('statusEditorOverrides', () => {
             }, 'replace');
         }
 
-        if (typeof window.changeStatus === 'function' && !window.__vkifyChangeStatusHooked) {
-            window.__vkifyChangeStatusHooked = true;
+        if (typeof window.changeStatus === 'function' && !changeStatusHooked) {
+            changeStatusHooked = true;
             vkify.hook(window, 'changeStatus', async function () {
                 const form = document.status_popup_form || document.forms['status_popup_form'];
                 if (!form) return;
@@ -64,7 +67,7 @@ vkify.bindOnce('statusEditorOverrides', () => {
     };
 
     hookStatusEditor();
-    vkify.hook(vkify, 'onPageReady', hookStatusEditor, 'after');
+    vkify.onPageLifecycle('afterPageReady', hookStatusEditor, 'after');
 
     function openMobileStatusEditor(opts) {
         const { value, placeholder, onSave } = opts;
@@ -87,7 +90,7 @@ vkify.bindOnce('statusEditorOverrides', () => {
         });
     }
 
-    window.__mobileEditStatus = function() {
+    vkify.mobileEditStatus = function() {
         const form = document.status_popup_form || document.forms['status_popup_form'];
         const currentStatus = form?.status?.value ?? '';
         openMobileStatusEditor({

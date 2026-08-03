@@ -387,18 +387,28 @@ vkify.once('contentFetcher', function() {
             return doc;
         },
 
+        _updateUrl(url, options = {}) {
+            if (window.router?.updateHistory) {
+                window.router.updateHistory(url, {
+                    replace: options.replace,
+                    kind: options.kind || 'ui',
+                    state: options.state || {},
+                });
+                return;
+            }
+            if (options.replace) {
+                location.replace(url);
+            } else {
+                location.assign(url);
+            }
+        },
+
         updateUrlParam(param, value, options = {}) {
             if (options.skip) return;
-
             try {
                 const url = new URL(window.location.href);
                 url.searchParams.set(param, value);
-
-                if (options.replace) {
-                    window.history.replaceState(options.state || {}, '', url.toString());
-                } else {
-                    window.history.pushState(options.state || {}, '', url.toString());
-                }
+                this._updateUrl(url, options);
             } catch (err) {
                 console.warn(`Failed to update URL param ${param}:`, err);
             }
@@ -406,22 +416,13 @@ vkify.once('contentFetcher', function() {
 
         updateMultipleUrlParams(params, options = {}) {
             if (options.skip) return;
-
             try {
                 const url = new URL(window.location.href);
                 Object.entries(params).forEach(([key, value]) => {
-                    if (value === null || value === undefined) {
-                        url.searchParams.delete(key);
-                    } else {
-                        url.searchParams.set(key, value);
-                    }
+                    if (value === null || value === undefined) url.searchParams.delete(key);
+                    else url.searchParams.set(key, value);
                 });
-
-                if (options.replace) {
-                    window.history.replaceState(options.state || {}, '', url.toString());
-                } else {
-                    window.history.pushState(options.state || {}, '', url.toString());
-                }
+                this._updateUrl(url, options);
             } catch (err) {
                 console.warn('Failed to update URL params:', err);
             }
@@ -429,16 +430,10 @@ vkify.once('contentFetcher', function() {
 
         clearUrlParam(param, options = {}) {
             if (options.skip) return;
-
             try {
                 const url = new URL(window.location.href);
                 url.searchParams.delete(param);
-
-                if (options.replace) {
-                    window.history.replaceState(options.state || {}, '', url.toString());
-                } else {
-                    window.history.pushState(options.state || {}, '', url.toString());
-                }
+                this._updateUrl(url, options);
             } catch (err) {
                 console.warn(`Failed to clear URL param ${param}:`, err);
             }
@@ -446,16 +441,10 @@ vkify.once('contentFetcher', function() {
 
         clearMultipleUrlParams(params, options = {}) {
             if (options.skip) return;
-
             try {
                 const url = new URL(window.location.href);
                 params.forEach(param => url.searchParams.delete(param));
-
-                if (options.replace) {
-                    window.history.replaceState(options.state || {}, '', url.toString());
-                } else {
-                    window.history.pushState(options.state || {}, '', url.toString());
-                }
+                this._updateUrl(url, options);
             } catch (err) {
                 console.warn('Failed to clear URL params:', err);
             }

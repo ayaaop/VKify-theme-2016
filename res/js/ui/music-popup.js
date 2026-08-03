@@ -1,6 +1,8 @@
 (function() {
 'use strict';
 
+vkify.musicPopup = vkify.musicPopup || {};
+
 const __vkifyFavicon = vkify.resourceBase ? {
     get default() {
         const ico = vkify.getSetting('ovkHat') ? 'ovk.ico' : 'default.ico';
@@ -468,7 +470,7 @@ function initTopPlayerOnce() {
         }
     }
 
-    window.__vkifyMusicPopupUpdateTopPlayer = updateTopPlayer;
+    vkify.musicPopup.updateTopPlayer = updateTopPlayer;
 
     topPlayerPlay.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -518,7 +520,7 @@ function initTopPlayerOnce() {
     tryWrapUpdateFace();
     updateTopPlayer();
 
-    window.__vkifyMusicPopupTryWrapUpdateFace = tryWrapUpdateFace;
+    vkify.musicPopup.tryWrapUpdateFace = tryWrapUpdateFace;
 }
 
 
@@ -763,11 +765,11 @@ async function initMusicPopupTippyOnce() {
                 await updateCurrentlyPlayingInfo(playingNowContainer);
             }
 
-            if (typeof window.__vkifyMusicPopupUpdateTopPlayer === 'function') {
-                window.__vkifyMusicPopupUpdateTopPlayer();
+            if (typeof vkify.musicPopup.updateTopPlayer === 'function') {
+                vkify.musicPopup.updateTopPlayer();
             }
-            if (typeof window.__vkifyMusicPopupUpdateSidebarPlayer === 'function') {
-                window.__vkifyMusicPopupUpdateSidebarPlayer();
+            if (typeof vkify.musicPopup.updateSidebarPlayer === 'function') {
+                vkify.musicPopup.updateSidebarPlayer();
             }
         }
     });
@@ -944,8 +946,8 @@ async function init() {
     bindSliderTipPositionFixOnce();
     await initMusicPopupTippyOnce();
 
-    if (typeof window.__vkifyMusicPopupTryWrapUpdateFace === 'function') {
-        window.__vkifyMusicPopupTryWrapUpdateFace();
+    if (typeof vkify.musicPopup.tryWrapUpdateFace === 'function') {
+        vkify.musicPopup.tryWrapUpdateFace();
     }
 }
 

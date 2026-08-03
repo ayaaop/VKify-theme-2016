@@ -627,9 +627,9 @@ window.DismissablePopup = {
     clearSessionState: clearPopupSessionState
 };
 
-vkify.hook(vkify, 'onPageReady', (container) => {
+vkify.onPageLifecycle('afterPageReady', ({ container = document }) => {
     window.reinitializeTooltips?.(container);
-    discoverDismissablePopups(container || document);
+    discoverDismissablePopups(container);
 }, 'after');
 
 vkify.ready(() => {

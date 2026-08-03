@@ -1,6 +1,10 @@
 (function () {
 'use strict';
 
+vkify.paginator = vkify.paginator || {};
+let paginatorAutoScrollInit = false;
+let paginatorScrollBound = false;
+
 const setButtonLoadingState = (btn, isLoading) => {
     if (!btn || btn.length < 1) return;
 
@@ -159,7 +163,7 @@ const refreshAlbumMasonry = (containerEl) => {
         });
     }
 
-    window.__vkifySchedulePaginatorCheck?.();
+    vkify.paginator.scheduleCheck?.();
 };
 
 const isNearDocumentBottom = () => (
@@ -342,13 +346,13 @@ const handlePaginationTrigger = async (paginatorNode, btnNode) => {
             setButtonLoadingState(refreshedBtn, false);
         }
         if (!containerEl || !containerEl.dataset.paginatorExhausted) {
-            window.__vkifySchedulePaginatorCheck?.();
+            vkify.paginator.scheduleCheck?.();
         }
     }
 };
 
-if (!window.__vkifyPaginatorAutoScrollInit) {
-    window.__vkifyPaginatorAutoScrollInit = true;
+if (!paginatorAutoScrollInit) {
+    paginatorAutoScrollInit = true;
 
     if (typeof showMoreObserver !== 'undefined' && u('.vkify-paginator').length > 0) {
         try {
@@ -399,8 +403,8 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
         });
     };
 
-    window.__vkifyPaginatorCheck = checkPaginatorInView;
-    window.__vkifySchedulePaginatorCheck = schedulePaginatorCheckBurst;
+    vkify.paginator.check = checkPaginatorInView;
+    vkify.paginator.scheduleCheck = schedulePaginatorCheckBurst;
 
     const initPaginatorAutoScroll = () => {
         const paginatorEl = getPaginatorElement();
@@ -413,8 +417,8 @@ if (!window.__vkifyPaginatorAutoScrollInit) {
         schedulePaginatorCheckSoon();
     };
 
-    if (!window.__vkifyPaginatorScrollBound) {
-        window.__vkifyPaginatorScrollBound = true;
+    if (!paginatorScrollBound) {
+        paginatorScrollBound = true;
         window.addEventListener('scroll', schedulePaginatorCheckSoon, { passive: true, capture: true });
         window.addEventListener('resize', schedulePaginatorCheckSoon, { passive: true });
     }

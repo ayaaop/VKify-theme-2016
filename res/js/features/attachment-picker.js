@@ -1506,7 +1506,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
             </div></div>
         `;
         msg.getNode().find('#__content').html(content);
-        window.__vkifyInitTabSliderSafe?.();
+        vkify.initTabSliderSafe?.();
     }
 
     u('#_fast_video_upload').on('click', '.ui_tab', (e) => {
@@ -1516,7 +1516,7 @@ vkify.hook(window, 'showFastVideoUpload', (formNode) => {
 
     switchTab('file');
     initVideoTitleAutofill('#_fast_video_upload');
-    window.__vkifyInitTabSliderSafe?.();
+    vkify.initTabSliderSafe?.();
 }, 'replace');
 
 function initVideoTitleAutofill(container) {

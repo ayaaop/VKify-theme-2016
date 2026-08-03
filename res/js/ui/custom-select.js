@@ -108,7 +108,7 @@ vkify.bindOnce('dropdownHandlers', () => {
     document.addEventListener('mousedown', onSelectMouseDown, true);
     document.addEventListener('click', onSelectClick, true);
 
-    vkify.hook(vkify, 'onPageReady', removeDropdown, 'after');
+    vkify.onPageLifecycle('afterPageReady', removeDropdown, 'after');
 
     vkify.observeDOM((mutations) => {
         for (const m of mutations) {

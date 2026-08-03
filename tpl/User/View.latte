@@ -63,12 +63,12 @@
 						<div class="mir-text">{$audioStatus->getName()}</div>
 					{if !$thatIsThisUser}</a>{else}</div>{/if}
 				{elseif $user->getStatus()}
-					<div class="mobile-info-row {if $thatIsThisUser}mobile-info-row-editable{/if}" {if $thatIsThisUser}onclick="__mobileEditStatus()"{/if}>
+					<div class="mobile-info-row {if $thatIsThisUser}mobile-info-row-editable{/if}" {if $thatIsThisUser}onclick="window.vkify.mobileEditStatus()"{/if}>
 						<svg class="mir-icon" viewBox="0 0 24 24"><use href="#message-24"></use></svg>
 						<div class="mir-text" id="mobile_status_display">{$user->getStatus()}</div>
 					</div>
 				{elseif $thatIsThisUser}
-					<div class="mobile-info-row mobile-info-row-editable" onclick="__mobileEditStatus()">
+					<div class="mobile-info-row mobile-info-row-editable" onclick="window.vkify.mobileEditStatus()">
 						<svg class="mir-icon" viewBox="0 0 24 24"><use href="#message-24"></use></svg>
 						<div class="mir-text" id="mobile_status_display">{_change_status}</div>
 					</div>
@@ -1013,7 +1013,7 @@
 		</div>
 	</div>
 
-	<script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()">
+	<script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" data-vkify-route-script="user-view">
 		(function() {
 			var input = document.getElementById('page_photos_upload_input');
 			if (!input) return;
@@ -1071,7 +1071,7 @@
 		})();
 	</script>
 
-	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
+	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" data-vkify-route-script="user-view-2">
 		function banUser() {
 			uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
 			uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
@@ -1121,7 +1121,7 @@
 		}
 	</script>
 
-	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+	<script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)" data-vkify-route-script="user-view-3">
 		{if $user->isBannedInSupport()}
 			function toggleBanInSupport() {
 				uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";

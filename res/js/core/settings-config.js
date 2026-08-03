@@ -85,5 +85,5 @@
         bindToggle('ovkhat', 'ovkHat', window.toggleOvkHat);
     }
 
-    vkify.hook(vkify, 'onPageReady', bindSettingsToggles, 'after');
+    vkify.onPageLifecycle('afterPageReady', bindSettingsToggles, 'after');
 })();

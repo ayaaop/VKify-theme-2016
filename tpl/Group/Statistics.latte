@@ -49,13 +49,13 @@
             </div>
         </div>
         
-        <style>
+        <style data-vkify-route-style="group-statistics">
             .modebar-container {
                 display: none !important;
             }
         </style>
         {script "js/node_modules/plotly.js-dist/plotly.js"}
-        <script>
+        <script data-vkify-route-script="group-statistics-2">
             function makePlot(selector, datum) {
                 Plotly.newPlot(document.querySelector(selector), [datum.total, datum.subs, datum.viral], {
                     margin: { t: 0 },

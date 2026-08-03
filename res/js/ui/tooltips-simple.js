@@ -1,8 +1,8 @@
 (function () {
 'use strict';
 
-if (!window.__vkifySimpleTooltips) {
-    window.__vkifySimpleTooltips = {};
+if (!vkify.simpleTooltips) {
+    vkify.simpleTooltips = {};
 }
 
 vkify.once('simpleTooltips', () => {
@@ -126,11 +126,11 @@ vkify.once('simpleTooltips', () => {
         });
     }
 
-    window.__vkifySimpleTooltips.init = initializeSimpleTooltips;
+    vkify.simpleTooltips.init = initializeSimpleTooltips;
 
     const bindObserverOnce = () => {
-        if (window.__vkifySimpleTooltips.__observerBound) return;
-        window.__vkifySimpleTooltips.__observerBound = true;
+        if (vkify.simpleTooltips.observerBound) return;
+        vkify.simpleTooltips.observerBound = true;
 
         vkify.observeDOM((mutations) => {
             let shouldReinit = false;
@@ -152,9 +152,9 @@ vkify.once('simpleTooltips', () => {
         });
     };
 
-    vkify.hook(vkify, 'onPageReady', (container) => {
+    vkify.onPageLifecycle('afterPageReady', ({ container = document }) => {
         bindObserverOnce();
-        initializeSimpleTooltips(container || document);
+        initializeSimpleTooltips(container);
     }, 'after');
 
     vkify.ready(() => {

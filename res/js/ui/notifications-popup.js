@@ -17,12 +17,12 @@ vkify.ready(() => {
     const customSoundId = "vkify_notification";
     createjs.Sound.registerSound("../bb1.mp3", customSoundId);
 
-    window.__actualPlayNotifSound = function() {
+    vkify.actualPlayNotifSound = function() {
         createjs.Sound.play(customSoundId);
     };
 
     if (window.playNotifSound && window.playNotifSound !== Function.noop) {
-        window.playNotifSound = window.__actualPlayNotifSound;
+        window.playNotifSound = vkify.actualPlayNotifSound;
     }
 
 
@@ -108,7 +108,7 @@ vkify.once("initNotificationsPopup", () => {
         }
     }
 
-    window.__vkifyUiOwnsInitNotificationsPopup = true;
+    vkify.uiOwnsInitNotificationsPopup = true;
 
     window.initNotificationsPopup = async function () {
         const targetElement = document.querySelector('#top_notify_btn_div');
@@ -158,7 +158,7 @@ vkify.once("initNotificationsPopup", () => {
         });
     };
 
-    vkify.hook(vkify, 'onPageReady', () => window.initNotificationsPopup(), 'after');
+    vkify.onPageLifecycle('afterPageReady', () => window.initNotificationsPopup(), 'after');
 
     vkify.ready(() => window.initNotificationsPopup());
 });
