@@ -50,11 +50,11 @@ vkify.once('mediaModals', function () {
             const pretty_id = `${video_object.owner_id}_${video_object.id}`;
 
             function updateVideoUrl(videoId) {
-                CF.updateUrlParam('z', `video${videoId}`, { skip: skipUrlUpdate });
+                CF.updateUrlParam('z', `video${videoId}`, { skip: skipUrlUpdate, kind: 'modal' });
             }
 
             function clearVideoUrl() {
-                CF.clearUrlParam('z');
+                CF.clearUrlParam('z', { kind: 'modal' });
             }
 
             const author = findAuthor(video_object.owner_id, video_api?.profiles, video_api?.groups);
@@ -379,11 +379,11 @@ vkify.once('mediaModals', function () {
                 } else {
                     value = `photo${photoId}`;
                 }
-                CF.updateUrlParam('z', value, { skip: skipUrlUpdate });
+                CF.updateUrlParam('z', value, { skip: skipUrlUpdate, kind: 'modal' });
             }
 
             function clearPhotoUrl() {
-                CF.clearUrlParam('z');
+                CF.clearUrlParam('z', { kind: 'modal' });
             }
 
             ModalUtils.setupCloseButton(msgbox, '#__modal_photo_close');
@@ -963,10 +963,23 @@ vkify.once('mediaModals', function () {
         window.OpenMiniature = vkifyOpenMiniature;
     }
 
+    if (window.jQuery) {
+        window.jQuery(document).on('submitted', '.save_photo', (e) => {
+            const $jq = window.jQuery;
+            const $btn = $jq(e.target).find('input[type=submit], button[type=submit]');
+            $btn.prop('disabled', true);
+            if ($btn.is('input')) {
+                $btn.val(tr('photo_saved'));
+            } else {
+                $btn.text(tr('photo_saved'));
+            }
+        });
+    }
+
     function clearZParam() {
         const url = new URL(window.location);
         url.searchParams.delete('z');
-        history.replaceState(null, '', url);
+        window.router?.updateHistory(url, { replace: true, kind: 'modal' });
     }
 
     function parseZParam() {
@@ -1060,7 +1073,8 @@ vkify.once('mediaModals', function () {
 
     vkify.ready(openModalFromUrl);
 
-    window.addEventListener('popstate', () => {
+    window.addEventListener('popstate', (event) => {
+        if (event.state?.vkify?.kind !== 'modal') return;
         if (parseZParam()) openModalFromUrl();
     });
 
@@ -1089,8 +1103,13 @@ vkify.once('mediaModals', function () {
                 this.openPostPopup(href);
             }, true);
 
-            window.addEventListener('popstate', () => {
+            window.addEventListener('popstate', (event) => {
                 if (window.isMobile && window.isMobile()) return;
+
+                if (event.state?.vkify?.kind !== 'modal') {
+                    if (this.currentModal) this.closePostPopup(false);
+                    return;
+                }
 
                 const wallParam = CF.getUrlParam('w');
                 const sortParam = CF.getUrlParam('sort');
@@ -1133,7 +1152,7 @@ vkify.once('mediaModals', function () {
                     const params = { w: postPath.substring(1) };
                     if (sortParam) params.sort = sortParam;
                     if (pageParam) params.p = pageParam;
-                    CF.updateMultipleUrlParams(params, { state: { postPopup: postPath } });
+                    CF.updateMultipleUrlParams(params, { kind: 'modal', state: { postPopup: postPath } });
                 }
 
                 const fetchUrl = new URL(postPath, location.origin);

@@ -97,6 +97,7 @@
 }
 .pv_left .pv_bottom_actions > a,
 .pv_left .pv_bottom_actions > button,
+.pv_left .pv_bottom_actions > form > button,
 .pv_left .pv_bottom_actions > span,
 .pv_left .pv_bottom_actions > .pv_actions_more {
   color: #cccccc;
@@ -106,12 +107,27 @@
   line-height: inherit;
   cursor: pointer;
 }
+.pv_left .pv_bottom_actions > form {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+.pv_left .pv_bottom_actions > form > button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
 .pv_left .pv_bottom_actions > a:hover,
+.pv_left .pv_bottom_actions > form > button:not(:disabled):hover,
 .pv_left .pv_bottom_actions > span:hover,
 .pv_left .pv_bottom_actions > .pv_actions_more:hover,
 .pv_left .pv_bottom_actions span[aria-expanded="true"] {
   opacity: 1;
   text-decoration: none;
+}
+.pv_left .pv_bottom_actions > form > button:disabled {
+  cursor: default;
+  color: #cccccc;
 }
 .pv_album_name {
   color: #cccccc;

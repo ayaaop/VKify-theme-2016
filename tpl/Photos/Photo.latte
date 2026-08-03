@@ -39,8 +39,13 @@
                         <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete?hash={rawurlencode($csrfToken)}">{_delete}</a>
                         <span class="divider"></span>
                     {/if}
+                    <form n:if="$canSave" class="save_photo" action="/photo{$photo->getPrettyId()}/save" method="post">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <button type="submit">{_save_photo}</button>
+                        <span class="divider"></span>
+                    </form>
                     <span class="pv_actions_more" role="button" data-tippy-content-id="pv_actions_more_menu" data-tippy-theme="dark vk">
-                        {_show_more}
+                        {=vkifyTr('more')}
                     </span>
                     <div id="pv_actions_more_menu" class="tippy-menu tippy-content-template">
                         <a n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()" href="javascript:showEditPhotoModal('{$photo->getPrettyId()}')">{_edit}</a>
